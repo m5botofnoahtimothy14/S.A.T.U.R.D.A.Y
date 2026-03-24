@@ -4,5 +4,5 @@ pydantic==2.11.3
 python-dotenv==1.0.1
 firebase-admin==6.8.0
 jsonschema==4.23.0
-langgraph==0.4.8
+langgraph==1.0.10rc1
 psutil==7.0.0
