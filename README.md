@@ -30,6 +30,18 @@ You can also mount the secure gateway directly into the core app path by setting
 - `aegis-control-panel/`: React Firebase dashboard for live telemetry
 - `ops/secure_access/`: LAN and remote overlay access scripts (Tailscale, Cloudflare Tunnel, ZeroTier)
 
+🔹 Pre-trained Models & Dependencies
+
+AEGIS relies on some large models, node packages, and other resources that are **not included in this repo** to keep it lightweight.  
+
+You can download these manually as needed:  
+
+- **Core AI Models** → download from your preferred source  
+- **Node Packages / Dependencies** → download from your preferred source  
+- **Datasets / Embeddings** → download from your preferred source  
+
+> ⚠️ Make sure to place downloaded models and packages in the appropriate directories under `core/` or `data/` before running AEGIS.
+
 ## Quick Start (Core Runtime)
 
 ### Prerequisites
