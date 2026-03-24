@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: aegis-api
+    env: node
+    region: oregon
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: PORT
+        value: 10000

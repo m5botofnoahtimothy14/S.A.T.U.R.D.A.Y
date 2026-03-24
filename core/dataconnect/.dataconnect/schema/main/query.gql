@@ -1,0 +1,267 @@
+extend type Query {
+  """
+  ✨ Look up a single `AIAgent` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  aIAgent(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: AIAgent_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AIAgent_FirstRow
+  ): AIAgent @fdc_generated(from: "AIAgent", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Command` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  command(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Command_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Command_FirstRow
+  ): Command @fdc_generated(from: "Command", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Deployment` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  deployment(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Deployment_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Deployment_FirstRow
+  ): Deployment @fdc_generated(from: "Deployment", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `LogEntry` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  logEntry(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: LogEntry_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: LogEntry_FirstRow
+  ): LogEntry @fdc_generated(from: "LogEntry", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  user(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
+  """
+  ✨ List `AIAgent` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  aIAgents(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: AIAgent_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [AIAgent_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: AIAgent_Having
+  ): [AIAgent!]! @fdc_generated(from: "AIAgent", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Command` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  commands(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Command_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Command_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Command_Having
+  ): [Command!]! @fdc_generated(from: "Command", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Deployment` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  deployments(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Deployment_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Deployment_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Deployment_Having
+  ): [Deployment!]! @fdc_generated(from: "Deployment", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `LogEntry` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  logEntries(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: LogEntry_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [LogEntry_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: LogEntry_Having
+  ): [LogEntry!]! @fdc_generated(from: "LogEntry", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  users(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: User_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [User_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: User_Having
+  ): [User!]! @fdc_generated(from: "User", purpose: QUERY_MULTIPLE)
+}

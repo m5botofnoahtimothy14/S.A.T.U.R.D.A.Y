@@ -1,0 +1,51 @@
+# requirements.txt
+fastapi
+uvicorn
+pydantic>=2.0
+structlog
+python-dotenv
+sqlalchemy
+aiosqlite
+llama-cpp-python
+sentence-transformers
+scikit-learn
+sounddevice
+numpy
+faster-whisper
+pyttsx3
+opencv-python
+mediapipe
+psutil
+paho-mqtt
+jinja2
+python-multipart
+face_recognition
+pywin32
+httptools
+pystray
+Pillow
+aiohttp
+pygetwindow
+pyautogui
+requests
+pyserial
+SpeechRecognition
+pyaudio
+firebase-admin
+jsonschema
+# Browser automation
+selenium
+twilio
+langgraph
+langchain-core
+autogen
+livekit
+livekit-api
+livekit-agents
+redis
+# Add any other missing dependencies for future phases if needed
+# but I'll stick to what is currently required or explicitly mentioned.
+# Phase C: autogen
+# Phase D: livekit, livekit-api, livekit-agents
+# Phase E: rclpy (usually installed via ROS2, but I'll add placeholder)
+# Phase F: redis

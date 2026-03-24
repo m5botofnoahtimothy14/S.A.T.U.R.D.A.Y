@@ -1,0 +1,71 @@
+{
+    "wake_word": "aegis",
+    "edith_wake_word": "edith",
+    "voices": {
+        "aegis": {
+            "gender": "male",
+            "rate": 160,
+            "volume": 1.0
+        },
+        "edith": {
+            "gender": "female",
+            "rate": 170,
+            "volume": 1.0
+        }
+    },
+    "cloud": {
+        "endpoint": "https://aegis-cloud.example.com",
+        "sync_interval": 30
+    },
+    "homebot": {
+        "device_ip": "192.168.0.100",
+        "motor_max_speed": 100
+    },
+    "security": {
+        "cpu_threshold": 85,
+        "mem_threshold": 90
+    },
+    "christianity_core": {
+        "scripture_db_path": "christianity_core/scripture_db.json"
+    },
+    "logging": {
+        "event_log": "logs/events.log",
+        "security_log": "logs/security.log"
+    },
+    "ai": {
+        "use_llama_cpp": true,
+        "use_langgraph": true,
+        "use_autogen": true,
+        "use_livekit": true,
+        "use_ros2": true,
+        "use_sync": true,
+        "model_path": "models/llama-3-8b-instruct.Q4_K_M.gguf",
+        "n_ctx": 2048,
+        "n_gpu_layers": -1
+    },
+    "voice": {
+        "use_deep_learning": true,
+        "whisper_model_size": "tiny",
+        "whisper_language": "en",
+        "whisper_beam_size": 1,
+        "whisper_vad": true,
+        "energy_threshold": 80,
+        "pause_threshold": 0.3,
+        "continuous_listening": true,
+        "no_wake_word": true,
+        "intent_classification": true
+    },
+    "subsystems": {
+        "system_control": true,
+        "vision": true,
+        "home_automation": true,
+        "communication": true,
+        "media": true,
+        "code": true,
+        "security": true,
+        "search": true,
+        "file": true,
+        "calendar": true,
+        "health": true
+    }
+}

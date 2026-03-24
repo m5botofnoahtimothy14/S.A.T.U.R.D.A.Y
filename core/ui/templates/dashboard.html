@@ -1,0 +1,333 @@
+<!-- ui/templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AEGIS OS | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background: #0a0a0c;
+            color: #00ffcc;
+            font-family: 'Fira Code', monospace;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+        }
+        .sidebar {
+            background: #141418;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #1f1f25;
+        }
+        .main-view {
+            background: #141418;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #1f1f25;
+            min-height: 700px;
+        }
+        .log-vessel {
+            flex: 1;
+            overflow-y: auto;
+            background: #000;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            max-height: 300px;
+        }
+        .input-area { display: flex; gap: 10px; margin-bottom: 20px; }
+        input {
+            flex: 1;
+            background: #1f1f25;
+            border: 1px solid #333;
+            color: #00ffcc;
+            padding: 12px;
+            border-radius: 5px;
+            outline: none;
+        }
+        .stat-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #222;
+        }
+        .stat-value { color: #fff; font-size: 1.1rem; }
+        .section-title {
+            color: #ff9500;
+            font-size: 0.9rem;
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn {
+            background: #1f1f25;
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.8rem;
+            margin: 3px;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: #00ffcc; color: #000; }
+        .btn-stop { border-color: #ff4444; color: #ff4444; }
+        .btn-stop:hover { background: #ff4444; color: #fff; }
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        .music-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .music-btn {
+            padding: 10px 15px;
+            font-size: 0.85rem;
+        }
+        .panel {
+            background: #0d0d10;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .panel h3 {
+            margin: 0 0 10px 0;
+            color: #ff9500;
+            font-size: 0.9rem;
+        }
+        .log-entry { margin: 3px 0; color: #888; }
+        .log-entry::before { content: "> "; color: #444; }
+        .log-time { color: #555; font-size: 0.75rem; }
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff00;
+            margin-right: 8px;
+        }
+        .status-dot.offline { background: #ff4444; }
+        .status-dot.warning { background: #ffaa00; }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="stat-item">
+                <div>SYSTEM STATUS</div>
+                <div class="stat-value"><span class="status-dot" id="status-dot"></span><span id="status-val">OPTIMAL</span></div>
+            </div>
+            <div class="stat-item">
+                <div>CPU LOAD</div>
+                <div class="stat-value" id="cpu-val">0%</div>
+            </div>
+            <div class="stat-item">
+                <div>MEMORY</div>
+                <div class="stat-value" id="mem-val">0%</div>
+            </div>
+            <div class="stat-item">
+                <div>DISK</div>
+                <div class="stat-value" id="disk-val">0%</div>
+            </div>
+            
+            <div class="section-title">HOMEBOT</div>
+            <div class="panel">
+                <div style="margin-bottom:10px;">
+                    <span id="hb-status" class="status-dot offline"></span>
+                    <span id="hb-status-text">Disconnected</span>
+                </div>
+                <div class="control-grid">
+                    <button class="btn" onclick="homebotCmd('forward')">▲</button>
+                    <button class="btn" onclick="homebotCmd('backward')">▼</button>
+                    <button class="btn" onclick="homebotCmd('strafe_left')">◄</button>
+                    <button class="btn" onclick="homebotCmd('strafe_right')">►</button>
+                </div>
+                <button class="btn btn-stop" onclick="homebotCmd('stop')" style="width:100%">STOP</button>
+                <div style="margin-top:10px;">
+                    <button class="btn" onclick="homebotNav()">Navigate to (50,50)</button>
+                </div>
+            </div>
+            
+            <div class="section-title">SOCIAL (EDITH)</div>
+            <div class="panel">
+                <div class="control-grid">
+                    <button class="btn" onclick="socialCmd('whatsapp', 'start')">WhatsApp</button>
+                    <button class="btn" onclick="socialCmd('instagram', 'start')">Instagram</button>
+                    <button class="btn" onclick="socialCmd('twitter', 'start')">X/Twitter</button>
+                </div>
+                <button class="btn btn-stop" onclick="socialCmd('all', 'stop')" style="width:100%">Stop All</button>
+            </div>
+            
+            <div class="section-title">MUSIC</div>
+            <div class="panel">
+                <div class="music-controls">
+                    <button class="btn music-btn" onclick="playMood('happy')">Happy</button>
+                    <button class="btn music-btn" onclick="playMood('focus')">Focus</button>
+                    <button class="btn music-btn" onclick="playMood('chill')">Chill</button>
+                    <button class="btn music-btn" onclick="playMood('workout')">Workout</button>
+                    <button class="btn music-btn" onclick="playMood('sleep')">Sleep</button>
+                </div>
+                <div style="margin-top:10px;">
+                    <button class="btn" onclick="playLocal()" style="width:100%">Play Local Music</button>
+                </div>
+                <div style="margin-top:10px;">
+                    <button class="btn btn-stop" onclick="stopMusic()" style="width:100%">Stop Music</button>
+                </div>
+                <div style="margin-top:10px;font-size:0.8rem;color:#666;">
+                    Now Playing: <span id="now-playing">--</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-view">
+            <h2 style="margin-top:0;">AEGIS NEURAL INTERFACE</h2>
+            
+            <div class="panel">
+                <h3>HomeBot Telemetry</h3>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+                    <div>Ultrasonic: <span id="hb-ultrasonic">--</span> cm</div>
+                    <div>Battery: <span id="hb-battery">--</span>%</div>
+                    <div>Status: <span id="hb-command">idle</span></div>
+                </div>
+                <div style="margin-top:10px;">
+                    <strong>Logs:</strong>
+                    <div id="hb-logs" class="log-vessel" style="max-height:120px;"></div>
+                </div>
+            </div>
+            
+            <div class="log-vessel" id="logs">
+                <div>[SYSTEM] AEGIS Kernel Version 2.0.0 Online.</div>
+                <div>[SYSTEM] Listening for neural input...</div>
+            </div>
+            
+            <div class="input-area">
+                <input type="text" id="cmd" placeholder="Enter command or query..." onkeypress="handleKey(event)">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleKey(e) {
+            if (e.key === 'Enter') {
+                const cmd = e.target.value;
+                addLog(`> ${cmd}`);
+                fetch(`/chat?prompt=${encodeURIComponent(cmd)}`, { method: 'POST' })
+                    .then(r => r.json())
+                    .then(data => {
+                        addLog(`AEGIS: ${data.response}`);
+                    });
+                e.target.value = '';
+            }
+        }
+
+        function socialCmd(platform, action) {
+            fetch('/chat?prompt=' + encodeURIComponent('edith ' + action + ' ' + platform), { method: 'POST' })
+                .then(r => r.json())
+                .then(d => addLog(`EDITH: ${platform} ${action}`));
+        }
+
+        function addLog(msg) {
+            const logs = document.getElementById('logs');
+            const div = document.createElement('div');
+            const time = new Date().toLocaleTimeString();
+            div.innerHTML = `<span class="log-time">[${time}]</span> ${msg}`;
+            logs.appendChild(div);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function homebotCmd(cmd) {
+            fetch('/api/homebot/command', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({command: cmd})
+            }).then(r => r.json()).then(d => {
+                addLog(`HomeBot: ${cmd} - ${d.success ? 'OK' : d.error}`);
+            });
+        }
+
+        function homebotNav() {
+            fetch('/api/homebot/navigate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({x: 50, y: 50})
+            }).then(r => r.json()).then(d => {
+                addLog(`HomeBot: Navigate to (50,50) - ${d.success ? 'OK' : d.error}`);
+            });
+        }
+
+        function playMood(mood) {
+            fetch(`/chat?prompt=play ${mood} music`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    addLog(`Playing ${mood} music...`);
+                });
+        }
+
+        function stopMusic() {
+            fetch('/api/music/stop', { method: 'POST' })
+                .then(() => addLog('Music stopped'));
+        }
+
+        function playLocal() {
+            fetch('/chat?prompt=play my local music', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    addLog('Playing local music from D:/Music');
+                    document.getElementById('now-playing').textContent = 'Local Files';
+                });
+        }
+
+        setInterval(() => {
+            fetch('/api/status')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('cpu-val').textContent = `${data.cpu_percent || 0}%`;
+                    document.getElementById('mem-val').textContent = `${Math.round(data.memory_mb || 0)} MB`;
+                    document.getElementById('disk-val').textContent = `${Math.round(data.disk_percent || 0)}%`;
+                });
+        }, 2000);
+
+        setInterval(() => {
+            fetch('/api/homebot/status')
+                .then(r => r.json())
+                .then(data => {
+                    const dot = document.getElementById('hb-status');
+                    const text = document.getElementById('hb-status-text');
+                    if (data.connected) {
+                        dot.className = 'status-dot';
+                        text.textContent = 'Connected';
+                    } else {
+                        dot.className = 'status-dot offline';
+                        text.textContent = 'Disconnected';
+                    }
+                    document.getElementById('hb-ultrasonic').textContent = data.sensors?.ultrasonic || '--';
+                    document.getElementById('hb-battery').textContent = data.battery || '--';
+                    document.getElementById('hb-command').textContent = data.current_command || 'idle';
+                });
+        }, 3000);
+
+        fetch('/api/homebot/logs').then(r => r.json()).then(d => {
+            const container = document.getElementById('hb-logs');
+            (d.logs || []).forEach(l => {
+                container.innerHTML += `<div class="log-entry">${l}</div>`;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1753 @@
+{"event": "voice_response", "data": "System checks are green."}
+{"event": "voice_response", "data": "Need music, a search, or to control HomeBot?"}
+{"event": "voice_command", "data": "hey"}
+{"event": "voice_command", "data": "welcome back"}
+{"event": "exchange", "data": {"user": "welcome back", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_command", "data": "any song from ed sheeran"}
+{"event": "exchange", "data": {"user": "any song from ed sheeran", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Need music, a search, or to control HomeBot?"}
+{"event": "voice_response", "data": "Anything you want me to handle?"}
+{"event": "voice_response", "data": "Need me to draft a plan or remind you about anything?"}
+{"event": "voice_command", "data": "images"}
+{"event": "exchange", "data": {"user": "images", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 89 percent, memory 94 percent."}
+{"event": "voice_command", "data": "welcome back"}
+{"event": "exchange", "data": {"user": "welcome back", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_command", "data": "security alert triggered"}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "exchange", "data": {"user": "security alert triggered", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 38 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 41 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 62 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 43 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 27 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Anything you want me to handle?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 67 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 91 percent."}
+{"event": "voice_response", "data": "How’s your day going? Anything you want me to handle?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "hello images how are you"}
+{"event": "exchange", "data": {"user": "hello images how are you", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_command", "data": "what's the weather today"}
+{"event": "voice_command", "data": "my favourite music"}
+{"event": "exchange", "data": {"user": "what's the weather today", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "exchange", "data": {"user": "my favourite music", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "hello"}
+{"event": "exchange", "data": {"user": "hello", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "Anything you want me to handle?"}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 85 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 21 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 30 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 78 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 77 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 45 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Do you want a quick status check or to queue some music?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 49 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 18 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 52 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 40 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 64 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Anything you want me to handle?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "AEGIS: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "AEGIS: Great. I can cue some focus music if you like."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Need music, a search, or to control HomeBot?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Do you want a quick status check or to queue some music?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "AEGIS: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "AEGIS: Great. I can cue some focus music if you like."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "System checks are green."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "when announcing"}
+{"event": "exchange", "data": {"user": "when announcing", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "no"}
+{"event": "exchange", "data": {"user": "no", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "wet tissue"}
+{"event": "exchange", "data": {"user": "wet tissue", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "you can vary"}
+{"event": "exchange", "data": {"user": "you can vary", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "I see 3 people nearby. Do you want me to engage privacy or alert mode?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "System checks are green."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "yeah"}
+{"event": "exchange", "data": {"user": "yeah", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 34 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 20 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 23 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 26 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 24 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 23 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 20 percent, memory 93 percent."}
+{"event": "voice_response", "data": "System checks are green."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 41 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 32 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 41 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 16 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 44 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 82 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "AEGIS: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "AEGIS: Great. I can cue some focus music if you like."}
+{"event": "voice_command", "data": "getting"}
+{"event": "exchange", "data": {"user": "getting", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "no more"}
+{"event": "exchange", "data": {"user": "no more", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_command", "data": "ah will"}
+{"event": "exchange", "data": {"user": "ah will", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_command", "data": "ah cool"}
+{"event": "exchange", "data": {"user": "ah cool", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "again"}
+{"event": "exchange", "data": {"user": "again", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 27 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "again"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 35 percent, memory 93 percent."}
+{"event": "exchange", "data": {"user": "again", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Anything you want me to handle?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Need me to draft a plan or remind you about anything?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "System checks are green."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Need me to draft a plan or remind you about anything?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "in early"}
+{"event": "exchange", "data": {"user": "in early", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "the"}
+{"event": "exchange", "data": {"user": "the", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Need music, a search, or to control HomeBot?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 30 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Anything you want me to handle?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "AEGIS: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "AEGIS: Great. I can cue some focus music if you like."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Do you want a quick status check or to queue some music?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 76 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Anything you want me to handle?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "AEGIS: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "AEGIS: Great. I can cue some focus music if you like."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "System checks are green."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "AEGIS: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "AEGIS: Great. I can cue some focus music if you like."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "kim's to"}
+{"event": "exchange", "data": {"user": "kim's to", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_command", "data": "kim student or teacher to look"}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_command", "data": "kim student or teacher to look things up"}
+{"event": "exchange", "data": {"user": "kim student or teacher to look", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "exchange", "data": {"user": "kim student or teacher to look things up", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "up"}
+{"event": "exchange", "data": {"user": "up", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Need me to draft a plan or remind you about anything?"}
+{"event": "voice_command", "data": "yeah"}
+{"event": "exchange", "data": {"user": "yeah", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 37 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 27 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Need music, a search, or to control HomeBot?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "AEGIS: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "AEGIS: Great. I can cue some focus music if you like."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Do you want a quick status check or to queue some music?"}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 79 percent."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_response", "data": "Security alert triggered."}
+{"event": "voice_command", "data": "35"}
+{"event": "exchange", "data": {"user": "35", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_command", "data": "yes recording from 10"}
+{"event": "exchange", "data": {"user": "yes recording from 10", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_command", "data": "bottle bottle bottle"}
+{"event": "voice_command", "data": "no one"}
+{"event": "voice_command", "data": "just what"}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "exchange", "data": {"user": "bottle bottle bottle", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "exchange", "data": {"user": "no one", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "exchange", "data": {"user": "just what", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_command", "data": "leave online"}
+{"event": "exchange", "data": {"user": "leave online", "reply": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}}
+{"event": "voice_response", "data": "LLM operating in fallback mode. Configure Ollama for full AI capabilities."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 75 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 76 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 72 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 77 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 80 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 84 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 39 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 43 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 34 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 64 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 49 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 47 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 26 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 56 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 34 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 21 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 77 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 53 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 47 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 90 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 67 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 71 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 82 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 71 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 69 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 72 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 82 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 67 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 86 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 67 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 83 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 82 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 75 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 90 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 87 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 90 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 83 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 79 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 68 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 61 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 46 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 49 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 56 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 59 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 60 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 89 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 86 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 71 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 74 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 66 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 90 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 90 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 81 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 43 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 62 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 85 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 54 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 64 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 40 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 19 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 39 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 23 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 19 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 18 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 32 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 21 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 20 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 20 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 21 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 44 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 6 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 11 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 7 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 12 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 10 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 7 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 7 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 9 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 6 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 10 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 15 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 6 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 7 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 7 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 16 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 16 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 10 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 10 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 9 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 10 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 15 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 5 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 4 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 9 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 10 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 7 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 35 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 56 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 41 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 11 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 5 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 12 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 14 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 9 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 4 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 11 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 9 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 14 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 5 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 7 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 5 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 7 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 9 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 16 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 10 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 12 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 14 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 9 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 11 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 9 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 15 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 6 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 15 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 5 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 12 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 6 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 11 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 14 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 7 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 18 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 60 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 11 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 10 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 15 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 10 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 7 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 6 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 19 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 8 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 10 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 9 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 7 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 5 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 19 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 65 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 96 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 44 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 60 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 20 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 15 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 34 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 46 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 39 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 34 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 34 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 26 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 37 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 40 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 31 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 67 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 70 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 59 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 66 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 77 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 59 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 40 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 35 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 33 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 40 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 37 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 41 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 16 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 50 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 18 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 38 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 81 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 20 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 56 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 29 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 60 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 86 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 41 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 18 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 53 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 88 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 65 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 56 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 5 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 24 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 14 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 13 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 58 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 34 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 83 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 22 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 17 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 9 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 16 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 27 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 84 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 34 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 76 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 26 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 29 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 30 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 23 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 85 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 4 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 63 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 40 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 49 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 53 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 40 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 39 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 27 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 39 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 27 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 22 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 19 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 49 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 36 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 29 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 23 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 18 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 24 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 43 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 78 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 40 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 67 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 44 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 71 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 60 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 72 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 32 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 85 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 57 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 83 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 46 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 54 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 60 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 90 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 79 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 75 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 38 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 81 percent, memory 96 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 36 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 38 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 46 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 46 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 61 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 66 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 60 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 71 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 70 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 72 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 57 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 62 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 59 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 66 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 61 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 64 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 55 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 86 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 46 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 64 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 86 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 50 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 62 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 53 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 44 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 43 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 58 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 45 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 44 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 72 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 77 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 67 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 87 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 48 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 63 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 66 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 66 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 42 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 70 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 54 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 23 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 48 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 40 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 37 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 19 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 38 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 35 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 31 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 15 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 23 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 16 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 47 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 26 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 19 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 11 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 11 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 12 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 85 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 76 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 34 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 38 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 23 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 50 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 26 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 19 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 38 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 20 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 19 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 24 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 12 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 18 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 22 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 15 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 20 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 12 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 36 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 46 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 37 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 39 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 34 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 24 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 26 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 34 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 45 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 80 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 41 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 52 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 89 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 91 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 94 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 69 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 85 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 82 percent, memory 92 percent."}
+{"event": "voice_command", "data": "resources"}
+{"event": "voice_command", "data": "system resources"}
+{"event": "voice_command", "data": "my best friend"}
+{"event": "voice_command", "data": "we thought experiment"}
+{"event": "voice_command", "data": "both"}
+{"event": "voice_command", "data": "both will not let us know"}
+{"event": "voice_command", "data": "both will not let it's not"}
+{"event": "voice_command", "data": "a few"}
+{"event": "voice_command", "data": "she'll do"}
+{"event": "voice_command", "data": "she'll be doing an"}
+{"event": "voice_command", "data": "she'll give given a dude from originally"}
+{"event": "voice_command", "data": "adult are"}
+{"event": "voice_command", "data": "adult or"}
+{"event": "voice_command", "data": "screaming have been using"}
+{"event": "voice_command", "data": "screaming have been using"}
+{"event": "voice_command", "data": "let's fly"}
+{"event": "voice_command", "data": "now"}
+{"event": "voice_command", "data": "she's much"}
+{"event": "voice_command", "data": "she's much to watch"}
+{"event": "voice_command", "data": "the map"}
+{"event": "voice_command", "data": "hardly"}
+{"event": "voice_command", "data": "tim"}
+{"event": "voice_command", "data": "we don't"}
+{"event": "voice_command", "data": "we don't have the news about"}
+{"event": "voice_command", "data": "we don't have the news"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 86 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 88 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 26 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_command", "data": "sorry just"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 76 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 55 percent, memory 95 percent."}
+{"event": "voice_command", "data": "oh yeah"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 96 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 59 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 73 percent, memory 96 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 47 percent, memory 96 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 94 percent."}
+{"event": "voice_command", "data": "still hmg and"}
+{"event": "voice_command", "data": "still hmg and"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_command", "data": "do"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 96 percent."}
+{"event": "voice_command", "data": "do they"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 96 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 97 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 96 percent."}
+{"event": "voice_command", "data": "this"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 97 percent."}
+{"event": "voice_command", "data": "this is your"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 38 percent, memory 93 percent."}
+{"event": "voice_command", "data": "this it yeah she was"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_command", "data": "this it as you can be will say no also and forty"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_command", "data": "this it as you can be will say no also for the"}
+{"event": "voice_command", "data": "we're not going to"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_command", "data": "this not going on"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 88 percent, memory 95 percent."}
+{"event": "voice_command", "data": "okay"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 70 percent, memory 96 percent."}
+{"event": "voice_command", "data": "the last year was on"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 96 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 21 percent, memory 96 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 58 percent, memory 96 percent."}
+{"event": "voice_command", "data": "my name"}
+{"event": "voice_command", "data": "my name"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_command", "data": "you know that"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 95 percent."}
+{"event": "voice_command", "data": "you know that"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 95 percent."}
+{"event": "voice_command", "data": "to"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 96 percent."}
+{"event": "voice_command", "data": "ah"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 96 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 95 percent."}
+{"event": "voice_command", "data": "right to huge"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 52 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 63 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 69 percent, memory 93 percent."}
+{"event": "voice_command", "data": "the"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 84 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 90 percent, memory 87 percent."}
+{"event": "voice_command", "data": "right enough"}
+{"event": "voice_command", "data": "rapid response"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 86 percent, memory 93 percent."}
+{"event": "voice_command", "data": "rapid response is longer part of the care"}
+{"event": "voice_command", "data": "the catcher you are"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 93 percent."}
+{"event": "voice_command", "data": "the catch is that what"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 88 percent, memory 93 percent."}
+{"event": "voice_command", "data": "the catch is that what you just get"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 30 percent, memory 93 percent."}
+{"event": "voice_command", "data": "the catcher your that one who just get it he he thought it was insulting if you"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 43 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_command", "data": "fraser"}
+{"event": "voice_command", "data": "fraser a"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 92 percent."}
+{"event": "voice_command", "data": "okay my"}
+{"event": "voice_command", "data": "okay"}
+{"event": "voice_command", "data": "murphy and"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 93 percent."}
+{"event": "voice_command", "data": "have you know like"}
+{"event": "voice_command", "data": "have you know like by"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 92 percent."}
+{"event": "voice_command", "data": "of you know like by robots"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 91 percent."}
+{"event": "voice_command", "data": "not going to change"}
+{"event": "voice_command", "data": "instructions you journey few"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 37 percent, memory 92 percent."}
+{"event": "voice_command", "data": "do something"}
+{"event": "voice_command", "data": "once you"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 93 percent."}
+{"event": "voice_command", "data": "what are you a lot"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 72 percent, memory 92 percent."}
+{"event": "voice_command", "data": "once you get along well as long as you"}
+{"event": "voice_command", "data": "once you get along well as long as you don't feel too"}
+{"event": "voice_command", "data": "once you along a long walk around with this sleepers you don't feel too"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 80 percent, memory 94 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 88 percent, memory 93 percent."}
+{"event": "voice_command", "data": "yeah"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 93 percent."}
+{"event": "voice_command", "data": "yeah"}
+{"event": "voice_command", "data": "i'm"}
+{"event": "voice_command", "data": "i'm upset"}
+{"event": "voice_command", "data": "oh really"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 66 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 53 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 94 percent."}
+{"event": "voice_command", "data": "that's so silly how will that"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 75 percent, memory 93 percent."}
+{"event": "voice_command", "data": "that's so silly how will that"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 87 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 64 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 32 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 68 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 30 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 93 percent."}
+{"event": "voice_command", "data": "i read"}
+{"event": "voice_command", "data": "eating"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 35 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 35 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 22 percent, memory 94 percent."}
+{"event": "voice_command", "data": "hearing"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 20 percent, memory 93 percent."}
+{"event": "voice_command", "data": "right"}
+{"event": "voice_command", "data": "with you if you"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 20 percent, memory 93 percent."}
+{"event": "voice_command", "data": "i'm about to"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 93 percent."}
+{"event": "voice_command", "data": "i'm you to watch out"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 46 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 60 percent, memory 94 percent."}
+{"event": "voice_command", "data": "tuesday"}
+{"event": "voice_command", "data": "monday"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 52 percent, memory 92 percent."}
+{"event": "voice_command", "data": "current"}
+{"event": "voice_command", "data": "agnipath"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 98 percent."}
+{"event": "voice_command", "data": "நடிகர் விஜய்"}
+{"event": "voice_response", "data": "Need music, a search, or to control HomeBot?"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 40 percent, memory 98 percent."}
+{"event": "voice_command", "data": "யூடியூப் ட்ரான்ஸ்லேட்"}
+{"event": "voice_response", "data": "Shall I run a health check on the system?"}
+{"event": "voice_response", "data": "System checks are green."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 17 percent, memory 95 percent."}
+{"event": "voice_response", "data": "Need me to draft a plan or remind you about anything?"}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 25 percent, memory 95 percent."}
+{"event": "voice_response", "data": "AEGIS: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 19 percent, memory 98 percent."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "Anything you want me to handle?"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 18 percent, memory 96 percent."}
+{"event": "voice_command", "data": "வீடியோ சாங்"}
+{"event": "voice_command", "data": "bengaluru ka kya"}
+{"event": "voice_command", "data": "ஓப்பன் வாட்ஸ்அப்"}
+{"event": "voice_command", "data": "ரெண்டு மண்ட"}
+{"event": "voice_response", "data": "AEGIS: Great. I can cue some focus music if you like."}
+{"event": "voice_response", "data": "System checks are green."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 55 percent, memory 98 percent."}
+{"event": "voice_command", "data": "bf movie"}
+{"event": "voice_command", "data": "கொஞ்ச நேரம்"}
+{"event": "voice_command", "data": "i don't know"}
+{"event": "voice_command", "data": "நீ என்ன மயக்கமான"}
+{"event": "voice_command", "data": "there are multiple students"}
+{"event": "voice_command", "data": "பேட் ஒன்"}
+{"event": "voice_command", "data": "ipad"}
+{"event": "voice_command", "data": "if he is doing 90"}
+{"event": "voice_command", "data": "samsung"}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "AEGIS: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 41 percent, memory 96 percent."}
+{"event": "voice_command", "data": "இமேஜஸ்"}
+{"event": "voice_command", "data": "i am currently so basically i was wife calling"}
+{"event": "voice_command", "data": "whenever i am best of"}
+{"event": "voice_command", "data": "so that would have been"}
+{"event": "voice_command", "data": "studying and"}
+{"event": "voice_command", "data": "managing this people on social"}
+{"event": "voice_command", "data": "அனுஸ்ரீ"}
+{"event": "voice_command", "data": "fucking problem"}
+{"event": "voice_command", "data": "மூன்றாவது புண்டை"}
+{"event": "voice_command", "data": "when i use tab"}
+{"event": "voice_command", "data": "select during the day"}
+{"event": "voice_command", "data": "time when we"}
+{"event": "voice_command", "data": "மை"}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_command", "data": "things things like"}
+{"event": "voice_command", "data": "since things"}
+{"event": "voice_command", "data": "சம்"}
+{"event": "voice_command", "data": "on the"}
+{"event": "voice_command", "data": "hey"}
+{"event": "voice_command", "data": "hey there"}
+{"event": "voice_command", "data": "hello"}
+{"event": "voice_command", "data": "pages"}
+{"event": "voice_command", "data": "eid eid eid eid eid eid"}
+{"event": "voice_command", "data": "hello read it"}
+{"event": "voice_command", "data": "mr ages"}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_command", "data": "something"}
+{"event": "voice_response", "data": "Anything you want me to handle?"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 80 percent, memory 93 percent."}
+{"event": "voice_response", "data": "How’s your day going? Anything you want me to handle?"}
+{"event": "voice_response", "data": "Ready when you are."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 22 percent, memory 97 percent."}
+{"event": "voice_response", "data": "Shall I run a health check on the system?"}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 15 percent, memory 97 percent."}
+{"event": "voice_response", "data": "AEGIS: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "Anything you want me to handle?"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 69 percent, memory 98 percent."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "I'm here and listening."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 45 percent, memory 96 percent."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 28 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 78 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 92 percent, memory 86 percent."}
+{"event": "voice_command", "data": "i'm"}
+{"event": "voice_command", "data": "i'm"}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_command", "data": "you get up to the point where"}
+{"event": "voice_command", "data": "you know the people were killed"}
+{"event": "voice_command", "data": "i forget that you're wrong with america even like smoking talking about doing"}
+{"event": "voice_command", "data": "i forget that you're wrong with america even like smoking talking about doing in japan"}
+{"event": "voice_command", "data": "i forget that you're wrong with america even like smoking talking about doing it has to pay for it all of our everyday a copy of the"}
+{"event": "voice_command", "data": "i forget that you're wrong with america even like smoking talking about doing it has to pay for it all of our everyday a copy of the a few years"}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 54 percent, memory 92 percent."}
+{"event": "voice_command", "data": "he was unlike"}
+{"event": "voice_command", "data": "he was unlike he didn't"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_command", "data": "he was unlike he didn't is aimed at"}
+{"event": "voice_response", "data": "I see."}
+{"event": "voice_response", "data": "I see."}
+{"event": "voice_response", "data": "I see."}
+{"event": "voice_command", "data": "he was unlike he didn't is he takes that"}
+{"event": "voice_response", "data": "Understood."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 90 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Need me to draft a plan or remind you about anything?"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 97 percent."}
+{"event": "voice_command", "data": "the"}
+{"event": "voice_response", "data": "Understood."}
+{"event": "voice_command", "data": "the"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 79 percent."}
+{"event": "voice_response", "data": "I see."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 85 percent."}
+{"event": "voice_command", "data": "caution left"}
+{"event": "voice_response", "data": "Understood."}
+{"event": "voice_command", "data": "caution left the equipment"}
+{"event": "voice_command", "data": "wash left the equipment way back better"}
+{"event": "voice_response", "data": "I see."}
+{"event": "voice_response", "data": "I see."}
+{"event": "voice_command", "data": "yeah"}
+{"event": "voice_response", "data": "All right."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 91 percent, memory 85 percent."}
+{"event": "voice_command", "data": "this"}
+{"event": "voice_response", "data": "Hello. What should I handle for you?"}
+{"event": "voice_command", "data": "can be nice"}
+{"event": "voice_response", "data": "I see."}
+{"event": "voice_command", "data": "can be nice for her"}
+{"event": "voice_command", "data": "and the"}
+{"event": "voice_command", "data": "and this one"}
+{"event": "voice_response", "data": "I see."}
+{"event": "voice_response", "data": "All right."}
+{"event": "voice_response", "data": "Hello. How can I help?"}
+{"event": "voice_command", "data": "hey just"}
+{"event": "voice_response", "data": "Hello. What should I handle for you?"}
+{"event": "voice_command", "data": "hey this is the"}
+{"event": "voice_command", "data": "hey this is the pages"}
+{"event": "voice_response", "data": "Hello. What should I handle for you?"}
+{"event": "voice_response", "data": "Hi there. What do you need?"}
+{"event": "voice_command", "data": "radio"}
+{"event": "voice_response", "data": "All right."}
+{"event": "voice_command", "data": "yeah"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 94 percent."}
+{"event": "voice_response", "data": "All right."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 90 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 87 percent."}
+{"event": "voice_response", "data": "Do you want a quick status check or to queue some music?"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 93 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 90 percent."}
+{"event": "voice_command", "data": "hey there"}
+{"event": "voice_command", "data": "hey there you just have you"}
+{"event": "voice_command", "data": "hey there you just have you"}
+{"event": "voice_response", "data": "Hi there. What do you need?"}
+{"event": "voice_command", "data": "edit"}
+{"event": "voice_response", "data": "Hi there. What do you need?"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 93 percent."}
+{"event": "voice_response", "data": "Hello. What should I handle for you?"}
+{"event": "voice_command", "data": "edit"}
+{"event": "voice_response", "data": "All right."}
+{"event": "voice_response", "data": "I see."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 92 percent."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 100 percent, memory 88 percent."}
+{"event": "voice_command", "data": "medical"}
+{"event": "voice_response", "data": "All right."}
+{"event": "voice_command", "data": "better better better suited"}
+{"event": "voice_response", "data": "I see."}
+{"event": "voice_command", "data": "ah"}
+{"event": "voice_response", "data": "Understood."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 75 percent, memory 94 percent."}
+{"event": "voice_command", "data": "he just as online"}
+{"event": "voice_command", "data": "he just as online"}
+{"event": "voice_command", "data": "they they were"}
+{"event": "voice_command", "data": "he he just"}
+{"event": "voice_command", "data": "he he ages"}
+{"event": "voice_command", "data": "what"}
+{"event": "voice_command", "data": "oh"}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_command", "data": "welcome back"}
+{"event": "voice_command", "data": "தண்ணிய ஊத்த"}
+{"event": "voice_command", "data": "தண்ணியே ஊத்த"}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "AEGIS OS online. Welcome back, Sir."}

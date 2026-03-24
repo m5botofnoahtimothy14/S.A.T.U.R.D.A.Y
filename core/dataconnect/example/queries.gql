@@ -1,0 +1,53 @@
+query ListAllAIAgents @auth(level: USER, insecureReason: "This operation is safe to expose to all logged in users.") {
+  aIAgents {
+    id
+    agentName
+    deploymentStatus
+    version
+    lastActivityAt
+    user {
+      displayName
+      email
+    }
+  }
+}
+
+mutation CreateNewAIAgent($agentName: String!, $deploymentStatus: String!, $description: String, $version: String) @auth(level: USER) {
+  aIAgent_insert(data: {
+    agentName: $agentName,
+    deploymentStatus: $deploymentStatus,
+    description: $description,
+    version: $version,
+    createdAt_expr: "request.time",
+    userId_expr: "auth.uid"
+  }) {
+    id
+  }
+}
+
+query GetMyAgentLogEntries($aiAgentId: UUID!) @auth(level: USER) {
+  logEntries(where: {
+    aiAgentId: { eq: $aiAgentId },
+    aiAgent: { userId_expr: "auth.uid" }
+  }, orderBy: [{ timestamp: DESC }]) {
+    id
+    timestamp
+    logLevel
+    message
+    details
+    category
+  }
+}
+
+mutation UpdateAgentStatus($id: UUID!, $newStatus: String!) @auth(level: USER) {
+  aIAgent_update(
+    key: { id: $id },
+    data: {
+      deploymentStatus: $newStatus,
+      lastActivityAt_expr: "request.time"
+    },
+    where: { userId_expr: "auth.uid" } # Ensure only the owner can update
+  ) {
+    id
+  }
+}

@@ -1,0 +1,1529 @@
+"""
+✨ `AIAgent_KeyOutput` returns the primary key fields of table type `AIAgent`.
+
+It has the same format as `AIAgent_Key`, but is only used as mutation return value.
+"""
+scalar AIAgent_KeyOutput
+"""
+✨ `Command_KeyOutput` returns the primary key fields of table type `Command`.
+
+It has the same format as `Command_Key`, but is only used as mutation return value.
+"""
+scalar Command_KeyOutput
+"""
+✨ `Deployment_KeyOutput` returns the primary key fields of table type `Deployment`.
+
+It has the same format as `Deployment_Key`, but is only used as mutation return value.
+"""
+scalar Deployment_KeyOutput
+"""
+✨ `LogEntry_KeyOutput` returns the primary key fields of table type `LogEntry`.
+
+It has the same format as `LogEntry_Key`, but is only used as mutation return value.
+"""
+scalar LogEntry_KeyOutput
+"""
+✨ `User_KeyOutput` returns the primary key fields of table type `User`.
+
+It has the same format as `User_Key`, but is only used as mutation return value.
+"""
+scalar User_KeyOutput
+"""
+✨ Generated data input type for table 'AIAgent'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input AIAgent_Data {
+  """
+  ✨ Generated from Field `AIAgent`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `AIAgent`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `AIAgent`.`userId` of type `UUID`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `AIAgent`.`userId` of type `UUID`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `AIAgent`.`user` of type `User`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `AIAgent`.`agentName` of type `String!`
+  """
+  agentName: String
+  """
+  ✨ `_expr` server value variant of `agentName` (✨ Generated from Field `AIAgent`.`agentName` of type `String!`)
+  """
+  agentName_expr: String_Expr
+  """
+  ✨ Generated from Field `AIAgent`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `AIAgent`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `AIAgent`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `AIAgent`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `AIAgent`.`deploymentStatus` of type `String!`
+  """
+  deploymentStatus: String
+  """
+  ✨ `_expr` server value variant of `deploymentStatus` (✨ Generated from Field `AIAgent`.`deploymentStatus` of type `String!`)
+  """
+  deploymentStatus_expr: String_Expr
+  """
+  ✨ Generated from Field `AIAgent`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `AIAgent`.`description` of type `String`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `AIAgent`.`lastActivityAt` of type `Timestamp`
+  """
+  lastActivityAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `lastActivityAt` (✨ Generated from Field `AIAgent`.`lastActivityAt` of type `Timestamp`)
+  """
+  lastActivityAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `lastActivityAt` (✨ Generated from Field `AIAgent`.`lastActivityAt` of type `Timestamp`)
+  """
+  lastActivityAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `lastActivityAt` (✨ Generated from Field `AIAgent`.`lastActivityAt` of type `Timestamp`)
+  """
+  lastActivityAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `AIAgent`.`version` of type `String`
+  """
+  version: String
+  """
+  ✨ `_expr` server value variant of `version` (✨ Generated from Field `AIAgent`.`version` of type `String`)
+  """
+  version_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'AIAgent'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input AIAgent_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [AIAgent_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: AIAgent_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [AIAgent_Filter!]
+  """
+  ✨ Generated from Field `AIAgent`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`userId` of type `UUID`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`user` of type `User`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`agentName` of type `String!`
+  """
+  agentName: String_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`deploymentStatus` of type `String!`
+  """
+  deploymentStatus: String_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`lastActivityAt` of type `Timestamp`
+  """
+  lastActivityAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`version` of type `String`
+  """
+  version: String_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`commands_on_aiAgent` of type `[Command!]!`
+  """
+  commands_on_aiAgent: Command_ListFilter
+  """
+  ✨ Generated from Field `AIAgent`.`deployments_on_aiAgent` of type `[Deployment!]!`
+  """
+  deployments_on_aiAgent: Deployment_ListFilter
+  """
+  ✨ Generated from Field `AIAgent`.`logEntries_on_aiAgent` of type `[LogEntry!]!`
+  """
+  logEntries_on_aiAgent: LogEntry_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'AIAgent'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input AIAgent_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [AIAgent_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: AIAgent_Filter
+}
+"""
+✨ Generated having input type for table 'AIAgent'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input AIAgent_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [AIAgent_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: AIAgent_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [AIAgent_Having!]
+  """
+  ✨ Generated from Field `AIAgent`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`agentName_count` of type `Int!`
+  """
+  agentName_count: Int_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`deploymentStatus_count` of type `Int!`
+  """
+  deploymentStatus_count: Int_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`lastActivityAt_count` of type `Int!`
+  """
+  lastActivityAt_count: Int_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`version_count` of type `Int!`
+  """
+  version_count: Int_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`lastActivityAt_min` of type `Timestamp`
+  """
+  lastActivityAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `AIAgent`.`lastActivityAt_max` of type `Timestamp`
+  """
+  lastActivityAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'AIAgent'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input AIAgent_Key {
+  """
+  ✨ Generated from Field `AIAgent`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `AIAgent`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'AIAgent'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input AIAgent_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: AIAgent_Filter
+}
+"""
+✨ Generated order input type for table 'AIAgent'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input AIAgent_Order {
+  """
+  ✨ Generated from Field `AIAgent`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`userId` of type `UUID`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`user` of type `User`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `AIAgent`.`agentName` of type `String!`
+  """
+  agentName: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`deploymentStatus` of type `String!`
+  """
+  deploymentStatus: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`lastActivityAt` of type `Timestamp`
+  """
+  lastActivityAt: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`version` of type `String`
+  """
+  version: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`agentName_count` of type `Int!`
+  """
+  agentName_count: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`deploymentStatus_count` of type `Int!`
+  """
+  deploymentStatus_count: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`lastActivityAt_count` of type `Int!`
+  """
+  lastActivityAt_count: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`version_count` of type `Int!`
+  """
+  version_count: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`lastActivityAt_min` of type `Timestamp`
+  """
+  lastActivityAt_min: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `AIAgent`.`lastActivityAt_max` of type `Timestamp`
+  """
+  lastActivityAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Command'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Command_Data {
+  """
+  ✨ Generated from Field `Command`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Command`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Command`.`aiAgentId` of type `UUID`
+  """
+  aiAgentId: UUID
+  """
+  ✨ `_expr` server value variant of `aiAgentId` (✨ Generated from Field `Command`.`aiAgentId` of type `UUID`)
+  """
+  aiAgentId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Command`.`aiAgent` of type `AIAgent`
+  """
+  aiAgent: AIAgent_Key
+  """
+  ✨ Generated from Field `Command`.`commandType` of type `String!`
+  """
+  commandType: String
+  """
+  ✨ `_expr` server value variant of `commandType` (✨ Generated from Field `Command`.`commandType` of type `String!`)
+  """
+  commandType_expr: String_Expr
+  """
+  ✨ Generated from Field `Command`.`payload` of type `String`
+  """
+  payload: String
+  """
+  ✨ `_expr` server value variant of `payload` (✨ Generated from Field `Command`.`payload` of type `String`)
+  """
+  payload_expr: String_Expr
+  """
+  ✨ Generated from Field `Command`.`response` of type `String`
+  """
+  response: String
+  """
+  ✨ `_expr` server value variant of `response` (✨ Generated from Field `Command`.`response` of type `String`)
+  """
+  response_expr: String_Expr
+  """
+  ✨ Generated from Field `Command`.`sentAt` of type `Timestamp!`
+  """
+  sentAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `sentAt` (✨ Generated from Field `Command`.`sentAt` of type `Timestamp!`)
+  """
+  sentAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `sentAt` (✨ Generated from Field `Command`.`sentAt` of type `Timestamp!`)
+  """
+  sentAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `sentAt` (✨ Generated from Field `Command`.`sentAt` of type `Timestamp!`)
+  """
+  sentAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Command`.`status` of type `String!`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `Command`.`status` of type `String!`)
+  """
+  status_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Command'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Command_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Command_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Command_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Command_Filter!]
+  """
+  ✨ Generated from Field `Command`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Command`.`aiAgentId` of type `UUID`
+  """
+  aiAgentId: UUID_Filter
+  """
+  ✨ Generated from Field `Command`.`aiAgent` of type `AIAgent`
+  """
+  aiAgent: AIAgent_Filter
+  """
+  ✨ Generated from Field `Command`.`commandType` of type `String!`
+  """
+  commandType: String_Filter
+  """
+  ✨ Generated from Field `Command`.`payload` of type `String`
+  """
+  payload: String_Filter
+  """
+  ✨ Generated from Field `Command`.`response` of type `String`
+  """
+  response: String_Filter
+  """
+  ✨ Generated from Field `Command`.`sentAt` of type `Timestamp!`
+  """
+  sentAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Command`.`status` of type `String!`
+  """
+  status: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Command'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Command_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Command_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Command_Filter
+}
+"""
+✨ Generated having input type for table 'Command'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Command_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Command_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Command_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Command_Having!]
+  """
+  ✨ Generated from Field `Command`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Command`.`aiAgentId_count` of type `Int!`
+  """
+  aiAgentId_count: Int_Filter
+  """
+  ✨ Generated from Field `Command`.`commandType_count` of type `Int!`
+  """
+  commandType_count: Int_Filter
+  """
+  ✨ Generated from Field `Command`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Command`.`payload_count` of type `Int!`
+  """
+  payload_count: Int_Filter
+  """
+  ✨ Generated from Field `Command`.`response_count` of type `Int!`
+  """
+  response_count: Int_Filter
+  """
+  ✨ Generated from Field `Command`.`sentAt_count` of type `Int!`
+  """
+  sentAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Command`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `Command`.`sentAt_min` of type `Timestamp`
+  """
+  sentAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Command`.`sentAt_max` of type `Timestamp`
+  """
+  sentAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'Command'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Command_Key {
+  """
+  ✨ Generated from Field `Command`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Command`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Command'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Command_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Command_Filter
+}
+"""
+✨ Generated order input type for table 'Command'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Command_Order {
+  """
+  ✨ Generated from Field `Command`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`aiAgentId` of type `UUID`
+  """
+  aiAgentId: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`aiAgent` of type `AIAgent`
+  """
+  aiAgent: AIAgent_Order
+  """
+  ✨ Generated from Field `Command`.`commandType` of type `String!`
+  """
+  commandType: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`payload` of type `String`
+  """
+  payload: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`response` of type `String`
+  """
+  response: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`sentAt` of type `Timestamp!`
+  """
+  sentAt: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`status` of type `String!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`aiAgentId_count` of type `Int!`
+  """
+  aiAgentId_count: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`commandType_count` of type `Int!`
+  """
+  commandType_count: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`payload_count` of type `Int!`
+  """
+  payload_count: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`response_count` of type `Int!`
+  """
+  response_count: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`sentAt_count` of type `Int!`
+  """
+  sentAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`sentAt_min` of type `Timestamp`
+  """
+  sentAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Command`.`sentAt_max` of type `Timestamp`
+  """
+  sentAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Deployment'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Deployment_Data {
+  """
+  ✨ Generated from Field `Deployment`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Deployment`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Deployment`.`aiAgentId` of type `UUID`
+  """
+  aiAgentId: UUID
+  """
+  ✨ `_expr` server value variant of `aiAgentId` (✨ Generated from Field `Deployment`.`aiAgentId` of type `UUID`)
+  """
+  aiAgentId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Deployment`.`aiAgent` of type `AIAgent`
+  """
+  aiAgent: AIAgent_Key
+  """
+  ✨ Generated from Field `Deployment`.`commitHash` of type `String`
+  """
+  commitHash: String
+  """
+  ✨ `_expr` server value variant of `commitHash` (✨ Generated from Field `Deployment`.`commitHash` of type `String`)
+  """
+  commitHash_expr: String_Expr
+  """
+  ✨ Generated from Field `Deployment`.`deployedAt` of type `Timestamp!`
+  """
+  deployedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `deployedAt` (✨ Generated from Field `Deployment`.`deployedAt` of type `Timestamp!`)
+  """
+  deployedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `deployedAt` (✨ Generated from Field `Deployment`.`deployedAt` of type `Timestamp!`)
+  """
+  deployedAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `deployedAt` (✨ Generated from Field `Deployment`.`deployedAt` of type `Timestamp!`)
+  """
+  deployedAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Deployment`.`deploymentLog` of type `String`
+  """
+  deploymentLog: String
+  """
+  ✨ `_expr` server value variant of `deploymentLog` (✨ Generated from Field `Deployment`.`deploymentLog` of type `String`)
+  """
+  deploymentLog_expr: String_Expr
+  """
+  ✨ Generated from Field `Deployment`.`status` of type `String!`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `Deployment`.`status` of type `String!`)
+  """
+  status_expr: String_Expr
+  """
+  ✨ Generated from Field `Deployment`.`version` of type `String!`
+  """
+  version: String
+  """
+  ✨ `_expr` server value variant of `version` (✨ Generated from Field `Deployment`.`version` of type `String!`)
+  """
+  version_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Deployment'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Deployment_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Deployment_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Deployment_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Deployment_Filter!]
+  """
+  ✨ Generated from Field `Deployment`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Deployment`.`aiAgentId` of type `UUID`
+  """
+  aiAgentId: UUID_Filter
+  """
+  ✨ Generated from Field `Deployment`.`aiAgent` of type `AIAgent`
+  """
+  aiAgent: AIAgent_Filter
+  """
+  ✨ Generated from Field `Deployment`.`commitHash` of type `String`
+  """
+  commitHash: String_Filter
+  """
+  ✨ Generated from Field `Deployment`.`deployedAt` of type `Timestamp!`
+  """
+  deployedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Deployment`.`deploymentLog` of type `String`
+  """
+  deploymentLog: String_Filter
+  """
+  ✨ Generated from Field `Deployment`.`status` of type `String!`
+  """
+  status: String_Filter
+  """
+  ✨ Generated from Field `Deployment`.`version` of type `String!`
+  """
+  version: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Deployment'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Deployment_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Deployment_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Deployment_Filter
+}
+"""
+✨ Generated having input type for table 'Deployment'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Deployment_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Deployment_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Deployment_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Deployment_Having!]
+  """
+  ✨ Generated from Field `Deployment`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Deployment`.`aiAgentId_count` of type `Int!`
+  """
+  aiAgentId_count: Int_Filter
+  """
+  ✨ Generated from Field `Deployment`.`commitHash_count` of type `Int!`
+  """
+  commitHash_count: Int_Filter
+  """
+  ✨ Generated from Field `Deployment`.`deployedAt_count` of type `Int!`
+  """
+  deployedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Deployment`.`deploymentLog_count` of type `Int!`
+  """
+  deploymentLog_count: Int_Filter
+  """
+  ✨ Generated from Field `Deployment`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Deployment`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `Deployment`.`version_count` of type `Int!`
+  """
+  version_count: Int_Filter
+  """
+  ✨ Generated from Field `Deployment`.`deployedAt_min` of type `Timestamp`
+  """
+  deployedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Deployment`.`deployedAt_max` of type `Timestamp`
+  """
+  deployedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'Deployment'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Deployment_Key {
+  """
+  ✨ Generated from Field `Deployment`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Deployment`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Deployment'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Deployment_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Deployment_Filter
+}
+"""
+✨ Generated order input type for table 'Deployment'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Deployment_Order {
+  """
+  ✨ Generated from Field `Deployment`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`aiAgentId` of type `UUID`
+  """
+  aiAgentId: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`aiAgent` of type `AIAgent`
+  """
+  aiAgent: AIAgent_Order
+  """
+  ✨ Generated from Field `Deployment`.`commitHash` of type `String`
+  """
+  commitHash: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`deployedAt` of type `Timestamp!`
+  """
+  deployedAt: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`deploymentLog` of type `String`
+  """
+  deploymentLog: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`status` of type `String!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`version` of type `String!`
+  """
+  version: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`aiAgentId_count` of type `Int!`
+  """
+  aiAgentId_count: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`commitHash_count` of type `Int!`
+  """
+  commitHash_count: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`deployedAt_count` of type `Int!`
+  """
+  deployedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`deploymentLog_count` of type `Int!`
+  """
+  deploymentLog_count: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`version_count` of type `Int!`
+  """
+  version_count: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`deployedAt_min` of type `Timestamp`
+  """
+  deployedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Deployment`.`deployedAt_max` of type `Timestamp`
+  """
+  deployedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'LogEntry'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input LogEntry_Data {
+  """
+  ✨ Generated from Field `LogEntry`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `LogEntry`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `LogEntry`.`aiAgentId` of type `UUID`
+  """
+  aiAgentId: UUID
+  """
+  ✨ `_expr` server value variant of `aiAgentId` (✨ Generated from Field `LogEntry`.`aiAgentId` of type `UUID`)
+  """
+  aiAgentId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `LogEntry`.`aiAgent` of type `AIAgent`
+  """
+  aiAgent: AIAgent_Key
+  """
+  ✨ Generated from Field `LogEntry`.`category` of type `String`
+  """
+  category: String
+  """
+  ✨ `_expr` server value variant of `category` (✨ Generated from Field `LogEntry`.`category` of type `String`)
+  """
+  category_expr: String_Expr
+  """
+  ✨ Generated from Field `LogEntry`.`details` of type `String`
+  """
+  details: String
+  """
+  ✨ `_expr` server value variant of `details` (✨ Generated from Field `LogEntry`.`details` of type `String`)
+  """
+  details_expr: String_Expr
+  """
+  ✨ Generated from Field `LogEntry`.`logLevel` of type `String!`
+  """
+  logLevel: String
+  """
+  ✨ `_expr` server value variant of `logLevel` (✨ Generated from Field `LogEntry`.`logLevel` of type `String!`)
+  """
+  logLevel_expr: String_Expr
+  """
+  ✨ Generated from Field `LogEntry`.`message` of type `String!`
+  """
+  message: String
+  """
+  ✨ `_expr` server value variant of `message` (✨ Generated from Field `LogEntry`.`message` of type `String!`)
+  """
+  message_expr: String_Expr
+  """
+  ✨ Generated from Field `LogEntry`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: Timestamp
+  """
+  ✨ `_expr` server value variant of `timestamp` (✨ Generated from Field `LogEntry`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `timestamp` (✨ Generated from Field `LogEntry`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `timestamp` (✨ Generated from Field `LogEntry`.`timestamp` of type `Timestamp!`)
+  """
+  timestamp_update: [Timestamp_Update!]
+}
+"""
+✨ Generated filter input type for table 'LogEntry'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input LogEntry_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [LogEntry_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: LogEntry_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [LogEntry_Filter!]
+  """
+  ✨ Generated from Field `LogEntry`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`aiAgentId` of type `UUID`
+  """
+  aiAgentId: UUID_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`aiAgent` of type `AIAgent`
+  """
+  aiAgent: AIAgent_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`category` of type `String`
+  """
+  category: String_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`details` of type `String`
+  """
+  details: String_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`logLevel` of type `String!`
+  """
+  logLevel: String_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`message` of type `String!`
+  """
+  message: String_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'LogEntry'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input LogEntry_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [LogEntry_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: LogEntry_Filter
+}
+"""
+✨ Generated having input type for table 'LogEntry'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input LogEntry_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [LogEntry_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: LogEntry_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [LogEntry_Having!]
+  """
+  ✨ Generated from Field `LogEntry`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`aiAgentId_count` of type `Int!`
+  """
+  aiAgentId_count: Int_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`category_count` of type `Int!`
+  """
+  category_count: Int_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`details_count` of type `Int!`
+  """
+  details_count: Int_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`logLevel_count` of type `Int!`
+  """
+  logLevel_count: Int_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`message_count` of type `Int!`
+  """
+  message_count: Int_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`timestamp_count` of type `Int!`
+  """
+  timestamp_count: Int_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`timestamp_min` of type `Timestamp`
+  """
+  timestamp_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `LogEntry`.`timestamp_max` of type `Timestamp`
+  """
+  timestamp_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'LogEntry'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input LogEntry_Key {
+  """
+  ✨ Generated from Field `LogEntry`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `LogEntry`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'LogEntry'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input LogEntry_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: LogEntry_Filter
+}
+"""
+✨ Generated order input type for table 'LogEntry'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input LogEntry_Order {
+  """
+  ✨ Generated from Field `LogEntry`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`aiAgentId` of type `UUID`
+  """
+  aiAgentId: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`aiAgent` of type `AIAgent`
+  """
+  aiAgent: AIAgent_Order
+  """
+  ✨ Generated from Field `LogEntry`.`category` of type `String`
+  """
+  category: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`details` of type `String`
+  """
+  details: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`logLevel` of type `String!`
+  """
+  logLevel: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`message` of type `String!`
+  """
+  message: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`timestamp` of type `Timestamp!`
+  """
+  timestamp: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`aiAgentId_count` of type `Int!`
+  """
+  aiAgentId_count: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`category_count` of type `Int!`
+  """
+  category_count: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`details_count` of type `Int!`
+  """
+  details_count: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`logLevel_count` of type `Int!`
+  """
+  logLevel_count: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`message_count` of type `Int!`
+  """
+  message_count: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`timestamp_count` of type `Int!`
+  """
+  timestamp_count: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`timestamp_min` of type `Timestamp`
+  """
+  timestamp_min: OrderDirection
+  """
+  ✨ Generated from Field `LogEntry`.`timestamp_max` of type `Timestamp`
+  """
+  timestamp_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input User_Data {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String!`
+  """
+  displayName: String
+  """
+  ✨ `_expr` server value variant of `displayName` (✨ Generated from Field `User`.`displayName` of type `String!`)
+  """
+  displayName_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`email` of type `String`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `User`.`email` of type `String`)
+  """
+  email_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: String
+  """
+  ✨ `_expr` server value variant of `photoUrl` (✨ Generated from Field `User`.`photoUrl` of type `String`)
+  """
+  photoUrl_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [User_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: User_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [User_Filter!]
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String!`
+  """
+  displayName: String_Filter
+  """
+  ✨ Generated from Field `User`.`email` of type `String`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: String_Filter
+  """
+  ✨ Generated from Field `User`.`aIAgents_on_user` of type `[AIAgent!]!`
+  """
+  aIAgents_on_user: AIAgent_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input User_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [User_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: User_Filter
+}
+"""
+✨ Generated having input type for table 'User'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [User_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: User_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [User_Having!]
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`displayName_count` of type `Int!`
+  """
+  displayName_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'User'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input User_Key {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input User_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: User_Filter
+}
+"""
+✨ Generated order input type for table 'User'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input User_Order {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String!`
+  """
+  displayName: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email` of type `String`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: OrderDirection
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`displayName_count` of type `Int!`
+  """
+  displayName_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+}

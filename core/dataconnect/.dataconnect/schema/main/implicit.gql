@@ -1,0 +1,46 @@
+extend type AIAgent {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "AIAgent", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `AIAgent`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID @fdc_generated(from: "AIAgent.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Command {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Command", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Command`.`aiAgent`. It must match the value of `AIAgent`.`id`. See `@ref` for how to customize it.
+  """
+  aiAgentId: UUID @fdc_generated(from: "Command.aiAgent", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Deployment {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Deployment", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Deployment`.`aiAgent`. It must match the value of `AIAgent`.`id`. See `@ref` for how to customize it.
+  """
+  aiAgentId: UUID @fdc_generated(from: "Deployment.aiAgent", purpose: IMPLICIT_REF_FIELD)
+}
+extend type LogEntry {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "LogEntry", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `LogEntry`.`aiAgent`. It must match the value of `AIAgent`.`id`. See `@ref` for how to customize it.
+  """
+  aiAgentId: UUID @fdc_generated(from: "LogEntry.aiAgent", purpose: IMPLICIT_REF_FIELD)
+}
+extend type User {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "User", purpose: IMPLICIT_KEY_FIELD)
+}

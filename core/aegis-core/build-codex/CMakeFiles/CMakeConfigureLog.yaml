@@ -1,0 +1,472 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineSystem.cmake:212 (message)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      The system is: Windows - 10.0.26220 - AMD64
+...
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineSystem.cmake:212 (message)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      The system is: Windows - 10.0.26220 - AMD64
+  -
+    kind: "find-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:462 (find_file)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:500 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCXXCompilerId.cpp.in"
+    candidate_directories:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/"
+    found: "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeCXXCompilerId.cpp.in"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\Administrator\\.codex\\tmp\\arg0\\codex-arg020iPMU"
+        - "undefined"
+        - "c:\\Users\\Administrator\\.antigravity\\extensions\\openai.chatgpt-0.4.76-universal\\bin\\windows-x86_64"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      MSBuild version 17.14.40+3e7442088 for .NET Framework
+      Build started 2/26/2026 1:46:45 PM.
+      
+      Project "D:\\AEGIS\\aegis-core\\build-codex\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
+      PrepareForBuild:
+        Creating directory "Debug\\".
+        Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+        Creating directory "Debug\\CompilerIdCXX.tlog\\".
+      InitializeBuildStatus:
+        Creating "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        Touching "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild".
+      ClCompile:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TP /FC /errorReport:queue CMakeCXXCompilerId.cpp
+        CMakeCXXCompilerId.cpp
+      Link:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
+        CompilerIdCXX.vcxproj -> D:\\AEGIS\\aegis-core\\build-codex\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CompilerIdCXX.exe
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_CXX_COMPILER=C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        Deleting file "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild".
+        Touching "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate".
+      Done Building Project "D:\\AEGIS\\aegis-core\\build-codex\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (default targets).
+      
+      Build succeeded.
+          0 Warning(s)
+          0 Error(s)
+      
+      Time Elapsed 00:00:06.60
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
+      
+      The CXX compiler identification is MSVC, found in:
+        D:/AEGIS/aegis-core/build-codex/CMakeFiles/4.2.1/CompilerIdCXX/CompilerIdCXX.exe
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:103 (__resolve_linker_path)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "link"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.com"
+    found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.exe"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\Administrator\\.codex\\tmp\\arg0\\codex-arg020iPMU"
+        - "undefined"
+        - "c:\\Users\\Administrator\\.antigravity\\extensions\\openai.chatgpt-0.4.76-universal\\bin\\windows-x86_64"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:104 (__resolve_linker_path)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lld-link"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.com"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.exe"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/lld-link.com"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/lld-link.exe"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/lld-link"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/lld-link.com"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/lld-link.exe"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/lld-link"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/lld-link.com"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/lld-link.exe"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/lld-link"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\Administrator\\.codex\\tmp\\arg0\\codex-arg020iPMU"
+        - "undefined"
+        - "c:\\Users\\Administrator\\.antigravity\\extensions\\openai.chatgpt-0.4.76-universal\\bin\\windows-x86_64"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_LINKER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "link"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.com"
+    found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.exe"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\Administrator\\.codex\\tmp\\arg0\\codex-arg020iPMU"
+        - "undefined"
+        - "c:\\Users\\Administrator\\.antigravity\\extensions\\openai.chatgpt-0.4.76-universal\\bin\\windows-x86_64"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_MT"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "mt"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt.com"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt.exe"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/mt.com"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/mt.exe"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/mt"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/mt.com"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/mt.exe"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/mt"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/mt.com"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/mt.exe"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/mt"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\Administrator\\.codex\\tmp\\arg0\\codex-arg020iPMU"
+        - "undefined"
+        - "c:\\Users\\Administrator\\.antigravity\\extensions\\openai.chatgpt-0.4.76-universal\\bin\\windows-x86_64"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_AR"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lib"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lib.com"
+    found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lib.exe"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\Administrator\\.codex\\tmp\\arg0\\codex-arg020iPMU"
+        - "undefined"
+        - "c:\\Users\\Administrator\\.antigravity\\extensions\\openai.chatgpt-0.4.76-universal\\bin\\windows-x86_64"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineRCCompiler.cmake:40 (find_program)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/Platform/Windows-MSVC.cmake:580 (enable_language)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/Platform/Windows-MSVC.cmake:553 (__windows_compiler_msvc_enable_rc)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/Platform/Windows-MSVC-CXX.cmake:6 (__windows_compiler_msvc)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeCXXInformation.cmake:48 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_RC_COMPILER"
+    description: "RC compiler"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "rc"
+    candidate_directories:
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/"
+      - "C:/Program Files/bin/"
+      - "C:/Program Files/sbin/"
+      - "C:/Program Files/"
+      - "C:/Program Files (x86)/bin/"
+      - "C:/Program Files (x86)/sbin/"
+      - "C:/Program Files (x86)/"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/bin/"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/sbin/"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/"
+      - "C:/Program Files/AEGISCore/bin/"
+      - "C:/Program Files/AEGISCore/sbin/"
+      - "C:/Program Files/AEGISCore/"
+    searched_directories:
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/rc.com"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/rc.exe"
+      - "C:/Users/Administrator/.codex/tmp/arg0/codex-arg020iPMU/rc"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/rc.com"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/rc.exe"
+      - "D:/AEGIS/aegis-core/build-codex/undefined/rc"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/rc.com"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/rc.exe"
+      - "C:/Users/Administrator/.antigravity/extensions/openai.chatgpt-0.4.76-universal/bin/windows-x86_64/rc"
+      - "C:/Program Files/bin/rc.com"
+      - "C:/Program Files/bin/rc.exe"
+      - "C:/Program Files/bin/rc"
+      - "C:/Program Files/sbin/rc.com"
+      - "C:/Program Files/sbin/rc.exe"
+      - "C:/Program Files/sbin/rc"
+      - "C:/Program Files/rc.com"
+      - "C:/Program Files/rc.exe"
+      - "C:/Program Files/rc"
+      - "C:/Program Files (x86)/bin/rc.com"
+      - "C:/Program Files (x86)/bin/rc.exe"
+      - "C:/Program Files (x86)/bin/rc"
+      - "C:/Program Files (x86)/sbin/rc.com"
+      - "C:/Program Files (x86)/sbin/rc.exe"
+      - "C:/Program Files (x86)/sbin/rc"
+      - "C:/Program Files (x86)/rc.com"
+      - "C:/Program Files (x86)/rc.exe"
+      - "C:/Program Files (x86)/rc"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/bin/rc.com"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/bin/rc.exe"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/bin/rc"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/sbin/rc.com"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/sbin/rc.exe"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/sbin/rc"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/rc.com"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/rc.exe"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/rc"
+      - "C:/Program Files/AEGISCore/bin/rc.com"
+      - "C:/Program Files/AEGISCore/bin/rc.exe"
+      - "C:/Program Files/AEGISCore/bin/rc"
+      - "C:/Program Files/AEGISCore/sbin/rc.com"
+      - "C:/Program Files/AEGISCore/sbin/rc.exe"
+      - "C:/Program Files/AEGISCore/sbin/rc"
+      - "C:/Program Files/AEGISCore/rc.com"
+      - "C:/Program Files/AEGISCore/rc.exe"
+      - "C:/Program Files/AEGISCore/rc"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\Administrator\\.codex\\tmp\\arg0\\codex-arg020iPMU"
+        - "undefined"
+        - "c:\\Users\\Administrator\\.antigravity\\extensions\\openai.chatgpt-0.4.76-universal\\bin\\windows-x86_64"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files/AEGISCore"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "D:/AEGIS/.venv/Lib/site-packages/cmake/data"
+        - "C:/Program Files/AEGISCore"
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake:83 (try_compile)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "D:/AEGIS/aegis-core/build-codex/CMakeFiles/CMakeScratch/TryCompile-mcpdwf"
+      binary: "D:/AEGIS/aegis-core/build-codex/CMakeFiles/CMakeScratch/TryCompile-mcpdwf"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/AEGIS/aegis-core/build-codex/CMakeFiles/CMakeScratch/TryCompile-mcpdwf'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_88184.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.14.40+3e7442088 for .NET Framework
+        Build started 2/26/2026 1:46:56 PM.
+        
+        Project "D:\\AEGIS\\aegis-core\\build-codex\\CMakeFiles\\CMakeScratch\\TryCompile-mcpdwf\\cmTC_88184.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "D:\\AEGIS\\aegis-core\\build-codex\\CMakeFiles\\CMakeScratch\\TryCompile-mcpdwf\\Debug\\".
+          Creating directory "cmTC_88184.dir\\Debug\\cmTC_88184.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_88184.dir\\Debug\\cmTC_88184.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_88184.dir\\Debug\\cmTC_88184.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /Fo"cmTC_88184.dir\\Debug\\\\" /Fd"cmTC_88184.dir\\Debug\\vc143.pdb" /external:W1 /TP /errorReport:queue "D:\\AEGIS\\.venv\\Lib\\site-packages\\cmake\\data\\share\\cmake-4.2\\Modules\\CMakeCXXCompilerABI.cpp"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35222 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /Fo"cmTC_88184.dir\\Debug\\\\" /Fd"cmTC_88184.dir\\Debug\\vc143.pdb" /external:W1 /TP /errorReport:queue "D:\\AEGIS\\.venv\\Lib\\site-packages\\cmake\\data\\share\\cmake-4.2\\Modules\\CMakeCXXCompilerABI.cpp"
+          CMakeCXXCompilerABI.cpp
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"D:\\AEGIS\\aegis-core\\build-codex\\CMakeFiles\\CMakeScratch\\TryCompile-mcpdwf\\Debug\\cmTC_88184.exe" /INCREMENTAL /ILK:"cmTC_88184.dir\\Debug\\cmTC_88184.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/AEGIS/aegis-core/build-codex/CMakeFiles/CMakeScratch/TryCompile-mcpdwf/Debug/cmTC_88184.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"D:/AEGIS/aegis-core/build-codex/CMakeFiles/CMakeScratch/TryCompile-mcpdwf/Debug/cmTC_88184.lib" /MACHINE:X64  /machine:x64 cmTC_88184.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_88184.vcxproj -> D:\\AEGIS\\aegis-core\\build-codex\\CMakeFiles\\CMakeScratch\\TryCompile-mcpdwf\\Debug\\cmTC_88184.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_88184.dir\\Debug\\cmTC_88184.tlog\\unsuccessfulbuild".
+          Touching "cmTC_88184.dir\\Debug\\cmTC_88184.tlog\\cmTC_88184.lastbuildstate".
+        Done Building Project "D:\\AEGIS\\aegis-core\\build-codex\\CMakeFiles\\CMakeScratch\\TryCompile-mcpdwf\\cmTC_88184.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:05.63
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake:253 (message)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?))("|,| |$)]
+        linker tool for 'CXX': C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe
+        implicit libs: []
+        implicit objs: []
+        implicit dirs: []
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/Internal/CMakeDetermineLinkerId.cmake:38 (message)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake:299 (cmake_determine_linker_id)"
+      - "D:/AEGIS/.venv/Lib/site-packages/cmake/data/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Running the CXX compiler's linker: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe" "-v"
+      Microsoft (R) Incremental Linker Version 14.44.35222.0
+      Copyright (C) Microsoft Corporation.  All rights reserved.
+...

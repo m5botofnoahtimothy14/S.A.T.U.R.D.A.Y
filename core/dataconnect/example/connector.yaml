@@ -1,0 +1,8 @@
+connectorId: example
+generate:
+  javascriptSdk:
+    - outputDir: ..\..\aegis-control-panel\src\dataconnect-generated
+      package: "@dataconnect/generated"
+      packageJsonDir: ..\..\aegis-control-panel
+      react: true
+      angular: false

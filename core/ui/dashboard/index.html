@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEGIS | Command Center</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030508;
+            --panel: rgba(20, 25, 35, 0.85);
+            --panel-solid: #0d1117;
+            --border: rgba(88, 166, 255, 0.15);
+            --accent: #58a6ff;
+            --accent-glow: rgba(88, 166, 255, 0.4);
+            --cyan: #39d0d8;
+            --orange: #f78166;
+            --green: #3fb950;
+            --red: #f85149;
+            --purple: #a371f7;
+            --yellow: #d29922;
+            --text: #c9d1d9;
+            --text-dim: #8b949e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(88, 166, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(88, 166, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: scan 4s linear infinite;
+            opacity: 0.5;
+            z-index: 1000;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: var(--panel-solid);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #000;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            letter-spacing: 0.15em;
+            background: linear-gradient(90deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-indicators {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        .dot.warning { background: var(--yellow); box-shadow: 0 0 10px var(--yellow); }
+        .dot.danger { background: var(--red); box-shadow: 0 0 10px var(--red); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.75rem 2rem;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+        .nav-tab.active { 
+            background: rgba(88, 166, 255, 0.1); 
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 1.5rem;
+            padding: 1.5rem 2rem;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-header h2 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-header h2::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .panel-content {
+            padding: 1.25rem;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+        .stat-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-card .label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.25rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--cyan));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-1px); }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--accent), #1f6feb); 
+            border: none; 
+            color: #fff;
+            font-weight: 600;
+        }
+        .btn-primary:hover { box-shadow: 0 4px 15px var(--accent-glow); }
+        .btn-danger { border-color: var(--red); color: var(--red); }
+        .btn-danger:hover { background: rgba(248, 81, 73, 0.2); }
+        .btn-success { border-color: var(--green); color: var(--green); }
+        .btn-success:hover { background: rgba(63, 185, 80, 0.2); }
+        .btn-warning { border-color: var(--yellow); color: var(--yellow); }
+
+        .camera-feed {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .camera-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #0d1117, #161b22);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+        }
+
+        .camera-placeholder svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .terminal {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.25rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .terminal-prompt { color: var(--green); }
+        .terminal-output { color: var(--text-dim); }
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: inherit;
+            font-size: inherit;
+            outline: none;
+            flex: 1;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus { border-color: var(--accent); }
+        .input-field::placeholder { color: var(--text-dim); }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .face-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .face-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.75rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .face-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .face-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .face-card .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .face-card .meta {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-zone:hover { border-color: var(--accent); background: rgba(88, 166, 255, 0.05); }
+        .upload-zone svg {
+            width: 40px;
+            height: 40px;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
+        }
+
+        .upload-zone p { color: var(--text-dim); font-size: 0.9rem; }
+        .upload-zone span { color: var(--accent); }
+
+        .health-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .health-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .health-item .icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .health-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .health-item .label {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .directory-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .directory-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .directory-item:hover { border-color: var(--accent); }
+        .directory-item .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .directory-item .info { flex: 1; }
+        .directory-item .name { font-weight: 600; }
+        .directory-item .relation { font-size: 0.8rem; color: var(--text-dim); }
+        .directory-item .status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .switch-toggle {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .switch-toggle.active { background: var(--accent); }
+        .switch-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .switch-toggle.active::after { transform: translateX(22px); }
+
+        .alert-box {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-box.warning { 
+            background: rgba(210, 153, 34, 0.15); 
+            border: 1px solid var(--yellow);
+            color: var(--yellow);
+        }
+        .alert-box.danger { 
+            background: rgba(248, 81, 73, 0.15); 
+            border: 1px solid var(--red);
+            color: var(--red);
+        }
+        .alert-box.success { 
+            background: rgba(63, 185, 80, 0.15); 
+            border: 1px solid var(--green);
+            color: var(--green);
+        }
+
+        .log-stream {
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .log-entry {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .log-time { color: var(--text-dim); margin-right: 0.5rem; }
+        .log-level { 
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            margin-right: 0.5rem;
+        }
+        .log-level.info { background: rgba(88, 166, 255, 0.2); color: var(--accent); }
+        .log-level.warn { background: rgba(210, 153, 34, 0.2); color: var(--yellow); }
+        .log-level.error { background: rgba(248, 81, 73, 0.2); color: var(--red); }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .voice-wave {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            height: 40px;
+            margin: 1rem 0;
+        }
+
+        .voice-bar {
+            width: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+            animation: voiceWave 1s ease-in-out infinite;
+        }
+
+        .voice-bar:nth-child(1) { animation-delay: 0s; height: 20px; }
+        .voice-bar:nth-child(2) { animation-delay: 0.1s; height: 30px; }
+        .voice-bar:nth-child(3) { animation-delay: 0.2s; height: 40px; }
+        .voice-bar:nth-child(4) { animation-delay: 0.3s; height: 25px; }
+        .voice-bar:nth-child(5) { animation-delay: 0.4s; height: 35px; }
+
+        @keyframes voiceWave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.5); }
+        }
+
+        .recording .voice-bar { animation: voiceWave 0.3s ease-in-out infinite; }
+
+        .profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .profile-badge .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green), var(--cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .quick-btn {
+            padding: 0.75rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .quick-btn:hover { background: rgba(88, 166, 255, 0.1); border-color: var(--accent); }
+        .quick-btn.danger:hover { background: rgba(248, 81, 73, 0.1); border-color: var(--red); }
+
+        .system-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .control-label { font-size: 0.9rem; }
+
+        @media (max-width: 1200px) {
+            .main-container { grid-template-columns: 1fr; }
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="scanline"></div>
+
+    <header class="topbar">
+        <div class="logo">
+            <div class="logo-icon">⌬</div>
+            <h1>AEGIS</h1>
+        </div>
+        <div class="status-indicators">
+            <div class="indicator">
+                <span class="dot" id="core-status"></span>
+                <span>Core</span>
+            </div>
+            <div class="indicator">
+                <span class="dot" id="vision-status"></span>
+                <span>Vision</span>
+            </div>
+            <div class="indicator">
+                <span class="dot" id="voice-status"></span>
+                <span>Voice</span>
+            </div>
+            <div class="indicator">
+                <span class="dot" id="security-status"></span>
+                <span>Security</span>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-page="dashboard">Dashboard</button>
+        <button class="nav-tab" data-page="faceid">Face ID</button>
+        <button class="nav-tab" data-page="voiceid">Voice ID</button>
+        <button class="nav-tab" data-page="camera">Live Feed</button>
+        <button class="nav-tab" data-page="terminal">Terminal</button>
+        <button class="nav-tab" data-page="directory">Directory</button>
+        <button class="nav-tab" data-page="logs">Logs</button>
+        <button class="nav-tab" data-page="controls">Controls</button>
+    </nav>
+
+    <main class="main-container">
+        <div class="content-area">
+            <!-- Dashboard Page -->
+            <div class="page active" id="page-dashboard">
+                <div class="grid-4" style="margin-bottom: 1rem;">
+                    <div class="stat-card">
+                        <div class="value" id="cpu-stat">0%</div>
+                        <div class="label">CPU Usage</div>
+                        <div class="progress-bar"><div class="progress-fill" id="cpu-bar" style="width: 0%"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="mem-stat">0%</div>
+                        <div class="label">Memory</div>
+                        <div class="progress-bar"><div class="progress-fill" id="mem-bar" style="width: 0%"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="disk-stat">0%</div>
+                        <div class="label">Disk</div>
+                        <div class="progress-bar"><div class="progress-fill" id="disk-bar" style="width: 0%"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="uptime-stat">00:00</div>
+                        <div class="label">Uptime</div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-bottom: 1rem;">
+                    <div class="panel-header">
+                        <h2>System Health</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="health-metrics">
+                            <div class="health-item">
+                                <div class="icon" style="background: rgba(88, 166, 255, 0.2);">🧠</div>
+                                <div class="value" id="health-cpu">--</div>
+                                <div class="label">CPU Temperature</div>
+                            </div>
+                            <div class="health-item">
+                                <div class="icon" style="background: rgba(63, 185, 80, 0.2);">💾</div>
+                                <div class="value" id="health-mem">--</div>
+                                <div class="label">Memory Available</div>
+                            </div>
+                            <div class="health-item">
+                                <div class="icon" style="background: rgba(163, 113, 247, 0.2);">🌡️</div>
+                                <div class="value" id="health-sys">--</div>
+                                <div class="label">System Health</div>
+                            </div>
+                            <div class="health-item">
+                                <div class="icon" style="background: rgba(247, 129, 102, 0.2);">🔋</div>
+                                <div class="value" id="health-power">--</div>
+                                <div class="label">Power Status</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Event Log</h2>
+                        <button class="btn" onclick="clearLog()">Clear</button>
+                    </div>
+                    <div class="panel-content">
+                        <div class="log-stream" id="log-stream"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Face ID Page -->
+            <div class="page" id="page-faceid">
+                <div class="panel" style="margin-bottom: 1rem;">
+                    <div class="panel-header">
+                        <h2>Add New Face</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" class="input-field" id="face-name" placeholder="Enter person's name">
+                        </div>
+                        <div class="form-group">
+                            <label>Relation</label>
+                            <select class="input-field" id="face-relation">
+                                <option value="admin">Admin</option>
+                                <option value="family">Family Member</option>
+                                <option value="friend">Friend</option>
+                                <option value="known">Known Person</option>
+                                <option value="guest">Guest</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Upload Photos (Max 10)</label>
+                            <div class="upload-zone" id="upload-zone">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                <p>Drop photos here or <span>browse</span></p>
+                                <p style="font-size: 0.8rem; margin-top: 0.5rem;">JPG, PNG up to 10MB each</p>
+                            </div>
+                            <input type="file" id="face-upload" multiple accept="image/*" style="display: none;">
+                            <div class="face-grid" id="preview-grid" style="margin-top: 1rem;"></div>
+                        </div>
+                        <button class="btn btn-primary" onclick="trainFace()">Train Face ID</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Registered Faces</h2>
+                        <span id="face-count">0/10</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="face-grid" id="faces-grid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voice ID Page -->
+            <div class="page" id="page-voiceid">
+                <div class="panel" style="margin-bottom: 1rem;">
+                    <div class="panel-header">
+                        <h2>Voice ID Training</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="alert-box warning">
+                            <span>⚠️</span>
+                            <span>Speak clearly and cover different phrases for better recognition accuracy.</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Voice Profile Name</label>
+                            <input type="text" class="input-field" id="voice-name" placeholder="Enter name for this voice profile">
+                        </div>
+
+                        <div class="voice-wave" id="voice-wave">
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                        </div>
+
+                        <div style="text-align: center; margin-bottom: 1rem;">
+                            <button class="btn btn-primary" id="record-btn" onclick="toggleRecording()">
+                                <span>🎤</span> Start Recording
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Training Phrases</label>
+                            <div style="color: var(--text-dim); font-size: 0.9rem;">
+                                <p style="margin-bottom: 0.5rem;">1. "Hello AEGIS, how are you?"</p>
+                                <p style="margin-bottom: 0.5rem;">2. "Turn on the living room lights"</p>
+                                <p style="margin-bottom: 0.5rem;">3. "What's the weather today?"</p>
+                                <p>4. "Play my favorite music"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Voice Profiles</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="directory-list" id="voice-profiles"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Page -->
+            <div class="page" id="page-camera">
+                <div class="panel" style="margin-bottom: 1rem;">
+                    <div class="panel-header">
+                        <h2>Live Camera Feed</h2>
+                        <div>
+                            <button class="btn btn-success" onclick="startCamera()">Start</button>
+                            <button class="btn btn-danger" onclick="stopCamera()">Stop</button>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="camera-placeholder" id="camera-placeholder">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            <p>Camera Feed Inactive</p>
+                            <p style="font-size: 0.8rem;">Click Start to activate</p>
+                        </div>
+                        <img id="camera-feed" class="camera-feed" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Detection Log</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="log-stream" id="detection-log"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal Page -->
+            <div class="page" id="page-terminal">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>AEGIS Terminal</h2>
+                        <button class="btn" onclick="clearTerminal()">Clear</button>
+                    </div>
+                    <div class="panel-content">
+                        <div class="terminal" id="terminal">
+                            <div class="terminal-line">
+                                <span class="terminal-prompt">AEGIS@System:~$</span>
+                                <span class="terminal-output">AEGIS Command Interface v1.0</span>
+                            </div>
+                            <div class="terminal-line">
+                                <span class="terminal-output">Type 'help' for available commands.</span>
+                            </div>
+                            <div class="terminal-line">
+                                <span class="terminal-prompt">AEGIS@System:~$</span>
+                                <input type="text" class="terminal-input" id="terminal-input" autofocus>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Directory Page -->
+            <div class="page" id="page-directory">
+                <div class="panel" style="margin-bottom: 1rem;">
+                    <div class="panel-header">
+                        <h2>Add Contact</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="input-field" id="contact-name" placeholder="Full name">
+                            </div>
+                            <div class="form-group">
+                                <label>Relation</label>
+                                <select class="input-field" id="contact-relation">
+                                    <option value="family">Family</option>
+                                    <option value="friend">Friend</option>
+                                    <option value="colleague">Colleague</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="tel" class="input-field" id="contact-phone" placeholder="+1 234 567 8900">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" class="input-field" id="contact-email" placeholder="email@example.com">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="addContact()">Add to Directory</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Directory</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="directory-list" id="directory-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Page -->
+            <div class="page" id="page-logs">
+                <div class="grid-2" style="margin-bottom: 1rem;">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2>Event Log</h2>
+                            <div>
+                                <button class="btn" onclick="clearLog()">Clear</button>
+                                <button class="btn btn-primary" onclick="exportLogs()">Export</button>
+                            </div>
+                        </div>
+                        <div class="panel-content">
+                            <div class="log-filter" style="margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <button class="btn btn-primary" onclick="filterLogs('all')">All</button>
+                                <button class="btn" onclick="filterLogs('info')">Info</button>
+                                <button class="btn" onclick="filterLogs('warn')">Warning</button>
+                                <button class="btn" onclick="filterLogs('error')">Error</button>
+                                <button class="btn" onclick="filterLogs('voice')">Voice</button>
+                                <button class="btn" onclick="filterLogs('face')">Face</button>
+                                <button class="btn" onclick="filterLogs('system')">System</button>
+                            </div>
+                            <div class="log-container" id="master-log" style="height: 400px; overflow-y: auto; background: #0d1117; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Activity Stream</h2>
+                        <span id="log-count">0 events</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="activity-timeline" id="activity-timeline" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls Page -->
+            <div class="page" id="page-controls">
+                <div class="alert-box danger" id="kill-switch-warning" style="display: none;">
+                    <span>⚠️</span>
+                    <span>KILL SWITCH ACTIVATED - AEGIS is shutting down all systems!</span>
+                </div>
+
+                <div class="panel" style="margin-bottom: 1rem;">
+                    <div class="panel-header">
+                        <h2>System Control</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="system-controls">
+                            <div class="control-row">
+                                <span class="control-label">🔊 Wake AEGIS (Voice)</span>
+                                <button class="btn btn-primary" onclick="wakeAegis()">Wake Now</button>
+                            </div>
+                            <div class="control-row">
+                                <span class="control-label">🛡️ Security Mode</span>
+                                <div class="switch-toggle active" id="security-toggle" onclick="toggleSecurity()"></div>
+                            </div>
+                            <div class="control-row">
+                                <span class="control-label">👁️ Vision System</span>
+                                <div class="switch-toggle active" id="vision-toggle" onclick="toggleVision()"></div>
+                            </div>
+                            <div class="control-row">
+                                <span class="control-label">🎤 Voice Recognition</span>
+                                <div class="switch-toggle active" id="voice-toggle" onclick="toggleVoice()"></div>
+                            </div>
+                            <div class="control-row">
+                                <span class="control-label">🔐 Face ID</span>
+                                <div class="switch-toggle active" id="faceid-toggle" onclick="toggleFaceID()"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-bottom: 1rem;">
+                    <div class="panel-header">
+                        <h2>Emergency Controls</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="alert-box warning">
+                            <span>⚠️</span>
+                            <span>These actions affect core AEGIS functionality. Use with caution.</span>
+                        </div>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button class="btn btn-warning" onclick="restartAegis()">🔄 Restart AEGIS</button>
+                            <button class="btn btn-danger" onclick="activateKillSwitch()">☠️ KILL SWITCH</button>
+                            <button class="btn" onclick="resetAll()">⚙️ Reset All Settings</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Quick Actions</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="quick-actions">
+                            <button class="quick-btn" onclick="quickAction('status')">📊 System Status</button>
+                            <button class="quick-btn" onclick="quickAction('scan')">🔍 Security Scan</button>
+                            <button class="quick-btn" onclick="quickAction('lights')">💡 Toggle Lights</button>
+                            <button class="quick-btn" onclick="quickAction('lock')">🔒 Lock Down</button>
+                            <button class="quick-btn" onclick="quickAction('connect')">📡 Connect HomeBot</button>
+                            <button class="quick-btn danger" onclick="quickAction('panic')">🚨 PANIC</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <aside class="sidebar">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Current User</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="profile-badge">
+                        <div class="avatar">👤</div>
+                        <div>
+                            <div class="name" id="current-user">Admin</div>
+                            <div class="relation">System Administrator</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-dim);">
+                        <p>Last active: <span id="last-active">Just now</span></p>
+                        <p>Access level: <span style="color: var(--green);">Root</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Quick Actions</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="quick-actions">
+                        <button class="quick-btn" onclick="wakeAegis()">☀️ Wake</button>
+                        <button class="quick-btn" onclick="toggleSidebarMic()">🎤 Listen</button>
+                        <button class="quick-btn" onclick="switchTab('camera')">📷 Camera</button>
+                        <button class="quick-btn danger" onclick="activateKillSwitch()">☠️ Kill</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>AEGIS Status</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="control-row" style="margin-bottom: 0.5rem;">
+                        <span>Runtime</span>
+                        <span id="runtime-display" style="font-family: 'JetBrains Mono', monospace;">00:00:00</span>
+                    </div>
+                    <div class="control-row" style="margin-bottom: 0.5rem;">
+                        <span>Status</span>
+                        <span id="aegis-status" style="color: var(--green);">Active</span>
+                    </div>
+                    <div class="control-row">
+                        <span>Version</span>
+                        <span>v2.0.0</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        const socket = io();
+        let uploadedFiles = [];
+        let isRecording = false;
+        let cameraActive = false;
+        let startTime = Date.now();
+
+        // Navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('page-' + tab.dataset.page).classList.add('active');
+            });
+        });
+
+        function switchTab(page) {
+            document.querySelector(`[data-page="${page}"]`).click();
+        }
+
+        // Socket events
+        socket.on('connect', () => {
+            addLog('Connected to AEGIS Core', 'info', 'system');
+            socket.emit('register_ui');
+        });
+
+        socket.on('disconnect', () => {
+            addLog('Disconnected from AEGIS Core', 'warn', 'system');
+        });
+
+        socket.on('system_status', (data) => {
+            document.getElementById('cpu-stat').textContent = Math.round(data.cpu_percent) + '%';
+            document.getElementById('mem-stat').textContent = Math.round(data.memory_percent) + '%';
+            document.getElementById('disk-stat').textContent = Math.round(data.disk_percent) + '%';
+            document.getElementById('cpu-bar').style.width = data.cpu_percent + '%';
+            document.getElementById('mem-bar').style.width = data.memory_percent + '%';
+            document.getElementById('disk-bar').style.width = data.disk_percent + '%';
+            
+            // Update status indicators
+            document.getElementById('core-status').className = 'dot ' + (data.cpu_percent > 80 ? 'warning' : '');
+        });
+
+        socket.on('health_update', (data) => {
+            document.getElementById('health-cpu').textContent = data.cpu_temp || '--°C';
+            document.getElementById('health-mem').textContent = data.memory_available || '--GB';
+            document.getElementById('health-sys').textContent = data.system_status || 'OK';
+            document.getElementById('health-power').textContent = data.power_status || 'AC';
+        });
+
+        socket.on('face_detected', (data) => {
+            const msg = `Face detected: ${data.count} face(s)`;
+            addDetectionLog(msg);
+            addLog(msg, 'info', 'face');
+        });
+
+        socket.on('voice_msg', (data) => {
+            addLog(`AEGIS: "${data.text}"`, 'info', 'voice');
+        });
+
+        socket.on('terminal_output', (data) => {
+            appendTerminal(data.output, false);
+        });
+
+        socket.on('camera_frame', (data) => {
+            if (cameraActive && data.frame) {
+                document.getElementById('camera-feed').src = 'data:image/jpeg;base64,' + data.frame;
+            }
+        });
+
+        socket.on('system_alert', (data) => {
+            addLog(data.message, 'error', 'system');
+        });
+
+        socket.on('status_update', (data) => {
+            addLog(`${data.system} ${data.enabled ? 'enabled' : 'disabled'}`, 'info', 'system');
+        });
+
+        socket.on('voice_command', (data) => {
+            addLog(`Voice command: "${data.text}"`, 'info', 'voice');
+        });
+
+        // System functions
+        let logHistory = [];
+        let currentFilter = 'all';
+
+        function addLog(message, level = 'info', category = 'system') {
+            const time = new Date();
+            const timeStr = time.toLocaleTimeString();
+            const logEntry = { time: timeStr, message, level, category, timestamp: time.getTime() };
+            logHistory.push(logEntry);
+            
+            // Update dashboard log
+            const stream = document.getElementById('log-stream');
+            if (stream) {
+                stream.insertAdjacentHTML('afterbegin', 
+                    `<div class="log-entry"><span class="log-time">${timeStr}</span><span class="log-level ${level}">${level.toUpperCase()}</span>${message}</div>`
+                );
+            }
+            
+            // Update master log
+            updateMasterLog();
+            
+            // Update activity timeline
+            updateActivityTimeline();
+        }
+
+        function updateMasterLog() {
+            const container = document.getElementById('master-log');
+            if (!container) return;
+            
+            const filtered = currentFilter === 'all' 
+                ? logHistory 
+                : logHistory.filter(l => l.category === currentFilter || l.level === currentFilter);
+            
+            container.innerHTML = filtered.slice().reverse().map(entry => {
+                const levelColors = { info: '#58a6ff', warn: '#d29922', error: '#f85149', voice: '#a371f7', face: '#3fb950' };
+                const color = levelColors[entry.level] || '#8b949e';
+                return `<div style="padding: 4px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; gap: 10px;">
+                    <span style="color: #8b949e;">${entry.time}</span>
+                    <span style="color: ${color}; font-weight: 600; min-width: 60px;">${entry.level.toUpperCase()}</span>
+                    <span style="color: #c9d1d9;">${entry.message}</span>
+                </div>`;
+            }).join('');
+            
+            document.getElementById('log-count').textContent = `${logHistory.length} events`;
+        }
+
+        function updateActivityTimeline() {
+            const container = document.getElementById('activity-timeline');
+            if (!container) return;
+            
+            const recent = logHistory.slice(-10).reverse();
+            container.innerHTML = recent.map(entry => {
+                const icons = { info: 'ℹ️', warn: '⚠️', error: '❌', voice: '🎤', face: '👤', system: '⚙️' };
+                const icon = icons[entry.category] || icons[entry.level] || '📝';
+                return `<div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                    <span style="font-size: 1.2rem;">${icon}</span>
+                    <span style="color: var(--text-dim); font-size: 0.8rem;">${entry.time}</span>
+                    <span style="flex: 1;">${entry.message}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function filterLogs(filter) {
+            currentFilter = filter;
+            updateMasterLog();
+            document.querySelectorAll('.log-filter .btn').forEach(btn => btn.classList.remove('btn-primary'));
+            event.target.classList.add('btn-primary');
+        }
+
+        function exportLogs() {
+            const data = JSON.stringify(logHistory, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `aegis-logs-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            addLog('Logs exported successfully', 'info');
+        }
+
+        function clearLog() {
+            document.getElementById('log-stream').innerHTML = '';
+            logHistory = [];
+            updateMasterLog();
+            updateActivityTimeline();
+            addLog('Logs cleared', 'info');
+        }
+
+        function addDetectionLog(message) {
+            const log = document.getElementById('detection-log');
+            const time = new Date().toLocaleTimeString();
+            log.insertAdjacentHTML('afterbegin', 
+                `<div class="log-entry"><span class="log-time">${time}</span>${message}</div>`
+            );
+        }
+
+        // Face ID functions
+        document.getElementById('upload-zone').addEventListener('click', () => {
+            document.getElementById('face-upload').click();
+        });
+
+        document.getElementById('face-upload').addEventListener('change', (e) => {
+            handleFileUpload(e.target.files);
+        });
+
+        function handleFileUpload(files) {
+            const preview = document.getElementById('preview-grid');
+            const maxFiles = 10 - uploadedFiles.length;
+            
+            Array.from(files).slice(0, maxFiles).forEach(file => {
+                if (uploadedFiles.length >= 10) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedFiles.push({ name: file.name, data: e.target.result });
+                    preview.insertAdjacentHTML('beforeend', 
+                        `<div class="face-card"><img src="${e.target.result}"><div class="meta">${file.name}</div></div>`
+                    );
+                    document.getElementById('face-count').textContent = `${uploadedFiles.length}/10`;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function trainFace() {
+            const name = document.getElementById('face-name').value;
+            const relation = document.getElementById('face-relation').value;
+            
+            if (!name || uploadedFiles.length === 0) {
+                alert('Please enter a name and upload at least one photo');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/face/train', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, relation, photos: uploadedFiles })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    addLog(`Face ID trained for: ${name}`, 'info');
+                    loadFaces();
+                    document.getElementById('face-name').value = '';
+                    uploadedFiles = [];
+                    document.getElementById('preview-grid').innerHTML = '';
+                }
+            } catch (err) {
+                addLog('Face training failed: ' + err.message, 'error');
+            }
+        }
+
+        async function loadFaces() {
+            try {
+                const response = await fetch('/api/face/list');
+                const faces = await response.json();
+                const grid = document.getElementById('faces-grid');
+                grid.innerHTML = faces.map(f => `
+                    <div class="face-card">
+                        <img src="${f.photo}">
+                        <div class="name">${f.name}</div>
+                        <div class="meta">${f.relation} • ${f.photos} photos</div>
+                    </div>
+                `).join('');
+                document.getElementById('face-count').textContent = `${faces.length}/10`;
+            } catch (err) {
+                console.error('Failed to load faces:', err);
+            }
+        }
+
+        // Voice ID functions
+        function toggleRecording() {
+            isRecording = !isRecording;
+            const btn = document.getElementById('record-btn');
+            const wave = document.getElementById('voice-wave');
+            
+            if (isRecording) {
+                btn.innerHTML = '<span>⏹️</span> Stop Recording';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-danger');
+                wave.classList.add('recording');
+                socket.emit('voice_train_start', { name: document.getElementById('voice-name').value });
+            } else {
+                btn.innerHTML = '<span>🎤</span> Start Recording';
+                btn.classList.add('btn-primary');
+                btn.classList.remove('btn-danger');
+                wave.classList.remove('recording');
+                socket.emit('voice_train_stop');
+            }
+        }
+
+        // Camera functions
+        let cameraStream = null;
+        
+        async function startCamera() {
+            cameraActive = true;
+            document.getElementById('camera-placeholder').style.display = 'none';
+            document.getElementById('camera-feed').style.display = 'block';
+            
+            // Try backend streaming first
+            socket.emit('camera_start');
+            addLog('Camera feed started - connecting to AEGIS vision', 'info', 'system');
+            
+            // Fallback: use local browser camera
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user', width: 640, height: 480 } 
+                });
+                document.getElementById('camera-feed').srcObject = cameraStream;
+                addLog('Local camera connected as fallback', 'warn', 'system');
+            } catch (err) {
+                console.error('Camera error:', err);
+                addLog('Camera access denied or unavailable', 'error', 'system');
+            }
+        }
+
+        function stopCamera() {
+            cameraActive = false;
+            document.getElementById('camera-placeholder').style.display = 'flex';
+            document.getElementById('camera-feed').style.display = 'none';
+            socket.emit('camera_stop');
+            
+            // Stop local stream
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            
+            addLog('Camera feed stopped', 'info', 'system');
+        }
+
+        // Terminal functions
+        document.getElementById('terminal-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = e.target.value;
+                appendTerminal('AEGIS@System:~$ ' + cmd, false);
+                socket.emit('terminal_command', { command: cmd });
+                e.target.value = '';
+            }
+        });
+
+        function appendTerminal(text, isInput = false) {
+            const term = document.getElementById('terminal');
+            term.insertAdjacentHTML('beforeend', 
+                `<div class="terminal-line"><span class="terminal-output">${text}</span></div>`
+            );
+            term.scrollTop = term.scrollHeight;
+        }
+
+        function clearTerminal() {
+            document.getElementById('terminal').innerHTML = `
+                <div class="terminal-line"><span class="terminal-output">Terminal cleared.</span></div>
+            `;
+        }
+
+        // Control functions
+        function wakeAegis() {
+            socket.emit('wake_aegis');
+            addLog('AEGIS wake command sent');
+        }
+
+        function toggleSecurity() {
+            socket.emit('toggle_security');
+            addLog('Security mode toggled');
+        }
+
+        function toggleVision() {
+            socket.emit('toggle_vision');
+            addLog('Vision system toggled');
+        }
+
+        function toggleVoice() {
+            socket.emit('toggle_voice');
+            addLog('Voice recognition toggled');
+        }
+
+        function toggleFaceID() {
+            socket.emit('toggle_faceid');
+            addLog('Face ID toggled');
+        }
+
+        function toggleSidebarMic() {
+            toggleRecording();
+        }
+
+        function activateKillSwitch() {
+            if (confirm('⚠️ WARNING: This will shut down ALL AEGIS systems. Are you sure?')) {
+                if (confirm('This is your final warning. AEGIS will be completely disabled. Continue?')) {
+                    document.getElementById('kill-switch-warning').style.display = 'flex';
+                    document.getElementById('aegis-status').textContent = 'SHUTTING DOWN';
+                    document.getElementById('aegis-status').style.color = 'var(--red)';
+                    socket.emit('kill_switch');
+                    addLog('KILL SWITCH ACTIVATED', 'error');
+                }
+            }
+        }
+
+        function restartAegis() {
+            socket.emit('restart_aegis');
+            addLog('AEGIS restart initiated');
+        }
+
+        function resetAll() {
+            if (confirm('This will reset all AEGIS settings to defaults. Continue?')) {
+                socket.emit('reset_all');
+                addLog('Settings reset to defaults');
+            }
+        }
+
+        function quickAction(action) {
+            socket.emit('quick_action', { action });
+            addLog(`Quick action: ${action}`, 'info', 'system');
+        }
+
+        // Directory functions
+        async function addContact() {
+            const name = document.getElementById('contact-name').value;
+            const relation = document.getElementById('contact-relation').value;
+            const phone = document.getElementById('contact-phone').value;
+            const email = document.getElementById('contact-email').value;
+
+            if (!name) {
+                alert('Please enter a name');
+                return;
+            }
+
+            try {
+                await fetch('/api/directory/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, relation, phone, email })
+                });
+                loadDirectory();
+                document.getElementById('contact-name').value = '';
+                document.getElementById('contact-phone').value = '';
+                document.getElementById('contact-email').value = '';
+            } catch (err) {
+                addLog('Failed to add contact: ' + err.message, 'error');
+            }
+        }
+
+        async function loadDirectory() {
+            try {
+                const response = await fetch('/api/directory/list');
+                const contacts = await response.json();
+                const list = document.getElementById('directory-list');
+                list.innerHTML = contacts.map(c => `
+                    <div class="directory-item">
+                        <div class="avatar">${c.name.charAt(0)}</div>
+                        <div class="info">
+                            <div class="name">${c.name}</div>
+                            <div class="relation">${c.relation}</div>
+                        </div>
+                        <span class="status"></span>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load directory:', err);
+            }
+        }
+
+        // Runtime update
+        setInterval(() => {
+            const diff = Math.floor((Date.now() - startTime) / 1000);
+            const h = Math.floor(diff / 3600);
+            const m = Math.floor((diff % 3600) / 60);
+            const s = diff % 60;
+            document.getElementById('runtime-display').textContent = 
+                `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            document.getElementById('uptime-stat').textContent = 
+                `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+        }, 1000);
+
+        // Poll system stats
+        async function pollStats() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                document.getElementById('cpu-stat').textContent = Math.round(data.cpu_percent) + '%';
+                document.getElementById('mem-stat').textContent = Math.round(data.memory_percent) + '%';
+                document.getElementById('disk-stat').textContent = Math.round(data.disk_percent) + '%';
+                document.getElementById('cpu-bar').style.width = data.cpu_percent + '%';
+                document.getElementById('mem-bar').style.width = data.memory_percent + '%';
+                document.getElementById('disk-bar').style.width = data.disk_percent + '%';
+                
+                // Update status indicators
+                const cpuDot = document.getElementById('core-status');
+                if (cpuDot) {
+                    cpuDot.className = 'dot' + (data.cpu_percent > 80 ? ' warning' : '');
+                }
+            } catch (err) {}
+        }
+        
+        async function pollHealth() {
+            try {
+                const res = await fetch('/api/health');
+                const data = await res.json();
+                if (document.getElementById('health-cpu')) {
+                    document.getElementById('health-cpu').textContent = data.cpu_temp || '--°C';
+                    document.getElementById('health-mem').textContent = data.memory_available || '--GB';
+                    document.getElementById('health-sys').textContent = data.system_status || 'OK';
+                    document.getElementById('health-power').textContent = data.power_status || 'AC';
+                }
+            } catch (err) {}
+        }
+        
+        setInterval(pollStats, 2000);
+        setInterval(pollHealth, 5000);
+        pollStats();
+        pollHealth();
+
+        // Initialize
+        loadFaces();
+        loadDirectory();
+        addLog('AEGIS Command Center initialized', 'info', 'system');
+    </script>
+</body>
+</html>

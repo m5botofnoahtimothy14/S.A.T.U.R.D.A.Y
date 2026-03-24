@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/AEGIS/aegis-core/build-codex/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

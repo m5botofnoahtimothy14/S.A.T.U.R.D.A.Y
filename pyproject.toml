@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aegis-ai"
+version = "1.0.0"
+description = "Advanced Engine for Global Integrated Systems"
+dependencies = [
+    "numpy",
+    "psutil",
+    "requests",
+    "opencv-python",
+    "face_recognition",
+    "pyaudio",
+    "SpeechRecognition",
+    "pyttsx3",
+    "flask",
+    "flask-socketio",
+    "python-dotenv",
+    "esptool",
+    "pyserial",
+    "scikit-learn",
+    "pandas",
+    "vlc",
+    "schedule",
+    "eventlet",
+    "uvloop",
+    "httptools",
+    "pygetwindow",
+    "pyautogui",
+    "structlog",
+    "fastapi",
+    "uvicorn",
+    "jinja2",
+    "paho-mqtt",
+    "aiohttp",
+    "pystray",
+    "Pillow"
+]
+
+[tool.setuptools]
+packages = ["core", "ai_modules", "identity", "communication", "health", "sensors", "services", "governance", "christianity_core", "ui", "homebot", "embodied", "hybrid"]

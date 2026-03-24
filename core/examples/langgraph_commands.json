@@ -1,0 +1,33 @@
+{
+  "viewer_test_endpoint": {
+    "method": "GET",
+    "path": "/v1/commands/examples"
+  },
+  "operator_move": {
+    "intent": "MOVE",
+    "parameters": {
+      "direction": "FORWARD",
+      "duration": 1.5,
+      "speed": 0.4,
+      "torque": 20.0
+    }
+  },
+  "operator_stop": {
+    "intent": "STOP",
+    "parameters": {
+      "immediate": true
+    }
+  },
+  "admin_estop": {
+    "intent": "EMERGENCY_STOP",
+    "parameters": {
+      "reason": "manual safety test"
+    }
+  },
+  "admin_clear_estop": {
+    "intent": "CLEAR_ESTOP",
+    "parameters": {
+      "require_ack": true
+    }
+  }
+}

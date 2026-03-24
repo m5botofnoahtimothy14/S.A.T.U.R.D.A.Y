@@ -1,0 +1,562 @@
+extend type Mutation {
+  """
+  ✨ Insert a single `AIAgent` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  aIAgent_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: AIAgent_Data!
+  ): AIAgent_KeyOutput! @fdc_generated(from: "AIAgent", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Command` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  command_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Command_Data!
+  ): Command_KeyOutput! @fdc_generated(from: "Command", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Deployment` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  deployment_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Deployment_Data!
+  ): Deployment_KeyOutput! @fdc_generated(from: "Deployment", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `LogEntry` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  logEntry_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: LogEntry_Data!
+  ): LogEntry_KeyOutput! @fdc_generated(from: "LogEntry", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `User` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `AIAgent` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  aIAgent_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [AIAgent_Data!]!
+  ): [AIAgent_KeyOutput!]! @fdc_generated(from: "AIAgent", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Command` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  command_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Command_Data!]!
+  ): [Command_KeyOutput!]! @fdc_generated(from: "Command", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Deployment` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  deployment_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Deployment_Data!]!
+  ): [Deployment_KeyOutput!]! @fdc_generated(from: "Deployment", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `LogEntry` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  logEntry_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [LogEntry_Data!]!
+  ): [LogEntry_KeyOutput!]! @fdc_generated(from: "LogEntry", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `User` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert or update a single `AIAgent` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `AIAgent`.
+  """
+  aIAgent_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: AIAgent_Data!
+  ): AIAgent_KeyOutput! @fdc_generated(from: "AIAgent", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Command` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Command`.
+  """
+  command_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Command_Data!
+  ): Command_KeyOutput! @fdc_generated(from: "Command", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Deployment` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Deployment`.
+  """
+  deployment_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Deployment_Data!
+  ): Deployment_KeyOutput! @fdc_generated(from: "Deployment", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `LogEntry` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `LogEntry`.
+  """
+  logEntry_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: LogEntry_Data!
+  ): LogEntry_KeyOutput! @fdc_generated(from: "LogEntry", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `User` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update `AIAgent` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `AIAgent`.
+  """
+  aIAgent_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [AIAgent_Data!]!
+  ): [AIAgent_KeyOutput!]! @fdc_generated(from: "AIAgent", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Command` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Command`.
+  """
+  command_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Command_Data!]!
+  ): [Command_KeyOutput!]! @fdc_generated(from: "Command", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Deployment` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Deployment`.
+  """
+  deployment_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Deployment_Data!]!
+  ): [Deployment_KeyOutput!]! @fdc_generated(from: "Deployment", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `LogEntry` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `LogEntry`.
+  """
+  logEntry_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [LogEntry_Data!]!
+  ): [LogEntry_KeyOutput!]! @fdc_generated(from: "LogEntry", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `User` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `AIAgent` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `AIAgent` or `null` if not found.
+  """
+  aIAgent_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: AIAgent_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AIAgent_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: AIAgent_Data!
+  ): AIAgent_KeyOutput @fdc_generated(from: "AIAgent", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Command` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Command` or `null` if not found.
+  """
+  command_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Command_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Command_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Command_Data!
+  ): Command_KeyOutput @fdc_generated(from: "Command", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Deployment` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Deployment` or `null` if not found.
+  """
+  deployment_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Deployment_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Deployment_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Deployment_Data!
+  ): Deployment_KeyOutput @fdc_generated(from: "Deployment", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `LogEntry` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `LogEntry` or `null` if not found.
+  """
+  logEntry_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: LogEntry_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: LogEntry_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: LogEntry_Data!
+  ): LogEntry_KeyOutput @fdc_generated(from: "LogEntry", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `User` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `User` or `null` if not found.
+  """
+  user_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: User_Data!
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update `AIAgent` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  aIAgent_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: AIAgent_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: AIAgent_Data!
+  ): Int! @fdc_generated(from: "AIAgent", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Command` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  command_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Command_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Command_Data!
+  ): Int! @fdc_generated(from: "Command", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Deployment` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  deployment_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Deployment_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Deployment_Data!
+  ): Int! @fdc_generated(from: "Deployment", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `LogEntry` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  logEntry_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: LogEntry_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: LogEntry_Data!
+  ): Int! @fdc_generated(from: "LogEntry", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `User` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  user_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: User_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: User_Data!
+  ): Int! @fdc_generated(from: "User", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Delete a single `AIAgent` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  aIAgent_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: AIAgent_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AIAgent_FirstRow
+  ): AIAgent_KeyOutput @fdc_generated(from: "AIAgent", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Command` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  command_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Command_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Command_FirstRow
+  ): Command_KeyOutput @fdc_generated(from: "Command", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Deployment` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  deployment_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Deployment_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Deployment_FirstRow
+  ): Deployment_KeyOutput @fdc_generated(from: "Deployment", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `LogEntry` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  logEntry_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: LogEntry_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: LogEntry_FirstRow
+  ): LogEntry_KeyOutput @fdc_generated(from: "LogEntry", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `User` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  user_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `AIAgent` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  aIAgent_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: AIAgent_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "AIAgent", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Command` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  command_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Command_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Command", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Deployment` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  deployment_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Deployment_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Deployment", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `LogEntry` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  logEntry_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: LogEntry_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "LogEntry", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `User` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  user_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: User_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "User", purpose: DELETE_MULTIPLE)
+}

@@ -1,0 +1,25 @@
+[Unit]
+Description=AEGIS AI OS - Advanced Engine for Global Integrated Systems
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/aegis
+EnvironmentFile=/opt/aegis/prod.env
+ExecStart=/opt/aegis/.venv/bin/python run_production.py
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=append:/opt/aegis/logs/stdout.log
+StandardError=append:/opt/aegis/logs/stderr.log
+
+# Security
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/aegis/data /opt/aegis/logs
+
+[Install]
+WantedBy=multi-user.target

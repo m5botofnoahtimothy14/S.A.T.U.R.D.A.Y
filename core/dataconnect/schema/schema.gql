@@ -1,0 +1,43 @@
+type User @table {
+  displayName: String!
+  createdAt: Timestamp!
+  email: String
+  photoUrl: String
+}
+
+type AIAgent @table {
+  agentName: String!
+  deploymentStatus: String!
+  createdAt: Timestamp!
+  description: String
+  version: String
+  lastActivityAt: Timestamp
+  user: User
+}
+
+type Deployment @table {
+  version: String!
+  deployedAt: Timestamp!
+  status: String!
+  deploymentLog: String
+  commitHash: String
+  aiAgent: AIAgent
+}
+
+type Command @table {
+  commandType: String!
+  sentAt: Timestamp!
+  status: String!
+  payload: String
+  response: String
+  aiAgent: AIAgent
+}
+
+type LogEntry @table {
+  timestamp: Timestamp!
+  logLevel: String!
+  message: String!
+  details: String
+  category: String
+  aiAgent: AIAgent
+}

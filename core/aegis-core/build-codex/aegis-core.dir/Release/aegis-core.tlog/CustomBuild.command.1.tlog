@@ -1,0 +1,10 @@
+^D:\AEGIS\AEGIS-CORE\CMAKELISTS.TXT
+setlocal
+D:\AEGIS\.venv\Lib\site-packages\cmake\data\bin\cmake.exe -SD:/AEGIS/aegis-core -BD:/AEGIS/aegis-core/build-codex --check-stamp-file D:/AEGIS/aegis-core/build-codex/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

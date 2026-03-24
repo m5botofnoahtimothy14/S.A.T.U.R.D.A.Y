@@ -1,0 +1,9 @@
+tunnel: ${CLOUDFLARE_TUNNEL_ID}
+credentials-file: ${CLOUDFLARE_TUNNEL_CREDENTIALS_FILE}
+
+ingress:
+  - hostname: ${CLOUDFLARE_TUNNEL_HOSTNAME}
+    service: https://127.0.0.1:8443
+    originRequest:
+      noTLSVerify: true
+  - service: http_status:404

@@ -1,0 +1,3 @@
+D:/AEGIS/aegis-core/build-codex/CMakeFiles/aegis-core.dir
+D:/AEGIS/aegis-core/build-codex/CMakeFiles/ALL_BUILD.dir
+D:/AEGIS/aegis-core/build-codex/CMakeFiles/ZERO_CHECK.dir

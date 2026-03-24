@@ -1,0 +1,10 @@
+{
+    "user_mode": "Sir",
+    "aeigis_active": true,
+    "edith_active": true,
+    "homebot_connected": false,
+    "cloud_session": false,
+    "last_command": null,
+    "security_alerts": [],
+    "active_modules": []
+}
