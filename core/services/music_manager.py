@@ -1,8 +1,4 @@
-"""
-MusicManager
-------------
-Mood-based playlist suggester/launcher + local VLC playback.
-"""
+﻿
 import logging
 import subprocess
 import os

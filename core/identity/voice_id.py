@@ -1,4 +1,4 @@
-# identity/voice_id.py
+﻿                      
 import logging
 import threading
 import speech_recognition as sr
@@ -37,7 +37,7 @@ class VoiceID:
                 while self.active:
                     try:
                         audio = self.recognizer.listen(source, timeout=5, phrase_time_limit=10)
-                        # Use the recognizer method, not the module function
+                                                                            
                         text = self.recognizer.recognize_google(audio)
                         logger.info(f"Speech recognized: {text}")
                         self.event_bus.publish("voice_command", text)

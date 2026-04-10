@@ -1,11 +1,4 @@
-# ml_integration/predictor.py
-"""
-Predictive Engine - ML Prediction for ALL AEGIS Subsystems
-=========================================================
-Provides predictive capabilities using machine learning
-for all AEGIS systems.
-"""
-
+﻿                             
 import os
 import json
 import time
@@ -18,15 +11,6 @@ import numpy as np
 logger = structlog.get_logger("AEGIS.ML.Predictor")
 
 class PredictiveEngine:
-    """
-    ML-powered Predictive Engine for all AEGIS subsystems.
-    Predicts:
-    - Health issues before they occur
-    - User behavior and needs
-    - System failures
-    - Communication patterns
-    - And more...
-    """
     
     def __init__(self, event_bus=None):
         self.event_bus = event_bus
@@ -39,7 +23,7 @@ class PredictiveEngine:
         self._init_predictors()
         
     def _init_predictors(self):
-        """Initialize prediction models"""
+        
         self.predictors = {
             "health": self._predict_health,
             "behavior": self._predict_behavior,
@@ -49,7 +33,7 @@ class PredictiveEngine:
         }
         
     def add_data_point(self, predictor_type: str, value: float, metadata: Dict = None):
-        """Add data point for prediction"""
+        
         if predictor_type not in self.time_series_buffers:
             self.time_series_buffers[predictor_type] = deque(maxlen=50)
             
@@ -60,7 +44,7 @@ class PredictiveEngine:
         })
         
     def predict(self, predictor_type: str, horizon: int = 5) -> Dict[str, Any]:
-        """Make prediction using simple ML"""
+        
         if predictor_type not in self.time_series_buffers:
             return {"error": "No data for prediction"}
             
@@ -92,7 +76,7 @@ class PredictiveEngine:
         }
         
     def _linear_predict(self, values: List[float], horizon: int) -> float:
-        """Simple linear prediction"""
+        
         n = len(values)
         if n < 2:
             return values[-1] if values else 0.0
@@ -107,7 +91,7 @@ class PredictiveEngine:
         return float(np.clip(predicted, 0, 100))
         
     def _calculate_confidence(self, values: List[float]) -> float:
-        """Calculate prediction confidence"""
+        
         if len(values) < 5:
             return 0.3
             
@@ -124,27 +108,27 @@ class PredictiveEngine:
         return float(confidence)
         
     def _predict_health(self, data: Dict) -> Dict:
-        """Predict health issues"""
+        
         return self.predict("health")
         
     def _predict_behavior(self, data: Dict) -> Dict:
-        """Predict user behavior"""
+        
         return self.predict("behavior")
         
     def _predict_system(self, data: Dict) -> Dict:
-        """Predict system issues"""
+        
         return self.predict("system")
         
     def _predict_communication(self, data: Dict) -> Dict:
-        """Predict communication needs"""
+        
         return self.predict("communication")
         
     def _predict_resource(self, data: Dict) -> Dict:
-        """Predict resource usage"""
+        
         return self.predict("resource")
         
     def get_status(self) -> Dict:
-        """Get predictor status"""
+        
         return {
             "predictors": list(self.predictors.keys()),
             "data_buffers": {k: len(v) for k, v in self.time_series_buffers.items()},

@@ -1,0 +1,13 @@
+{
+  "captured_at": 1775408485.830831,
+  "ambient_db": 58.7,
+  "ambient_dbfs": -41.3,
+  "speech_db": 58.04,
+  "speech_dbfs": -41.96,
+  "snr_db": -0.65,
+  "sound_threshold_db": 68.7,
+  "voice_biometric_threshold": 0.72,
+  "speaker_scope": "admin",
+  "speaker_score_speech": null,
+  "speaker_score_ambient": null
+}

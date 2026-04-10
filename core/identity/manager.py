@@ -1,4 +1,4 @@
-# identity/manager.py
+﻿                     
 import uuid
 from core.event_bus import EventBus
 from core.logging_config import AEGISLogger

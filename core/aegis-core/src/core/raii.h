@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <utility>
 #include <type_traits>
@@ -9,13 +9,6 @@
 
 namespace aegis {
 
-/**
- * @class ScopeGuard
- * @brief RAII guard that executes cleanup on scope exit
- * 
- * Executes a cleanup function when the guard goes out of scope.
- * Useful for resource management and commit/rollback patterns.
- */
 template<typename Func>
 class ScopeGuard {
 public:
@@ -36,18 +29,11 @@ private:
     bool dismissed_;
 };
 
-/**
- * @brief Create a scope guard from a lambda or function
- */
 template<typename Func>
 ScopeGuard<Func> make_scope_guard(Func&& func) {
     return ScopeGuard<Func>(std::forward<Func>(func));
 }
 
-/**
- * @class SharedResource
- * @brief RAII wrapper for shared resources with reference counting
- */
 template<typename T>
 class SharedResource {
 public:
@@ -108,10 +94,6 @@ private:
     uint32_t* ref_count_;
 };
 
-/**
- * @class LazyInit
- * @brief Thread-safe lazy initialization wrapper
- */
 template<typename T>
 class LazyInit {
 public:
@@ -142,10 +124,6 @@ private:
     bool initialized_ = false;
 };
 
-/**
- * @class SpinLock
- * @brief Simple spinlock for low-contention scenarios
- */
 class SpinLock {
 public:
     SpinLock() = default;
@@ -153,7 +131,6 @@ public:
     
     void lock() {
         while (flag_.test_and_set(std::memory_order_acquire)) {
-            // Spin - in production, add yield or backoff
         }
     }
     
@@ -161,7 +138,6 @@ public:
         flag_.clear(std::memory_order_release);
     }
     
-    // C++17 scoped locking
     void lock() const {
         const_cast<SpinLock*>(this)->lock();
     }
@@ -170,10 +146,6 @@ private:
     mutable std::atomic_flag flag_ = ATOMIC_FLAG_INIT;
 };
 
-/**
- * @class ScopedLock
- * @brief RAII scoped lock adapter
- */
 template<typename Lock>
 class ScopedLock {
 public:

@@ -1,4 +1,4 @@
-# hybrid/edith/__init__.py
+﻿                          
 from .main import EDITH
 from .voice_interface import EdithVoiceInterface
 from .task_handler import EdithTaskHandler

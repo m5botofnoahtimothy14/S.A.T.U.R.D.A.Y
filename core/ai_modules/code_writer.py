@@ -1,4 +1,4 @@
-# ai_modules/code_writer.py
+﻿                           
 import logging
 
 logger = logging.getLogger("AEGIS.AI.CodeWriter")
@@ -13,7 +13,6 @@ class CodeWriter:
         language = data.get("language", "python")
         logger.info(f"Generating {language} code for: {prompt}")
         
-        # In a real system, this would call an LLM API
         generated_code = f"# Generated {language} code\n# Prompt: {prompt}\n\ndef main():\n    print('Hello AEGIS')\n"
         
         self.event_bus.publish("code_response", {"code": generated_code})

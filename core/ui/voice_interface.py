@@ -1,4 +1,4 @@
-# ui/voice_interface.py
+﻿                       
 import speech_recognition as sr
 import pyttsx3
 import threading
@@ -9,7 +9,6 @@ from core.event_bus import EventBus
 from core.audio_service import CrossPlatformAudio
 
 logger = structlog.get_logger("AEGIS.VoiceInterface")
-
 
 class VoiceInterface:
     def __init__(self, event_bus: EventBus):

@@ -1,8 +1,4 @@
-"""
-USBWatchdog
------------
-Polls mounted drives and publishes events when new USB volumes appear.
-"""
+﻿
 import time
 import threading
 import psutil
@@ -10,7 +6,6 @@ import logging
 from core.event_bus import EventBus
 
 logger = logging.getLogger("AEGIS.USBWatchdog")
-
 
 class USBWatchdog:
     def __init__(self, event_bus: EventBus, interval: float = 5.0):

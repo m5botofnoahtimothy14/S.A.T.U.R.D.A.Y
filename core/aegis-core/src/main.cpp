@@ -1,4 +1,4 @@
-#include <GLFW/glfw3.h>
+﻿#include <GLFW/glfw3.h>
 #include <GL/gl.h>
 #include <cmath>
 #include <vector>
@@ -24,7 +24,6 @@ struct Color {
     Color(float r_ = 1, float g_ = 1, float b_ = 1, float a_ = 1) : r(r_), g(g_), b(b_), a(a_) {}
 };
 
-// Simple hash for deterministic noise without RNG state
 float hash11(float n) {
     return fmodf(sinf(n) * 43758.5453f, 1.0f);
 }
@@ -115,7 +114,6 @@ void drawCoreSpiral(float time, float radius) {
 }
 
 void drawPulse(float time, float intensity) {
-    // Orbital glow layers
     float base = 0.35f + 0.05f * sinf(time * 2.0f);
     float glow = 0.55f + 0.08f * sinf(time * 5.0f);
 
@@ -127,7 +125,6 @@ void drawPulse(float time, float intensity) {
     drawGlowDisc(base * 1.25f, base * 0.05f, 120, inner, outer);
     drawGlowDisc(glow * 1.15f, glow * 0.08f, 120, mid, outer);
 
-    // Concentric rings
     for (int i = 0; i < 4; ++i) {
         float t = static_cast<float>(i) / 4.0f;
         float r = 0.2f + 0.15f * i + 0.02f * sinf(time * 3.5f + i);
@@ -135,13 +132,10 @@ void drawPulse(float time, float intensity) {
         drawRing(r, 0.01f + 0.01f * t, 140, Color(1.0f, 0.75f, 0.25f, alpha));
     }
 
-    // Radial circuitry
     drawRadials(time * 0.8f);
 
-    // Spiral heart
     drawCoreSpiral(time, 0.35f);
 
-    // Floating fragments
     drawOrbitingFragments(time, 0.55f);
 }
 
@@ -213,7 +207,6 @@ int main() {
         glClearColor(0.02f, 0.03f, 0.08f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
-        // Subtle camera drift for holographic parallax
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         float wobble = 2.0f * sinf(elapsed * 0.8f);

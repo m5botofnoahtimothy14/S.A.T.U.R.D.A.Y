@@ -1,4 +1,4 @@
-# governance/consent_manager.py
+﻿                               
 class ConsentManager:
     def __init__(self):
         self.consent_log = {}

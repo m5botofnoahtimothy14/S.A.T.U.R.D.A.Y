@@ -1,4 +1,4 @@
-# services/energy_manager.py
+﻿                            
 import structlog
 import psutil
 import asyncio
@@ -26,7 +26,7 @@ class EnergyManager:
                     self.event_bus.publish("voice_response", "Battery low. Switching AEGIS to power-saving mode.")
                     self.event_bus.publish("system_state_change", "low_power")
             
-            await asyncio.sleep(300) # Check every 5 mins
+            await asyncio.sleep(300)                     
 
     async def stop(self):
         self.active = False

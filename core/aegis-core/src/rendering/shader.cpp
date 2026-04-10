@@ -1,11 +1,10 @@
-#include "shader.h"
+﻿#include "shader.h"
 #include "core/logger.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <algorithm>
 
-// OpenGL function pointers (would normally come from GLEW/GLAD)
 #ifdef _WIN32
     #include <windows.h>
     #include <GL/gl.h>

@@ -1,9 +1,8 @@
-#include "mesh.h"
+﻿#include "mesh.h"
 #include "core/logger.h"
 #include <cmath>
 #include <algorithm>
 
-// OpenGL function declarations (simplified for this implementation)
 #ifdef _WIN32
     #include <windows.h>
     #include <GL/gl.h>
@@ -101,19 +100,15 @@ void Mesh::build() {
     glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(float), 
                  vertices_.data(), GL_STATIC_DRAW);
     
-    // Position (3 floats)
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     
-    // Normal (3 floats)
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     
-    // Texcoord (2 floats)
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     
-    // Color (4 floats)
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(8 * sizeof(float)));
     
@@ -130,7 +125,6 @@ void Mesh::build() {
 }
 
 void Mesh::upload() {
-    // Already uploaded in build()
 }
 
 void Mesh::bind() const {
@@ -318,12 +312,10 @@ Mesh Mesh::create_particle_system(size_t count) {
     std::vector<uint32_t> indices(count);
     
     for (size_t i = 0; i < count; ++i) {
-        // Random initial position
         vertices[i].position[0] = 0;
         vertices[i].position[1] = 0;
         vertices[i].position[2] = 0;
         
-        // Random velocity stored in color
         vertices[i].color[0] = (rand() % 100) / 100.0f;
         vertices[i].color[1] = (rand() % 100) / 100.0f;
         vertices[i].color[2] = (rand() % 100) / 100.0f;

@@ -1,11 +1,8 @@
-# conversational_dl/memory.py
-"""Conversation memory module"""
-
+﻿                             
 from collections import deque
 from typing import List, Dict
 
 class ConversationMemory:
-    """Long-term conversation memory for AEGIS"""
     
     def __init__(self, max_memory: int = 1000):
         self.max_memory = max_memory

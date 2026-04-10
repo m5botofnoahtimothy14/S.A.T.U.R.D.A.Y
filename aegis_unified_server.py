@@ -1,14 +1,4 @@
-#!/usr/bin/env python3
-"""
-AEGIS Unified Server
-===================
-Complete server with:
-- AEGIS Core API
-- Firebase Admin SDK for authentication
-- Control Panel serving (React/Vite)
-- Firebase Remote Wake listener
-- 24/7 Always-on process monitor
-"""
+﻿#!/usr/bin/env python3
 import os
 import sys
 import asyncio
@@ -29,13 +19,10 @@ from firebase_admin import credentials, firestore
 BASE_DIR = Path(__file__).parent
 sys.path.insert(0, str(BASE_DIR))
 os.chdir(BASE_DIR)
-
 from dotenv import load_dotenv
 load_dotenv(BASE_DIR / ".env")
-
 LOG_DIR = BASE_DIR / "logs" / "unified"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
-
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -45,10 +32,8 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger("AEGIS.Unified")
-
 AEGIS_PORT = 8000
 CONTROL_PORT = 8001
-
 class AEGISUnifiedServer:
     def __init__(self):
         self.running = True
@@ -63,7 +48,6 @@ class AEGISUnifiedServer:
         }
         self.node_id = os.getenv("AEGIS_NODE_ID", "aegis-primary")
         self._init_firebase()
-        
     def get_local_ip(self):
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -73,7 +57,6 @@ class AEGISUnifiedServer:
             return ip
         except:
             return "127.0.0.1"
-    
     def check_aegis(self):
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -83,9 +66,7 @@ class AEGISUnifiedServer:
             return result == 0
         except:
             return False
-    
     def start_aegis(self):
-        # Don't restart if already running or recently started (60 sec cooldown)
         if self.aegis_process and self.aegis_process.poll() is None:
             return True
         if self.aegis_start_time > 0 and time.time() - self.aegis_start_time < 60:
@@ -100,7 +81,6 @@ class AEGISUnifiedServer:
         self.aegis_start_time = time.time()
         logger.info(f"AEGIS started with PID: {self.aegis_process.pid}")
         return True
-    
     def _init_firebase(self):
         try:
             if not firebase_admin._apps:
@@ -110,11 +90,8 @@ class AEGISUnifiedServer:
         except Exception as e:
             logger.error(f"Unified Server: Firebase failed: {e}")
             self.db = None
-
     def start_cloud_watcher(self):
-        """Listens for remote 'Wake' signals when AEGIS is offline."""
         if not self.db: return
-        
         def on_snapshot(doc_snapshot, changes, read_time):
             for doc in doc_snapshot:
                 data = doc.to_dict()
@@ -122,12 +99,9 @@ class AEGISUnifiedServer:
                     logger.info("REMOTE CLOUD WAKE DETECTED!")
                     self.start_aegis()
                     doc.reference.update({"status": "executed", "woken_at": time.time()})
-
         self.db.collection("telemetry_nodes").document(self.node_id).collection("remote_commands").where("command", "==", "wake").on_snapshot(on_snapshot)
         logger.info("Unified Server: Cloud Watcher active.")
-    
     def proxy_to_aegis(self, path, method="GET", body=None):
-        """Proxy requests to AEGIS core"""
         import http.client
         try:
             conn = http.client.HTTPConnection("127.0.0.1", AEGIS_PORT, timeout=10)
@@ -142,14 +116,12 @@ class AEGISUnifiedServer:
             return response.status, data.decode('utf-8', errors='ignore')
         except Exception as e:
             return 502, json.dumps({"error": str(e)})
-    
     def get_control_panel_html(self):
         local_ip = self.server_info["local_ip"]
         aegis_status = "🟢 Online" if self.server_info["aegis_online"] else "🔴 Offline"
         uptime = int(time.time() - self.server_info["start_time"])
         hours = uptime // 3600
         minutes = (uptime % 3600) // 60
-        
         return f'''<!DOCTYPE html>
 <html>
 <head>
@@ -282,7 +254,6 @@ class AEGISUnifiedServer:
         <h1>⬡ AEGIS Control Panel</h1>
         <div class="status-badge">{aegis_status}</div>
     </div>
-    
     <div class="nav">
         <button onclick="location.reload()">🔄 Refresh</button>
         <button onclick="fetch('/api/control/restart',{{method:'POST'}}).then(()=>location.reload())">♻️ Restart AEGIS</button>
@@ -290,7 +261,6 @@ class AEGISUnifiedServer:
         <button onclick="fetch('/api/vision/start',{{method:'POST'}}).then(r=>r.json()).then(d=>alert(JSON.stringify(d)))">📷 Start Camera</button>
         <button onclick="fetch('/api/vision/stop',{{method:'POST'}}).then(r=>r.json()).then(d=>alert(JSON.stringify(d)))">⏹ Stop Camera</button>
     </div>
-    
     <div class="content">
         <div class="panel">
             <h2>📊 Server Status</h2>
@@ -313,7 +283,6 @@ class AEGISUnifiedServer:
                 </div>
             </div>
         </div>
-        
         <div class="panel">
             <h2>🔗 Access Links</h2>
             <div class="url-box">
@@ -325,7 +294,6 @@ class AEGISUnifiedServer:
                 <a href="http://{local_ip}:{CONTROL_PORT}">http://{local_ip}:{CONTROL_PORT}</a>
             </div>
         </div>
-        
         <div class="panel">
             <h2>🛠️ Quick API Endpoints</h2>
             <div class="api-section">
@@ -356,7 +324,6 @@ class AEGISUnifiedServer:
             </div>
         </div>
     </div>
-    
     <script>
         // Auto-refresh status every 10 seconds
         setInterval(() => {{
@@ -373,19 +340,13 @@ class AEGISUnifiedServer:
     </script>
 </body>
 </html>'''
-    
     def _send_cors(self, handler):
-        """Add CORS headers to response."""
         handler.send_header('Access-Control-Allow-Origin', '*')
         handler.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
         handler.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-
     def handle_request(self, handler):
-        """Handle incoming HTTP requests"""
         path = handler.path.split('?')[0]
         method = handler.command
-        
-        # Server status endpoints
         if path == '/' or path == '/index.html':
             handler.send_response(200)
             handler.send_header('Content-type', 'text/html')
@@ -393,7 +354,6 @@ class AEGISUnifiedServer:
             handler.end_headers()
             handler.wfile.write(self.get_control_panel_html().encode())
             return
-        
         if path == '/api/server/status':
             handler.send_response(200)
             handler.send_header('Content-type', 'application/json')
@@ -403,8 +363,6 @@ class AEGISUnifiedServer:
             self.server_info["aegis_online"] = self.check_aegis()
             handler.wfile.write(json.dumps(self.server_info).encode())
             return
-        
-        # Proxy to AEGIS Core
         if path.startswith('/api/') or path.startswith('/ws') or path.startswith('/vision') or path.startswith('/chat') or path.startswith('/tasks') or path.startswith('/status') or path.startswith('/health'):
             status, data = self.proxy_to_aegis(path, method)
             handler.send_response(status)
@@ -413,8 +371,6 @@ class AEGISUnifiedServer:
             handler.end_headers()
             handler.wfile.write(data.encode())
             return
-        
-        # Control endpoints
         if path == '/api/control/restart' and method == 'POST':
             self.start_aegis()
             handler.send_response(200)
@@ -422,7 +378,6 @@ class AEGISUnifiedServer:
             handler.end_headers()
             handler.wfile.write(json.dumps({"status": "restarting"}).encode())
             return
-        
         if path.startswith('/api/control/wake/'):
             target = path.split('/')[-1]
             _, data = self.proxy_to_aegis(f'/api/control/wake', 'POST', json.dumps({"target": target}))
@@ -431,7 +386,6 @@ class AEGISUnifiedServer:
             handler.end_headers()
             handler.wfile.write(data.encode())
             return
-        
         if path == '/api/vision/start' and method == 'POST':
             _, data = self.proxy_to_aegis('/api/camera/start', 'POST')
             handler.send_response(200)
@@ -439,7 +393,6 @@ class AEGISUnifiedServer:
             handler.end_headers()
             handler.wfile.write(data.encode())
             return
-        
         if path == '/api/vision/stop' and method == 'POST':
             _, data = self.proxy_to_aegis('/api/camera/stop', 'POST')
             handler.send_response(200)
@@ -447,11 +400,8 @@ class AEGISUnifiedServer:
             handler.end_headers()
             handler.wfile.write(data.encode())
             return
-        
-        # Static Files (React Build)
         dist_path = BASE_DIR / "aegis-control-panel" / "dist"
         if dist_path.exists():
-            # If path ends in a file or is a directory with index.html
             full_path = dist_path / path.lstrip('/')
             if full_path.is_file():
                 handler.send_response(200)
@@ -471,15 +421,11 @@ class AEGISUnifiedServer:
                 with open(dist_path / "index.html", 'rb') as f:
                     handler.wfile.write(f.read())
                 return
-
-        # 404
         handler.send_response(404)
         handler.send_header('Content-type', 'application/json')
         handler.end_headers()
         handler.wfile.write(json.dumps({"error": "Not found"}).encode())
-    
     def start_server(self):
-        """Start the HTTP server"""
         class RequestHandler(SimpleHTTPRequestHandler):
             def do_GET(self):
                 self.server.handle_request(self)
@@ -492,15 +438,11 @@ class AEGISUnifiedServer:
             def do_OPTIONS(self):
                 self.send_response(200)
                 self.end_headers()
-        
         RequestHandler.server = self
-        
         server = HTTPServer(('', CONTROL_PORT), RequestHandler)
         logger.info(f"Unified server running on port {CONTROL_PORT}")
         logger.info(f"Control Panel: http://{self.server_info['local_ip']}:{CONTROL_PORT}")
         logger.info(f"AEGIS API: http://{self.server_info['local_ip']}:{AEGIS_PORT}")
-        
-        # Handle OPTIONS for CORS
         original_do_OPTIONS = RequestHandler.do_OPTIONS
         def do_OPTIONS(self):
             self.send_response(200)
@@ -509,25 +451,17 @@ class AEGISUnifiedServer:
             self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
             self.end_headers()
         RequestHandler.do_OPTIONS = do_OPTIONS
-        
         server.serve_forever()
-    
     def monitor_loop(self):
-        """Monitor AEGIS and restart if needed"""
         while self.running:
             self.server_info["aegis_online"] = self.check_aegis()
-            
             if not self.server_info["aegis_online"]:
                 logger.warning("AEGIS offline, starting...")
                 self.start_aegis()
                 time.sleep(5)
-            
             time.sleep(10)
-    
     def run(self):
-        """Run the unified server"""
         self.server_info["local_ip"] = self.get_local_ip()
-        
         logger.info("="*60)
         logger.info("AEGIS UNIFIED SERVER STARTING")
         logger.info("="*60)
@@ -535,19 +469,11 @@ class AEGISUnifiedServer:
         logger.info(f"Control Panel: http://{self.server_info['local_ip']}:{CONTROL_PORT}")
         logger.info(f"AEGIS API: http://{self.server_info['local_ip']}:{AEGIS_PORT}")
         logger.info("="*60)
-        
         self.start_aegis()
-        
-        # Start monitor
         monitor_thread = threading.Thread(target=self.monitor_loop, daemon=True)
         monitor_thread.start()
-        
-        # Start cloud watcher
         self.start_cloud_watcher()
-        
-        # Start server
         self.start_server()
-
 if __name__ == "__main__":
     server = AEGISUnifiedServer()
     server.run()

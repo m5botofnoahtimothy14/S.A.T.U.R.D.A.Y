@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <chrono>
 #include <string>
@@ -6,10 +6,6 @@
 
 namespace aegis {
 
-/**
- * @class Timer
- * @brief High-resolution timer for performance measurement
- */
 class Timer {
 public:
     using Clock = std::chrono::high_resolution_clock;
@@ -18,35 +14,20 @@ public:
 
     Timer() : start_(Clock::now()) {}
 
-    /**
-     * @brief Reset timer to current time
-     */
     void reset() { start_ = Clock::now(); }
 
-    /**
-     * @brief Get elapsed time in seconds
-     */
     double elapsed_seconds() const {
         return std::chrono::duration<double>(Clock::now() - start_).count();
     }
 
-    /**
-     * @brief Get elapsed time in milliseconds
-     */
     double elapsed_milliseconds() const {
         return Duration(Clock::now() - start_).count();
     }
 
-    /**
-     * @brief Get elapsed time in microseconds
-     */
     double elapsed_microseconds() const {
         return std::chrono::duration<double, std::micro>(Clock::now() - start_).count();
     }
 
-    /**
-     * @brief Get elapsed time as a formatted string
-     */
     std::string elapsed_string() const {
         double ms = elapsed_milliseconds();
         if (ms < 1.0) {
@@ -62,27 +43,17 @@ private:
     TimePoint start_;
 };
 
-/**
- * @class FrameRateCounter
- * @brief Tracks frame rate over a sliding window
- */
 class FrameRateCounter {
 public:
     FrameRateCounter(size_t window_size = 60) 
         : window_size_(window_size), frame_times_(window_size), index_(0), count_(0) {}
 
-    /**
-     * @brief Record a frame time
-     */
     void record_frame(double frame_time_ms) {
         frame_times_[index_] = frame_time_ms;
         index_ = (index_ + 1) % window_size_;
         if (count_ < window_size_) ++count_;
     }
 
-    /**
-     * @brief Get current FPS
-     */
     double fps() const {
         if (count_ == 0) return 0.0;
         double total = 0.0;
@@ -93,9 +64,6 @@ public:
         return (count_ * 1000.0) / total;
     }
 
-    /**
-     * @brief Get average frame time in milliseconds
-     */
     double average_frame_time() const {
         if (count_ == 0) return 0.0;
         double total = 0.0;
@@ -105,9 +73,6 @@ public:
         return total / count_;
     }
 
-    /**
-     * @brief Get minimum frame time
-     */
     double min_frame_time() const {
         if (count_ == 0) return 0.0;
         double min_time = frame_times_[0];
@@ -117,9 +82,6 @@ public:
         return min_time;
     }
 
-    /**
-     * @brief Get maximum frame time
-     */
     double max_frame_time() const {
         if (count_ == 0) return 0.0;
         double max_time = frame_times_[0];
@@ -136,10 +98,6 @@ private:
     size_t count_;
 };
 
-/**
- * @class ScopedTimer
- * @brief RAII timer that logs on destruction
- */
 class ScopedTimer {
 public:
     ScopedTimer(const std::string& name, bool log = true) 

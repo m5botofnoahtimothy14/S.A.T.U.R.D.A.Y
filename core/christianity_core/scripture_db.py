@@ -1,7 +1,5 @@
-# scripture_db.py
-
+﻿                 
 import random
-
 
 class ScriptureDB:
 

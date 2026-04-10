@@ -1,15 +1,8 @@
-"""
-AEGIS HomeBot for M5Stack CORE2
-MicroPython v1.0
-================================
-Voice controlled robot via serial
-"""
+﻿
 import machine
 import time
 import sys
 
-# M5Stack CORE2 I2C motor driver (KAISE or similar)
-# Using GPIO pins for motor control
 MOTOR_A_PWM = 32
 MOTOR_A_DIR1 = 33
 MOTOR_A_DIR2 = 25
@@ -17,17 +10,14 @@ MOTOR_B_PWM = 26
 MOTOR_B_DIR1 = 27
 MOTOR_B_DIR2 = 14
 
-# Initialize
 def init():
     global pwm_a, pwm_b
     
-    # Motor A
     machine.Pin(MOTOR_A_DIR1, machine.Pin.OUT)
     machine.Pin(MOTOR_A_DIR2, machine.Pin.OUT)
     pwm_a = machine.PWM(machine.Pin(MOTOR_A_PWM), freq=1000)
     pwm_a.duty(0)
     
-    # Motor B
     machine.Pin(MOTOR_B_DIR1, machine.Pin.OUT)
     machine.Pin(MOTOR_B_DIR2, machine.Pin.OUT)
     pwm_b = machine.PWM(machine.Pin(MOTOR_B_PWM), freq=1000)
@@ -128,7 +118,6 @@ def process(cmd):
     else:
         return "UNKNOWN:" + cmd
 
-# Main loop
 init()
 uart = machine.UART(2, 115200, tx=17, rx=16)
 uart.init(115200)
@@ -150,7 +139,6 @@ while True:
                 else:
                     buffer += c
     
-    # Check serial from USB
     if sys.stdin.any():
         data = sys.stdin.read(1)
         if data == '\n' or data == '\r':

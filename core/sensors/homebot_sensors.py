@@ -1,4 +1,4 @@
-# sensors/homebot_sensors.py
+﻿                            
 import logging
 import paho.mqtt.client as mqtt
 from core.event_bus import EventBus
@@ -33,7 +33,7 @@ class HomeBotSensors:
             payload = json.loads(msg.payload)
             sensor_id = topic.split('/')[-1]
             self.latest_readings[sensor_id] = payload
-            # Create async task for event publishing
+                                                    
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             loop.run_until_complete(self.event_bus.publish("sensor_update", {"id": sensor_id, "value": payload}))

@@ -1,4 +1,4 @@
-# governance/privacy_mode.py
+﻿                            
 class PrivacyMode:
     def __init__(self):
         self.enabled = False

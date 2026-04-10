@@ -1,7 +1,5 @@
-#!/usr/bin/env python3
-"""
-Download Piper TTS models for OFFLINE deep learning text-to-speech.
-"""
+﻿#!/usr/bin/env python3
+
 import os
 import urllib.request
 import zipfile

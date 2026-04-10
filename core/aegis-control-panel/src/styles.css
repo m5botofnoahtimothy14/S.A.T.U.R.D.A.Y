@@ -1,5 +1,4 @@
-/* aegis-control-panel/src/styles.css */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap');
 
 :root {
   --bg-deep: #050a10;
@@ -32,7 +31,6 @@ body {
     url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
 }
 
-/* Authentication Layout */
 .auth-shell {
   height: 100vh;
   display: flex;
@@ -142,7 +140,6 @@ button:hover:not(:disabled) {
   filter: brightness(1.2);
 }
 
-/* Dashboard Layout */
 .dashboard-container {
   display: grid;
   grid-template-columns: 280px 1fr 350px;
@@ -165,7 +162,6 @@ button:hover:not(:disabled) {
   overflow-y: auto;
 }
 
-/* Panel Styles */
 .panel {
   background: var(--bg-card);
   backdrop-filter: blur(8px);
@@ -206,7 +202,6 @@ button:hover:not(:disabled) {
   gap: 10px;
 }
 
-/* Stats Grid */
 .health-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -233,7 +228,6 @@ button:hover:not(:disabled) {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Camera Stream */
 .video-container {
   width: 100%;
   aspect-ratio: 16/9;
@@ -260,7 +254,6 @@ button:hover:not(:disabled) {
   pointer-events: none;
 }
 
-/* Logs */
 .logs-container {
   height: 300px;
   overflow-y: auto;
@@ -283,7 +276,6 @@ button:hover:not(:disabled) {
 
 .log-time { color: var(--text-secondary); margin-right: 10px; }
 
-/* Scrollbar Customization */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -298,7 +290,6 @@ button:hover:not(:disabled) {
   background: var(--accent-blue);
 }
 
-/* Mobile Responsiveness */
 @media (max-width: 1200px) {
   .dashboard-container {
     grid-template-columns: 1fr;

@@ -1,4 +1,4 @@
-# christianity_core/spirituality.py
+﻿                                   
 import structlog
 from core.event_bus import EventBus
 import random

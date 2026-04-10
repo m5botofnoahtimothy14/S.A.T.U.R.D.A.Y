@@ -1,4 +1,4 @@
-import psutil
+﻿import psutil
 import logging
 import time
 import os
@@ -20,7 +20,7 @@ class SystemMonitor:
         self._establish_baseline()
         
     def _establish_baseline(self):
-        """Establish baseline for anomaly detection"""
+        
         cpu_samples = []
         mem_samples = []
         for _ in range(5):
@@ -45,14 +45,13 @@ class SystemMonitor:
             time.sleep(2)
             
     def _detect_anomalies(self):
-        """Real anomaly detection based on baseline"""
+        
         if not self.baseline_stats:
             return
             
         cpu = psutil.cpu_percent(interval=0.1)
         memory = psutil.virtual_memory().percent
         
-        # Detect CPU anomalies
         cpu_threshold = self.baseline_stats['cpu_mean'] + (3 * self.baseline_stats['cpu_std'])
         if cpu > cpu_threshold and cpu > 80:
             self.event_bus.publish('security_alert', {
@@ -62,7 +61,6 @@ class SystemMonitor:
                 'timestamp': datetime.now().isoformat()
             })
             
-        # Detect memory anomalies
         if memory > 90:
             self.event_bus.publish('security_alert', {
                 'type': 'memory_anomaly',
@@ -70,11 +68,10 @@ class SystemMonitor:
                 'timestamp': datetime.now().isoformat()
             })
             
-        # Check for suspicious processes
         self._scan_suspicious_processes()
             
     def _scan_suspicious_processes(self):
-        """Scan for suspicious processes"""
+        
         suspicious_names = ['mimikatz', 'pwdump', 'procdump', 'lsass', 'metasploit', 'nikto', 'nmap', 'hydra']
         
         for proc in psutil.process_iter(['name', 'cpu_percent']):
@@ -120,20 +117,18 @@ class SystemMonitor:
             logger.error(f"Error collecting system stats: {e}")
             
     def get_system_stats(self):
-        """Get REAL system stats"""
+        
         cpu = psutil.cpu_percent(interval=0.5)
         memory = psutil.virtual_memory()
         disk = psutil.disk_usage(os.getenv('SystemDrive', 'C:\\'))
         network = psutil.net_io_counters()
         
-        # Get battery if available
         battery = None
         try:
             battery = psutil.sensors_battery()
         except:
             pass
         
-        # Get temperatures if available
         temps = {}
         try:
             temps = psutil.sensors_temperatures()
@@ -164,14 +159,11 @@ class SystemMonitor:
         return stats
         
     def get_defense_status(self):
-        """Get REAL defense system status"""
-        # Check real firewall status
+        
         firewall_status = self._check_firewall()
         
-        # Check real antivirus
         antivirus_status = self._check_antivirus()
         
-        # Get network security status
         network_security = self._check_network_security()
         
         return {
@@ -188,9 +180,9 @@ class SystemMonitor:
         }
         
     def _check_firewall(self):
-        """Check real firewall status"""
+        
         try:
-            # On Windows, check Windows Firewall status
+                                                       
             if os.name == 'nt':
                 import subprocess
                 result = subprocess.run(
@@ -204,7 +196,7 @@ class SystemMonitor:
             return 'Unknown'
             
     def _check_antivirus(self):
-        """Check real antivirus status"""
+        
         try:
             if os.name == 'nt':
                 import subprocess
@@ -219,7 +211,7 @@ class SystemMonitor:
             return 'Unknown'
             
     def _check_network_security(self):
-        """Check network security status"""
+        
         try:
             connections = psutil.net_connections()
             listening = [c for c in connections if c.status == 'LISTEN']
@@ -228,22 +220,19 @@ class SystemMonitor:
             return False
         
     def get_threats(self):
-        """Get REAL threats from system"""
+        
         threats = []
         
-        # Check for suspicious network connections
         threats.extend(self._detect_network_threats())
         
-        # Check for suspicious files
         threats.extend(self._detect_file_threats())
         
-        # Check for suspicious processes  
         threats.extend(self._detect_process_threats())
         
-        return threats[:20]  # Return top 20
+        return threats[:20]                 
         
     def _detect_network_threats(self):
-        """Detect real network threats"""
+        
         threats = []
         suspicious_ips = []
         
@@ -252,11 +241,11 @@ class SystemMonitor:
             for conn in connections:
                 if conn.status == 'ESTABLISHED' and conn.raddr:
                     ip = conn.raddr.ip
-                    # Check for suspicious patterns
+                                                   
                     if ip.startswith(('10.', '192.168.', '172.')):
-                        pass  # Local network
+                        pass                 
                     else:
-                        # Check for unusual ports
+                                                 
                         if conn.raddr.port not in [80, 443, 22, 21, 25, 53]:
                             threats.append({
                                 'id': len(threats) + 1,
@@ -274,10 +263,9 @@ class SystemMonitor:
         return threats
         
     def _detect_file_threats(self):
-        """Detect real file-based threats"""
+        
         threats = []
         
-        # Check for suspicious files in common locations
         suspicious_paths = [
             os.path.expanduser('~/Downloads'),
             os.path.expanduser('~/AppData/Local/Temp'),
@@ -295,7 +283,7 @@ class SystemMonitor:
                         ext = os.path.splitext(file)[1].lower()
                         if ext in suspicious_extensions:
                             filepath = os.path.join(root, file)
-                            # Get file hash
+                                           
                             try:
                                 with open(filepath, 'rb') as f:
                                     file_hash = hashlib.sha256(f.read(1024)).hexdigest()
@@ -320,7 +308,7 @@ class SystemMonitor:
         return threats
         
     def _detect_process_threats(self):
-        """Detect real process-based threats"""
+        
         threats = []
         
         suspicious_processes = {
@@ -352,7 +340,7 @@ class SystemMonitor:
                                 'time': 'Now',
                                 'action_taken': 'Process terminated'
                             })
-                            # Try to terminate the process
+                                                          
                             try:
                                 proc.kill()
                             except:
@@ -365,7 +353,7 @@ class SystemMonitor:
         return threats
         
     def get_network_connections(self):
-        """Get REAL network connections"""
+        
         connections = []
         try:
             for conn in psutil.net_connections(kind='inet'):
@@ -385,7 +373,7 @@ class SystemMonitor:
         return connections[:50]
         
     def get_process_list(self):
-        """Get REAL process list"""
+        
         processes = []
         try:
             for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent', 'status', 'create_time']):
@@ -407,7 +395,7 @@ class SystemMonitor:
         return sorted(processes, key=lambda x: x['cpu'], reverse=True)[:20]
         
     def perform_antivirus_scan(self):
-        """Perform REAL antivirus scan"""
+        
         scan_results = {
             'scan_started': datetime.now().isoformat(),
             'files_scanned': 0,
@@ -418,7 +406,6 @@ class SystemMonitor:
             'suspicious_files': []
         }
         
-        # Scan critical directories
         scan_paths = [
             os.path.expanduser('~/Downloads'),
             os.path.expanduser('~/Documents'),
@@ -427,7 +414,7 @@ class SystemMonitor:
         ]
         
         malicious_signatures = [
-            b'MZ',  # PE header (could be legitimate)
+            b'MZ',                                   
             b'CreateRemoteThread',
             b'VirtualAlloc',
             b'WriteProcessMemory',
@@ -453,7 +440,6 @@ class SystemMonitor:
                                     content = f.read(4096)
                                     file_hash = hashlib.sha256(content).hexdigest()
                                     
-                                    # Check for suspicious patterns
                                     is_suspicious = False
                                     for sig in malicious_signatures:
                                         if sig in content:
@@ -482,7 +468,6 @@ class SystemMonitor:
         scan_results['status'] = 'Completed'
         scan_results['scan_completed'] = datetime.now().isoformat()
         
-        # Publish security alert if threats found
         if scan_results['threats_found'] > 0:
             self.event_bus.publish('security_alert', {
                 'type': 'antivirus_scan',
@@ -493,8 +478,7 @@ class SystemMonitor:
         return scan_results
         
     def get_dl_defense_analytics(self):
-        """Get REAL DL defense analytics"""
-        # Get actual network traffic stats
+        
         net_io = psutil.net_io_counters()
         
         return {

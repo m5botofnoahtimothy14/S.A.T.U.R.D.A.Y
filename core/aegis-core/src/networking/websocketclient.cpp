@@ -1,4 +1,4 @@
-#include "networking/websocketclient.h"
+﻿#include "networking/websocketclient.h"
 
 namespace aegis {
 
@@ -8,7 +8,6 @@ WebSocketClient::~WebSocketClient() = default;
 bool WebSocketClient::connect(const std::string& url) {
     url_ = url;
     set_state(ConnectionState::Connecting);
-    // Would use libwebsockets in production
     return true;
 }
 
@@ -18,7 +17,6 @@ void WebSocketClient::disconnect() {
 
 bool WebSocketClient::send_json(const std::string& json) {
     if (!is_connected()) return false;
-    // Would send via WebSocket
     return true;
 }
 

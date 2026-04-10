@@ -1,12 +1,4 @@
-# deep_learning/patterns.py
-"""
-PatternRecognition
-=================
-Neural pattern recognition for AEGIS.
-Identifies patterns in user behavior, system events,
-and environmental factors to make predictions.
-"""
-
+﻿                           
 import os
 import json
 import time
@@ -21,7 +13,6 @@ import numpy as np
 logger = structlog.get_logger("AEGIS.DL.Patterns")
 
 class PatternMatcher:
-    """Neural-inspired pattern matching"""
     
     def __init__(self, pattern_size: int = 10):
         self.pattern_size = pattern_size
@@ -29,12 +20,12 @@ class PatternMatcher:
         self.weights = {}
         
     def hash_pattern(self, data: Any) -> str:
-        """Create pattern hash"""
+        
         data_str = str(data)
         return hashlib.md5(data_str.encode()).hexdigest()[:16]
         
     def learn_pattern(self, sequence: List[Any], label: str):
-        """Learn a pattern from sequence"""
+        
         pattern_hash = self.hash_pattern(sequence)
         
         if pattern_hash not in self.patterns:
@@ -49,7 +40,7 @@ class PatternMatcher:
         self.patterns[pattern_hash]["confidence"] = min(1.0, self.patterns[pattern_hash]["count"] / 10.0)
         
     def match(self, sequence: List[Any]) -> Optional[Tuple[str, float]]:
-        """Find matching pattern"""
+        
         pattern_hash = self.hash_pattern(sequence)
         
         if pattern_hash in self.patterns:
@@ -63,20 +54,14 @@ class PatternMatcher:
         return None
         
     def _similarity(self, seq1: List[Any], seq2: List[Any]) -> float:
-        """Calculate sequence similarity"""
+        
         if not seq1 or not seq2:
             return 0.0
             
         matches = sum(1 for a, b in zip(seq1, seq2) if a == b)
         return matches / max(len(seq1), len(seq2))
 
-
 class PatternRecognition:
-    """
-    Pattern Recognition System for AEGIS.
-    Uses neural-inspired algorithms to recognize patterns
-    in user behavior, commands, and system states.
-    """
     
     def __init__(self, event_bus=None, deep_learning_core=None):
         self.event_bus = event_bus
@@ -112,14 +97,14 @@ class PatternRecognition:
         logger.info("PatternRecognition initialized - Neural pattern matching active")
         
     def _subscribe_to_events(self):
-        """Subscribe to events for pattern learning"""
+        
         if self.event_bus:
             self.event_bus.subscribe("voice_command", self._on_command)
             self.event_bus.subscribe("task_request", self._on_task)
             self.event_bus.subscribe("user_detected", self._on_user)
             
     def _on_command(self, data):
-        """Learn from commands"""
+        
         command = str(data)
         self.sequence_buffer.append(command)
         
@@ -133,7 +118,7 @@ class PatternRecognition:
         })
         
     def _on_task(self, data):
-        """Learn from tasks"""
+        
         self.behavior_buffer.append({
             "type": "task",
             "data": data,
@@ -141,7 +126,7 @@ class PatternRecognition:
         })
         
     def _on_user(self, data):
-        """Learn user patterns"""
+        
         user_id = data.get("user_id", "default")
         
         self.user_profiles[user_id]["times"].append(time.time())
@@ -154,7 +139,7 @@ class PatternRecognition:
             self.time_patterns.learn_pattern([hour], f"user_{user_id}")
             
     def recognize_command_pattern(self, command: str) -> Dict[str, Any]:
-        """Recognize command patterns"""
+        
         recent = list(self.sequence_buffer)[-5:]
         recent.append(command)
         
@@ -176,7 +161,7 @@ class PatternRecognition:
         }
         
     def recognize_time_pattern(self) -> Dict[str, Any]:
-        """Recognize time-based patterns"""
+        
         current_hour = time.localtime().tm_hour
         current_minute = time.localtime().tm_min
         
@@ -198,7 +183,7 @@ class PatternRecognition:
         }
         
     def recognize_behavior(self, user: str = "default") -> Dict[str, Any]:
-        """Recognize user behavior patterns"""
+        
         profile = self.user_profiles[user]
         
         recent_behavior = list(self.behavior_buffer)[-10:]
@@ -227,7 +212,7 @@ class PatternRecognition:
         }
         
     def _calculate_anomaly_score(self, user: str, behavior: List[Dict]) -> float:
-        """Calculate anomaly score for behavior"""
+        
         if user not in self.user_profiles:
             return 0.0
             
@@ -255,7 +240,7 @@ class PatternRecognition:
         return max(0.0, 1.0 - similarity)
         
     def _generate_suggestion(self, command: str) -> Optional[str]:
-        """Generate suggestion based on pattern"""
+        
         suggestions = {
             "music": "Would you like to play some music?",
             "search": "I can search for more information.",
@@ -272,7 +257,7 @@ class PatternRecognition:
         return None
         
     def _get_time_context(self) -> str:
-        """Get time context description"""
+        
         hour = time.localtime().tm_hour
         
         if 5 <= hour < 12:
@@ -285,7 +270,7 @@ class PatternRecognition:
             return "night"
             
     def predict_next_command(self, user: str = "default") -> Dict[str, Any]:
-        """Predict next likely command"""
+        
         profile = self.user_profiles[user]
         
         recent = list(self.sequence_buffer)[-3:]
@@ -318,7 +303,7 @@ class PatternRecognition:
         }
         
     def learn_from_outcome(self, command: str, success: bool):
-        """Learn from command execution outcome"""
+        
         user = "default"
         self.user_profiles[user]["commands"].append(command)
         
@@ -328,7 +313,7 @@ class PatternRecognition:
             self.behavior_patterns.learn_pattern([command], "failed_command")
             
     def _save_patterns(self):
-        """Save learned patterns"""
+        
         patterns_data = {
             "command_patterns": len(self.command_patterns.patterns),
             "time_patterns": len(self.time_patterns.patterns),
@@ -340,7 +325,7 @@ class PatternRecognition:
             json.dump(patterns_data, f, indent=2)
             
     def _load_patterns(self):
-        """Load previously learned patterns"""
+        
         patterns_file = f"{self.data_dir}/patterns.json"
         
         if os.path.exists(patterns_file):
@@ -358,7 +343,7 @@ class PatternRecognition:
                 logger.warning(f"Failed to load patterns: {e}")
                 
     def get_status(self) -> Dict[str, Any]:
-        """Get pattern recognition status"""
+        
         return {
             "command_patterns": len(self.command_patterns.patterns),
             "time_patterns": len(self.time_patterns.patterns),

@@ -1,12 +1,4 @@
-# ml_integration/core.py
-"""
-ML Integration Core - Unified ML/DL for ALL AEGIS Subsystems
-=============================================================
-This module provides plug-and-play ML/DL capabilities to any AEGIS subsystem.
-Every system in AEGIS now uses neural networks for decision making,
-prediction, classification, and continuous learning.
-"""
-
+﻿                        
 import os
 import json
 import time
@@ -20,7 +12,6 @@ from core.logging_config import AEGISLogger
 logger = AEGISLogger.get_logger("ML.Core", "ml")
 
 class SubsystemNeuralNetwork:
-    """Neural network wrapper for any subsystem"""
     
     def __init__(self, name: str, input_size: int = 15, hidden_size: int = 30, output_size: int = 5):
         self.name = name
@@ -90,22 +81,7 @@ class SubsystemNeuralNetwork:
         self.train(X, y_onehot, epochs=10, lr=0.01)
         return True
 
-
 class MLIntegrationCore:
-    """
-    Unified ML/DL Integration Core for ALL AEGIS Subsystems.
-    
-    This class provides neural network capabilities to any subsystem:
-    - Health Monitoring
-    - Identity & Security
-    - Communication
-    - Vision & Embodied AI
-    - UI
-    - Christianity Core
-    - And more
-    
-    Each subsystem gets its own neural network that learns and evolves.
-    """
     
     _instance = None
     _lock = threading.Lock()
@@ -137,7 +113,6 @@ class MLIntegrationCore:
         self._initialized = True
         
     def _register_default_subsystems(self):
-        """Register all AEGIS subsystems with ML capabilities"""
         
         subsystems = [
             ("health", 15, 30, 5),
@@ -162,7 +137,7 @@ class MLIntegrationCore:
             self.register_subsystem(name, inp, hid, out)
             
     def register_subsystem(self, name: str, input_size: int = 15, hidden_size: int = 30, output_size: int = 5):
-        """Register a new subsystem with ML capabilities"""
+        
         if name not in self.subsystem_networks:
             self.subsystem_networks[name] = SubsystemNeuralNetwork(name, input_size, hidden_size, output_size)
             self.subsystem_stats[name] = {
@@ -174,7 +149,7 @@ class MLIntegrationCore:
             logger.info(f"Registered subsystem with ML: {name}")
             
     def predict(self, subsystem: str, features: List[float]) -> Dict[str, Any]:
-        """Make a prediction using neural network"""
+        
         if subsystem not in self.subsystem_networks:
             self.register_subsystem(subsystem)
             
@@ -200,7 +175,7 @@ class MLIntegrationCore:
             return {"success": False, "error": str(e)}
             
     def learn(self, subsystem: str, features: List[float], label: int):
-        """Learn from an experience"""
+        
         if subsystem not in self.subsystem_networks:
             self.register_subsystem(subsystem)
             
@@ -219,7 +194,7 @@ class MLIntegrationCore:
             logger.info(f"ML model updated for {subsystem}")
             
     def batch_learn(self, subsystem: str, data: List[tuple]):
-        """Batch learn from multiple experiences"""
+        
         if subsystem not in self.subsystem_networks:
             self.register_subsystem(subsystem)
             
@@ -235,7 +210,7 @@ class MLIntegrationCore:
         self.subsystem_stats[subsystem]["experiences"] += len(data)
         
     def analyze_and_decide(self, subsystem: str, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Analyze context and make intelligent decision"""
+        
         features = self._context_to_features(context)
         
         result = self.predict(subsystem, features)
@@ -259,7 +234,7 @@ class MLIntegrationCore:
         return {"action": "fallback", "confidence": 0.0, "subsystem": subsystem}
         
     def _context_to_features(self, context: Dict) -> List[float]:
-        """Convert context to feature vector"""
+        
         features = []
         
         numeric_keys = [
@@ -284,7 +259,7 @@ class MLIntegrationCore:
         return features
         
     def _get_subsystem_actions(self, subsystem: str) -> List[str]:
-        """Get action list for subsystem"""
+        
         actions = {
             "health": ["monitor", "alert", "treat", "escalate", "ignore"],
             "identity": ["verify", "deny", "review", "escalate", "allow"],
@@ -302,7 +277,7 @@ class MLIntegrationCore:
         return actions.get(subsystem, actions["default"])
         
     def get_subsystem_status(self, subsystem: str) -> Dict[str, Any]:
-        """Get status of a subsystem's ML"""
+        
         if subsystem not in self.subsystem_networks:
             return {"error": "Subsystem not registered"}
             
@@ -319,14 +294,14 @@ class MLIntegrationCore:
         }
         
     def get_all_status(self) -> Dict[str, Any]:
-        """Get status of all ML-integrated subsystems"""
+        
         return {
             "total_subsystems": len(self.subsystem_networks),
             "subsystems": {name: self.get_subsystem_status(name) for name in self.subsystem_networks}
         }
         
     def save_models(self):
-        """Save all subsystem models"""
+        
         for name, nn in self.subsystem_networks.items():
             try:
                 model_data = {
@@ -346,7 +321,7 @@ class MLIntegrationCore:
         logger.info(f"Saved ML models for {len(self.subsystem_networks)} subsystems")
         
     def _load_models(self):
-        """Load previously trained models"""
+        
         for name in self.subsystem_networks.keys():
             try:
                 model_file = f"{self.data_dir}/{name}_model.json"
@@ -366,7 +341,7 @@ class MLIntegrationCore:
                 logger.warning(f"Failed to load {name} model: {e}")
                 
     async def start_autonomous_learning(self):
-        """Background learning for all subsystems"""
+        
         while self.running:
             try:
                 for name, nn in self.subsystem_networks.items():
@@ -379,7 +354,7 @@ class MLIntegrationCore:
                 await asyncio.sleep(60)
                 
     async def start_periodic_save(self):
-        """Periodically save models"""
+        
         while self.running:
             try:
                 await asyncio.sleep(300)
@@ -388,7 +363,7 @@ class MLIntegrationCore:
                 logger.warning(f"Model save error: {e}")
                 
     def shutdown(self):
-        """Graceful shutdown"""
+        
         self.running = False
         self.save_models()
         logger.info("ML Integration Core shutdown - Models saved")

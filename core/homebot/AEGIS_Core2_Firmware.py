@@ -1,53 +1,41 @@
-# AEGIS HomeBot Core2 Firmware v3.0 - Full AI Edition
-# Copy this entire code to UiFlow2 Web IDE and flash
-# Features: Multi-MQTT, Speech, Reactive Face, Auto-Failover
-
-# ============== CONFIG ==============
+﻿                                                     
 WIFI_SSID = "Timojoe"
 WIFI_PASSWORD = "kebajtimo"
 
-# COM4 Serial Configuration
 SERIAL_BAUD = 115200
-SERIAL_TIMEOUT = 1000  # ms
+SERIAL_TIMEOUT = 1000      
 
-# Multi-MQTT Configuration
 MQTT_BROKER_PRIMARY = "192.168.0.1"
 MQTT_PORT_PRIMARY = 1883
 MQTT_BROKER_SECONDARY = "192.168.0.180"
 MQTT_PORT_SECONDARY = 1883
-MQTT_ENABLED = True  # ENABLED for real deployment
+MQTT_ENABLED = True                               
 
-MQTT_USE_PRIMARY = True  # Start with primary
+MQTT_USE_PRIMARY = True                      
 
-# Motor Pins (GPIO)
 M_FL = 26
 M_FR = 25
 M_BL = 32
 M_BR = 33
 
-# Sensor Pins
 ULTRASONIC_TRIG = 23
 ULTRASONIC_ECHO = 22
 VIBRATION_PIN = 34
 
-# DL/ML Settings
 SENSOR_INTERVAL = 2
 MOTOR_TIMEOUT = 10
 ANOMALY_THRESHOLD = 0.75
 OBSTACLE_THRESHOLD = 30
 
-# Audio Settings
 SPEAKER_VOLUME = 80
 MIC_GAIN = 3
-TTS_THRESHOLD = 0.3  # Volume threshold to detect speech
+TTS_THRESHOLD = 0.3                                     
 
-# Animation Settings
-EYE_COLOR = 0x00FF7F  # Spring green
+EYE_COLOR = 0x00FF7F                
 MOUTH_COLOR = 0x00FF7F
-BG_COLOR = 0x1A1A2E  # Dark blue
+BG_COLOR = 0x1A1A2E             
 EXPRESSIVE_MODE = True
 
-# ============== DL CORE ==============
 class DLCore:
     def __init__(self):
         self.model_loaded = False
@@ -109,17 +97,16 @@ class DLCore:
             "capabilities": self.capabilities
         }
 
-# ============== SERIAL COMMUNICATION ==============
 class SerialComm:
     def __init__(self):
         self.uart = None
         self.connected = False
         
     def init(self):
-        """Initialize UART for COM4 communication"""
+        
         try:
             from machine import UART
-            # Use UART2 (common for external communication)
+                                                           
             self.uart = UART(2, SERIAL_BAUD, timeout=SERIAL_TIMEOUT)
             self.connected = True
             print("[SERIAL] COM4 ready")
@@ -128,7 +115,7 @@ class SerialComm:
             self.connected = False
     
     def send(self, data):
-        """Send data via serial"""
+        
         if self.connected and self.uart:
             try:
                 if isinstance(data, str):
@@ -140,7 +127,7 @@ class SerialComm:
         return False
     
     def receive(self):
-        """Receive data from serial"""
+        
         if self.connected and self.uart:
             try:
                 if self.uart.any():
@@ -151,13 +138,12 @@ class SerialComm:
         return None
     
     def process_commands(self):
-        """Process incoming serial commands"""
+        
         cmd = self.receive()
         if cmd:
             cmd = cmd.strip()
             print("[SERIAL] Received:", cmd)
             
-            # Motor commands
             if cmd == "FWD":
                 motors.omni(0, 50, 0)
             elif cmd == "REV":
@@ -173,7 +159,7 @@ class SerialComm:
             elif cmd == "STP":
                 motors.stop()
             elif cmd.startswith("NAV"):
-                # NAVx,y format
+                               
                 try:
                     coords = cmd[3:].split(',')
                     x, y = int(coords[0]), int(coords[1])
@@ -184,7 +170,6 @@ class SerialComm:
             return cmd
         return None
 
-# ============== MOTORS ==============
 class Motors:
     def __init__(self):
         from machine import Pin
@@ -225,7 +210,6 @@ class Motors:
             "BR": int(br/m*100)
         })
 
-# ============== SENSORS ==============
 class Sensors:
     def __init__(self):
         from machine import Pin, ADC
@@ -275,7 +259,6 @@ class Sensors:
         r = self.wifi_rssi(None)
         return {"distance": d, "vibration": v, "rssi": r}
 
-# ============== SPEECH ENGINE ==============
 class SpeechEngine:
     def __init__(self):
         self.speaking = False
@@ -286,7 +269,7 @@ class SpeechEngine:
         print("[SPEECH] Engine Ready")
     
     def speak(self, text):
-        """Convert text to speech and play via speaker"""
+        
         if not text:
             return
             
@@ -298,8 +281,6 @@ class SpeechEngine:
             from M5 import Speaker
             Speaker.setVolume(SPEAKER_VOLUME)
             
-            # Use beep tones for now (real TTS would need cloud)
-            # This creates a simple "speaking" animation effect
             for i, char in enumerate(text):
                 if char in 'aeiou':
                     freq = 800 + (i * 50)
@@ -312,17 +293,17 @@ class SpeechEngine:
         self.last_speech_time = time.time()
     
     def listen_start(self):
-        """Start listening via microphone"""
+        
         self.listening = True
         print("[STT] Listening...")
     
     def listen_stop(self):
-        """Stop listening"""
+        
         self.listening = False
         print("[STT] Stopped")
     
     def get_audio_level(self):
-        """Get current audio level from mic"""
+        
         try:
             import M5
             from M5 import Mic
@@ -333,11 +314,10 @@ class SpeechEngine:
             return 0
     
     def is_speech_detected(self):
-        """Detect if someone is speaking"""
+        
         level = self.get_audio_level()
         return level > (TTS_THRESHOLD * 100)
 
-# ============== REACTIVE FACE ==============
 class ReactiveFace:
     def __init__(self):
         self.emotion = "happy"
@@ -369,12 +349,12 @@ class ReactiveFace:
         print("[FACE] Reactive Face Ready")
     
     def init_display(self):
-        """Initialize and draw initial face"""
+        
         self.lcd = None
         try:
             import M5
             M5.begin()
-            # Try M5Lcd (common in UiFlow2)
+                                           
             try:
                 from M5 import M5Lcd
                 self.lcd = M5Lcd
@@ -392,9 +372,8 @@ class ReactiveFace:
                         print("[FACE] No display found")
                         return
             
-            # Initialize display settings
             try:
-                self.lcd.setRotation(1)  # Landscape
+                self.lcd.setRotation(1)             
                 self.lcd.setBrightness(80)
                 print("[FACE] Display configured")
             except:
@@ -402,7 +381,7 @@ class ReactiveFace:
             
             self.initialized = True
             print("[FACE] Display ready")
-            # Try initial draw
+                              
             self.draw_face()
         except Exception as e:
             print("[FACE] Init error:", str(e))
@@ -412,28 +391,25 @@ class ReactiveFace:
         self.emotion = emotion
     
     def update(self, speaking=False, music_level=0, sensor_data=None):
-        # Auto blink
+                    
         self.blink_timer += 1
         if self.blink_timer > 120:
             self.blink_state = not self.blink_state
             self.blink_timer = 0
             self.eye_open = 0.15 if self.blink_state else 1.0
         
-        # Talking animation
         if speaking:
             self.talk_frame += 1
             self.mouth_open = 0.5 + (self.talk_frame % 3) * 0.15
         else:
             self.mouth_open = max(0, self.mouth_open - 0.15)
         
-        # Music/beat reaction
         if music_level > 20:
             self.music_beat = music_level / 100.0
             self.wobble = self.music_beat * 8
         else:
             self.wobble *= 0.85
         
-        # Eye tracking
         if sensor_data:
             dist = sensor_data.get("distance", 100)
             vib = sensor_data.get("vibration", 0)
@@ -444,12 +420,11 @@ class ReactiveFace:
             else:
                 self.eye_y = 0
             
-            # Vibration = alert
             if vib > 1500:
                 self.emotion = "alert"
     
     def draw_face(self):
-        """Draw complete reactive face"""
+        
         if not self.initialized:
             return
             
@@ -457,7 +432,6 @@ class ReactiveFace:
             import M5
             Lcd = self.lcd
             
-            # Try to clear screen with multiple methods
             cleared = False
             for clear_method in [lambda: Lcd.clear(0x000000), 
                               lambda: Lcd.fillScreen(0x000000),
@@ -477,7 +451,6 @@ class ReactiveFace:
             eye_size = int(25 * self.eye_open)
             wobble = int(self.wobble)
             
-            # Draw eyes with fallback methods
             def draw_circle(x, y, radius, color):
                 for method in [lambda: Lcd.drawCircle(x, y, radius, color),
                              lambda: Lcd.fillCircle(x, y, radius, color)]:
@@ -489,7 +462,7 @@ class ReactiveFace:
             
             def fill_circle(x, y, radius, color):
                 for method in [lambda: Lcd.fillCircle(x, y, radius, color),
-                             lambda: Lcd.drawCircle(x, y, radius, color)]:  # Fallback
+                             lambda: Lcd.drawCircle(x, y, radius, color)]:            
                     try:
                         method()
                         break
@@ -502,17 +475,14 @@ class ReactiveFace:
                 except:
                     pass
             
-            # Left eye
             draw_circle(90 - wobble, 100, eye_size + 8, 0xFFFFFF)
             draw_circle(90 - wobble, 100, eye_size, color)
             fill_circle(90 - wobble, 100, 6, 0x000000)
             
-            # Right eye
             draw_circle(190 + wobble, 100, eye_size + 8, 0xFFFFFF)
             draw_circle(190 + wobble, 100, eye_size, color)
             fill_circle(190 + wobble, 100, 6, 0x000000)
             
-            # Eyebrows
             brow_y = 70
             if self.emotion == "surprised":
                 brow_y = 60
@@ -521,10 +491,8 @@ class ReactiveFace:
             draw_line(60, brow_y, 120, brow_y - 5, color)
             draw_line(160, brow_y - 5, 220, brow_y, color)
             
-            # Draw mouth
             self.draw_mouth(color)
             
-            # Cheeks
             if self.emotion in ["happy", "excited", "speaking"]:
                 fill_circle(50, 140, 12, 0xFFB6C1)
                 fill_circle(230, 140, 12, 0xFFB6C1)
@@ -533,7 +501,7 @@ class ReactiveFace:
             print("[FACE DRAW ERROR]", str(e))
     
     def draw_mouth(self, color):
-        """Draw mouth based on emotion"""
+        
         if not self.initialized:
             return
         try:
@@ -560,16 +528,14 @@ class ReactiveFace:
             print("[MOUTH ERROR]", str(e))
     
     def draw_status_indicators(self):
-        """Draw small status icons"""
+        
         try:
             from M5 import Lcd
             
-            # Microphone icon when listening
             if self.emotion == "listening" or self.emotion == "thinking":
                 Lcd.fillCircle(295, 35, 5, 0xFF0000)
                 Lcd.drawCircle(295, 48, 5, 0xFF0000)
             
-            # Speaker icon when speaking
             if self.emotion == "speaking":
                 Lcd.fillCircle(15, 35, 5, 0x00FF00)
                 Lcd.drawCircle(22, 35, 8, 0x00FF00)
@@ -579,10 +545,9 @@ class ReactiveFace:
             pass
     
     def draw(self):
-        """Main draw method - redraws entire face"""
+        
         self.draw_face()
 
-# ============== NAVIGATOR ==============
 class Navigator:
     def __init__(self, motors, sensors, dl_core):
         self.motors = motors
@@ -624,7 +589,6 @@ class Navigator:
         self.dl.learn(sensor_data, action)
         return prediction
 
-# ============== MQTT MANAGER (Multi-Broker) ==============
 class MQTTManager:
     def __init__(self):
         self.client = None
@@ -639,7 +603,7 @@ class MQTTManager:
         return MQTT_BROKER_SECONDARY, MQTT_PORT_SECONDARY
     
     def switch_broker(self):
-        """Switch between primary and secondary broker"""
+        
         self.using_primary = not self.using_primary
         broker, port = self.get_broker_info()
         print("[MQTT] Switching to:", broker, port)
@@ -658,7 +622,6 @@ class MQTTManager:
         
         client_id = "AEGIS-Core2-{}".format(int(time.time()))
         
-        # Try primary broker first (no auth for now)
         try:
             self.client = MQTTClient(client_id, broker, port=port, keepalive=30)
             self.client.connect()
@@ -668,7 +631,6 @@ class MQTTManager:
         except Exception as e:
             print("[MQTT] Failed:", str(e)[:50])
         
-        # Try alternate broker
         print("[MQTT] Trying alternate...")
         broker2, port2 = self.switch_broker()
         
@@ -710,11 +672,10 @@ class MQTTManager:
                 self.connected = False
     
     def is_alive(self):
-        """Check if MQTT connection is still alive"""
+        
         if not self.connected:
             return False
         
-        # Check heartbeat timeout
         if time.time() - self.last_heartbeat > 60:
             print("[MQTT] Heartbeat timeout")
             self.connected = False
@@ -722,7 +683,6 @@ class MQTTManager:
         
         return True
 
-# ============== MAIN ==============
 def run():
     import network
     import time
@@ -734,7 +694,6 @@ def run():
     print("Multi-MQTT | Speech | Reactive Face")
     print("="*50)
     
-    # Init Core
     try:
         import M5
         M5.begin()
@@ -742,11 +701,9 @@ def run():
     except Exception as e:
         print("[M5] Init error:", e)
     
-    # Init DL Core
     dl_core = DLCore()
     print("[DL] Neural Core Initialized")
     
-    # Init hardware
     motors = Motors()
     sensors = Sensors()
     navigator = Navigator(motors, sensors, dl_core)
@@ -754,14 +711,11 @@ def run():
     face = ReactiveFace()
     serial_comm = SerialComm()
     
-    # Initialize serial communication
     serial_comm.init()
     
-    # Draw initial face
     face.set_emotion("happy")
     face.draw()
     
-    # MQTT (skip if disabled)
     mqtt_connected = False
     mqtt_mgr = MQTTManager()
     if MQTT_ENABLED:
@@ -774,7 +728,6 @@ def run():
     else:
         print("[MQTT] Disabled - skipping")
     
-    # WiFi
     print("[WIFI] Connecting...")
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
@@ -790,7 +743,6 @@ def run():
     
     wifi_ok = wlan.isconnected()
     
-    # MQTT Connect with retry (only if enabled)
     mqtt_connected = False
     if MQTT_ENABLED:
         for attempt in range(3):
@@ -799,7 +751,6 @@ def run():
                 break
             time.sleep(2)
     
-    # MQTT Subscriptions
     def sub(topic, msg):
         print("[MSG]", topic, "<-", msg)
         
@@ -807,7 +758,6 @@ def run():
             t = topic.decode() if isinstance(topic, bytes) else topic
             m = msg.decode() if isinstance(msg, bytes) else msg
             
-            # Motor commands
             if t == "homebot/motor/FL":
                 motors.set("FL", int(m))
             elif t == "homebot/motor/FR":
@@ -824,19 +774,16 @@ def run():
             elif t == "homebot/motors/stop":
                 motors.stop()
             
-            # Sensors
             elif t == "homebot/sensors/read":
                 data = sensors.read_all()
                 if mqtt_mgr:
                     mqtt_mgr.publish("homebot/sensors/data", json.dumps(data))
             
-            # DL Status
             elif t == "homebot/dl/status":
                 status = dl_core.get_status()
                 if mqtt_mgr:
                     mqtt_mgr.publish("homebot/dl/status", json.dumps(status))
             
-            # Navigation
             elif t == "homebot/nav/autonomous":
                 target = json.loads(m)
                 navigator.autonomous_navigate((target.get("x",0), target.get("y",0)))
@@ -845,9 +792,8 @@ def run():
                 if mqtt_mgr:
                     mqtt_mgr.publish("homebot/nav/scan", json.dumps(scan))
             
-            # SPEECH COMMANDS
             elif t == "homebot/speech/say":
-                # AEGIS is speaking through HomeBot
+                                                   
                 face.set_emotion("speaking")
                 face.update(True, 0, {})
                 face.draw()
@@ -857,7 +803,7 @@ def run():
                 face.draw()
             
             elif t == "homebot/speech/listen":
-                # Start listening
+                                 
                 face.set_emotion("thinking")
                 speech.listen_start()
             
@@ -865,11 +811,9 @@ def run():
                 speech.listen_stop()
                 face.set_emotion("happy")
             
-            # FACE EMOTIONS
             elif t == "homebot/face/emotion":
                 face.set_emotion(m)
             
-            # MUSIC/BEAT
             elif t == "homebot/audio/beat":
                 level = int(m)
                 face.update(speech.speaking, level, {})
@@ -897,7 +841,6 @@ def run():
             except Exception as e:
                 print("[MQTT] Sub error:", e)
         
-        # Initial status publish
         if mqtt_connected:
             mqtt_mgr.publish("homebot/status", json.dumps({
                 "type": "AEGIS-Core2-v3",
@@ -919,7 +862,7 @@ def run():
     
     while True:
         try:
-            # Process serial commands from COM4
+                                               
             serial_cmd = serial_comm.process_commands()
             if serial_cmd:
                 face.set_emotion("thinking")
@@ -928,11 +871,9 @@ def run():
                 face.set_emotion("happy")
                 face.draw()
             
-            # MQTT check
             if mqtt_connected:
                 mqtt_mgr.check_msg()
                 
-                # Reconnect if needed
                 if not mqtt_mgr.is_alive():
                     print("[MQTT] Reconnecting...")
                     for _ in range(3):
@@ -940,28 +881,23 @@ def run():
                             mqtt_connected = True
                             break
             
-            # Auto-stop motors
             if time.time() - last_cmd > MOTOR_TIMEOUT:
                 if any(motors.speeds.values()):
                     motors.stop()
             
-            # Periodic sensor publish
             if time.time() - last_pub > SENSOR_INTERVAL:
                 data = sensors.read_all()
                 if mqtt_connected:
                     mqtt_mgr.publish("homebot/sensors/data", json.dumps(data))
                 last_pub = time.time()
             
-            # Autonomous nav
             if navigator.autonomous and time.time() - last_nav > 1:
                 navigator.step()
                 last_nav = time.time()
             
-            # Face animation update (30fps)
             if time.time() - last_face > 0.1:
                 sensor_data = sensors.read_all()
                 
-                # Detect if user is speaking
                 if speech.listening:
                     if speech.is_speech_detected():
                         face.set_emotion("listening")
@@ -973,7 +909,7 @@ def run():
                     face.set_emotion("speaking")
                     face.update(True, 0, sensor_data)
                 else:
-                    # Default reactive face
+                                           
                     dist = sensor_data.get("distance", 100)
                     vib = sensor_data.get("vibration", 0)
                     if dist < 30:
@@ -986,7 +922,6 @@ def run():
                         face.set_emotion("happy")
                     face.update(False, 0, sensor_data)
                 
-                # Redraw face
                 face.draw()
                 
                 last_face = time.time()

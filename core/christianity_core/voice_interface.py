@@ -1,9 +1,7 @@
-# voice_interface.py
-
+﻿                    
 import asyncio
 from .ethical_guidance import EthicalGuidanceEngine
 from .scripture_db import ScriptureDB
-
 
 class VoiceInterface:
 
@@ -16,14 +14,12 @@ class VoiceInterface:
         while True:
             user_input = input("You: ")
 
-            # Ethical evaluation
             ethical_result = self.ethics.evaluate_intent(user_input)
 
             if not ethical_result["allowed"]:
                 print(f"[Ethics] {ethical_result['message']}")
                 continue
 
-            # Scripture query trigger
             if "scripture" in user_input.lower():
                 verse = self.scripture_db.get_random()
                 print(f"{verse['ref']} — {verse['text']}")

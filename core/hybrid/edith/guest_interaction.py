@@ -1,4 +1,4 @@
-# hybrid/edith/guest_interaction.py
+﻿                                   
 import logging
 from core.event_bus import EventBus
 
@@ -11,7 +11,7 @@ class EdithGuestInteraction:
 
     def identify_guest(self, facial_features):
         logger.info("EDITH identifying guest...")
-        # Face recognition logic here
+                                     
         return "Unknown Guest"
 
     def greet_guest(self, guest_name: str):

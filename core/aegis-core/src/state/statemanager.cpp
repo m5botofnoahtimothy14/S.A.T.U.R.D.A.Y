@@ -1,4 +1,4 @@
-#include "state/statemanager.h"
+﻿#include "state/statemanager.h"
 
 namespace aegis {
 
@@ -89,7 +89,6 @@ AIStateData AIStateData::for_state(AIState state) {
 }
 
 std::string AISystemState::to_json() const {
-    // Simplified JSON output
     std::string json = "{";
     json += "\"state\":" + std::to_string(static_cast<int>(current_state));
     json += ",\"audio_reactivity\":" + std::to_string(audio_reactivity);
@@ -101,7 +100,6 @@ std::string AISystemState::to_json() const {
 
 AISystemState AISystemState::from_json(const std::string& json) {
     AISystemState state;
-    // Simplified parsing
     state.current_state = AIState::Idle;
     return state;
 }
@@ -116,7 +114,6 @@ void StateManager::initialize() {
 }
 
 void StateManager::shutdown() {
-    // Cleanup
 }
 
 void StateManager::set_state(AIState new_state, bool immediate) {
@@ -141,7 +138,6 @@ void StateManager::set_state(AIState new_state, bool immediate) {
 }
 
 void StateManager::update_audio_level(const AudioReactiveData& audio_data) {
-    // Smooth audio reactivity
     float smooth_factor = 0.15f;
     audio_bass_factor_ = audio_bass_factor_ * (1 - smooth_factor) + audio_data.bass_smooth * smooth_factor;
     audio_mid_factor_ = audio_mid_factor_ * (1 - smooth_factor) + audio_data.mid_smooth * smooth_factor;
@@ -173,7 +169,6 @@ void StateManager::interpolate_state_data(float t) {
     interpolated_data_.distortion_strength = current_state_data_.distortion_strength + 
         (target_state_data_.distortion_strength - current_state_data_.distortion_strength) * t;
     
-    // Apply audio reactivity to interpolated data
     interpolated_data_.pulse_amplitude += audio_overall_factor_ * 0.2f;
     interpolated_data_.distortion_strength += audio_bass_factor_ * 0.3f;
     interpolated_data_.bloom_intensity = interpolated_data_.bloom_intensity * (1.0f + audio_overall_factor_ * 0.5f);

@@ -1,4 +1,4 @@
-#include "core/orbitalcore.h"
+﻿#include "core/orbitalcore.h"
 
 namespace aegis {
 
@@ -11,7 +11,6 @@ bool OrbitalCore::initialize(int width, int height) {
     viewport_width_ = width;
     viewport_height_ = height;
     
-    // Create meshes
     sphere_mesh_ = Mesh::create_sphere(1.0f, 64, 32);
     ring_meshes_.push_back(Mesh::create_torus(1.5f, 0.05f, 64, 16));
     ring_meshes_.push_back(Mesh::create_torus(2.0f, 0.03f, 64, 16));
@@ -19,7 +18,6 @@ bool OrbitalCore::initialize(int width, int height) {
     particle_mesh_ = Mesh::create_particle_system(1000);
     quad_mesh_ = Mesh::create_quad();
     
-    // Create framebuffer for post-processing
     if (!create_framebuffer()) {
         post_processing_enabled_ = false;
     }
@@ -47,19 +45,16 @@ void OrbitalCore::set_audio_data(const AudioReactiveData& audio_data) {
 void OrbitalCore::update(float delta_time, double time) {
     time_ = time;
     
-    // Smooth state transition
     float lerp_factor = delta_time * 3.0f;
     current_state_.core_color.r = current_state_.core_color.r * (1 - lerp_factor) + target_state_.core_color.r * lerp_factor;
     current_state_.core_color.g = current_state_.core_color.g * (1 - lerp_factor) + target_state_.core_color.g * lerp_factor;
     current_state_.core_color.b = current_state_.core_color.b * (1 - lerp_factor) + target_state_.core_color.b * lerp_factor;
     
-    // Audio reactive updates
     uniforms_.bass_react = audio_data_.bass_smooth;
     uniforms_.mid_react = audio_data_.mid_smooth;
     uniforms_.treble_react = audio_data_.treble_smooth;
     uniforms_.overall_react = audio_data_.overall_smooth;
     
-    // Update animation
     rotation_ += delta_time * current_state_.rotation_speed;
     pulse_phase_ += delta_time * current_state_.pulse_speed;
     
@@ -69,23 +64,12 @@ void OrbitalCore::update(float delta_time, double time) {
 void OrbitalCore::render() {
     if (!initialized_) return;
     
-    // Render to framebuffer if post-processing enabled
     if (post_processing_enabled_) {
-        // Bind framebuffer
     }
     
-    // Clear
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    // Render core sphere
-    // (In production, would bind shader and draw mesh)
-    
-    // Render rings
-    // Render particles
-    
-    // Post-processing pass if enabled
     if (post_processing_enabled_) {
-        // Bloom pass
     }
 }
 
@@ -106,13 +90,10 @@ unsigned int OrbitalCore::get_output_texture() const {
 }
 
 bool OrbitalCore::create_framebuffer() {
-    // Simplified framebuffer creation
-    // In production, would use proper FBO setup
     return true;
 }
 
 void OrbitalCore::destroy_framebuffer() {
-    // Clean up framebuffer resources
 }
 
 void OrbitalCore::update_uniforms() {
@@ -133,11 +114,9 @@ void OrbitalCore::update_uniforms() {
 }
 
 bool OrbitalCore::create_shaders() {
-    // Load shaders from files
     return true;
 }
 
-// Startup Sequence Implementation
 StartupSequence::StartupSequence() = default;
 
 void StartupSequence::start() {

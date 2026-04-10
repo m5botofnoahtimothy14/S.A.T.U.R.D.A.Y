@@ -1,4 +1,4 @@
-# communication/screen_navigator.py
+﻿                                   
 import logging
 import asyncio
 import os
@@ -18,7 +18,7 @@ except ImportError:
 logger = logging.getLogger("AEGIS.Screen")
 
 class ScreenNavigator:
-    """Handles autonomous screen interaction and app management."""
+    
     def __init__(self, event_bus):
         self.event_bus = event_bus
         self.active = True
@@ -29,7 +29,7 @@ class ScreenNavigator:
         logger.info("Screen Navigator initialized.")
 
     async def open_app(self, app_name: str):
-        """Attempts to open an application using Windows search."""
+        
         if not pyautogui: return
         
         logger.info(f"Navigating screen to open: {app_name}")
@@ -40,24 +40,24 @@ class ScreenNavigator:
         pyautogui.press('enter')
         
     async def play_music_autonomous(self):
-        """Autonomous action to play music."""
+        
         logger.info("Autonomous action: Playing music.")
-        # Try to open Spotify or YouTube
+                                        
         await self.open_app("spotify")
         await asyncio.sleep(3)
-        pyautogui.press('space') # Play/Pause toggle
+        pyautogui.press('space')                    
 
     async def search_on_screen(self, query: str):
-        """Autonomous screen search."""
+        
         if not pyautogui: return
         logger.info(f"Searching on screen for: {query}")
-        pyautogui.hotkey('ctrl', 't') # Assume a browser is open
+        pyautogui.hotkey('ctrl', 't')                           
         await asyncio.sleep(0.5)
         pyautogui.write(query)
         pyautogui.press('enter')
 
     def check_screen_status(self):
-        """Return the active foreground window when available."""
+        
         foreground = "unknown"
         if win32gui:
             try:

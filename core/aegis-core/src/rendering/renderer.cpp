@@ -1,4 +1,4 @@
-#include "rendering/renderer.h"
+﻿#include "rendering/renderer.h"
 #include "core/logger.h"
 #include "core/raii.h"
 
@@ -6,14 +6,12 @@
 #include <GLFW/glfw3.h>
 #pragma comment(lib, "glfw3.lib")
 
-// OpenGL extensions
 #include <GL/gl.h>
 #include <GL/glew.h>
 #pragma comment(lib, "opengl32.lib")
 
 namespace aegis {
 
-// Global GLFW initialization
 static bool glfw_initialized = false;
 
 Renderer::Renderer() = default;
@@ -31,7 +29,6 @@ bool Renderer::initialize(int width, int height, const std::string& title) {
     width_ = width;
     height_ = height;
     
-    // Initialize GLFW
     if (!glfw_initialized) {
         if (!glfwInit()) {
             AEGIS_ERROR("Renderer", "Failed to initialize GLFW");
@@ -41,14 +38,12 @@ bool Renderer::initialize(int width, int height, const std::string& title) {
         AEGIS_INFO("Renderer", "GLFW initialized");
     }
     
-    // Configure OpenGL context
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_SAMPLES, 4); // MSAA 4x
     
-    // Create window
     window_ = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
     if (!window_) {
         AEGIS_ERROR("Renderer", "Failed to create window");
@@ -57,7 +52,6 @@ bool Renderer::initialize(int width, int height, const std::string& title) {
     
     glfwMakeContextCurrent(window_);
     
-    // Initialize GLEW
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if (err != GLEW_OK) {
@@ -66,10 +60,8 @@ bool Renderer::initialize(int width, int height, const std::string& title) {
         return false;
     }
     
-    // Clear any errors from GLEW init
     while (glGetError() != GL_NO_ERROR) {}
     
-    // Configure OpenGL state
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_CULL_FACE);
@@ -77,10 +69,8 @@ bool Renderer::initialize(int width, int height, const std::string& title) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    // Enable MSAA
     glEnable(GL_MULTISAMPLE);
     
-    // Set vsync
     glfwSwapInterval(vsync_ ? 1 : 0);
     
     last_time_ = glfwGetTime();
@@ -144,11 +134,9 @@ void Renderer::set_fullscreen(bool fullscreen) {
     if (fullscreen == fullscreen_) return;
     
     if (fullscreen) {
-        // Save windowed state
         glfwGetWindowPos(window_, &saved_x_, &saved_y_);
         glfwGetWindowSize(window_, &saved_width_, &saved_height_);
         
-        // Get primary monitor
         GLFWmonitor* monitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(monitor);
         

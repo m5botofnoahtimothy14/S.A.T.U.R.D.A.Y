@@ -1,4 +1,4 @@
-# distributed/__init__.py
+﻿                         
 from .interdevice_sync import InterDeviceSync
 from .device_registry import DeviceRegistry
 from .remote_control import RemoteControl

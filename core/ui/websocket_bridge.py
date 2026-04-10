@@ -1,4 +1,4 @@
-# ui/websocket_bridge.py
+﻿                        
 import logging
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
@@ -12,7 +12,6 @@ class WebSocketBridge:
         self.app = Flask(__name__, template_folder="dashboard", static_folder="dashboard")
         self.socketio = SocketIO(self.app, cors_allowed_origins="*")
         
-        # Subscribe to EventBus to forward to UI
         self.event_bus.subscribe("security_alert", self._on_security_alert)
         self.event_bus.subscribe("homebot_telemetry", self._on_telemetry)
         self.event_bus.subscribe("voice_response", self._on_voice)

@@ -1,9 +1,4 @@
-# communication/oauth_manager.py
-"""
-OAuth2 Integration Manager for AEGIS
-Supports: Google, GitHub (API-based)
-Note: WhatsApp, Instagram, X - handled by EDITH browser automation (no API needed)
-"""
+﻿                                
 import os
 import json
 import structlog
@@ -14,10 +9,6 @@ from core.event_bus import EventBus
 logger = structlog.get_logger("AEGIS.OAuth")
 
 class OAuthManager:
-    """
-    Manages OAuth2 authentication for API-based services.
-    Browser-based services (WhatsApp, Instagram, X) handled by EDITH.
-    """
     
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus

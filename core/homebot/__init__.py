@@ -1,4 +1,4 @@
-# homebot/__init__.py
+﻿                     
 from .mqtt_client import HomeBotClient
 from .control import HomeBotBridgeSensors
 from .motors import OmniMotors

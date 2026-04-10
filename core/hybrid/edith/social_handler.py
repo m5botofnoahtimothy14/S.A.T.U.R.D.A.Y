@@ -1,8 +1,4 @@
-# hybrid/edith/social_handler.py
-"""
-EDITH Social Media Handler
-Controls WhatsApp, Instagram, X (Twitter) - handles messages, DMs, uploads, replies
-"""
+﻿                                
 import logging
 import structlog
 import threading
@@ -12,10 +8,6 @@ from core.event_bus import EventBus
 logger = structlog.get_logger("AEGIS.EDITH.Social")
 
 class EdithSocialHandler:
-    """
-    EDITH's social media control center.
-    Manages WhatsApp, Instagram, X (Twitter) through voice commands
-    """
     
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
@@ -31,7 +23,7 @@ class EdithSocialHandler:
         self._start_monitoring()
         
     def _init_social_manager(self):
-        """Initialize social manager"""
+        
         try:
             from communication.social_manager import SocialManager
             self.social_manager = SocialManager(self.event_bus)
@@ -40,7 +32,7 @@ class EdithSocialHandler:
             logger.warning(f"Social manager not available: {e}")
     
     def _handle_command(self, command: str):
-        """Handle voice commands for social media"""
+        
         command = command.lower()
         
         if not any(x in command for x in ["whatsapp", "instagram", "twitter", "tweet", "x", "social", "message", "dm"]):
@@ -77,7 +69,7 @@ class EdithSocialHandler:
             self._get_status()
     
     def _start_platform(self, platform: str):
-        """Start a social platform"""
+        
         if not self.social_manager:
             self.event_bus.publish("voice_response", "Social manager not available.")
             return
@@ -92,7 +84,7 @@ class EdithSocialHandler:
             self.event_bus.publish("voice_response", f"Failed to start {platform}.")
     
     def _stop_platform(self, platform: str):
-        """Stop a social platform"""
+        
         if not self.social_manager:
             return
             
@@ -103,14 +95,14 @@ class EdithSocialHandler:
         self.event_bus.publish("voice_response", f"{platform.capitalize()} stopped.")
     
     def _start_all(self):
-        """Start all social platforms"""
+        
         for platform in ["whatsapp", "instagram", "twitter"]:
             if self.social_manager:
                 self.social_manager.start_platform(platform)
         self.event_bus.publish("voice_response", "All social platforms active, Sir.")
     
     def _parse_send_message(self, command: str):
-        """Parse and send message from voice command"""
+        
         if not self.social_manager:
             self.event_bus.publish("voice_response", "Social manager not available.")
             return
@@ -128,7 +120,7 @@ class EdithSocialHandler:
             self.event_bus.publish("voice_response", "Specify recipient and message.")
     
     def _parse_send_tweet(self, command: str):
-        """Parse and send tweet from voice command"""
+        
         if not self.social_manager:
             self.event_bus.publish("voice_response", "Social manager not available.")
             return
@@ -142,7 +134,7 @@ class EdithSocialHandler:
             self.event_bus.publish("voice_response", "What should I tweet?")
     
     def _check_notifications(self):
-        """Check for notifications across all platforms"""
+        
         if not self.social_manager:
             self.event_bus.publish("voice_response", "Social manager not available.")
             return
@@ -156,7 +148,7 @@ class EdithSocialHandler:
             self.event_bus.publish("voice_response", "No new notifications, Sir.")
     
     def _enable_auto_reply(self, command: str):
-        """Enable auto-reply for specific triggers"""
+        
         rules = {}
         
         if "whatsapp" in command:
@@ -176,7 +168,7 @@ class EdithSocialHandler:
             self.event_bus.publish("voice_response", "Twitter auto-reply configured.")
     
     def _get_status(self):
-        """Get status of all platforms"""
+        
         if not self.social_manager:
             return
             
@@ -188,7 +180,7 @@ class EdithSocialHandler:
                 self.event_bus.publish("voice_response", f"{platform.capitalize()} is offline.")
     
     def _start_monitoring(self):
-        """Start background monitoring thread"""
+        
         def monitor():
             while True:
                 try:
@@ -206,7 +198,7 @@ class EdithSocialHandler:
         t.start()
     
     def upload_to_instagram(self, image_path: str, caption: str = ""):
-        """Upload image to Instagram"""
+        
         if not self.social_manager:
             return False
             
@@ -245,7 +237,7 @@ class EdithSocialHandler:
             return False
     
     def handle_dm_request(self, platform: str, recipient: str, message: str):
-        """Handle DM request"""
+        
         if not self.social_manager:
             return False
             

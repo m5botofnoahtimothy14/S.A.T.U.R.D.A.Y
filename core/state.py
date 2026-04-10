@@ -1,4 +1,4 @@
-# core/state.py
+﻿               
 import threading
 import time
 import json
@@ -9,9 +9,9 @@ class SystemState:
         self.lock = threading.Lock()
         self.state_file = "core/state.json"
         self.config = ConfigManager()
-        # Real-time system state variables
+                                          
         self.state = {
-            "user_mode": "Sir",      # or "Noah"
+            "user_mode": "Sir",                 
             "aeigis_active": True,
             "edith_active": True,
             "homebot_connected": False,
@@ -49,7 +49,6 @@ class SystemState:
             self.state[key].append(value)
             self.save_state()
 
-# Optional background state saver
 def autosave_state(system_state: SystemState, interval=10):
     def _autosave():
         while True:

@@ -1,4 +1,4 @@
-specVersion: "v1"
+﻿specVersion: "v1"
 serviceId: "aegis"
 location: "us-east4"
 schema:
@@ -8,6 +8,4 @@ schema:
       database: "fdcdb"
       cloudSql:
         instanceId: "aegis-fdc"
-        # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
-        # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
 connectorDirs: ["./example"]

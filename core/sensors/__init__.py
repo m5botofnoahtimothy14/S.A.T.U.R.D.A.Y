@@ -1,4 +1,4 @@
-# sensors/__init__.py
+﻿                     
 from .homebot_sensors import HomeBotSensors
 
 try:

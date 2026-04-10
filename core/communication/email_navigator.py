@@ -1,4 +1,4 @@
-# communication/email_navigator.py
+﻿                                  
 import structlog
 import smtplib
 from email.mime.text import MIMEText

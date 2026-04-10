@@ -1,4 +1,4 @@
-# christianity_core/__init__.py
+﻿                               
 from .spirituality import ChristianityCore
 from .scripture_db import ScriptureDB
 from .prayer_reminder import PrayerReminder

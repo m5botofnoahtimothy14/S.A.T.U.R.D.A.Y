@@ -1,4 +1,4 @@
-# embodied/hand_tracking.py
+﻿                           
 import os
 import cv2
 import mediapipe as mp
@@ -7,12 +7,8 @@ from mediapipe.tasks.python import vision
 
 DEFAULT_MODEL = os.getenv("HAND_LANDMARKER_PATH", "D:/AEGIS/models/hand_landmarker.task")
 
-
 class HandTracker:
-    """
-    Hand detection using MediaPipe Tasks (mediapipe 0.10+). Returns HandLandmarkerResult or None.
-    """
-
+    
     def __init__(self, model_path: str = DEFAULT_MODEL, num_hands: int = 2):
         if os.path.exists(model_path):
             base = mp.tasks.BaseOptions(model_asset_path=model_path)

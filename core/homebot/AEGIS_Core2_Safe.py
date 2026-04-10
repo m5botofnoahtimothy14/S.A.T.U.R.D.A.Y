@@ -1,11 +1,4 @@
-"""
-AEGIS Core2 safe-mode firmware.
-
-Purpose:
-- Recover from crash loops.
-- Confirm Core2 display + serial + basic hardware init are working.
-"""
-
+﻿
 import time
 
 try:

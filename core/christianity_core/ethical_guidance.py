@@ -1,14 +1,8 @@
-# ethical_guidance.py
-
+﻿                     
 from datetime import datetime
 
-
 class EthicalGuidanceEngine:
-    """
-    Ethical oversight and value-alignment module.
-    Evaluates intents and returns advisory responses.
-    """
-
+    
     def __init__(self):
         self.restricted_keywords = [
             "harm",

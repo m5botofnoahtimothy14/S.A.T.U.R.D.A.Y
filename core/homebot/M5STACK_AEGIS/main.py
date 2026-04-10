@@ -1,12 +1,9 @@
-# AEGIS HomeBot - M5Stack CORE2 Firmware v4.0
-# Full Display UI with AEGIS Eye Animation
-
+﻿                                             
 import machine
 import time
 import network
 import math
 
-# M5Stack LCD imports
 try:
     import M5
     from M5 import Lcd as lcd
@@ -20,20 +17,17 @@ except:
     except:
         HAS_M5STACK = False
 
-# MQTT
 try:
     from umqtt.simple import MQTTClient
     HAS_MQTT = True
 except:
     HAS_MQTT = False
 
-# ==================== CONFIG ====================
 WIFI_SSID = "Timojoe"
 WIFI_PASSWORD = "kebajtimo"
 AEGIS_MQTT_SERVER = "192.168.0.180"
 AEGIS_MQTT_PORT = 1884
 
-# Colors
 BG = 0x000000
 AEGIS_BLUE = 0x00AAFF
 AEGIS_GREEN = 0x00FF88
@@ -42,11 +36,9 @@ AEGIS_RED = 0xFF4444
 WHITE = 0xFFFFFF
 CYAN = 0x00FFFF
 
-# ==================== MOTOR PINS ====================
 MA_PWM, MA_IN1, MA_IN2 = 32, 33, 25
 MB_PWM, MB_IN1, MB_IN2 = 26, 27, 14
 
-# ==================== GLOBALS ====================
 pwm_a = pwm_b = None
 connected_wifi = connected_mqtt = False
 direction = "STOP"
@@ -54,7 +46,6 @@ mqtt_client = None
 wlan = None
 anim_frame = 0
 
-# ==================== DISPLAY ====================
 def init_display():
     if not HAS_M5STACK: return
     try:
@@ -171,7 +162,6 @@ def show_loading():
             time.sleep_ms(200)
     except: pass
 
-# ==================== MOTORS ====================
 def init_motors():
     global pwm_a, pwm_b
     machine.Pin(MA_IN1, machine.Pin.OUT)
@@ -223,7 +213,6 @@ def move(cmd, speed=800):
         machine.Pin(MB_IN1).value(0); machine.Pin(MB_IN2).value(1)
         direction = "RTR"
 
-# ==================== WIFI ====================
 def wifi_connect():
     global connected_wifi, wlan
     wlan = network.WLAN(network.STA_IF)
@@ -239,7 +228,6 @@ def wifi_connect():
     connected_wifi = False
     return None
 
-# ==================== MQTT ====================
 def mqtt_callback(topic, msg):
     global connected_mqtt
     try:
@@ -282,7 +270,6 @@ def mqtt_pub(msg):
         except:
             connected_mqtt = False
 
-# ==================== MAIN ====================
 def main():
     global connected_wifi, connected_mqtt, direction, anim_frame, wlan
     

@@ -1,8 +1,9 @@
-# identity/__init__.py
+﻿                      
 from .manager import IdentityManager
 from .onboarding import OnboardingManager
 from .face_id import FaceID
 from .voice_id import VoiceID
+from .voice_biometric import VoiceBiometricEngine
 from .trust_engine import TrustEngine
 from .behavioral_biometrics import BehavioralBiometrics
 
@@ -11,6 +12,7 @@ __all__ = [
     "OnboardingManager",
     "FaceID",
     "VoiceID",
+    "VoiceBiometricEngine",
     "TrustEngine",
     "BehavioralBiometrics"
 ]

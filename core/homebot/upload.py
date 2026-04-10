@@ -1,4 +1,4 @@
-import serial
+﻿import serial
 import time
 import sys
 
@@ -6,7 +6,6 @@ print('Uploading firmware to M5Stack...')
 ser = serial.Serial('COM4', 115200, timeout=3)
 time.sleep(2)
 
-# Soft reset
 ser.write(b'\x03')
 time.sleep(0.5)
 ser.write(b'\x04')
@@ -20,7 +19,6 @@ with open('homebot/M5STACK_AEGIS/main.py', 'r') as f:
 
 print(f'Lines: {len(lines)}')
 
-# Delete existing
 ser.write(b'import os\r\n')
 time.sleep(0.3)
 ser.write(b'try: os.remove("main.py")\r\n')
@@ -28,7 +26,6 @@ time.sleep(0.2)
 ser.write(b'except: pass\r\n')
 time.sleep(0.2)
 
-# Create file
 ser.write(b'f=open("main.py","w")\r\n')
 time.sleep(0.5)
 
@@ -36,10 +33,8 @@ errors = 0
 for i, line in enumerate(lines):
     line = line.rstrip()
     
-    # Python escape for string
     escaped = line.replace('\\', '\\\\').replace('"', '\\"')
     
-    # Build command
     cmd = f'f.write("{escaped}\\n")'
     ser.write((cmd + '\r\n').encode())
     time.sleep(0.03)
@@ -57,7 +52,6 @@ for i, line in enumerate(lines):
 ser.write(b'f.close()\r\n')
 time.sleep(0.5)
 
-# Verify
 ser.write(b'import os\r\n')
 time.sleep(0.3)
 ser.write(b's=os.stat("main.py")\r\n')
@@ -69,7 +63,6 @@ if ser.in_waiting:
     resp = ser.read(ser.in_waiting).decode('utf-8', errors='ignore')
     print('File size:', resp.strip())
 
-# Reset to run
 ser.write(b'\x04\r\n')
 time.sleep(2)
 

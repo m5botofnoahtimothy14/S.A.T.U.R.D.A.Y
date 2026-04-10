@@ -1,9 +1,4 @@
-# core/task_manager.py
-"""
-AEGIS Multitasking & Background Task Manager
-Provides a central async task registry that tracks, prioritises and manages 
-long-running background coroutines and threads across all modules.
-"""
+﻿                      
 import asyncio
 import logging
 import threading
@@ -13,35 +8,24 @@ from core.event_bus import EventBus
 
 logger = logging.getLogger("AEGIS.TaskManager")
 
-
 class BackgroundTask:
     def __init__(self, name: str, priority: int = 5):
         self.name = name
-        self.priority = priority          # 1 (highest) – 10 (lowest)
+        self.priority = priority                                     
         self.created_at = time.time()
-        self.status = "pending"           # pending | running | done | failed
-        self.handle = None               # asyncio.Task or threading.Thread
-
+        self.status = "pending"                                              
+        self.handle = None                                                 
 
 class TaskManager:
-    """
-    Central hub for all AEGIS background tasks.
-    - Schedules async coroutines via asyncio
-    - Wraps blocking calls in daemon threads
-    - Exposes live task registry for the dashboard
-    """
-
+    
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
         self._registry: dict[str, BackgroundTask] = {}
         self._lock = threading.Lock()
         logger.info("Task Manager initialized.")
 
-    # ------------------------------------------------------------------
-    # Async task scheduling
-    # ------------------------------------------------------------------
     def schedule(self, coro: Coroutine, name: str, priority: int = 5) -> asyncio.Task:
-        """Schedule an async coroutine and register it."""
+        
         task = BackgroundTask(name, priority)
         asyncio_task = asyncio.create_task(self._wrap_async(coro, task))
         task.handle = asyncio_task
@@ -63,11 +47,8 @@ class TaskManager:
             logger.error(f"Task failed: {task.name!r} — {e}")
             self.event_bus.publish("task_failed", {"task": task.name, "error": str(e)})
 
-    # ------------------------------------------------------------------
-    # Thread (blocking) task scheduling
-    # ------------------------------------------------------------------
     def schedule_thread(self, fn: Callable, name: str, priority: int = 5, *args, **kwargs):
-        """Run a blocking function in a daemon thread, tracked in the registry."""
+        
         task = BackgroundTask(name, priority)
         t = threading.Thread(target=self._wrap_thread, args=(fn, task, args, kwargs), daemon=True)
         task.handle = t
@@ -85,11 +66,8 @@ class TaskManager:
             task.status = "failed"
             logger.error(f"Thread task failed: {task.name!r} — {e}")
 
-    # ------------------------------------------------------------------
-    # Task management
-    # ------------------------------------------------------------------
     def cancel(self, name: str):
-        """Cancel an async task by name."""
+        
         with self._lock:
             task = self._registry.get(name)
         if task and isinstance(task.handle, asyncio.Task):
@@ -99,7 +77,7 @@ class TaskManager:
             logger.warning(f"Task {name!r} not found or not cancellable.")
 
     def list_tasks(self) -> list[dict]:
-        """Return a snapshot of all registered tasks for the dashboard."""
+        
         with self._lock:
             return [
                 {
@@ -112,7 +90,7 @@ class TaskManager:
             ]
 
     def clear_done(self):
-        """Purge completed/failed tasks from the registry."""
+        
         with self._lock:
             before = len(self._registry)
             self._registry = {k: v for k, v in self._registry.items()

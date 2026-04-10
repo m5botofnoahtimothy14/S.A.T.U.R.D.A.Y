@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+﻿const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 class ApiService {
   constructor() {
@@ -35,7 +35,6 @@ class ApiService {
     }
   }
 
-  // System Stats
   async getSystemStats() {
     return this.request('/v1/system/stats');
   }
@@ -56,17 +55,14 @@ class ApiService {
     return this.request('/v1/system/processes');
   }
 
-  // DL Defense Analytics
   async getDLDefenseAnalytics() {
     return this.request('/v1/system/dl-analytics');
   }
 
-  // Antivirus
   async runAntivirusScan() {
     return this.request('/v1/antivirus/scan', { method: 'POST' });
   }
 
-  // Remote Wake
   async wakeAegis(target = 'aegis') {
     return this.request('/v1/control/wake', {
       method: 'POST',
@@ -74,7 +70,6 @@ class ApiService {
     });
   }
 
-  // Health check
   async healthCheck() {
     return this.request('/healthz');
   }

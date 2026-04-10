@@ -1,4 +1,4 @@
-# ai_modules/task_automation.py
+﻿                               
 import structlog
 import asyncio
 from core.event_bus import EventBus
@@ -16,7 +16,7 @@ class TaskAutomator:
         logger.info("Task Automator starting...")
         while self.running:
             now = datetime.now()
-            # Example: Trigger health check every morning at 8:00
+                                                                 
             if now.hour == 8 and now.minute == 0:
                 logger.info("Morning routine triggered.")
                 self.event_bus.publish("voice_response", "Good morning. AEGIS is performing system health checks.")

@@ -1,4 +1,4 @@
-# ui/edith_voice.py
+﻿                   
 import pyttsx3
 import threading
 

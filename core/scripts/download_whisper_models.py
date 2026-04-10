@@ -1,8 +1,5 @@
-#!/usr/bin/env python3
-"""
-Download Whisper models for OFFLINE deep learning voice recognition.
-Run: python scripts/download_whisper_models.py
-"""
+﻿#!/usr/bin/env python3
+
 import os
 import sys
 

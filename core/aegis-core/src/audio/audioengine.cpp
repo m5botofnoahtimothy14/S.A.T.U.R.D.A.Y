@@ -1,4 +1,4 @@
-#include "audio/audioengine.h"
+﻿#include "audio/audioengine.h"
 
 namespace aegis {
 
@@ -77,12 +77,10 @@ bool FFTProcessor::initialize(size_t size) {
     smoothed_magnitudes_.resize(fft_size_ / 2 + 1);
     prev_magnitudes_.resize(fft_size_ / 2 + 1);
     
-    // Create Hann window
     for (size_t i = 0; i < fft_size_; ++i) {
         window_[i] = 0.5f * (1.0f - std::cos(2.0f * 3.14159f * i / (fft_size_ - 1)));
     }
     
-    // Calculate frequency bins
     float sample_rate = 44100.0f;
     for (size_t i = 0; i < frequencies_.size(); ++i) {
         frequencies_[i] = (float)i * sample_rate / fft_size_;
@@ -99,21 +97,17 @@ void FFTProcessor::shutdown() {
 void FFTProcessor::process(const float* samples, size_t count) {
     if (!initialized_ || count < fft_size_) return;
     
-    // Apply window
     for (size_t i = 0; i < fft_size_; ++i) {
         input_[i] = samples[i] * window_[i];
     }
     
     compute_fft();
     
-    // Calculate magnitudes
     for (size_t i = 0; i < magnitudes_.size(); ++i) {
         magnitudes_[i] = std::sqrt(real_[i] * real_[i] + imag_[i] * imag_[i]);
         
-        // Normalize
         magnitudes_[i] /= fft_size_;
         
-        // Apply smoothing
         smoothed_magnitudes_[i] = smoothing_factor_ * magnitudes_[i] + 
                                   (1.0f - smoothing_factor_) * prev_magnitudes_[i];
         prev_magnitudes_[i] = smoothed_magnitudes_[i];
@@ -121,8 +115,6 @@ void FFTProcessor::process(const float* samples, size_t count) {
 }
 
 void FFTProcessor::compute_fft() {
-    // Simplified FFT (would use FFTW in production)
-    // For now, just copy input as placeholder
     for (size_t i = 0; i < real_.size(); ++i) {
         real_[i] = i < input_.size() ? input_[i] : 0.0f;
         imag_[i] = 0.0f;

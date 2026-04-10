@@ -1,4 +1,4 @@
-# embodied/screen_navigation.py
+﻿                               
 import pyautogui
 
 class EmbodiedScreenNav:

@@ -1,4 +1,4 @@
-# hybrid/edith/task_handler.py
+﻿                              
 import logging
 from core.event_bus import EventBus
 
@@ -11,4 +11,4 @@ class EdithTaskHandler:
 
     def execute_task(self, task_name: str, params: dict = None):
         logger.info(f"EDITH executing task: {task_name}")
-        # Task execution logic here
+                                   

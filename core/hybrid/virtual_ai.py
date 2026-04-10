@@ -1,4 +1,4 @@
-# hybrid/virtual_ai.py
+﻿                      
 import logging
 from core.event_bus import EventBus
 
@@ -11,12 +11,12 @@ class VirtualAI:
         logger.info("Hybrid Virtual AI initialized.")
 
     async def get_response(self, prompt: str):
-        # Logic to decide between local and cloud
+                                                 
         logger.info(f"Processing hybrid prompt: {prompt}")
         
         if self.llm:
             try:
-                # Accumulate the stream for simplicity here, or we could stream it out
+                                                                                      
                 response_text = ""
                 async for chunk in self.llm.chat_stream(prompt):
                     response_text += chunk

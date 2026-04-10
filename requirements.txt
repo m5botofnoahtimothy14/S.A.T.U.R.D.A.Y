@@ -1,4 +1,7 @@
 # requirements.txt
+# ==================
+# AEGIS Core Dependencies
+# ==================
 fastapi
 uvicorn
 pydantic>=2.0
@@ -9,43 +12,98 @@ aiosqlite
 llama-cpp-python
 sentence-transformers
 scikit-learn
+
+# ==================
+# Audio & Speech
+# ==================
 sounddevice
-numpy
-faster-whisper
-pyttsx3
-opencv-python
-mediapipe
-psutil
-paho-mqtt
-jinja2
-python-multipart
-face_recognition
-pywin32
-httptools
-pystray
-Pillow
-aiohttp
-pygetwindow
-pyautogui
-requests
-pyserial
 SpeechRecognition
 pyaudio
+faster-whisper
+pyttsx3
+piper-tts
+
+# ==================
+# Deep Learning - Drive D (D:/AEGIS)
+# ==================
+tensorflow>=2.15.0
+torch>=2.0.0
+torchvision
+onnxruntime
+deepface
+retina-face
+facenet-pytorch
+
+# ==================
+# Vision & Computer Vision
+# ==================
+opencv-python
+opencv-python-headless
+mediapipe
+face_recognition
+Pillow
+dlib
+ultralytics
+
+# ==================
+# System & Hardware
+# ==================
+psutil
+pywin32
+pyserial
+pystray
+
+# ==================
+# Networking & IoT
+# ==================
+paho-mqtt
+aiohttp
+requests
+
+# ==================
+# UI & Frontend
+# ==================
+jinja2
+python-multipart
+pygetwindow
+pyautogui
+
+# ==================
+# Security & Auth
+# ==================
 firebase-admin
 jsonschema
-# Browser automation
-selenium
-twilio
+cryptography
+
+# ==================
+# AI & Agents
+# ==================
 langgraph
 langchain-core
+langchain-community
 autogen
+
+# ==================
+# Communication
+# ==================
 livekit
 livekit-api
 livekit-agents
+twilio
+
+# ==================
+# Utilities
+# ==================
+httptools
+Pillow
+selenium
 redis
-# Add any other missing dependencies for future phases if needed
-# but I'll stick to what is currently required or explicitly mentioned.
-# Phase C: autogen
-# Phase D: livekit, livekit-api, livekit-agents
-# Phase E: rclpy (usually installed via ROS2, but I'll add placeholder)
-# Phase F: redis
+
+# ==================
+# Cache directories (set via env vars on Drive D):
+# TF_HUB_CACHE_DIR = D:/AEGIS/.tensorflow/hub
+# HF_HOME = D:/AEGIS/.huggingface
+# TORCH_HOME = D:/AEGIS/.torch
+# DEEPFACE_HOME = D:/AEGIS/.deepface
+# KERAS_HOME = D:/AEGIS/.keras
+# ==================

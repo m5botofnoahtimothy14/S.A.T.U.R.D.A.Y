@@ -1,6 +1,4 @@
-# AEGIS Visual Core Build Script
-# Run this to build the C++ visual engine
-
+﻿
 param(
     [string]$BuildType = "Release"
 )
@@ -18,7 +16,6 @@ Write-Host "  BUILDING AEGIS VISUAL CORE (C++)" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Check for Visual Studio
 $vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
 $vsPath = $null
 
@@ -30,7 +27,6 @@ if (Test-Path $vsWhere) {
     Write-Host "       Please install Visual Studio 2019+" -ForegroundColor Yellow
 }
 
-# Check for CMake
 $cmake = Get-Command cmake -ErrorAction SilentlyContinue
 if (-not $cmake) {
     Write-Host "[ERROR] CMake not found!" -ForegroundColor Red
@@ -39,19 +35,16 @@ if (-not $cmake) {
 }
 Write-Host "[OK] CMake found: $($cmake.Source)" -ForegroundColor Green
 
-# Create build directory
 if (-not (Test-Path $BuildDir)) {
     New-Item -ItemType Directory -Path $BuildDir | Out-Null
 }
 
-# Configure
 Write-Host ""
 Write-Host "[1/2] Configuring CMake..." -ForegroundColor Yellow
 Push-Location $BuildDir
 try {
     cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=$BuildType
     if ($LASTEXITCODE -ne 0) {
-        # Try VS 2019 if 2022 fails
         Write-Host "  Trying Visual Studio 2019..." -ForegroundColor Gray
         cmake .. -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=$BuildType
     }
@@ -59,7 +52,6 @@ try {
     Pop-Location
 }
 
-# Build
 Write-Host "[2/2] Building..." -ForegroundColor Yellow
 Push-Location $BuildDir
 try {
@@ -68,7 +60,6 @@ try {
     Pop-Location
 }
 
-# Check output
 $ExePath = Join-Path $BinDir "aegis-core.exe"
 if (Test-Path $ExePath) {
     Write-Host ""

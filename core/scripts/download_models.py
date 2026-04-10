@@ -1,4 +1,4 @@
-import os
+﻿import os
 import urllib.request
 import sys
 
@@ -30,29 +30,22 @@ def main():
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
 
-    # Llama 3 8B Instruct GGUF (Q4_K_M)
-    # Using a known reliable HuggingFace mirror link
     llama_url = "https://huggingface.co/bartowski/Meta-Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf"
     llama_path = os.path.join(models_dir, "llama-3-8b-instruct.Q4_K_M.gguf")
     
-    # MediaPipe Face Landmarker
     face_url = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"
     face_path = os.path.join(models_dir, "face_landmarker.task")
     
-    # Vosk model (small)
     vosk_url = "https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip"
     vosk_zip = os.path.join(models_dir, "vosk-model-small-en-us-0.15.zip")
     vosk_dir = os.path.join(models_dir, "vosk-model-small-en-us-0.15")
 
     print("--- AEGIS Model Downloader ---")
     
-    # Download LLM
     download_file(llama_url, llama_path)
     
-    # Download Face Landmarker
     download_file(face_url, face_path)
     
-    # Check Vosk
     if not os.path.exists(vosk_dir):
         download_file(vosk_url, vosk_zip)
         print("Extracting Vosk model...")

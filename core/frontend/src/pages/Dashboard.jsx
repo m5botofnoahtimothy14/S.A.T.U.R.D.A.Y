@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, Activity, Lock, Eye, Zap, Cpu, Wifi, RefreshCw } from 'lucide-react';
 import { apiService } from '../services/api';
 import './Dashboard.css';
@@ -25,7 +25,6 @@ const Dashboard = () => {
     try {
       setLoading(true);
       
-      // Fetch stats and threats in parallel
       const [statsData, threatsData, defenseData] = await Promise.all([
         apiService.getSystemStats().catch(() => null),
         apiService.getThreats().catch(() => null),
@@ -45,7 +44,6 @@ const Dashboard = () => {
       if (threatsData?.threats) {
         setThreats(threatsData.threats);
       } else {
-        // Fallback data if API fails
         setThreats([
           { id: 1, type: 'Malware', severity: 'high', source: 'Network', time: '2 min ago', status: 'Blocked' },
           { id: 2, type: 'Port Scan', severity: 'medium', source: 'External IP', time: '5 min ago', status: 'Blocked' },
@@ -65,7 +63,6 @@ const Dashboard = () => {
       setLastUpdate(new Date());
     } catch (error) {
       console.error('Failed to fetch data:', error);
-      // Fallback to default data
       setThreats([
         { id: 1, type: 'Malware', severity: 'high', source: 'Network', time: '2 min ago', status: 'Blocked' },
         { id: 2, type: 'Port Scan', severity: 'medium', source: 'External IP', time: '5 min ago', status: 'Blocked' },
@@ -86,7 +83,6 @@ const Dashboard = () => {
   useEffect(() => {
     fetchData();
     
-    // Auto-refresh every 5 seconds
     const interval = setInterval(fetchData, 5000);
     
     return () => clearInterval(interval);

@@ -1,4 +1,4 @@
-# governance/__init__.py
+﻿                        
 from .policy import PolicyEngine
 from .compliance_logger import ComplianceLogger
 from .consent_manager import ConsentManager

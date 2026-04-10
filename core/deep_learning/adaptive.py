@@ -1,12 +1,4 @@
-# deep_learning/adaptive.py
-"""
-AdaptiveLearningEngine
-======================
-Continuous learning system for AEGIS.
-Learns from interactions, adapts behavior, and builds
-knowledge over time - making AEGIS a truly learning AI.
-"""
-
+﻿                           
 import os
 import json
 import time
@@ -23,7 +15,7 @@ logger = structlog.get_logger("AEGIS.DL.Adaptive")
 
 @dataclass
 class LearningEntry:
-    """Single learning entry"""
+    
     input_data: Any
     output_data: Any
     outcome: float
@@ -31,11 +23,6 @@ class LearningEntry:
     context: Dict = field(default_factory=dict)
 
 class AdaptiveLearningEngine:
-    """
-    Adaptive Learning Engine for continuous improvement.
-    AEGIS learns from every interaction and continuously
-    improves its responses and behavior.
-    """
     
     def __init__(self, event_bus=None, deep_learning_core=None):
         self.event_bus = event_bus
@@ -65,7 +52,7 @@ class AdaptiveLearningEngine:
         logger.info("AdaptiveLearningEngine initialized - Continuous learning active")
         
     def _subscribe_to_events(self):
-        """Subscribe to events for learning"""
+        
         if self.event_bus:
             self.event_bus.subscribe("voice_command", self._on_command)
             self.event_bus.subscribe("voice_response", self._on_response)
@@ -75,7 +62,7 @@ class AdaptiveLearningEngine:
             self.event_bus.subscribe("search_results", self._on_search)
             
     def _on_command(self, data):
-        """Learn from commands"""
+        
         command = str(data)
         
         entry = LearningEntry(
@@ -87,7 +74,7 @@ class AdaptiveLearningEngine:
         self.learning_buffer.append(entry)
         
     def _on_response(self, data):
-        """Learn from responses"""
+        
         response = str(data)
         
         if len(self.learning_buffer) > 0:
@@ -101,7 +88,7 @@ class AdaptiveLearningEngine:
         })
         
     def _on_task_outcome(self, data):
-        """Learn from task outcomes"""
+        
         task_type = data.get("type", "unknown")
         success = "task_completed" in str(data)
         
@@ -118,7 +105,7 @@ class AdaptiveLearningEngine:
         self._adapt_learning_rate(success)
         
     def _on_feedback(self, data):
-        """Learn from explicit user feedback"""
+        
         feedback = data.get("feedback", 0.5)
         
         if len(self.learning_buffer) > 0:
@@ -128,7 +115,7 @@ class AdaptiveLearningEngine:
         self._update_preferences(data.get("user", "default"), feedback)
         
     def _on_search(self, data):
-        """Learn from search results"""
+        
         query = data.get("query", "")
         results = data.get("results", [])
         
@@ -142,14 +129,14 @@ class AdaptiveLearningEngine:
             self.learning_buffer.append(entry)
             
     def _adapt_learning_rate(self, success: bool):
-        """Adapt learning rate based on success"""
+        
         if success:
             self.learning_rate = min(0.1, self.learning_rate * 1.05)
         else:
             self.learning_rate = max(0.0001, self.learning_rate * 0.95)
             
     def _update_preferences(self, user: str, feedback: float):
-        """Update user preferences based on feedback"""
+        
         if user not in self.user_preferences:
             self.user_preferences[user] = {
                 "feedback_sum": 0.0,
@@ -163,10 +150,7 @@ class AdaptiveLearningEngine:
         prefs["interactions"] += 1
         
     def learn(self, input_data: Any, context: Dict = None) -> Dict[str, Any]:
-        """
-        Main learning function.
-        AEGIS learns from input and builds understanding.
-        """
+        
         entry = LearningEntry(
             input_data=input_data,
             output_data=None,
@@ -197,10 +181,7 @@ class AdaptiveLearningEngine:
         }
         
     def predict(self, input_data: Any, context: Dict = None) -> Dict[str, Any]:
-        """
-        Make predictions based on learned patterns.
-        AEGIS uses accumulated knowledge to predict outcomes.
-        """
+        
         key = self._extract_key(input_data)
         
         if key in self.knowledge_graph:
@@ -228,7 +209,7 @@ class AdaptiveLearningEngine:
         }
         
     def _extract_key(self, data: Any) -> str:
-        """Extract knowledge key from data"""
+        
         data_str = str(data).lower().strip()
         words = data_str.split()
         if len(words) > 3:
@@ -236,7 +217,7 @@ class AdaptiveLearningEngine:
         return data_str
         
     def _find_pattern_match(self, input_data: Any) -> Optional[Dict]:
-        """Find matching pattern from history"""
+        
         input_str = str(input_data).lower()
         
         for entry in reversed(list(self.learning_buffer)):
@@ -251,7 +232,7 @@ class AdaptiveLearningEngine:
         return None
         
     def _generate_insights(self, input_data: Any, context: Dict = None) -> List[str]:
-        """Generate insights from learned data"""
+        
         insights = []
         
         total_entries = len(self.learning_buffer)
@@ -270,7 +251,7 @@ class AdaptiveLearningEngine:
         return insights
         
     def _calculate_success_rate(self) -> float:
-        """Calculate overall success rate"""
+        
         if not self.learning_buffer:
             return 0.5
             
@@ -281,10 +262,7 @@ class AdaptiveLearningEngine:
         return sum(e.outcome for e in completed) / len(completed)
         
     def adapt_response(self, response: str, user: str = "default") -> str:
-        """
-        Adapt response based on learned user preferences.
-        AEGIS personalizes its responses.
-        """
+        
         if user in self.user_preferences:
             prefs = self.user_preferences[user]
             avg_feedback = prefs["feedback_sum"] / max(1, prefs["interactions"])
@@ -297,7 +275,7 @@ class AdaptiveLearningEngine:
         return response
         
     def get_user_model(self, user: str = "default") -> Dict[str, Any]:
-        """Get learned user model"""
+        
         if user not in self.user_preferences:
             return {"interactions": 0, "style": "neutral"}
             
@@ -310,7 +288,7 @@ class AdaptiveLearningEngine:
         }
         
     def _save_knowledge(self):
-        """Save learned knowledge"""
+        
         knowledge = {
             "learning_buffer_size": len(self.learning_buffer),
             "knowledge_graph_size": len(self.knowledge_graph),
@@ -333,7 +311,7 @@ class AdaptiveLearningEngine:
             json.dump(knowledge, f, indent=2)
             
     def _load_knowledge(self):
-        """Load previously learned knowledge"""
+        
         knowledge_file = f"{self.data_dir}/adaptive_knowledge.json"
         
         if os.path.exists(knowledge_file):
@@ -358,7 +336,7 @@ class AdaptiveLearningEngine:
                 logger.warning(f"Failed to load adaptive knowledge: {e}")
                 
     def get_status(self) -> Dict[str, Any]:
-        """Get learning status"""
+        
         return {
             "learning_entries": len(self.learning_buffer),
             "knowledge_nodes": len(self.knowledge_graph),
@@ -369,6 +347,6 @@ class AdaptiveLearningEngine:
         }
         
     def save(self):
-        """Save all learning data"""
+        
         self._save_knowledge()
         logger.info("Adaptive learning knowledge saved")

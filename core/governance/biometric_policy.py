@@ -1,4 +1,4 @@
-# governance/biometric_policy.py
+﻿                                
 class BiometricPolicy:
     def __init__(self):
         self.allowed_users = set()

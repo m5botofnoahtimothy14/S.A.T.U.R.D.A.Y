@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -671,6 +671,144 @@
             .grid-4 { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
+    <style>
+        .firstboot-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 14, 0.92);
+            backdrop-filter: blur(8px);
+            z-index: 5000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .firstboot-overlay.active {
+            display: flex;
+        }
+
+        .firstboot-card {
+            width: min(860px, 100%);
+            max-height: calc(100vh - 2rem);
+            overflow: auto;
+            background: var(--panel-solid);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+        }
+
+        .firstboot-header {
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .firstboot-kicker {
+            color: var(--accent);
+            letter-spacing: 0.12em;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.35rem;
+        }
+
+        .firstboot-header h2 {
+            font-size: 1.05rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .firstboot-progress {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            margin-top: 0.6rem;
+        }
+
+        .firstboot-progress-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #58a6ff, #1f6feb);
+            transition: width 0.2s ease;
+        }
+
+        .firstboot-body {
+            padding: 1.2rem 1.25rem;
+        }
+
+        .firstboot-step {
+            display: none;
+        }
+
+        .firstboot-step.active {
+            display: block;
+        }
+
+        .firstboot-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.6rem;
+            padding: 1rem 1.25rem 1.25rem;
+            border-top: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .firstboot-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .firstboot-status {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-top: 0.75rem;
+        }
+
+        .firstboot-status strong {
+            color: var(--text);
+        }
+
+        .firstboot-face-capture {
+            margin-top: 0.75rem;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.32);
+        }
+
+        .firstboot-face-video {
+            width: 100%;
+            max-height: 280px;
+            object-fit: cover;
+            background: #000;
+            display: block;
+        }
+
+        .firstboot-face-grid {
+            margin-top: 0.75rem;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.5rem;
+        }
+
+        .firstboot-face-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            min-height: 72px;
+            background: rgba(0, 0, 0, 0.28);
+        }
+
+        .firstboot-face-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <div class="bg-grid"></div>
@@ -714,7 +852,7 @@
 
     <main class="main-container">
         <div class="content-area">
-            <!-- Dashboard Page -->
+            
             <div class="page active" id="page-dashboard">
                 <div class="grid-4" style="margin-bottom: 1rem;">
                     <div class="stat-card">
@@ -779,7 +917,6 @@
                 </div>
             </div>
 
-            <!-- Face ID Page -->
             <div class="page" id="page-faceid">
                 <div class="panel" style="margin-bottom: 1rem;">
                     <div class="panel-header">
@@ -825,7 +962,6 @@
                 </div>
             </div>
 
-            <!-- Voice ID Page -->
             <div class="page" id="page-voiceid">
                 <div class="panel" style="margin-bottom: 1rem;">
                     <div class="panel-header">
@@ -878,7 +1014,6 @@
                 </div>
             </div>
 
-            <!-- Camera Page -->
             <div class="page" id="page-camera">
                 <div class="panel" style="margin-bottom: 1rem;">
                     <div class="panel-header">
@@ -908,7 +1043,6 @@
                 </div>
             </div>
 
-            <!-- Terminal Page -->
             <div class="page" id="page-terminal">
                 <div class="panel">
                     <div class="panel-header">
@@ -933,7 +1067,6 @@
                 </div>
             </div>
 
-            <!-- Directory Page -->
             <div class="page" id="page-directory">
                 <div class="panel" style="margin-bottom: 1rem;">
                     <div class="panel-header">
@@ -979,7 +1112,6 @@
                 </div>
             </div>
 
-            <!-- Logs Page -->
             <div class="page" id="page-logs">
                 <div class="grid-2" style="margin-bottom: 1rem;">
                     <div class="panel">
@@ -1016,7 +1148,6 @@
                 </div>
             </div>
 
-            <!-- Controls Page -->
             <div class="page" id="page-controls">
                 <div class="alert-box danger" id="kill-switch-warning" style="display: none;">
                     <span>⚠️</span>
@@ -1144,12 +1275,135 @@
         </aside>
     </main>
 
+    <div id="firstboot-overlay" class="firstboot-overlay" aria-hidden="true">
+        <div class="firstboot-card">
+            <div class="firstboot-header">
+                <div class="firstboot-kicker">First Boot Setup</div>
+                <h2 id="firstboot-title">Welcome to AEGIS</h2>
+                <div id="firstboot-subtitle" class="firstboot-status">Complete guided setup to unlock the full system.</div>
+                <div class="firstboot-progress">
+                    <div id="firstboot-progress-fill" class="firstboot-progress-fill"></div>
+                </div>
+            </div>
+            <div class="firstboot-body">
+                <div id="firstboot-alert" class="alert-box warning" style="display: none;"></div>
+
+                <div class="firstboot-step" data-step="1">
+                    <div class="alert-box success">
+                        <span>🛠️</span>
+                        <span>This one-time setup is required before AEGIS enters normal operation.</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Greeting Name</label>
+                        <input type="text" class="input-field" id="firstboot-display-name" placeholder="Sir">
+                    </div>
+                    <div class="firstboot-status">
+                        AEGIS will use this name for startup greetings and confirmations.
+                    </div>
+                </div>
+
+                <div class="firstboot-step" data-step="2">
+                    <div class="alert-box warning">
+                        <span>🎙️</span>
+                        <span>Record your ADMIN voice profile now. This enables speaker-isolated recognition in noisy spaces.</span>
+                    </div>
+                    <div class="form-group">
+                        <label>ADMIN Profile Name</label>
+                        <input type="text" class="input-field" id="firstboot-admin-name" value="ADMIN">
+                    </div>
+                    <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" id="firstboot-voice-btn">Start ADMIN Recording</button>
+                        <button class="btn" id="firstboot-refresh-btn">Refresh Status</button>
+                    </div>
+                    <div class="firstboot-status" id="firstboot-voice-status">Waiting for ADMIN voice enrollment.</div>
+                </div>
+
+                <div class="firstboot-step" data-step="3">
+                    <div class="alert-box warning">
+                        <span>📷</span>
+                        <span>Register ADMIN face profile now. This allows visual identity match for secure wake and access.</span>
+                    </div>
+                    <div class="form-group">
+                        <label>ADMIN Face Name</label>
+                        <input type="text" class="input-field" id="firstboot-face-name" value="ADMIN">
+                    </div>
+                    <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" id="firstboot-face-camera-btn">Start Camera</button>
+                        <button class="btn" id="firstboot-face-capture-btn">Capture</button>
+                        <button class="btn" id="firstboot-face-clear-btn">Clear Captures</button>
+                        <button class="btn btn-primary" id="firstboot-face-train-btn">Train ADMIN Face</button>
+                    </div>
+                    <div class="firstboot-face-capture">
+                        <video id="firstboot-face-video" class="firstboot-face-video" autoplay muted playsinline></video>
+                        <canvas id="firstboot-face-canvas" style="display:none;"></canvas>
+                    </div>
+                    <div id="firstboot-face-preview" class="firstboot-face-grid"></div>
+                    <div class="firstboot-status" id="firstboot-face-status">Waiting for ADMIN face enrollment.</div>
+                </div>
+
+                <div class="firstboot-step" data-step="4">
+                    <div class="alert-box warning">
+                        <span>📈</span>
+                        <span>Calibrate room noise thresholds. This improves detection for speech vs TV/hall/kids/noise.</span>
+                    </div>
+                    <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                        <button class="btn btn-primary" id="firstboot-auto-calibrate-btn">Auto Calibrate (Mic)</button>
+                        <button class="btn" id="firstboot-apply-calibrate-btn">Apply Manual Values</button>
+                    </div>
+                    <div class="firstboot-grid">
+                        <div class="form-group">
+                            <label>Sound Threshold (dB)</label>
+                            <input type="number" class="input-field" id="firstboot-sound-threshold" value="68.0" step="0.1" min="45" max="80">
+                        </div>
+                        <div class="form-group">
+                            <label>Voice Biometric Threshold</label>
+                            <input type="number" class="input-field" id="firstboot-voice-threshold" value="0.72" step="0.001" min="0.62" max="0.90">
+                        </div>
+                    </div>
+                    <div class="firstboot-status" id="firstboot-calibration-status">Calibration pending.</div>
+                </div>
+
+                <div class="firstboot-step" data-step="5">
+                    <div class="alert-box success">
+                        <span>✅</span>
+                        <span>Final confirmation. AEGIS will switch to normal operation after this step.</span>
+                    </div>
+                    <div class="firstboot-status">
+                        <strong>Checklist:</strong><br>
+                        <span id="firstboot-check-voice">ADMIN voice profile: pending</span><br>
+                        <span id="firstboot-check-face">ADMIN face profile: pending</span><br>
+                        <span id="firstboot-check-calibration">Audio calibration: pending</span>
+                    </div>
+                </div>
+            </div>
+            <div class="firstboot-actions">
+                <button class="btn" id="firstboot-back-btn">Back</button>
+                <button class="btn btn-primary" id="firstboot-next-btn">Next</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const socket = io();
         let uploadedFiles = [];
         let isRecording = false;
         let cameraActive = false;
         let startTime = Date.now();
+        let voiceRecorder = null;
+        let voiceStream = null;
+        let voiceChunks = [];
+        let voiceMimeType = '';
+        let activeVoiceProfileName = '';
+        const firstBoot = {
+            active: false,
+            step: 1,
+            totalSteps: 5,
+            recording: false,
+            faceCameraOn: false,
+            faceStream: null,
+            facePhotos: [],
+            status: null,
+        };
 
         // Navigation
         document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -1385,9 +1639,9 @@
                 const grid = document.getElementById('faces-grid');
                 grid.innerHTML = faces.map(f => `
                     <div class="face-card">
-                        <img src="${f.photo}">
+                        <img src="${typeof f.photo === 'string' ? f.photo : ''}" onerror="this.style.display='none';">
                         <div class="name">${f.name}</div>
-                        <div class="meta">${f.relation} • ${f.photos} photos</div>
+                        <div class="meta">${f.relation} • ${Number(f.photo_count ?? f.photos ?? 0) || 0} photos</div>
                     </div>
                 `).join('');
                 document.getElementById('face-count').textContent = `${faces.length}/10`;
@@ -1397,24 +1651,728 @@
         }
 
         // Voice ID functions
-        function toggleRecording() {
-            isRecording = !isRecording;
+        function setVoiceRecordUI(recording) {
             const btn = document.getElementById('record-btn');
             const wave = document.getElementById('voice-wave');
-            
-            if (isRecording) {
+            if (!btn || !wave) return;
+            if (recording) {
                 btn.innerHTML = '<span>⏹️</span> Stop Recording';
                 btn.classList.remove('btn-primary');
                 btn.classList.add('btn-danger');
                 wave.classList.add('recording');
-                socket.emit('voice_train_start', { name: document.getElementById('voice-name').value });
             } else {
                 btn.innerHTML = '<span>🎤</span> Start Recording';
                 btn.classList.add('btn-primary');
                 btn.classList.remove('btn-danger');
                 wave.classList.remove('recording');
-                socket.emit('voice_train_stop');
             }
+        }
+
+        function arrayBufferToBase64(buffer) {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            const chunkSize = 0x8000;
+            for (let i = 0; i < bytes.length; i += chunkSize) {
+                const chunk = bytes.subarray(i, i + chunkSize);
+                binary += String.fromCharCode.apply(null, chunk);
+            }
+            return btoa(binary);
+        }
+
+        function writeAscii(view, offset, text) {
+            for (let i = 0; i < text.length; i++) {
+                view.setUint8(offset + i, text.charCodeAt(i));
+            }
+        }
+
+        function resampleLinear(samples, inRate, outRate) {
+            if (inRate === outRate || samples.length === 0) return samples;
+            const ratio = inRate / outRate;
+            const outLength = Math.max(1, Math.round(samples.length / ratio));
+            const out = new Float32Array(outLength);
+            for (let i = 0; i < outLength; i++) {
+                const pos = i * ratio;
+                const idx = Math.floor(pos);
+                const frac = pos - idx;
+                const s0 = samples[Math.min(idx, samples.length - 1)];
+                const s1 = samples[Math.min(idx + 1, samples.length - 1)];
+                out[i] = s0 + (s1 - s0) * frac;
+            }
+            return out;
+        }
+
+        function encodeWavPcm16(samples, sampleRate) {
+            const bytesPerSample = 2;
+            const dataSize = samples.length * bytesPerSample;
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+
+            writeAscii(view, 0, 'RIFF');
+            view.setUint32(4, 36 + dataSize, true);
+            writeAscii(view, 8, 'WAVE');
+            writeAscii(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * bytesPerSample, true);
+            view.setUint16(32, bytesPerSample, true);
+            view.setUint16(34, 16, true);
+            writeAscii(view, 36, 'data');
+            view.setUint32(40, dataSize, true);
+
+            let offset = 44;
+            for (let i = 0; i < samples.length; i++) {
+                let s = Math.max(-1, Math.min(1, samples[i]));
+                s = s < 0 ? s * 32768 : s * 32767;
+                view.setInt16(offset, s, true);
+                offset += 2;
+            }
+            return buffer;
+        }
+
+        async function blobToWavBase64(blob, targetSampleRate = 16000) {
+            const arrayBuffer = await blob.arrayBuffer();
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) {
+                throw new Error('AudioContext is not supported in this browser');
+            }
+
+            const audioCtx = new AudioCtx();
+            try {
+                const decoded = await audioCtx.decodeAudioData(arrayBuffer.slice(0));
+                const channels = decoded.numberOfChannels;
+                const frameCount = decoded.length;
+                const mono = new Float32Array(frameCount);
+                for (let ch = 0; ch < channels; ch++) {
+                    const data = decoded.getChannelData(ch);
+                    for (let i = 0; i < frameCount; i++) {
+                        mono[i] += data[i] / channels;
+                    }
+                }
+                const resampled = resampleLinear(mono, decoded.sampleRate, targetSampleRate);
+                const wav = encodeWavPcm16(resampled, targetSampleRate);
+                return arrayBufferToBase64(wav);
+            } finally {
+                if (audioCtx.close) await audioCtx.close();
+            }
+        }
+
+        async function uploadVoiceProfile(name, audioB64, sampleRate = 16000) {
+            const payload = {
+                name,
+                audio_b64: audioB64,
+                sample_rate: sampleRate,
+                is_admin: String(name || '').trim().toLowerCase() === 'admin',
+            };
+            const res = await fetch('/api/voice/train', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data.success) {
+                const detail = data.detail || data.error || `HTTP ${res.status}`;
+                throw new Error(detail);
+            }
+            return data.profile || null;
+        }
+
+        function renderVoiceProfiles(profiles) {
+            const list = document.getElementById('voice-profiles');
+            if (!list) return;
+
+            const rows = Array.isArray(profiles) ? profiles : [];
+            if (!rows.length) {
+                list.innerHTML = '<div class="directory-item"><div class="info"><div class="name">No voice profiles yet</div><div class="relation">Record and save your first profile</div></div></div>';
+                return;
+            }
+
+            list.innerHTML = rows.map((p) => {
+                const name = p.name || 'Unknown';
+                const samples = Number(p.samples || 0);
+                const trained = p.trained ? 'Trained' : 'Pending';
+                const role = p.is_admin ? 'ADMIN' : 'User';
+                return `
+                    <div class="directory-item">
+                        <div class="avatar">${String(name).charAt(0).toUpperCase()}</div>
+                        <div class="info">
+                            <div class="name">${name}</div>
+                            <div class="relation">${role} • ${trained} • ${samples} sample(s)</div>
+                        </div>
+                        <span class="status"></span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadVoiceProfiles() {
+            try {
+                const res = await fetch('/api/voice/list');
+                const profiles = await res.json();
+                renderVoiceProfiles(profiles);
+            } catch (err) {
+                addLog(`Failed to load voice profiles: ${err.message}`, 'warn', 'voice');
+            }
+        }
+
+        async function startVoiceTraining(nameOverride = '') {
+            const name = String(nameOverride || document.getElementById('voice-name')?.value || '').trim();
+            if (!name) {
+                alert('Please enter a voice profile name (use ADMIN for admin voice).');
+                return;
+            }
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') {
+                throw new Error('MediaRecorder is not available in this browser.');
+            }
+
+            voiceStream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true,
+                }
+            });
+
+            const candidates = [
+                'audio/webm;codecs=opus',
+                'audio/webm',
+                'audio/ogg;codecs=opus'
+            ];
+            voiceMimeType = candidates.find((m) => MediaRecorder.isTypeSupported(m)) || '';
+            voiceRecorder = voiceMimeType ? new MediaRecorder(voiceStream, { mimeType: voiceMimeType }) : new MediaRecorder(voiceStream);
+            voiceChunks = [];
+            activeVoiceProfileName = name;
+
+            voiceRecorder.addEventListener('dataavailable', (event) => {
+                if (event.data && event.data.size > 0) {
+                    voiceChunks.push(event.data);
+                }
+            });
+
+            voiceRecorder.start(250);
+            socket.emit('voice_train_start', { name });
+            addLog(`Voice training started for ${name}`, 'info', 'voice');
+        }
+
+        async function stopVoiceTraining(nameOverride = '') {
+            const recorder = voiceRecorder;
+            if (!recorder) return;
+
+            voiceRecorder = null;
+            socket.emit('voice_train_stop');
+
+            await new Promise((resolve) => {
+                const done = () => resolve();
+                recorder.addEventListener('stop', done, { once: true });
+                try {
+                    recorder.stop();
+                } catch (_) {
+                    resolve();
+                }
+            });
+
+            if (voiceStream) {
+                voiceStream.getTracks().forEach((track) => track.stop());
+                voiceStream = null;
+            }
+
+            if (!voiceChunks.length) {
+                throw new Error('No audio data captured. Please try again.');
+            }
+
+            const blob = new Blob(voiceChunks, { type: voiceMimeType || 'audio/webm' });
+            voiceChunks = [];
+            const name = String(nameOverride || activeVoiceProfileName || document.getElementById('voice-name')?.value || '').trim();
+            const wavB64 = await blobToWavBase64(blob, 16000);
+            await uploadVoiceProfile(name, wavB64, 16000);
+            await loadVoiceProfiles();
+            addLog(`Voice profile saved for ${name}`, 'info', 'voice');
+            activeVoiceProfileName = '';
+        }
+
+        async function toggleRecording() {
+            if (!isRecording) {
+                try {
+                    await startVoiceTraining();
+                    isRecording = true;
+                    setVoiceRecordUI(true);
+                } catch (err) {
+                    isRecording = false;
+                    setVoiceRecordUI(false);
+                    addLog(`Voice recording failed: ${err.message}`, 'error', 'voice');
+                }
+                return;
+            }
+
+            try {
+                await stopVoiceTraining();
+                isRecording = false;
+                setVoiceRecordUI(false);
+            } catch (err) {
+                isRecording = false;
+                setVoiceRecordUI(false);
+                addLog(`Voice training upload failed: ${err.message}`, 'error', 'voice');
+            }
+        }
+
+        function setFirstBootAlert(message = '', level = 'warning') {
+            const box = document.getElementById('firstboot-alert');
+            if (!box) return;
+            if (!message) {
+                box.style.display = 'none';
+                box.textContent = '';
+                box.className = 'alert-box warning';
+                return;
+            }
+            box.style.display = 'flex';
+            box.className = `alert-box ${level}`;
+            box.innerHTML = `<span>${message}</span>`;
+        }
+
+        function setFirstBootStep(step) {
+            firstBoot.step = Math.max(1, Math.min(firstBoot.totalSteps, step));
+            document.querySelectorAll('.firstboot-step').forEach((el) => {
+                el.classList.toggle('active', Number(el.dataset.step) === firstBoot.step);
+            });
+
+            const title = document.getElementById('firstboot-title');
+            const subtitle = document.getElementById('firstboot-subtitle');
+            const nextBtn = document.getElementById('firstboot-next-btn');
+            const backBtn = document.getElementById('firstboot-back-btn');
+            const fill = document.getElementById('firstboot-progress-fill');
+            const pct = (firstBoot.step / firstBoot.totalSteps) * 100;
+            if (fill) fill.style.width = `${pct}%`;
+            if (backBtn) backBtn.style.visibility = firstBoot.step === 1 ? 'hidden' : 'visible';
+
+            if (!title || !subtitle || !nextBtn) return;
+            if (firstBoot.step === 1) {
+                title.textContent = 'Welcome to AEGIS';
+                subtitle.textContent = 'Step 1/5: confirm your startup identity.';
+                nextBtn.textContent = 'Next';
+            } else if (firstBoot.step === 2) {
+                title.textContent = 'Enroll ADMIN Voice';
+                subtitle.textContent = 'Step 2/5: train ADMIN voice for speaker-isolated recognition.';
+                nextBtn.textContent = 'Next';
+            } else if (firstBoot.step === 3) {
+                title.textContent = 'Enroll ADMIN Face';
+                subtitle.textContent = 'Step 3/5: capture and train ADMIN face profile.';
+                nextBtn.textContent = 'Next';
+            } else if (firstBoot.step === 4) {
+                title.textContent = 'Calibrate Audio Environment';
+                subtitle.textContent = 'Step 4/5: set room noise and voice matching thresholds.';
+                nextBtn.textContent = 'Next';
+            } else {
+                title.textContent = 'Finalize Setup';
+                subtitle.textContent = 'Step 5/5: complete first-boot and enter normal operation.';
+                nextBtn.textContent = 'Complete Setup';
+            }
+        }
+
+        function showFirstBootOverlay(show) {
+            const overlay = document.getElementById('firstboot-overlay');
+            if (!overlay) return;
+            firstBoot.active = !!show;
+            overlay.classList.toggle('active', !!show);
+            overlay.setAttribute('aria-hidden', show ? 'false' : 'true');
+            document.body.style.overflow = show ? 'hidden' : '';
+            if (!show) {
+                stopFirstBootFaceCamera();
+            }
+        }
+
+        async function refreshFirstBootStatus() {
+            const res = await fetch('/api/setup/first-boot/status');
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+                throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+            }
+            firstBoot.status = data;
+
+            const displayName = data.state?.display_name || '';
+            const nameInput = document.getElementById('firstboot-display-name');
+            if (nameInput && displayName && !nameInput.value) {
+                nameInput.value = displayName;
+            }
+
+            const voiceReady = !!data.requirements?.admin_voice_profile;
+            const faceReady = !!data.requirements?.admin_face_profile;
+            const calibrationReady = !!data.requirements?.audio_calibration;
+            const welcomeDone = !!data.state?.steps?.welcome;
+
+            const voiceStatus = document.getElementById('firstboot-voice-status');
+            if (voiceStatus) {
+                voiceStatus.textContent = voiceReady
+                    ? 'ADMIN voice enrollment detected.'
+                    : 'Waiting for ADMIN voice enrollment.';
+            }
+
+            const faceStatus = document.getElementById('firstboot-face-status');
+            if (faceStatus) {
+                faceStatus.textContent = faceReady
+                    ? 'ADMIN face enrollment detected.'
+                    : 'Waiting for ADMIN face enrollment.';
+            }
+
+            const calStatus = document.getElementById('firstboot-calibration-status');
+            if (calStatus) {
+                calStatus.textContent = calibrationReady
+                    ? 'Calibration profile detected.'
+                    : 'Calibration pending.';
+            }
+
+            const checkVoice = document.getElementById('firstboot-check-voice');
+            const checkFace = document.getElementById('firstboot-check-face');
+            const checkCal = document.getElementById('firstboot-check-calibration');
+            if (checkVoice) checkVoice.textContent = `ADMIN voice profile: ${voiceReady ? 'ready' : 'pending'}`;
+            if (checkFace) checkFace.textContent = `ADMIN face profile: ${faceReady ? 'ready' : 'pending'}`;
+            if (checkCal) checkCal.textContent = `Audio calibration: ${calibrationReady ? 'ready' : 'pending'}`;
+
+            if (data.pending) {
+                showFirstBootOverlay(true);
+                if (!welcomeDone) {
+                    setFirstBootStep(1);
+                } else if (!voiceReady) {
+                    setFirstBootStep(2);
+                } else if (!faceReady) {
+                    setFirstBootStep(3);
+                } else if (!calibrationReady) {
+                    setFirstBootStep(4);
+                } else {
+                    setFirstBootStep(5);
+                }
+            } else {
+                showFirstBootOverlay(false);
+            }
+
+            return data;
+        }
+
+        async function loadCurrentCalibrationIntoWizard() {
+            try {
+                const res = await fetch('/api/voice/calibration');
+                const data = await res.json();
+                if (!res.ok || typeof data !== 'object' || data === null) return;
+                const sound = document.getElementById('firstboot-sound-threshold');
+                const voice = document.getElementById('firstboot-voice-threshold');
+                if (sound && data.sound_threshold_db !== undefined) {
+                    sound.value = Number(data.sound_threshold_db).toFixed(1);
+                }
+                if (voice && data.voice_biometric_threshold !== undefined) {
+                    voice.value = Number(data.voice_biometric_threshold).toFixed(3);
+                }
+            } catch (_) {}
+        }
+
+        async function toggleFirstBootVoiceRecording() {
+            const btn = document.getElementById('firstboot-voice-btn');
+            const nameInput = document.getElementById('firstboot-admin-name');
+            const profileName = String(nameInput?.value || 'ADMIN').trim() || 'ADMIN';
+
+            if (!firstBoot.recording) {
+                try {
+                    await startVoiceTraining(profileName);
+                    firstBoot.recording = true;
+                    if (btn) btn.textContent = 'Stop ADMIN Recording';
+                    setFirstBootAlert('Recording ADMIN voice sample. Speak clearly, then press stop.', 'warning');
+                } catch (err) {
+                    firstBoot.recording = false;
+                    if (btn) btn.textContent = 'Start ADMIN Recording';
+                    setFirstBootAlert(`Voice recording failed: ${err.message}`, 'danger');
+                }
+                return;
+            }
+
+            try {
+                await stopVoiceTraining(profileName);
+                firstBoot.recording = false;
+                if (btn) btn.textContent = 'Start ADMIN Recording';
+                setFirstBootAlert('ADMIN voice sample saved.', 'success');
+                await refreshFirstBootStatus();
+            } catch (err) {
+                firstBoot.recording = false;
+                if (btn) btn.textContent = 'Start ADMIN Recording';
+                setFirstBootAlert(`Voice upload failed: ${err.message}`, 'danger');
+            }
+        }
+
+        function renderFirstBootFacePreview() {
+            const grid = document.getElementById('firstboot-face-preview');
+            if (!grid) return;
+            grid.innerHTML = firstBoot.facePhotos.map((photo, idx) => `
+                <div class="firstboot-face-card" title="Capture ${idx + 1}">
+                    <img src="${photo.data}" alt="Capture ${idx + 1}">
+                </div>
+            `).join('');
+        }
+
+        function stopFirstBootFaceCamera() {
+            if (firstBoot.faceStream) {
+                firstBoot.faceStream.getTracks().forEach(track => track.stop());
+                firstBoot.faceStream = null;
+            }
+            firstBoot.faceCameraOn = false;
+            const btn = document.getElementById('firstboot-face-camera-btn');
+            if (btn) btn.textContent = 'Start Camera';
+        }
+
+        async function toggleFirstBootFaceCamera() {
+            const btn = document.getElementById('firstboot-face-camera-btn');
+            if (firstBoot.faceCameraOn) {
+                stopFirstBootFaceCamera();
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: 640, height: 480 },
+                    audio: false,
+                });
+                const video = document.getElementById('firstboot-face-video');
+                if (!video) {
+                    throw new Error('Face video element not found');
+                }
+                video.srcObject = stream;
+                firstBoot.faceStream = stream;
+                firstBoot.faceCameraOn = true;
+                if (btn) btn.textContent = 'Stop Camera';
+                setFirstBootAlert('Camera ready. Capture at least 2-3 samples, then train ADMIN face.', 'warning');
+            } catch (err) {
+                stopFirstBootFaceCamera();
+                setFirstBootAlert(`Camera start failed: ${err.message}`, 'danger');
+            }
+        }
+
+        function captureFirstBootFaceSample() {
+            const video = document.getElementById('firstboot-face-video');
+            const canvas = document.getElementById('firstboot-face-canvas');
+            if (!video || !canvas || !firstBoot.faceCameraOn) {
+                setFirstBootAlert('Start the camera before capturing face samples.', 'warning');
+                return;
+            }
+            if (firstBoot.facePhotos.length >= 10) {
+                setFirstBootAlert('Maximum 10 face captures reached.', 'warning');
+                return;
+            }
+
+            const width = video.videoWidth || 640;
+            const height = video.videoHeight || 480;
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                setFirstBootAlert('Unable to capture frame from camera.', 'danger');
+                return;
+            }
+            ctx.drawImage(video, 0, 0, width, height);
+            const data = canvas.toDataURL('image/jpeg', 0.9);
+            firstBoot.facePhotos.push({
+                name: `admin_face_${Date.now()}_${firstBoot.facePhotos.length + 1}.jpg`,
+                data,
+            });
+            renderFirstBootFacePreview();
+            setFirstBootAlert(`Captured ${firstBoot.facePhotos.length} face sample(s).`, 'success');
+        }
+
+        function clearFirstBootFaceSamples() {
+            firstBoot.facePhotos = [];
+            renderFirstBootFacePreview();
+            setFirstBootAlert('Face captures cleared.', 'warning');
+        }
+
+        async function trainFirstBootFaceProfile() {
+            const nameInput = document.getElementById('firstboot-face-name');
+            const profileName = String(nameInput?.value || 'ADMIN').trim() || 'ADMIN';
+            if (firstBoot.facePhotos.length === 0) {
+                setFirstBootAlert('Capture at least one face sample before training.', 'warning');
+                return;
+            }
+
+            const trainBtn = document.getElementById('firstboot-face-train-btn');
+            try {
+                if (trainBtn) trainBtn.disabled = true;
+                const res = await fetch('/api/face/train', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: profileName,
+                        relation: 'admin',
+                        is_admin: true,
+                        photos: firstBoot.facePhotos,
+                    }),
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+                }
+                setFirstBootAlert('ADMIN face profile saved.', 'success');
+                await refreshFirstBootStatus();
+            } catch (err) {
+                setFirstBootAlert(`Face training failed: ${err.message}`, 'danger');
+            } finally {
+                if (trainBtn) trainBtn.disabled = false;
+            }
+        }
+
+        async function autoCalibrateFirstBoot() {
+            const btn = document.getElementById('firstboot-auto-calibrate-btn');
+            try {
+                if (btn) btn.disabled = true;
+                setFirstBootAlert('Running automatic calibration. Stay in room and speak when prompted by the browser mic capture.', 'warning');
+                const res = await fetch('/api/setup/first-boot/auto-calibrate', { method: 'POST' });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+                }
+                const sound = document.getElementById('firstboot-sound-threshold');
+                const voice = document.getElementById('firstboot-voice-threshold');
+                if (sound && data.calibration?.sound_threshold_db !== undefined) {
+                    sound.value = Number(data.calibration.sound_threshold_db).toFixed(1);
+                }
+                if (voice && data.calibration?.voice_biometric_threshold !== undefined) {
+                    voice.value = Number(data.calibration.voice_biometric_threshold).toFixed(3);
+                }
+                setFirstBootAlert('Auto calibration completed and saved.', 'success');
+                await refreshFirstBootStatus();
+            } catch (err) {
+                setFirstBootAlert(`Auto calibration failed: ${err.message}`, 'danger');
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        async function applyManualCalibrationFirstBoot() {
+            const sound = Number(document.getElementById('firstboot-sound-threshold')?.value || 68.0);
+            const voice = Number(document.getElementById('firstboot-voice-threshold')?.value || 0.72);
+            try {
+                const res = await fetch('/api/voice/calibration', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sound_threshold_db: sound,
+                        voice_biometric_threshold: voice,
+                    }),
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+                }
+                setFirstBootAlert('Calibration values applied.', 'success');
+                await refreshFirstBootStatus();
+            } catch (err) {
+                setFirstBootAlert(`Calibration apply failed: ${err.message}`, 'danger');
+            }
+        }
+
+        async function completeFirstBootSetup() {
+            const displayName = String(document.getElementById('firstboot-display-name')?.value || 'Sir').trim() || 'Sir';
+            try {
+                const res = await fetch('/api/setup/first-boot/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        display_name: displayName,
+                        steps: { welcome: true, face_profile: true },
+                    }),
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+                }
+                setFirstBootAlert('', 'warning');
+                showFirstBootOverlay(false);
+                const currentUser = document.getElementById('current-user');
+                if (currentUser) currentUser.textContent = displayName;
+                addLog('First-boot setup completed. AEGIS is now fully operational.', 'info', 'system');
+            } catch (err) {
+                setFirstBootAlert(`Setup completion failed: ${err.message}`, 'danger');
+            }
+        }
+
+        async function handleFirstBootNext() {
+            setFirstBootAlert('', 'warning');
+            const status = firstBoot.status || { requirements: {}, state: {} };
+            const voiceReady = !!status.requirements?.admin_voice_profile;
+            const faceReady = !!status.requirements?.admin_face_profile;
+            const calibrationReady = !!status.requirements?.audio_calibration;
+
+            if (firstBoot.step === 1) {
+                const displayName = String(document.getElementById('firstboot-display-name')?.value || 'Sir').trim() || 'Sir';
+                try {
+                    await fetch('/api/setup/first-boot/progress', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            display_name: displayName,
+                            steps: { welcome: true },
+                        }),
+                    });
+                } catch (_) {}
+                await refreshFirstBootStatus();
+                setFirstBootStep(2);
+                return;
+            }
+            if (firstBoot.step === 2) {
+                if (!voiceReady) {
+                    setFirstBootAlert('Complete ADMIN voice enrollment before continuing.', 'warning');
+                    return;
+                }
+                setFirstBootStep(3);
+                return;
+            }
+            if (firstBoot.step === 3) {
+                if (!faceReady) {
+                    setFirstBootAlert('Complete ADMIN face enrollment before continuing.', 'warning');
+                    return;
+                }
+                setFirstBootStep(4);
+                return;
+            }
+            if (firstBoot.step === 4) {
+                if (!calibrationReady) {
+                    setFirstBootAlert('Run auto calibration or apply manual values before continuing.', 'warning');
+                    return;
+                }
+                setFirstBootStep(5);
+                return;
+            }
+            await completeFirstBootSetup();
+        }
+
+        function handleFirstBootBack() {
+            if (firstBoot.step > 1) {
+                setFirstBootAlert('', 'warning');
+                setFirstBootStep(firstBoot.step - 1);
+            }
+        }
+
+        async function initFirstBootWizard() {
+            const backBtn = document.getElementById('firstboot-back-btn');
+            const nextBtn = document.getElementById('firstboot-next-btn');
+            const voiceBtn = document.getElementById('firstboot-voice-btn');
+            const refreshBtn = document.getElementById('firstboot-refresh-btn');
+            const faceCameraBtn = document.getElementById('firstboot-face-camera-btn');
+            const faceCaptureBtn = document.getElementById('firstboot-face-capture-btn');
+            const faceClearBtn = document.getElementById('firstboot-face-clear-btn');
+            const faceTrainBtn = document.getElementById('firstboot-face-train-btn');
+            const autoCalBtn = document.getElementById('firstboot-auto-calibrate-btn');
+            const applyCalBtn = document.getElementById('firstboot-apply-calibrate-btn');
+
+            if (backBtn) backBtn.addEventListener('click', handleFirstBootBack);
+            if (nextBtn) nextBtn.addEventListener('click', () => { handleFirstBootNext(); });
+            if (voiceBtn) voiceBtn.addEventListener('click', () => { toggleFirstBootVoiceRecording(); });
+            if (refreshBtn) refreshBtn.addEventListener('click', () => { refreshFirstBootStatus(); });
+            if (faceCameraBtn) faceCameraBtn.addEventListener('click', () => { toggleFirstBootFaceCamera(); });
+            if (faceCaptureBtn) faceCaptureBtn.addEventListener('click', () => { captureFirstBootFaceSample(); });
+            if (faceClearBtn) faceClearBtn.addEventListener('click', () => { clearFirstBootFaceSamples(); });
+            if (faceTrainBtn) faceTrainBtn.addEventListener('click', () => { trainFirstBootFaceProfile(); });
+            if (autoCalBtn) autoCalBtn.addEventListener('click', () => { autoCalibrateFirstBoot(); });
+            if (applyCalBtn) applyCalBtn.addEventListener('click', () => { applyManualCalibrationFirstBoot(); });
+
+            renderFirstBootFacePreview();
+            setFirstBootStep(1);
+            await loadCurrentCalibrationIntoWizard();
+            await refreshFirstBootStatus();
         }
 
         // Camera functions
@@ -1640,6 +2598,8 @@
         // Initialize
         loadFaces();
         loadDirectory();
+        loadVoiceProfiles();
+        initFirstBootWizard();
         addLog('AEGIS Command Center initialized', 'info', 'system');
     </script>
 </body>

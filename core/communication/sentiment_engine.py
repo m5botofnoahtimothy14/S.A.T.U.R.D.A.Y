@@ -1,7 +1,5 @@
-# sentiment_engine.py
-
+﻿                     
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-
 
 class SentimentEngine:
 

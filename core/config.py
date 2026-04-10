@@ -1,16 +1,14 @@
-# core/config.py
+﻿                
+
 import json
 import os
-
 CONFIG_FILE = "core/config.json"
-
 class ConfigManager:
     def __init__(self):
         self.config = {}
         if not os.path.exists(CONFIG_FILE):
             self.create_default_config()
         self.load_config()
-
     def create_default_config(self):
         default_config = {
             "wake_word": "aegis",
@@ -41,16 +39,10 @@ class ConfigManager:
         }
         with open(CONFIG_FILE, "w") as f:
             json.dump(default_config, f, indent=4)
-
     def load_config(self):
         with open(CONFIG_FILE, "r") as f:
             self.config = json.load(f)
-
     def get(self, key_path, default=None):
-        """
-        Access nested config values using dot notation.
-        Example: get("voices.aegis.rate")
-        """
         keys = key_path.split(".")
         val = self.config
         try:
@@ -59,7 +51,6 @@ class ConfigManager:
             return val
         except KeyError:
             return default
-
     def set(self, key_path, value):
         keys = key_path.split(".")
         cfg = self.config
@@ -67,7 +58,6 @@ class ConfigManager:
             cfg = cfg.setdefault(k, {})
         cfg[keys[-1]] = value
         self.save()
-
     def save(self):
         with open(CONFIG_FILE, "w") as f:
             json.dump(self.config, f, indent=4)

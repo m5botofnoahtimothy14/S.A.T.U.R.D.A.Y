@@ -1,6 +1,4 @@
-# services/__init__.py
-# Lazy imports to avoid circular dependencies and missing modules
-
+﻿                      
 def __getattr__(name):
     if name == "AEGISWindowsService":
         from .windows_service import AEGISWindowsService

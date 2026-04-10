@@ -1,12 +1,4 @@
-# deep_learning/policy.py
-"""
-NeuralPolicyEngine
-==================
-Deep Learning enhanced policy governance.
-Replaces rigid rule-based decisions with neural network
-analysis for more intelligent, context-aware policy enforcement.
-"""
-
+﻿                         
 import os
 import json
 import time
@@ -20,7 +12,6 @@ import numpy as np
 logger = structlog.get_logger("AEGIS.DL.Policy")
 
 class PolicyNeuralNetwork:
-    """Neural network for policy decisions"""
     
     def __init__(self, input_size: int = 15, hidden_size: int = 30, output_size: int = 4):
         self.input_size = input_size
@@ -49,7 +40,7 @@ class PolicyNeuralNetwork:
         return output
     
     def predict(self, features: np.ndarray) -> Tuple[List[str], List[float]]:
-        """Predict policy decisions"""
+        
         output = self.forward(features)[0]
         
         actions = ["allow", "deny", "review", "escalate"]
@@ -67,13 +58,7 @@ class PolicyNeuralNetwork:
             
         return decisions, confidences
 
-
 class NeuralPolicyEngine:
-    """
-    Deep Learning enhanced Policy Engine.
-    Uses neural networks to make context-aware policy decisions
-    instead of rigid rule-based filtering.
-    """
     
     def __init__(self, event_bus, deep_learning_core=None):
         self.event_bus = event_bus
@@ -105,14 +90,14 @@ class NeuralPolicyEngine:
         logger.info("NeuralPolicyEngine initialized - AI-driven governance active")
         
     def _subscribe_to_events(self):
-        """Subscribe to relevant events"""
+        
         if self.event_bus:
             self.event_bus.subscribe("voice_command", self.validate_command)
             self.event_bus.subscribe("task_request", self.validate_task)
             self.event_bus.subscribe("security_alert", self.on_security_alert)
             
     def _extract_command_features(self, command: str, context: Dict = None) -> np.ndarray:
-        """Extract features from command for neural analysis"""
+        
         command_lower = command.lower()
         
         features = []
@@ -155,7 +140,7 @@ class NeuralPolicyEngine:
         return np.array([features[:self.policy_nn.input_size]])
         
     async def validate_command(self, data: str) -> bool:
-        """Validate command using neural decision making"""
+        
         command = str(data)
         
         self.command_history.append({
@@ -228,7 +213,7 @@ class NeuralPolicyEngine:
         return True
         
     async def validate_task(self, data: Dict) -> bool:
-        """Validate task request"""
+        
         task_type = data.get("type", "")
         task_data = data.get("data", {})
         
@@ -236,7 +221,7 @@ class NeuralPolicyEngine:
         return await self.validate_command(command)
         
     def _get_context(self) -> Dict[str, float]:
-        """Get current context for policy decisions"""
+        
         now = time.time()
         
         recent_commands = list(self.command_history)[-5:]
@@ -258,7 +243,7 @@ class NeuralPolicyEngine:
         }
         
     def on_security_alert(self, data: Dict):
-        """Learn from security alerts"""
+        
         if not isinstance(data, dict):
             return
 
@@ -272,7 +257,7 @@ class NeuralPolicyEngine:
             logger.warning("Security escalation detected by neural policy")
             
     def learn_from_outcome(self, command: str, approved: bool, actually_executed: bool):
-        """Learn from command outcomes"""
+        
         features = self._extract_command_features(command)
         
         expected = np.array([[0.0, 0.0, 0.0, 0.0]])
@@ -289,7 +274,7 @@ class NeuralPolicyEngine:
         logger.debug("Policy learned from outcome", command=command, approved=approved)
         
     def _save_model(self):
-        """Save neural network model"""
+        
         model_data = {
             "weights1": self.policy_nn.weights1.tolist(),
             "weights2": self.policy_nn.weights2.tolist(),
@@ -301,7 +286,7 @@ class NeuralPolicyEngine:
             json.dump(model_data, f)
             
     def _load_model(self):
-        """Load previously trained model"""
+        
         model_file = f"{self.data_dir}/policy_nn.json"
         
         if os.path.exists(model_file):
@@ -320,7 +305,7 @@ class NeuralPolicyEngine:
                 logger.warning(f"Failed to load policy model: {e}")
                 
     def get_status(self) -> Dict[str, Any]:
-        """Get policy engine status"""
+        
         return {
             "neural_policy_active": True,
             "commands_analyzed": len(self.command_history),

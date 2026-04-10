@@ -1,4 +1,4 @@
-# sensors/hardware.py
+﻿                     
 import structlog
 import cv2
 

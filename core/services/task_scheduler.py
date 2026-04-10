@@ -1,4 +1,4 @@
-# services/task_scheduler.py
+﻿                            
 import logging
 import threading
 import time
@@ -17,7 +17,7 @@ class TaskScheduler:
         logger.info("Task Scheduler started.")
 
     def _run_loop(self):
-        # Example schedule
+                          
         schedule.every(1).hours.do(lambda: self.event_bus.publish("maintenance_task", "health_check"))
         
         while self.running:

@@ -1,4 +1,4 @@
-# hybrid/edith/screen_nav.py
+﻿                            
 import logging
 from core.event_bus import EventBus
 
@@ -11,5 +11,5 @@ class EdithScreenNavigator:
 
     def navigate_to(self, screen_id: str):
         logger.info(f"EDITH Navigating to: {screen_id}")
-        # Screen navigation logic here
+                                      
         self.event_bus.publish("screen_change", {"target": screen_id})

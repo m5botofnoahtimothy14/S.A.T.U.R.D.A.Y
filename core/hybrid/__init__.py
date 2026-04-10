@@ -1,4 +1,4 @@
-# hybrid/__init__.py
+﻿                    
 from .main import HybridManager
 from .virtual_ai import VirtualAI
 from .session_manager import SessionManager

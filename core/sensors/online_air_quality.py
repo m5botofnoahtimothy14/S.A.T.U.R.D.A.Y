@@ -1,4 +1,4 @@
-# sensors/online_air_quality.py
+﻿                               
 import logging
 import aiohttp
 from core.event_bus import EventBus
@@ -8,7 +8,7 @@ logger = logging.getLogger("AEGIS.Sensors.AirQuality")
 class AirQualitySensor:
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
-        self.api_url = "https://api.waqi.info/feed/here/?token=demo" # Example
+        self.api_url = "https://api.waqi.info/feed/here/?token=demo"          
         logger.info("Online Air Quality module initialized.")
 
     async def fetch_current_aqi(self):

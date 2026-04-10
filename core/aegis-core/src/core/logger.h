@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include <memory>
@@ -11,10 +11,6 @@
 
 namespace aegis {
 
-/**
- * @enum LogLevel
- * @brief Severity levels for logging system
- */
 enum class LogLevel : uint8_t {
     Debug = 0,
     Info,
@@ -23,34 +19,18 @@ enum class LogLevel : uint8_t {
     Critical
 };
 
-/**
- * @class Logger
- * @brief Thread-safe singleton logger with file and console output
- * 
- * Provides centralized logging with timestamps, severity levels,
- * and both file and console output streams. Uses RAII for resource management.
- */
 class Logger {
 public:
-    // Delete copy/move for singleton
     Logger(const Logger&) = delete;
     Logger& operator=(const Logger&) = delete;
     Logger(Logger&&) = delete;
     Logger& operator=(Logger&&) = delete;
 
-    /**
-     * @brief Get singleton instance
-     */
     static Logger& instance() {
         static Logger instance;
         return instance;
     }
 
-    /**
-     * @brief Initialize logger with output configuration
-     * @param log_file Path to log file (empty for console-only)
-     * @param min_level Minimum log level to output
-     */
     void initialize(const std::string& log_file = "", LogLevel min_level = LogLevel::Info) {
         std::lock_guard<std::mutex> lock(mutex_);
         min_level_ = min_level;
@@ -61,9 +41,6 @@ public:
         }
     }
 
-    /**
-     * @brief Log a message with specified level
-     */
     void log(LogLevel level, const std::string& component, const std::string& message) {
         if (level < min_level_) return;
 
@@ -91,17 +68,14 @@ public:
 
         std::string log_line = oss.str();
         
-        // Console output
         std::cout << log_line << std::endl;
         
-        // File output
         if (file_output_ && log_file_.is_open()) {
             log_file_ << log_line << std::endl;
             log_file_.flush();
         }
     }
 
-    // Convenience methods
     void debug(const std::string& component, const std::string& msg) { 
         log(LogLevel::Debug, component, msg); 
     }
@@ -144,7 +118,6 @@ private:
     LogLevel min_level_ = LogLevel::Info;
 };
 
-// Convenience macro
 #define AEGIS_LOG(level, component, msg) \
     aegis::Logger::instance().log(aegis::LogLevel::level, component, msg)
 

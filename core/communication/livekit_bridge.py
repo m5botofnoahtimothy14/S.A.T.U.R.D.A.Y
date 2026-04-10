@@ -1,15 +1,11 @@
-import os
+﻿import os
 
 import structlog
 
 logger = structlog.get_logger("AEGIS.LiveKit")
 
-
 class LiveKitBridge:
-    """
-    Bridges internal AEGIS events into a real LiveKit room.
-    """
-
+    
     def __init__(self, event_bus):
         self.event_bus = event_bus
         self.url = os.getenv("LIVEKIT_URL", "").strip()
@@ -23,6 +19,9 @@ class LiveKitBridge:
         self.active = False
         self._sdk_available = False
         self._connect_error = None
+        self._reconnect_attempts = 0
+        self._max_reconnect_attempts = 3
+        self._reconnect_delay = 5
 
         try:
             from livekit import api, rtc
@@ -84,9 +83,23 @@ class LiveKitBridge:
             )
 
             self.room = self.rtc.Room()
-            await self.room.connect(self.url, token)
+            
+            @self.room.event_handler("disconnected")
+            async def on_disconnected():
+                self.active = False
+                if self._reconnect_attempts < self._max_reconnect_attempts:
+                    self._reconnect_attempts += 1
+                    logger.warning(f"LiveKit disconnected, reconnecting in {self._reconnect_delay}s (attempt {self._reconnect_attempts}/{self._max_reconnect_attempts})")
+                    import asyncio
+                    await asyncio.sleep(self._reconnect_delay)
+                    await self.start()
+                else:
+                    logger.error("LiveKit max reconnection attempts reached")
+            
+            await self.room.connect(self.url, token, timeout=30)
             self.active = True
             self._connect_error = None
+            self._reconnect_attempts = 0
             logger.info("Connected to LiveKit room", room=self.room_name, identity=self.identity)
         except Exception as e:
             self._connect_error = str(e)

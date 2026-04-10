@@ -1,15 +1,4 @@
-# deep_learning/core.py
-"""
-DeepLearningCore
-================
-The central neural network engine for AEGIS.
-Provides deep learning capabilities for decision making,
-pattern recognition, and adaptive behavior.
-
-This transforms AEGIS from a rule-based system into a 
-learning, evolving AI OS powered by Deep Learning.
-"""
-
+﻿                       
 import os
 import json
 import time
@@ -28,7 +17,7 @@ logger = AEGISLogger.get_logger("DL.Core", "deep_learning")
 
 @dataclass
 class NeuralState:
-    """Current state of AEGIS neural processing"""
+    
     awareness_level: float = 0.0
     confidence: float = 0.5
     learning_rate: float = 0.001
@@ -39,7 +28,6 @@ class NeuralState:
     last_update: float = field(default_factory=time.time)
     
 class NeuralNetwork:
-    """Simple feedforward neural network for AEGIS decisions"""
     
     def __init__(self, input_size: int, hidden_size: int, output_size: int):
         self.input_size = input_size
@@ -93,15 +81,13 @@ class NeuralNetwork:
         for _ in range(epochs):
             self.backward(inputs, expected, learning_rate)
 
-
 class DecisionNetwork(NeuralNetwork):
-    """Neural network for making decisions"""
     
     def __init__(self):
         super().__init__(input_size=20, hidden_size=40, output_size=10)
         
     def encode_context(self, context: Dict[str, Any]) -> np.ndarray:
-        """Encode context into numerical features"""
+        
         features = []
         
         feature_keys = [
@@ -125,7 +111,7 @@ class DecisionNetwork(NeuralNetwork):
         return np.array([features[:self.input_size]])
     
     def make_decision(self, context: Dict[str, Any]) -> Tuple[str, float]:
-        """Make a decision based on context"""
+        
         encoded = self.encode_context(context)
         output = self.forward(encoded)[0]
         
@@ -141,7 +127,7 @@ class DecisionNetwork(NeuralNetwork):
         return decisions[decision_idx], confidence
     
     def learn_from_outcome(self, context: Dict[str, Any], decision: str, outcome: float):
-        """Learn from decision outcomes"""
+        
         encoded = self.encode_context(context)
         
         decisions = [
@@ -155,13 +141,7 @@ class DecisionNetwork(NeuralNetwork):
         
         self.backward(encoded, expected, learning_rate=0.01)
 
-
 class DeepLearningCore:
-    """
-    The Deep Learning Core of AEGIS.
-    Provides neural network-based intelligence that learns,
-    evolves, and adapts - transforming AEGIS into a living AI OS.
-    """
     
     _instance = None
     _lock = threading.Lock()
@@ -199,7 +179,7 @@ class DeepLearningCore:
         self._initialized = True
         
     def _subscribe_to_events(self):
-        """Subscribe to relevant events for learning"""
+        
         if self.event_bus:
             self.event_bus.subscribe("voice_command", self._on_voice_command)
             self.event_bus.subscribe("voice_response", self._on_voice_response)
@@ -209,7 +189,7 @@ class DeepLearningCore:
             self.event_bus.subscribe("security_alert", self._on_security_event)
             
     def _on_voice_command(self, data):
-        """Process voice command for learning"""
+        
         self.experience_buffer.append({
             "type": "voice_command",
             "data": data,
@@ -218,7 +198,7 @@ class DeepLearningCore:
         })
         
     def _on_voice_response(self, data):
-        """Process voice response for learning"""
+        
         self.experience_buffer.append({
             "type": "voice_response",
             "data": data,
@@ -227,7 +207,7 @@ class DeepLearningCore:
         })
         
     def _on_task_outcome(self, data):
-        """Learn from task outcomes"""
+        
         if len(self.decision_history) > 0:
             last_decision = self.decision_history[-1]
             outcome = 1.0 if "completed" in str(data) else 0.0
@@ -246,7 +226,7 @@ class DeepLearningCore:
             })
             
     def _on_user_feedback(self, data):
-        """Learn from user feedback"""
+        
         feedback = data.get("feedback", 0)
         if len(self.decision_history) > 0:
             last_decision = self.decision_history[-1]
@@ -257,7 +237,7 @@ class DeepLearningCore:
             )
             
     def _on_security_event(self, data):
-        """Learn from security events"""
+        
         self.experience_buffer.append({
             "type": "security_event",
             "data": data,
@@ -274,7 +254,7 @@ class DeepLearningCore:
             )
             
     def _get_current_context(self) -> Dict[str, Any]:
-        """Get current context for decision making"""
+        
         hour = datetime.now().hour
         day = datetime.now().weekday()
         
@@ -302,10 +282,7 @@ class DeepLearningCore:
         }
         
     def think(self, query: str, context: Optional[Dict] = None) -> Dict[str, Any]:
-        """
-        AEGIS processes a query using neural decision making.
-        This is the core of AEGIS's DL intelligence.
-        """
+        
         current_context = self._get_current_context()
         if context:
             current_context.update(context)
@@ -341,7 +318,7 @@ class DeepLearningCore:
         }
         
     def _generate_reasoning(self, decision: str, context: Dict) -> str:
-        """Generate reasoning for the decision"""
+        
         reasoning_templates = {
             "execute_command": "Based on pattern recognition and successful history, executing directly.",
             "request_clarification": "Ambiguity detected. Seeking clarification for optimal response.",
@@ -366,7 +343,7 @@ class DeepLearningCore:
         return base_reasoning + awareness_note
         
     def train_on_experience(self):
-        """Train on accumulated experience"""
+        
         if len(self.experience_buffer) < 10:
             return
             
@@ -397,7 +374,7 @@ class DeepLearningCore:
         self.training_active = False
         
     def _context_to_features(self, context: Dict) -> np.ndarray:
-        """Convert context dict to feature array"""
+        
         features = []
         for key in ["time_of_day", "day_of_week", "mood_score", "security_level",
                     "success_rate", "interaction_count", "creativity_needed",
@@ -410,7 +387,7 @@ class DeepLearningCore:
         return np.array([features[:self.decision_network.input_size]])
         
     def evolve(self):
-        """AEGIS evolves based on accumulated learning"""
+        
         if not self.evolution_enabled:
             return
             
@@ -435,7 +412,7 @@ class DeepLearningCore:
         self.train_on_experience()
         
     def save_knowledge(self):
-        """Persist learned knowledge to disk"""
+        
         knowledge = {
             "state": {
                 "awareness_level": self.state.awareness_level,
@@ -462,7 +439,7 @@ class DeepLearningCore:
         logger.info(f"AEGIS knowledge saved - {len(self.experience_buffer)} experiences")
         
     def _load_knowledge(self):
-        """Load previously learned knowledge"""
+        
         knowledge_file = f"{self.data_dir}/knowledge.json"
         
         if os.path.exists(knowledge_file):
@@ -492,7 +469,7 @@ class DeepLearningCore:
                 logger.warning(f"Failed to load knowledge: {e}")
                 
     def get_status(self) -> Dict[str, Any]:
-        """Get current DL system status"""
+        
         return {
             "initialized": hasattr(self, '_initialized'),
             "neural_state": {
@@ -518,7 +495,7 @@ class DeepLearningCore:
         }
         
     async def start_autonomous_learning(self):
-        """Start background learning processes"""
+        
         while self.running:
             try:
                 self.evolve()
@@ -528,7 +505,7 @@ class DeepLearningCore:
                 await asyncio.sleep(60)
                 
     async def start_periodic_save(self):
-        """Periodically save knowledge"""
+        
         while self.running:
             try:
                 await asyncio.sleep(300)
@@ -537,7 +514,7 @@ class DeepLearningCore:
                 logger.warning(f"Knowledge save error: {e}")
                 
     def shutdown(self):
-        """Shutdown DL system gracefully"""
+        
         self.running = False
         self.save_knowledge()
         logger.info("AEGIS Deep Learning Core shutdown - Knowledge preserved")

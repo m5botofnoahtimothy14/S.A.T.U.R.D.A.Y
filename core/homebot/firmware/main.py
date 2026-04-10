@@ -1,15 +1,8 @@
-"""
-AEGIS HomeBot MicroPython Firmware v1.0
-======================================
-For ESP32
-Upload using: python -m esptool --port COM4 erase_flash && python -m esptool --port COM4 --baud 460800 write_flash 0x1000 esp32.bin
-Then use ampy or rshell to upload this file as main.py
-"""
+﻿
 import machine
 import time
 import ujson
 
-# Motor pins (L298N Driver)
 MOTOR_A_IN1 = 2
 MOTOR_A_IN2 = 4
 MOTOR_A_ENA = 5
@@ -17,25 +10,20 @@ MOTOR_B_IN1 = 18
 MOTOR_B_IN2 = 19
 MOTOR_B_ENB = 21
 
-# LED
 LED = 22
 
-# Initialize pins
 def init_pins():
-    # Motor A
+             
     machine.Pin(MOTOR_A_IN1, machine.Pin.OUT)
     machine.Pin(MOTOR_A_IN2, machine.Pin.OUT)
     machine.Pin(MOTOR_A_ENA, machine.Pin.OUT)
     
-    # Motor B
     machine.Pin(MOTOR_B_IN1, machine.Pin.OUT)
     machine.Pin(MOTOR_B_IN2, machine.Pin.OUT)
     machine.Pin(MOTOR_B_ENB, machine.Pin.OUT)
     
-    # LED
     machine.Pin(LED, machine.Pin.OUT)
     
-    # PWM for speed control
     global pwm_a, pwm_b
     pwm_a = machine.PWM(machine.Pin(MOTOR_A_ENA))
     pwm_b = machine.PWM(machine.Pin(MOTOR_B_ENB))
@@ -44,7 +32,6 @@ def init_pins():
     pwm_a.duty(0)
     pwm_b.duty(0)
     
-    # Stop motors initially
     stop()
 
 def stop():
@@ -109,7 +96,6 @@ def blink_led():
     time.sleep_ms(100)
     p.value(0)
 
-# Command processing
 def process_command(cmd):
     cmd = cmd.strip().upper()
     
@@ -145,7 +131,6 @@ def process_command(cmd):
     else:
         return "UNKNOWN:" + cmd
 
-# Serial REPL
 def main():
     init_pins()
     
@@ -173,7 +158,6 @@ def main():
                 else:
                     buffer += c
         
-        # Blink LED to show alive
         time.sleep(1)
 
 if __name__ == "__main__":
