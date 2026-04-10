@@ -1,4 +1,4 @@
-﻿name: Deploy to Firebase Hosting on merge
+name: Deploy to Firebase Hosting on merge
 'on':
   push:
     branches:
@@ -9,9 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Dependencies
-        run: cd aegis-control-panel && npm install
+        run: cd core/aegis-control-panel && npm install
       - name: Build Dashboard
-        run: cd aegis-control-panel && npm run build
+        run: cd core/aegis-control-panel && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'

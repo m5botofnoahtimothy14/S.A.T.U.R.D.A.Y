@@ -14,13 +14,10 @@ class MemoryController:
         self.passphrase = passphrase
         self.project_root = project_root
         
-        # Initialize Crypto (Keys are derived from passphrase)
-        self.crypto = FileCrypto(passphrase)
-        
-        # Paths
-        self.vault_dir = project_root / "vault"
-        self.blackbox_dir = project_root / "blackbox"
         self.config_dir = project_root / "config"
+        
+        # Initialize Crypto (Keys are derived from passphrase + salt)
+        self.crypto = FileCrypto(passphrase, salt_path=str(self.config_dir / "salt.dat"))
         
         # Sub-systems
         self.memory_engine = MemoryEngine(str(self.vault_dir / "memory"), self.crypto)

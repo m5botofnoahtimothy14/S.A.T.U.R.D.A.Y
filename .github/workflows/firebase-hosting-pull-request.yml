@@ -1,4 +1,4 @@
-﻿name: Deploy to Firebase Hosting on PR
+name: Deploy to Firebase Hosting on PR
 'on': pull_request
 jobs:
   build_and_preview:
@@ -7,17 +7,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Dependencies
-        run: cd aegis-control-panel && npm install
+        run: cd core/aegis-control-panel && npm install
       - name: Build Dashboard
         env:
-          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY || 'AIzaSyDrjbUlAww7IKrGgxvtrZhKeRwhFr-WIr8' }}
-          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN || 'aegis-os-75256.firebaseapp.com' }}
-          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID || 'aegis-os-75256' }}
-          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET || 'aegis-os-75256.firebasestorage.app' }}
-          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID || '223232577741' }}
-          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID || '1:223232577741:web:0b1f0976a76d147fe11984' }}
-          VITE_AEGIS_GATEWAY_URL: ${{ secrets.VITE_AEGIS_GATEWAY_URL || 'http://127.0.0.1:8000/api/secure' }}
-        run: cd aegis-control-panel && npm run build
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_AEGIS_GATEWAY_URL: ${{ secrets.VITE_AEGIS_GATEWAY_URL }}
+        run: cd core/aegis-control-panel && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'

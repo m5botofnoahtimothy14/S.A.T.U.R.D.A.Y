@@ -5,10 +5,21 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.fernet import Fernet
 
 class FileCrypto:
-    def __init__(self, passphrase: str):
-        self.salt = b'AEGIS_STATIC_SALT' # In production, this could be unique per install
+    def __init__(self, passphrase: str, salt_path: str = "config/salt.dat"):
+        self.salt_path = Path(salt_path)
+        self.salt = self._get_or_create_salt()
         self.key = self._derive_key(passphrase)
         self.fernet = Fernet(self.key)
+
+    def _get_or_create_salt(self) -> bytes:
+        if self.salt_path.exists():
+            return self.salt_path.read_bytes()
+        
+        # Generate a new 16-byte random salt
+        new_salt = os.urandom(16)
+        self.salt_path.parent.mkdir(parents=True, exist_ok=True)
+        self.salt_path.write_bytes(new_salt)
+        return new_salt
 
     def _derive_key(self, passphrase: str) -> bytes:
         kdf = PBKDF2HMAC(
