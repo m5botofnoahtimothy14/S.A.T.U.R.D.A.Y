@@ -1,4 +1,4 @@
-# christianity_core/main.py
+﻿                           
 import logging
 import random
 

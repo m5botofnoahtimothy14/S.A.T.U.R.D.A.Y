@@ -1,26 +1,6 @@
-/*
- * AEGIS HomeBot Firmware v1.0
- * Compatible with AEGIS Voice Control System
- * 
- * Hardware: Arduino/ESP32 with motor driver
- * Connection: Serial at 115200 baud
- * 
- * Commands:
- *   FWD - Move forward
- *   REV - Move backward  
- *   LFT - Move left
- *   RGT - Move right
- *   RTL - Rotate left
- *   RTR - Rotate right
- *   STP - Stop
- *   PING - Check connection
- *   STATUS - Get status
- *   INFO - Device info
- */
-
+﻿
 #include <Arduino.h>
 
-// Motor pins (customize for your setup)
 #define MOTOR_A_IN1 2
 #define MOTOR_A_IN2 3
 #define MOTOR_A_ENA 4
@@ -28,7 +8,6 @@
 #define MOTOR_B_IN2 6
 #define MOTOR_B_ENB 7
 
-// LED indicator
 #define LED_PIN 13
 
 String command = "";
@@ -37,7 +16,6 @@ bool commandComplete = false;
 void setup() {
     Serial.begin(115200);
     
-    // Initialize motor pins
     pinMode(MOTOR_A_IN1, OUTPUT);
     pinMode(MOTOR_A_IN2, OUTPUT);
     pinMode(MOTOR_A_ENA, OUTPUT);
@@ -46,17 +24,14 @@ void setup() {
     pinMode(MOTOR_B_ENB, OUTPUT);
     pinMode(LED_PIN, OUTPUT);
     
-    // Ensure motors are stopped
     stopMotors();
     digitalWrite(LED_PIN, LOW);
     
-    // Send ready signal
     Serial.println("AEGIS_HOMEBOT_READY");
     Serial.println("Type HELP for commands");
 }
 
 void loop() {
-    // Read serial commands
     while (Serial.available()) {
         char inChar = (char)Serial.read();
         
@@ -69,7 +44,6 @@ void loop() {
         }
     }
     
-    // Process command
     if (commandComplete) {
         processCommand(command);
         command = "";
@@ -138,7 +112,6 @@ void processCommand(String cmd) {
         Serial.println("UNKNOWN_COMMAND:" + cmd);
     }
     
-    // Blink LED on command
     digitalWrite(LED_PIN, HIGH);
     delay(100);
     digitalWrite(LED_PIN, LOW);

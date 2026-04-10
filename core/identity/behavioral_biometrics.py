@@ -1,4 +1,4 @@
-# identity/behavioral_biometrics.py
+﻿                                   
 import structlog
 import time
 from core.event_bus import EventBus
@@ -12,7 +12,7 @@ class BehavioralBiometrics:
         self.event_bus.subscribe("keystroke_event", self.record_event)
 
     async def record_event(self, event_data: dict):
-        # Calculate typing speed and cadence
+                                            
         timestamp = time.time()
         self.key_press_times.append(timestamp)
         
@@ -21,7 +21,7 @@ class BehavioralBiometrics:
             avg_speed = sum(diffs) / len(diffs)
             logger.debug("Typing cadence analyzed", avg_speed=avg_speed)
             
-            if avg_speed < 0.05: # Suspiciously fast typing (robot?)
+            if avg_speed < 0.05:                                    
                 self.event_bus.publish("security_alert", {"reason": "Anomalous typing speed detected"})
             
-            self.key_press_times = self.key_press_times[-10:] # Keep buffer small
+            self.key_press_times = self.key_press_times[-10:]                    

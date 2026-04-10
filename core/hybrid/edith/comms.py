@@ -1,4 +1,4 @@
-# hybrid/edith/comms.py
+﻿                       
 import logging
 from core.event_bus import EventBus
 
@@ -11,5 +11,5 @@ class EdithComms:
 
     def send_transmission(self, destination: str, message: str):
         logger.info(f"EDITH Transmitting to {destination}: {message}")
-        # Transmission logic here
+                                 
         self.event_bus.publish("transmission_sent", {"to": destination, "msg": message})

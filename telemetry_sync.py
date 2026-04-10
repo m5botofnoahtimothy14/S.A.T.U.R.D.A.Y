@@ -1,24 +1,17 @@
-from __future__ import annotations
-
+﻿from __future__ import annotations
 import os
 import threading
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
-
-
 def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
-
-
 @dataclass(frozen=True)
 class TelemetryConfig:
     collection: str = "telemetry_nodes"
     history_limit: int = 200
     log_limit: int = 100
-
-
 class TelemetrySync:
     def __init__(
         self,
@@ -37,27 +30,22 @@ class TelemetrySync:
         self._firebase_available = False
         self._db = None
         self._init_firebase(service_account_path)
-
     @property
     def firebase_enabled(self) -> bool:
         return self._firebase_available
-
     def _init_firebase(self, service_account_path: str | None) -> None:
         try:
             import firebase_admin
             from firebase_admin import credentials, firestore
-            
             if not firebase_admin._apps:
                 options = {}
                 if self.project_id:
                     options["projectId"] = self.project_id
-                
                 if service_account_path and os.path.exists(service_account_path):
                     cred = credentials.Certificate(service_account_path)
                     firebase_admin.initialize_app(cred, options=options or None)
                 elif self.project_id:
                     firebase_admin.initialize_app(options=options)
-            
             if firebase_admin._apps:
                 self._db = firestore.client()
                 self.node_ref = self._db.collection(self.config.collection).document(self.node_id)
@@ -69,7 +57,6 @@ class TelemetrySync:
             print(f"Telemetry: Firebase not available: {e}")
             self._db = None
             self._firebase_available = False
-
     def _system_metrics(self) -> dict[str, Any]:
         try:
             import psutil
@@ -96,7 +83,6 @@ class TelemetrySync:
                 "disk_total_gb": 0,
                 "timestamp": _utc_now_iso(),
             }
-
     def push_log(self, *, level: str, message: str, context: dict[str, Any] | None = None) -> None:
         payload = {
             "timestamp": _utc_now_iso(),
@@ -104,20 +90,15 @@ class TelemetrySync:
             "message": message,
             "context": context or {},
         }
-        
-        # Always store locally
         with self._lock:
             self._recent_logs.append(payload)
             if len(self._recent_logs) > self.config.log_limit:
                 self._recent_logs = self._recent_logs[-self.config.log_limit:]
-        
-        # Try Firebase if available
         if self._firebase_available and self._db:
             try:
                 self.log_ref.add(payload)
             except Exception:
                 pass
-
     def build_snapshot(
         self,
         *,
@@ -128,7 +109,6 @@ class TelemetrySync:
         metrics = self._system_metrics()
         with self._lock:
             recent_logs = list(self._recent_logs[-20:])
-
         return {
             "node_id": self.node_id,
             "updated_at": _utc_now_iso(),
@@ -140,7 +120,6 @@ class TelemetrySync:
             "backend": "firebase" if self._firebase_available else "local",
             "logs": recent_logs,
         }
-
     def push_snapshot(self, payload: dict[str, Any]) -> None:
         self._latest_snapshot = dict(payload)
         if not self._firebase_available or not self._db:
@@ -151,7 +130,6 @@ class TelemetrySync:
             self._trim_history()
         except Exception as e:
             print(f"Error pushing snapshot: {e}")
-
     def _trim_history(self) -> None:
         if not self._firebase_available:
             return
@@ -168,7 +146,6 @@ class TelemetrySync:
                 ref.delete()
         except Exception:
             pass
-
     def pull_latest(self) -> dict[str, Any] | None:
         if not self._firebase_available or not self._db:
             return dict(self._latest_snapshot) if self._latest_snapshot else None

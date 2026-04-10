@@ -1,13 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 
 namespace aegis {
 
-/**
- * @class Texture
- * @brief OpenGL texture wrapper
- */
 class Texture {
 public:
     Texture();

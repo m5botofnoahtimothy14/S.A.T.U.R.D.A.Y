@@ -1,4 +1,4 @@
-# ui/screen_navigation.py
+﻿                         
 import pyautogui
 import time
 import logging
@@ -11,7 +11,7 @@ class ScreenNavigator:
         pyautogui.FAILSAFE = True
 
     def open_app(self, app_name):
-        """Open applications by name (Windows only)"""
+        
         try:
             pyautogui.press('win')
             time.sleep(0.5)
@@ -22,17 +22,17 @@ class ScreenNavigator:
             logger.error(f"Failed to open {app_name}: {e}")
 
     def click_position(self, x, y):
-        """Click at screen coordinates"""
+        
         pyautogui.click(x, y)
         logger.info(f"Clicked at ({x},{y})")
 
     def type_text(self, text):
-        """Type text anywhere"""
+        
         pyautogui.typewrite(text)
         logger.info(f"Typed text: {text}")
 
     def send_message_whatsapp(self, contact, message):
-        """IRL send WhatsApp message by navigating screen"""
+        
         self.open_app("WhatsApp")
         time.sleep(3)
         pyautogui.hotkey('ctrl', 'f')

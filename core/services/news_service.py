@@ -1,4 +1,4 @@
-# services/news_service.py
+﻿                          
 import asyncio
 import logging
 import os
@@ -10,7 +10,7 @@ import requests
 logger = logging.getLogger("AEGIS.News")
 
 class NewsService:
-    """Fetches real headlines and falls back to cached data when offline."""
+    
     def __init__(self):
         feed_urls = os.getenv(
             "AEGIS_NEWS_FEEDS",
@@ -22,14 +22,14 @@ class NewsService:
         self.last_refresh = 0.0
 
     def get_latest(self):
-        """Returns the latest real headline or a truthful fallback."""
+        
         headlines = self._get_headlines()
         if headlines:
             return headlines[0]
         return "Live news is currently unavailable."
 
     async def fetch_real_news(self):
-        """Async wrapper around the RSS fetcher."""
+        
         loop = asyncio.get_running_loop()
         headlines = await loop.run_in_executor(None, self._refresh_headlines)
         if headlines:

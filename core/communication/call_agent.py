@@ -1,4 +1,4 @@
-# communication/call_agent.py
+﻿                             
 import asyncio
 import datetime
 import json
@@ -12,7 +12,6 @@ from livekit import api
 
 logger = structlog.get_logger("AEGIS.CallAgent")
 
-
 def _load_json(path, default=None):
     try:
         if os.path.exists(path):
@@ -22,23 +21,12 @@ def _load_json(path, default=None):
         logger.warning("CallAgent failed to load JSON", path=path, error=str(e))
     return default if default is not None else []
 
-
 def _ensure_dir(path: Path):
     path.mkdir(parents=True, exist_ok=True)
     return path
 
-
 class CallAgent:
-    """
-    Lightweight conversational call controller using LiveKit SIP.
-    - Maintains per-call sessions (caller id, last user text, transcript)
-    - Uses LLMEngine for responses
-    - Logs transcripts to logs/calls/{CallSid}.log
-    - Optional directory lookup for warmer greetings
-    - Supports inbound/outbound calls via LiveKit SIP trunk
-    - Supports meeting bridge dialing (Zoom, Meet, etc.)
-    """
-
+    
     def __init__(
         self,
         event_bus,

@@ -1,10 +1,4 @@
-# conversational_dl/engine.py
-"""
-ConversationalDLEngine
-----------------------
-Conversation manager that routes user intents to real AEGIS subsystems.
-"""
-
+﻿                             
 from __future__ import annotations
 
 import asyncio
@@ -17,7 +11,6 @@ import numpy as np
 import structlog
 
 logger = structlog.get_logger("AEGIS.ConvDL")
-
 
 class ConversationMemory:
     def __init__(self, max_memory: int = 1000):
@@ -50,7 +43,6 @@ class ConversationMemory:
     def get_learned_facts(self) -> List[str]:
         return [fact["fact"] for fact in self.facts_learned.values() if fact["verified"] > 0.5]
 
-
 class ResponseGenerator:
     def __init__(self):
         self.response_templates = {
@@ -70,7 +62,6 @@ class ResponseGenerator:
         templates = self.response_templates.get(intent, self.response_templates["acknowledgment"])
         response = str(np.random.choice(templates))
         return response.replace("{user}", user_name)
-
 
 class ConversationalDLEngine:
     def __init__(self, event_bus=None, aegis_core=None):

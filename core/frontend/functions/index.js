@@ -1,4 +1,4 @@
-const functions = require('firebase-functions');
+﻿const functions = require('firebase-functions');
 const express = require('express');
 const cors = require('cors');
 const uuid = require('uuid');
@@ -16,7 +16,6 @@ let aegisStatus = {
   lastUpdate: null
 };
 
-// Mock data for demo
 const mockHistory = Array.from({ length: 20 }, (_, i) => ({
   time: new Date(Date.now() - (20 - i) * 5000).toLocaleTimeString(),
   cpu: Math.floor(Math.random() * 30) + 10,
@@ -39,7 +38,6 @@ app.get('/healthz', (req, res) => {
   res.json({ status: 'healthy', aegis: 'connected' });
 });
 
-// System Stats
 app.get('/v1/system/stats', (req, res) => {
   aegisStatus.cpu = Math.floor(Math.random() * 30) + 10;
   aegisStatus.memory = Math.floor(Math.random() * 40) + 20;
@@ -52,7 +50,6 @@ app.get('/v1/system/stats', (req, res) => {
   });
 });
 
-// Defense Status
 app.get('/v1/system/defense-status', (req, res) => {
   res.json({
     defense_active: true,
@@ -62,12 +59,10 @@ app.get('/v1/system/defense-status', (req, res) => {
   });
 });
 
-// Threats
 app.get('/v1/system/threats', (req, res) => {
   res.json({ threats: [], count: 0 });
 });
 
-// Network Connections
 app.get('/v1/system/connections', (req, res) => {
   res.json({
     connections: [
@@ -76,7 +71,6 @@ app.get('/v1/system/connections', (req, res) => {
   });
 });
 
-// Process List
 app.get('/v1/system/processes', (req, res) => {
   res.json({
     processes: [
@@ -86,7 +80,6 @@ app.get('/v1/system/processes', (req, res) => {
   });
 });
 
-// DL Analytics
 app.get('/v1/system/dl-analytics', (req, res) => {
   res.json({
     model: 'malware_detector_v3.2',
@@ -95,26 +88,22 @@ app.get('/v1/system/dl-analytics', (req, res) => {
   });
 });
 
-// Wake Command
 app.post('/v1/control/wake', (req, res) => {
   const { target, source } = req.body;
   console.log(`Wake command received: target=${target}, source=${source}`);
   res.json({ status: 'success', message: 'Wake signal dispatched', target, source });
 });
 
-// Command
 app.post('/v1/control/command', (req, res) => {
   const { command } = req.body;
   console.log(`Command received: ${command}`);
   res.json({ status: 'success', message: `Command executed: ${command}` });
 });
 
-// Vision Stream (placeholder)
 app.get('/vision/stream', (req, res) => {
   res.redirect('https://via.placeholder.com/640x480/000000/00ff88?text=CAMERA+OFFLINE');
 });
 
-// Telemetry for Firestore sync
 app.get('/v1/telemetry', (req, res) => {
   res.json({
     vitals: {
@@ -130,7 +119,6 @@ app.get('/v1/telemetry', (req, res) => {
   });
 });
 
-// User registration
 app.post('/api/register/user', (req, res) => {
   const { name, email } = req.body;
   const userId = uuid.v4();

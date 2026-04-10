@@ -102,6 +102,31 @@ class SpeechManager:
                     os.remove(wav_path)
                 except:
                     pass
+        except AttributeError as e:
+            if "audio" in str(e).lower() or "AudioChunk" in str(e):
+                try:
+                    wav_path = os.path.join(tempfile.gettempdir(), "aegis_piper.wav")
+                    import subprocess
+                    result = subprocess.run([
+                        "python", "-m", "piper", "--model", 
+                        os.getenv("PIPER_MODEL_PATH", "models/piper/en_US-lessac-medium.onnx"),
+                        "--output_file", wav_path
+                    ], input=text, capture_output=True, text=True)
+                    if os.path.exists(wav_path):
+                        audio_data, sr = self._load_wav(wav_path)
+                        sd.play(audio_data, sr)
+                        sd.wait()
+                        try:
+                            os.remove(wav_path)
+                        except:
+                            pass
+                    else:
+                        self._speak_windows_wav(text)
+                except Exception:
+                    self._speak_windows_wav(text)
+            else:
+                logger.error(f"Piper error: {e}")
+                self._speak_windows_wav(text)
         except Exception as e:
             logger.error(f"Piper error: {e}")
             self._speak_windows_wav(text)

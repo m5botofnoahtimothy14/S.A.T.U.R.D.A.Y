@@ -1,4 +1,4 @@
-# ai_modules/issue_handler.py
+﻿                             
 import logging
 
 logger = logging.getLogger("AEGIS.AI.IssueHandler")
@@ -10,5 +10,5 @@ class IssueHandler:
 
     def triage_issue(self, data):
         logger.warning(f"Triaging system issue: {data}")
-        # Logic to automatically fix or report issues
+                                                     
         pass

@@ -1,4 +1,4 @@
-# health/sensor_hub.py
+﻿                      
 import logging
 import threading
 import time
@@ -17,8 +17,5 @@ class SensorHub:
 
     def _hub_loop(self):
         while self.active:
-            # Removed mock random simulations. 
-            # In a fully real architecture, this hub should wait for Bluetooth/WiFi 
-            # health peripherals (like an Apple Watch or Garmin over API) instead of generating rand data.
-            # Real camera heart-rate (rPPG) is handled by the Vision system simultaneously.
+                                               
             time.sleep(10)

@@ -1,4 +1,4 @@
-# ai_modules/predictive_planner.py
+﻿                                  
 import logging
 
 logger = logging.getLogger("AEGIS.AI.Planner")
@@ -10,5 +10,5 @@ class PredictivePlanner:
 
     def update_plan(self, data):
         logger.info("Updating predictive plan based on new data.")
-        # Logic for path prediction or task scheduling
+                                                      
         pass

@@ -1,19 +1,8 @@
-"""
-AlertManager
-------------
-Listens to system signals and surfaces spoken warnings.
-Rules (simple, extendable):
-- health_update: warn if CPU > 90 or memory > 92%
-- security_alert: only speak critical alerts, not every event
-- vision_event: if faces detected >= 3, warn about multiple people nearby
-- sound_detected / loud_noise / siren_detected / alarm_tone: announce source
-"""
+﻿
+
 import time
 import structlog
-
 logger = structlog.get_logger("AEGIS.AlertManager")
-
-
 class AlertManager:
     def __init__(self, event_bus):
         self.event_bus = event_bus
@@ -26,8 +15,6 @@ class AlertManager:
         self.event_bus.subscribe("loud_noise", self._on_loud)
         self.event_bus.subscribe("siren_detected", self._on_siren)
         self.event_bus.subscribe("alarm_tone", self._on_alarm)
-
-    # Handlers
     def _on_health(self, data):
         if not isinstance(data, dict):
             return
@@ -37,9 +24,7 @@ class AlertManager:
         if (cpu > 90 or mem > 92) and (now - self._last_health_alert_time) >= 45:
             self._last_health_alert_time = now
             self._speak(f"Warning: system resources high. CPU {cpu:.0f} percent, memory {mem:.0f} percent.")
-
     def _on_security(self, data):
-        # Only speak truly critical security events and debounce repeats.
         if isinstance(data, dict):
             alert_type = data.get("type", "")
             if alert_type in ["intrusion", "breach", "unauthorized"]:
@@ -47,7 +32,6 @@ class AlertManager:
                 if (now - self._last_security_alert_time) >= 30:
                     self._last_security_alert_time = now
                     self._speak("Critical security alert detected!")
-
     def _on_vision(self, data):
         if not isinstance(data, dict):
             return
@@ -55,21 +39,14 @@ class AlertManager:
             count = data.get("count", 0)
             if count >= 3:
                 self._speak(f"I see {count} people nearby. Do you want me to engage privacy or alert mode?")
-
     def _on_sound(self, data):
-        # soft acknowledgement
         pass
-
     def _on_loud(self, data):
         self._speak("Loud impact detected. Should I record or call for help?")
-
     def _on_siren(self, data):
         self._speak("Siren detected. Do you want traffic updates or to call emergency contacts?")
-
     def _on_alarm(self, data):
         self._speak("Alarm tone detected. Should I check cameras or silence alarms?")
-
-    # Utility
     def _speak(self, text: str):
         try:
             self.event_bus.publish("voice_response", text)

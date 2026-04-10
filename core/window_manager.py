@@ -1,9 +1,4 @@
-# core/window_manager.py
-"""
-AEGIS Window Manager
-Provides intelligent window layout control, virtual workspace assignment,
-focus management and background-app monitoring using pyautogui + pygetwindow.
-"""
+﻿                        
 import logging
 import threading
 import time
@@ -13,21 +8,14 @@ from core.event_bus import EventBus
 
 logger = logging.getLogger("AEGIS.WindowManager")
 
-
 class WindowManager:
-    """
-    AEGIS multi-window and workspace manager.
-    - Track, snap and tile active windows
-    - Monitor CPU/RAM per process and throttle background hogs
-    - Voice-command aware: listens for layout intents on the event bus
-    """
-
+    
     LAYOUTS = {
-        "focus":   [(0, 0, 1.0, 1.0)],                             # Full-screen single
-        "split":   [(0, 0, 0.5, 1.0), (0.5, 0, 0.5, 1.0)],        # Side by side
+        "focus":   [(0, 0, 1.0, 1.0)],                                                 
+        "split":   [(0, 0, 0.5, 1.0), (0.5, 0, 0.5, 1.0)],                      
         "grid4":   [(0, 0, 0.5, 0.5), (0.5, 0, 0.5, 0.5),
-                    (0, 0.5, 0.5, 0.5), (0.5, 0.5, 0.5, 0.5)],    # 2×2 grid
-        "sidebar": [(0, 0, 0.7, 1.0), (0.7, 0, 0.3, 1.0)],        # Main + sidebar
+                    (0, 0.5, 0.5, 0.5), (0.5, 0.5, 0.5, 0.5)],              
+        "sidebar": [(0, 0, 0.7, 1.0), (0.7, 0, 0.3, 1.0)],                        
     }
 
     def __init__(self, event_bus: EventBus):
@@ -35,7 +23,7 @@ class WindowManager:
         self._monitor_running = False
         self._last_security_alert_time = 0.0
         self._last_security_alert_key = ""
-        self._screen_w = 1920   # Will be auto-detected
+        self._screen_w = 1920                          
         self._screen_h = 1080
         self._detect_resolution()
         self.event_bus.subscribe("voice_command", self._on_voice_command)
@@ -47,13 +35,10 @@ class WindowManager:
             import pyautogui
             self._screen_w, self._screen_h = pyautogui.size()
         except Exception:
-            pass  # Use defaults
+            pass                
 
-    # ------------------------------------------------------------------
-    # Layout engine
-    # ------------------------------------------------------------------
     def apply_layout(self, layout_name: str):
-        """Apply a named layout to the currently visible windows."""
+        
         slots = self.LAYOUTS.get(layout_name)
         if not slots:
             logger.warning(f"Unknown layout: {layout_name!r}")
@@ -77,7 +62,7 @@ class WindowManager:
                                f"Applied {layout_name} layout to {len(windows)} windows.")
 
     def focus_window(self, title_fragment: str):
-        """Bring a window matching the title fragment to the foreground."""
+        
         for win in self._get_active_windows():
             if title_fragment.lower() in win.title.lower():
                 try:
@@ -94,18 +79,15 @@ class WindowManager:
         except Exception:
             return []
 
-    # ------------------------------------------------------------------
-    # Background process monitor
-    # ------------------------------------------------------------------
     def start_process_monitor(self, interval: float = 10.0, cpu_threshold: float = 80.0):
-        """Start a daemon thread watching for CPU/memory hogs."""
+        
         self._monitor_running = True
         threading.Thread(target=self._monitor_loop,
                          args=(interval, cpu_threshold), daemon=True).start()
         logger.info("Process monitor started.")
 
     def _monitor_loop(self, interval: float, cpu_threshold: float):
-        # Skip checking System Idle Process and other system processes
+                                                                      
         skip_processes = {"System Idle Process", "System", "Registry", "smss.exe", 
                          "csrss.exe", "wininit.exe", "services.exe", "lsass.exe"}
         
@@ -115,7 +97,7 @@ class WindowManager:
             for proc in psutil.process_iter(["pid", "name", "cpu_percent", "memory_percent"]):
                 try:
                     proc_name = proc.info.get("name", "")
-                    # Skip system processes and very short-lived processes
+                                                                          
                     if proc_name in skip_processes:
                         continue
                     if proc.info["cpu_percent"] > cpu_threshold:
@@ -123,9 +105,8 @@ class WindowManager:
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                     continue
             
-            # Only alert if we have real hogs (not just system noise)
             if hogs and len(hogs) <= 3:
-                # Filter out any remaining system processes
+                                                           
                 real_hogs = [h for h in hogs if h.get("name", "") not in skip_processes]
                 if real_hogs:
                     names = ", ".join(h["name"] for h in real_hogs[:3])
@@ -142,9 +123,6 @@ class WindowManager:
     def stop_process_monitor(self):
         self._monitor_running = False
 
-    # ------------------------------------------------------------------
-    # Voice command handler
-    # ------------------------------------------------------------------
     def _on_voice_command(self, command: str):
         cmd = command.lower()
         if "layout" in cmd:
@@ -153,7 +131,7 @@ class WindowManager:
                     self.apply_layout(name)
                     return
         if "focus" in cmd:
-            # e.g. "focus chrome"
+                                 
             words = cmd.split()
             idx = words.index("focus") if "focus" in words else -1
             if idx >= 0 and idx + 1 < len(words):

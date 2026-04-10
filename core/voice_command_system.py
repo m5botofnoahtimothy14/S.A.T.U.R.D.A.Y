@@ -1,12 +1,4 @@
-"""
-AEGIS Voice Command System - Complex Speech Recognition & Routing
-================================================================
-1. LISTEN: Continuous voice capture (Whisper DL offline)
-2. UNDERSTAND: Intent classification + entity extraction (LLM)
-3. ROUTE: Deploy correct subsystem based on intent
-4. RESPOND: Execute action + speak response
-5. CONTEXT: Multi-turn conversation memory
-"""
+﻿
 import asyncio
 import logging
 import threading
@@ -26,7 +18,6 @@ logger = structlog.get_logger("AEGIS.VoiceCommand")
 
 PLATFORM = __import__("sys").platform
 
-
 class Intent(Enum):
     SYSTEM_CONTROL = "system_control"
     VISION = "vision"
@@ -42,7 +33,6 @@ class Intent(Enum):
     CONVERSATION = "conversation"
     UNKNOWN = "unknown"
 
-
 @dataclass
 class VoiceCommand:
     raw_text: str
@@ -54,7 +44,6 @@ class VoiceCommand:
     params: Dict[str, Any] = field(default_factory=dict)
     context: Dict[str, Any] = field(default_factory=dict)
 
-
 @dataclass
 class ConversationContext:
     last_intent: Intent = Intent.UNKNOWN
@@ -62,9 +51,7 @@ class ConversationContext:
     pending_action: str = ""
     history: deque = field(default_factory=lambda: deque(maxlen=20))
 
-
 class SubsystemRouter:
-    """Routes commands to specialized AEGIS subsystems"""
     
     def __init__(self, event_bus: EventBus, llm_engine=None):
         self.event_bus = event_bus
@@ -106,7 +93,7 @@ class SubsystemRouter:
         }
 
     def classify_intent(self, text: str) -> tuple[Intent, float, Dict]:
-        """Classify user intent from text"""
+        
         text_lower = text.lower()
         
         scores = {}
@@ -140,7 +127,7 @@ class SubsystemRouter:
         return entities
 
     async def process_command(self, command: VoiceCommand) -> str:
-        """Process voice command and return response"""
+        
         handler = self.subsystem_handlers.get(command.intent)
         
         if handler:
@@ -304,9 +291,7 @@ class SubsystemRouter:
                 pass
         return "I'm here. What would you like to know or do?"
 
-
 class VoiceCommandSystem:
-    """Main voice command system - no wake word needed"""
     
     def __init__(self, event_bus: EventBus, llm_engine=None, speech_manager=None):
         self.event_bus = event_bus
@@ -414,7 +399,6 @@ class VoiceCommandSystem:
         response = await self.router.process_command(cmd)
         if response:
             self.speak(response)
-
 
 def start_voice_command_system(event_bus, llm_engine=None, speech_manager=None):
     system = VoiceCommandSystem(event_bus, llm_engine, speech_manager)

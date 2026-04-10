@@ -1,6 +1,5 @@
-version: 2
+﻿version: 2
 updates:
-  # Python dependencies
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
@@ -11,8 +10,6 @@ updates:
     ignore:
       - dependency-name: "*"
         versions: ["*"]
-
-  # Node.js dependencies
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -23,7 +20,6 @@ updates:
     ignore:
       - dependency-name: "*"
         versions: ["*"]
-
 exclude:
   - "core/models"
   - "core/build"

@@ -1,4 +1,4 @@
-# homebot/control.py
+﻿                    
 import logging
 import platform
 
@@ -25,7 +25,7 @@ class HomeBot:
             self.connected = False
             self._try_connect()
         else:
-            # MicroPython mode
+                              
             from homebot.motors import OmniMotors
             from homebot.navigation import Navigation
             from homebot.sensors import Sensors
@@ -36,7 +36,7 @@ class HomeBot:
 
     def _try_connect(self):
         try:
-            import serial  # noqa: F401
+            import serial              
             logger.warning("HomeBot direct bridge is not configured on Windows. Use core.homebot_integration for real transport.")
         except Exception as e:
             logger.warning(f"Could not establish serial connection to HomeBot: {e}")
@@ -49,7 +49,7 @@ class HomeBot:
             else:
                 logger.error("Cannot execute command: HomeBot not connected.")
         else:
-            # Internal execution on MicroPython
+                                               
             pass
 
     def autonomous_navigation(self, target):

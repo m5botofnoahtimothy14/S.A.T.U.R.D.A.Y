@@ -1,5 +1,4 @@
-# communication/voice_command_router.py
-
+﻿                                       
 import asyncio
 import logging
 
@@ -19,16 +18,13 @@ class VoiceCommandRouter:
         if not command:
             return
 
-        # WhatsApp voice control
         if "whatsapp" in command and "message" in command:
             self.speech.speak("WhatsApp messaging active. Use the dashboard to confirm recipients.")
-            # We don't block for input() anymore
+                                                
             return
 
-        # Instagram DM
         if "instagram" in command and "message" in command:
             self.speech.speak("Instagram DM service active.")
             return
 
-        # Default: Send to AI engine for deep processing
         self.event_bus.publish("voice_command_unhandled", {"command": command})

@@ -1,13 +1,4 @@
-#!/usr/bin/env python3
-"""
-LiveKit Phone Number Setup Script
-Run this to purchase a phone number and configure inbound calling for AEGIS.
-
-Usage:
-    python scripts/setup_livekit_phone.py --search US 415
-    python scripts/setup_livekit_phone.py --buy +1415555xxxx
-    python scripts/setup_livekit_phone.py --setup-dispatch
-"""
+﻿#!/usr/bin/env python3
 
 import asyncio
 import argparse
@@ -20,7 +11,7 @@ def load_env():
     load_dotenv()
 
 async def search_numbers(country_code: str, area_code: str = None):
-    """Search for available phone numbers."""
+    
     lk_api = get_api()
     
     request = api.SearchPhoneNumbersRequest(
@@ -38,7 +29,7 @@ async def search_numbers(country_code: str, area_code: str = None):
     await lk_api.aclose()
 
 async def purchase_number(phone_number: str, dispatch_rule_id: str = None):
-    """Purchase a phone number."""
+    
     lk_api = get_api()
     
     request = api.PurchasePhoneNumberRequest(
@@ -50,7 +41,7 @@ async def purchase_number(phone_number: str, dispatch_rule_id: str = None):
         print(f"\n✓ Successfully purchased {phone_number}")
         
         if dispatch_rule_id:
-            # Associate with dispatch rule
+                                          
             await lk_api.phone_number.update_phone_number(
                 api.UpdatePhoneNumberRequest(
                     phone_number=phone_number,
@@ -65,22 +56,20 @@ async def purchase_number(phone_number: str, dispatch_rule_id: str = None):
     await lk_api.aclose()
 
 async def create_dispatch_rule(room_prefix: str = "aegis"):
-    """Create a dispatch rule to route inbound calls to rooms."""
+    
     lk_api = get_api()
     
-    # Create inbound trunk for LiveKit Phone Numbers
     trunk = await lk_api.sip.create_sip_inbound_trunk(
         api.CreateSIPInboundTrunkRequest(
             trunk=api.SIPInboundTrunkInfo(
                 name="AEGIS Phone Number",
-                numbers=[],  # Will be assigned to purchased numbers
-                krisp_enabled=True,  # Noise cancellation
+                numbers=[],                                         
+                krisp_enabled=True,                      
             )
         )
     )
     print(f"✓ Created inbound trunk: {trunk.sip_trunk_id}")
     
-    # Create dispatch rule
     dispatch = await lk_api.sip.create_sip_dispatch_rule(
         api.CreateSIPDispatchRuleRequest(
             trunk_ids=[trunk.sip_trunk_id],
@@ -99,7 +88,7 @@ async def create_dispatch_rule(room_prefix: str = "aegis"):
     return dispatch.dispatch_rule_id
 
 async def list_numbers():
-    """List purchased phone numbers."""
+    
     lk_api = get_api()
     
     result = await lk_api.phone_number.list_phone_numbers(
@@ -116,7 +105,7 @@ async def list_numbers():
     await lk_api.aclose()
 
 def get_api():
-    """Initialize LiveKit API client from environment."""
+    
     url = os.getenv("LIVEKIT_URL")
     key = os.getenv("LIVEKIT_API_KEY")
     secret = os.getenv("LIVEKIT_API_SECRET")

@@ -1,4 +1,4 @@
-# health/doctor_mode.py
+﻿                       
 class DoctorMode:
     def analyze(self, vitals):
         alerts = []

@@ -1,4 +1,4 @@
-# identity/trust_engine.py
+﻿                          
 import logging
 
 logger = logging.getLogger("AEGIS.Identity.Trust")
@@ -6,7 +6,7 @@ logger = logging.getLogger("AEGIS.Identity.Trust")
 class TrustEngine:
     def __init__(self, event_bus):
         self.event_bus = event_bus
-        self.trust_levels = {} # UserID -> score (0-1.0)
+        self.trust_levels = {}                          
         self.event_bus.subscribe("auth_success", self.increase_trust)
         self.event_bus.subscribe("auth_failure", self.decrease_trust)
 

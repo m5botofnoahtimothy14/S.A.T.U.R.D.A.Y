@@ -1,15 +1,8 @@
-"""
-WebSearchService
-----------------
-Lightweight web search using DuckDuckGo's instant-answer JSON API.
-Listens for `search_request` events and responds with top hits plus a summary
-via `voice_response` and `search_results`.
-"""
+﻿
 import logging
 import requests
 
 logger = logging.getLogger("AEGIS.Services.WebSearch")
-
 
 class WebSearchService:
     def __init__(self, event_bus):
@@ -50,7 +43,6 @@ class WebSearchService:
 
         results = []
 
-        # Direct 'RelatedTopics' items
         for item in data.get("RelatedTopics", []):
             if "Text" in item and "FirstURL" in item:
                 results.append({
@@ -61,7 +53,6 @@ class WebSearchService:
                 if len(results) >= max_results:
                     break
 
-        # Fallback to abstract
         if not results and data.get("AbstractText"):
             results.append({
                 "title": data.get("Heading") or query,

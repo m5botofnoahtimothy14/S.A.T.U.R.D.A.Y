@@ -1,4 +1,4 @@
-# ui/notification_handler.py
+﻿                            
 import threading
 import time
 from plyer import notification

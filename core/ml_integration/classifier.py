@@ -1,7 +1,4 @@
-"""
-Neural classifier used by ML integration package exports.
-"""
-
+﻿
 from __future__ import annotations
 
 import json
@@ -14,10 +11,8 @@ import structlog
 
 logger = structlog.get_logger("AEGIS.ML.Classifier")
 
-
 class NeuralClassifier:
-    """Small feed-forward classifier for lightweight subsystem labels."""
-
+    
     def __init__(
         self,
         input_size: int = 16,

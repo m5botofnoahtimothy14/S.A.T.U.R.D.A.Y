@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+﻿import { useEffect, useState, useRef } from "react";
 import {
   Activity, Shield, Mic, Camera, LayoutDashboard,
   MessageSquare, User, Terminal, Heart,
@@ -23,8 +23,6 @@ import "./styles.css";
 
 const API_BASE_URL = import.meta.env.VITE_AEGIS_GATEWAY_URL || 'http://localhost:8000';
 const ADMIN_EMAILS = ['m5botkitm40@gmail.com', 'noahtimothykeba@gmail.com'];
-
-// --- UI Components ---
 
 const StatCard = ({ title, value, unit, icon: Icon, color = "var(--accent-blue)" }) => (
   <div className="health-item glow-border">
@@ -62,7 +60,6 @@ function App() {
   const [modules, setModules] = useState({});
   const [homebot, setHomebot] = useState({ connected: false, status: "unknown" });
 
-  // --- Auth Logic ---
   useEffect(() => {
     if (!auth) {
       setLoading(false);
@@ -102,7 +99,6 @@ function App() {
 
   const handleLogout = () => signOut(auth);
 
-  // --- REST API Data Sync ---
   const fetchAegisData = async () => {
     try {
       const token = user?.accessToken;
@@ -155,11 +151,9 @@ function App() {
     }
   };
 
-  // --- Real-time Cloud Sync (Firebase) ---
   useEffect(() => {
     if (!user || !db) return;
 
-    // Try REST API first
     fetchAegisData();
     fetchModules();
     fetchHomebot();
@@ -167,7 +161,6 @@ function App() {
     const moduleInterval = setInterval(fetchModules, 8000);
     const homebotInterval = setInterval(fetchHomebot, 8000);
 
-    // 1. Sync Vitals & Core Status
     const nodeRef = doc(db, "telemetry_nodes", "aegis-primary");
     const unsubNode = onSnapshot(nodeRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -182,20 +175,17 @@ function App() {
           alerts: data.social?.alerts || []
         }));
 
-        // Push to history
         const timestamp = new Date().toLocaleTimeString();
         setHistory(h => [...h, { time: timestamp, cpu: data.vitals?.cpu_percent || 0, ram: data.vitals?.memory_percent || 0 }].slice(-30));
       }
     });
 
-    // 2. Sync Logs
     const logQuery = query(collection(nodeRef, "logs"), orderBy("timestamp", "desc"), limit(20));
     const unsubLogs = onSnapshot(logQuery, (snapshot) => {
       const newLogs = snapshot.docs.map(d => d.data());
       setLogs(newLogs);
     });
 
-    // Websocket live events
     const wsToken = user?.accessToken;
     const wsUrl = API_BASE_URL.replace(/^http/, 'ws') + `/ws/events${wsToken ? `?token=${wsToken}` : ""}`;
     let ws;
@@ -235,13 +225,11 @@ function App() {
     };
   }, [user]);
 
-  // --- Actions ---
   const sendCommand = async (e) => {
     if (e) e.preventDefault();
     if (!command.trim()) return;
 
     try {
-      // Try REST API first
       const token = user?.accessToken;
       const res = await fetch(`${API_BASE_URL}/v1/commands`, {
         method: 'POST',
@@ -258,7 +246,6 @@ function App() {
         return;
       }
       
-      // Fallback to Firestore
       const nodeRef = doc(db, "telemetry_nodes", "aegis-primary");
       await addDoc(collection(nodeRef, "remote_commands"), {
         command: command,

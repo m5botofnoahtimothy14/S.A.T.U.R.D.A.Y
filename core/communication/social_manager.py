@@ -1,8 +1,4 @@
-# communication/social_manager.py
-"""
-Social Media Manager - Background automation for WhatsApp, Instagram, X (Twitter)
-Keeps apps running in background and handles automated responses
-"""
+﻿                                 
 import asyncio
 import logging
 import structlog
@@ -15,10 +11,6 @@ from core.event_bus import EventBus
 logger = structlog.get_logger("AEGIS.SocialManager")
 
 class SocialManager:
-    """
-    Manages WhatsApp, Instagram, X (Twitter) in background browser sessions.
-    Uses Selenium for automation - keeps apps open and handles incoming messages.
-    """
     
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
@@ -46,7 +38,7 @@ class SocialManager:
         self.event_bus.subscribe("social_reply", self.handle_auto_reply)
         
     def start_platform(self, platform: str) -> bool:
-        """Start a platform in background browser"""
+        
         if platform not in self.platforms:
             logger.warning(f"Unknown platform: {platform}")
             return False
@@ -87,7 +79,7 @@ class SocialManager:
             return False
     
     def stop_platform(self, platform: str):
-        """Stop a platform"""
+        
         if platform in self.drivers and self.drivers[platform]:
             try:
                 self.drivers[platform].quit()
@@ -97,16 +89,16 @@ class SocialManager:
             logger.info(f"Stopped {platform}")
     
     def stop_all(self):
-        """Stop all platforms"""
+        
         for platform in list(self.drivers.keys()):
             self.stop_platform(platform)
     
     def is_running(self, platform: str) -> bool:
-        """Check if platform is running"""
+        
         return platform in self.drivers and self.drivers[platform] is not None
     
     def get_status(self) -> Dict:
-        """Get status of all platforms"""
+        
         return {
             platform: {
                 "running": self.is_running(platform),
@@ -116,7 +108,7 @@ class SocialManager:
         }
     
     def handle_send_message(self, data: dict):
-        """Handle outgoing message request"""
+        
         platform = data.get("platform")
         recipient = data.get("recipient")
         message = data.get("message")
@@ -129,7 +121,7 @@ class SocialManager:
             self._send_tweet(message)
     
     def _send_whatsapp(self, contact: str, message: str):
-        """Send WhatsApp message"""
+        
         try:
             driver = self.drivers.get("whatsapp")
             if not driver:
@@ -159,7 +151,7 @@ class SocialManager:
             return False
     
     def _send_instagram(self, recipient: str, message: str):
-        """Send Instagram DM"""
+        
         try:
             driver = self.drivers.get("instagram")
             if not driver:
@@ -183,7 +175,7 @@ class SocialManager:
             return False
     
     def _send_tweet(self, message: str):
-        """Send tweet"""
+        
         try:
             driver = self.drivers.get("twitter")
             if not driver:
@@ -208,7 +200,7 @@ class SocialManager:
             return False
     
     def handle_auto_reply(self, data: dict):
-        """Enable/disable auto-reply for a platform"""
+        
         platform = data.get("platform")
         rules = data.get("rules", {})
         
@@ -219,7 +211,7 @@ class SocialManager:
             self._start_whatsapp_monitor()
     
     def _start_whatsapp_monitor(self):
-        """Monitor WhatsApp for new messages and auto-reply"""
+        
         def monitor():
             while self.is_running("whatsapp"):
                 try:
@@ -258,7 +250,7 @@ class SocialManager:
             self.threads["whatsapp"] = t
     
     def get_unread_messages(self, platform: str) -> list:
-        """Get unread messages from platform"""
+        
         try:
             driver = self.drivers.get(platform)
             if not driver:
@@ -280,7 +272,7 @@ class SocialManager:
         return []
     
     def check_notifications(self) -> Dict:
-        """Check all platforms for notifications"""
+        
         notifications = {}
         
         for platform in self.platforms:

@@ -1,4 +1,4 @@
-# health/fall_prediction.py
+﻿                           
 import time
 import numpy as np
 
@@ -12,7 +12,7 @@ class FallPredictor:
         if pose_landmarks is None:
             return False
 
-        hip = pose_landmarks.landmark[23]  # left hip
+        hip = pose_landmarks.landmark[23]            
         current_time = time.time()
 
         if self.prev_hip_y is not None:
@@ -21,8 +21,7 @@ class FallPredictor:
 
             velocity = dy / dt if dt > 0 else 0
 
-            # Threshold logic
-            if velocity > 0.8:  # sudden downward movement
+            if velocity > 0.8:                            
                 self.fall_detected = True
 
         self.prev_hip_y = hip.y

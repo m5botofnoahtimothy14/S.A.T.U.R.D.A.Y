@@ -1,4 +1,4 @@
-# ai_modules/llm_engine.py
+﻿                          
 import os
 import json
 import structlog
@@ -19,7 +19,6 @@ class LLMEngine:
             "on",
         }
         
-        # Load configuration for AI backend switch
         self.config = {}
         config_path = "core/config.json"
         if os.path.exists(config_path):
@@ -51,7 +50,7 @@ class LLMEngine:
         return bool(self._get_llama_cpp())
         
     def _get_llama_cpp(self):
-        """Lazy load llama-cpp-python"""
+        
         if self._llama is None:
             try:
                 from llama_cpp import Llama

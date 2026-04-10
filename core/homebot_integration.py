@@ -1,25 +1,20 @@
-# core/homebot_integration.py
+﻿                             
+
 import json
 import logging
 import os
 import threading
 import time
-
 from core.event_bus import EventBus
-
 try:
     import paho.mqtt.client as mqtt
 except ImportError:
     mqtt = None
-
 try:
     import serial
 except ImportError:
     serial = None
-
 logger = logging.getLogger("AEGIS.HomeBotIntegration")
-
-
 class HomeBotIntegration:
     def __init__(self, event_bus: EventBus, com_port: str | None = None):
         self.event_bus = event_bus
@@ -43,27 +38,22 @@ class HomeBotIntegration:
         self.latest_status = {}
         self.latest_sensors = {}
         self.latest_nav_scan = {}
-
         self.transport = self._select_transport()
         self._connect()
-
         if self.raw_voice_subscription:
             self.event_bus.subscribe("voice_command", self._process_command)
         threading.Thread(target=self._telemetry_loop, daemon=True).start()
-
     def _select_transport(self) -> str:
         if self.backend in {"serial", "mqtt"}:
             return self.backend
         if self.com_port:
             return "serial"
         return "mqtt"
-
     def _connect(self):
         if self.transport == "serial":
             self._connect_serial()
         else:
             self._connect_mqtt()
-
     def _connect_serial(self):
         if not serial:
             self._log("error", "pyserial is not installed; serial HomeBot transport is unavailable.")
@@ -86,7 +76,6 @@ class HomeBotIntegration:
             self._log("info", f"HomeBot serial connection established on {self.com_port}.")
         except Exception as e:
             self._log("error", f"Failed to connect HomeBot on serial port {self.com_port}: {e}")
-
     def _connect_mqtt(self):
         if not mqtt:
             self._log("error", "paho-mqtt is not installed; MQTT HomeBot transport is unavailable.")
@@ -94,20 +83,37 @@ class HomeBotIntegration:
         if not self.mqtt_broker:
             self._log("error", "MQTT_BROKER is not configured for HomeBot MQTT transport.")
             return
-
         self.mqtt_client = mqtt.Client(client_id="AEGIS-HomeBot")
         self.mqtt_client.on_connect = self._on_mqtt_connect
         self.mqtt_client.on_message = self._on_mqtt_message
         self.mqtt_client.on_disconnect = self._on_mqtt_disconnect
-
+        self.mqtt_client.on_log = self._on_mqtt_log
         try:
             self.mqtt_client.connect(self.mqtt_broker, self.mqtt_port, 60)
             self.mqtt_client.loop_start()
             self.broker_connected = True
             self._log("info", f"Connected to HomeBot MQTT broker at {self.mqtt_broker}:{self.mqtt_port}.")
+        except ConnectionRefusedError:
+            self._log("warning", f"HomeBot MQTT broker connection refused at {self.mqtt_broker}:{self.mqtt_port}. Broker may not be running. Will retry in background.")
+            self._retry_mqtt_connection()
         except Exception as e:
             self._log("error", f"Failed to connect to HomeBot MQTT broker {self.mqtt_broker}:{self.mqtt_port}: {e}")
-
+            self._retry_mqtt_connection()
+    def _retry_mqtt_connection(self):
+        def retry_thread():
+            for attempt in range(3):
+                time.sleep(10 * (attempt + 1))
+                try:
+                    if self.mqtt_client:
+                        self.mqtt_client.reconnect()
+                        self._log("info", f"Reconnected to HomeBot MQTT broker (attempt {attempt + 1})")
+                        return
+                except Exception as e:
+                    self._log("warning", f"MQTT reconnect attempt {attempt + 1} failed: {e}")
+        threading.Thread(target=retry_thread, daemon=True).start()
+    def _on_mqtt_log(self, client, userdata, level, buf):
+        if level == mqtt.MQTT_LOG_ERR:
+            logger.error(f"MQTT: {buf}")
     def _on_mqtt_connect(self, client, userdata, flags, rc, properties=None):
         if rc != 0:
             self._log("error", f"HomeBot MQTT connect failed with rc={rc}.")
@@ -118,22 +124,18 @@ class HomeBotIntegration:
         client.subscribe("homebot/sensors/data")
         client.subscribe("homebot/nav/scan")
         self.request_sensor_refresh()
-
     def _on_mqtt_disconnect(self, client, userdata, rc, properties=None):
         self.broker_connected = False
         self.connected = False
         self._log("warning", f"HomeBot MQTT disconnected with rc={rc}.")
-
     def _on_mqtt_message(self, client, userdata, msg):
         payload = msg.payload.decode("utf-8", errors="ignore")
         try:
             data = json.loads(payload) if payload else {}
         except json.JSONDecodeError:
             data = {"raw": payload}
-
         self.last_seen = time.time()
         self.connected = True
-
         if msg.topic == "homebot/status":
             self.latest_status = data
         elif msg.topic == "homebot/sensors/data":
@@ -141,19 +143,15 @@ class HomeBotIntegration:
             self.event_bus.publish("homebot_telemetry", data)
         elif msg.topic == "homebot/nav/scan":
             self.latest_nav_scan = data
-
     def _process_command(self, command_str):
         if isinstance(command_str, dict):
             command_str = command_str.get("command", "")
         self.execute_voice_command(str(command_str))
-
     def execute_voice_command(self, command_str: str) -> dict:
         command_str = (command_str or "").strip().lower()
         if not command_str:
             return {"status": "unavailable", "reason": "No HomeBot command was provided."}
-
         self._log("info", f"HomeBot received command: {command_str}")
-
         movement_map = [
             ("rotate left", "RTL"),
             ("spin left", "RTL"),
@@ -169,7 +167,6 @@ class HomeBotIntegration:
             ("stop", "STP"),
             ("halt", "STP"),
         ]
-
         if "go to" in command_str:
             parts = command_str.split()
             try:
@@ -178,21 +175,16 @@ class HomeBotIntegration:
             except Exception:
                 return {"status": "unavailable", "reason": "Navigation command must be in the form 'go to X Y'."}
             return self.autonomous_navigation(target)
-
         if "homebot" not in command_str and "bot" not in command_str and not any(key in command_str for key, _ in movement_map):
             return {"status": "unavailable", "reason": "Command does not target HomeBot."}
-
         for key, command in movement_map:
             if key in command_str:
                 return self.execute_command(command)
-
         return {"status": "unavailable", "reason": f"No mapped HomeBot action found for '{command_str}'."}
-
     def execute_command(self, command: str, duration: float = 1, speed: int = 80) -> dict:
         if self.transport == "serial":
             return self._execute_serial(command)
         return self._execute_mqtt(command, duration=duration, speed=speed)
-
     def _execute_serial(self, command: str) -> dict:
         if not self.serial_conn or not self.serial_conn.is_open:
             return {"status": "unavailable", "reason": "HomeBot serial transport is not connected."}
@@ -205,15 +197,12 @@ class HomeBotIntegration:
         except Exception as e:
             self._log("error", f"Serial send failed: {e}")
             return {"status": "error", "reason": str(e)}
-
     def _execute_mqtt(self, command: str, duration: float = 1, speed: int = 80) -> dict:
         if not self.mqtt_client or not self.broker_connected:
             return {"status": "unavailable", "reason": "HomeBot MQTT transport is not connected."}
-
         topic = None
         payload = None
         speed = max(0, min(int(speed), 100))
-
         if command == "FWD":
             topic = "homebot/motors/omni"
             payload = {"x": 0, "y": speed, "rotation": 0}
@@ -235,10 +224,8 @@ class HomeBotIntegration:
         elif command == "STP":
             topic = "homebot/motors/stop"
             payload = "1"
-
         if not topic:
             return {"status": "unavailable", "reason": f"Unsupported HomeBot command '{command}'."}
-
         try:
             wire_payload = json.dumps(payload) if isinstance(payload, dict) else str(payload)
             info = self.mqtt_client.publish(topic, wire_payload)
@@ -251,11 +238,9 @@ class HomeBotIntegration:
         except Exception as e:
             self._log("error", f"MQTT command publish failed: {e}")
             return {"status": "error", "reason": str(e)}
-
     def request_sensor_refresh(self):
         if self.mqtt_client and self.broker_connected:
             self.mqtt_client.publish("homebot/sensors/read", "1")
-
     def autonomous_navigation(self, target_pos):
         if self.transport == "serial":
             return {"status": "unavailable", "reason": "Autonomous navigation is only implemented on MQTT HomeBot firmware."}
@@ -271,7 +256,6 @@ class HomeBotIntegration:
         except Exception as e:
             self._log("error", f"HomeBot navigation publish failed: {e}")
             return {"status": "error", "reason": str(e)}
-
     def get_status(self) -> dict:
         return {
             "connected": self.connected,
@@ -283,7 +267,6 @@ class HomeBotIntegration:
             "sensors": self.latest_sensors,
             "navigation": self.latest_nav_scan,
         }
-
     def _telemetry_loop(self):
         while True:
             try:
@@ -294,12 +277,10 @@ class HomeBotIntegration:
             except Exception as e:
                 logger.debug(f"HomeBot telemetry loop error: {e}")
             time.sleep(10)
-
     def _log(self, level: str, message: str):
         self.logs.append({"ts": time.time(), "level": level, "message": message})
         self.logs = self.logs[-200:]
         getattr(logger, level, logger.info)(message)
-
     def shutdown(self):
         self._log("info", "HomeBot integration shutting down.")
         try:

@@ -1,4 +1,4 @@
-# services/windows_service.py
+﻿                             
 import win32serviceutil
 import win32service
 import win32event
@@ -9,10 +9,8 @@ import os
 import asyncio
 import logging
 
-# Ensure AEGIS root is in path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Lazy import to avoid circular imports
 _AEGISCore = None
 
 def get_aegis_core():
@@ -46,18 +44,16 @@ class AEGISWindowsService(win32serviceutil.ServiceFramework):
         self.main()
 
     def main(self):
-        # Initialize and run AEGIS core in the service thread
+                                                             
         try:
             self.aegis = AEGISCore()
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             
-            # Start the core
             loop.create_task(self.aegis.start())
             
-            # Wait for stop event
             while True:
-                # Check if stop event is signaled
+                                                 
                 rc = win32event.WaitForSingleObject(self.stop_event, 1000)
                 if rc == win32event.WAIT_OBJECT_0:
                     break

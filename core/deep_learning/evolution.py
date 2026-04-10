@@ -1,12 +1,4 @@
-# deep_learning/evolution.py
-"""
-SelfEvolution
-=============
-Self-improvement and evolution framework for AEGIS.
-Enables AEGIS to evolve, grow, and improve its own
-capabilities over time - making it a truly living AI.
-"""
-
+﻿                            
 import os
 import json
 import time
@@ -21,7 +13,7 @@ logger = structlog.get_logger("AEGIS.DL.Evolution")
 
 @dataclass
 class EvolutionMilestone:
-    """Record of evolution milestone"""
+    
     stage: int
     name: str
     timestamp: float = field(default_factory=time.time)
@@ -29,7 +21,6 @@ class EvolutionMilestone:
     improvements: Dict[str, float] = field(default_factory=dict)
 
 class EvolutionMetrics:
-    """Track evolution metrics"""
     
     def __init__(self):
         self.total_interactions = 0
@@ -56,11 +47,6 @@ class EvolutionMetrics:
         }
 
 class SelfEvolution:
-    """
-    Self-Evolution Framework for AEGIS.
-    Enables AEGIS to continuously evolve, grow, and improve
-    its own capabilities - transforming into a living AI OS.
-    """
     
     def __init__(self, event_bus=None, deep_learning_core=None, adaptive_engine=None, pattern_engine=None):
         self.event_bus = event_bus
@@ -108,7 +94,7 @@ class SelfEvolution:
         logger.info(f"SelfEvolution initialized - Stage {self.evolution_stage}: {self.evolution_name}")
         
     def record_interaction(self, success: bool = True):
-        """Record an interaction for evolution tracking"""
+        
         self.metrics.total_interactions += 1
         if success:
             self.metrics.successful_interactions += 1
@@ -116,21 +102,21 @@ class SelfEvolution:
         self._check_evolution()
         
     def record_learning(self):
-        """Record a learning event"""
+        
         self.metrics.learning_events += 1
         self._check_evolution()
         
     def record_adaptation(self):
-        """Record an adaptation event"""
+        
         self.metrics.adaptations += 1
         self._check_evolution()
         
     def record_pattern_learned(self):
-        """Record a pattern learned"""
+        
         self.metrics.patterns_learned += 1
         
     def _check_evolution(self):
-        """Check if AEGIS should evolve"""
+        
         for stage in range(self.evolution_stage + 1, 6):
             if stage in self.evolution_thresholds:
                 thresholds = self.evolution_thresholds[stage]
@@ -142,7 +128,7 @@ class SelfEvolution:
                     break
                     
     def _evolve_to_stage(self, stage: int):
-        """Evolve to a new stage"""
+        
         old_name = self.evolution_names.get(self.evolution_stage, "Unknown")
         new_name = self.evolution_names.get(stage, "Unknown")
         
@@ -172,7 +158,7 @@ class SelfEvolution:
         self._save_evolution()
         
     def _get_evolution_triggers(self, stage: int) -> List[str]:
-        """Get what triggered the evolution"""
+        
         triggers = []
         
         if self.metrics.total_interactions >= self.evolution_thresholds.get(stage, {}).get("interactions", 0):
@@ -187,7 +173,7 @@ class SelfEvolution:
         return triggers
         
     def _calculate_improvements(self, stage: int) -> Dict[str, float]:
-        """Calculate improvements from evolution"""
+        
         improvements = {
             "accuracy": 0.0,
             "efficiency": 0.0,
@@ -205,7 +191,7 @@ class SelfEvolution:
         return improvements
         
     def _update_metrics(self, stage: int):
-        """Update evolution metrics"""
+        
         improvements = self._calculate_improvements(stage)
         
         self.metrics.accuracy_score = min(1.0, self.metrics.accuracy_score + improvements["accuracy"])
@@ -214,7 +200,7 @@ class SelfEvolution:
         self.metrics.adaptability_score = min(1.0, self.metrics.adaptability_score + improvements["adaptability"])
         
     def get_evolution_status(self) -> Dict[str, Any]:
-        """Get current evolution status"""
+        
         progress = self._calculate_evolution_progress()
         
         return {
@@ -228,7 +214,7 @@ class SelfEvolution:
         }
         
     def _calculate_evolution_progress(self) -> float:
-        """Calculate progress to next evolution stage"""
+        
         next_stage = self.evolution_stage + 1
         
         if next_stage > 5:
@@ -242,7 +228,7 @@ class SelfEvolution:
         return min(1.0, (interaction_progress + learning_progress) / 2)
         
     def _get_capabilities(self) -> List[str]:
-        """Get current capabilities based on evolution stage"""
+        
         base_capabilities = [
             "basic_command_processing",
             "pattern_recognition",
@@ -282,7 +268,7 @@ class SelfEvolution:
         return base_capabilities
         
     def evolve_capabilities(self, dl_core=None) -> Dict[str, Any]:
-        """Evolve AEGIS's capabilities based on learning"""
+        
         if not dl_core:
             dl_core = self.dl_core
             
@@ -309,7 +295,7 @@ class SelfEvolution:
         }
         
     def _save_evolution(self):
-        """Save evolution state"""
+        
         data = {
             "evolution_stage": self.evolution_stage,
             "evolution_name": self.evolution_name,
@@ -330,7 +316,7 @@ class SelfEvolution:
             json.dump(data, f, indent=2)
             
     def _load_evolution(self):
-        """Load evolution state"""
+        
         evolution_file = f"{self.data_dir}/evolution.json"
         
         if os.path.exists(evolution_file):
@@ -366,6 +352,6 @@ class SelfEvolution:
                 logger.warning(f"Failed to load evolution state: {e}")
                 
     def shutdown(self):
-        """Save evolution state on shutdown"""
+        
         self._save_evolution()
         logger.info("Evolution state saved")

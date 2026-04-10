@@ -1,4 +1,4 @@
-# communication/livekit_webhooks.py
+﻿                                   
 import uuid
 import structlog
 from fastapi import APIRouter, Request, HTTPException
@@ -6,27 +6,15 @@ from fastapi.responses import JSONResponse
 
 logger = structlog.get_logger("AEGIS.LiveKitWebhooks")
 
-
 def register_livekit_webhooks(app, call_agent, event_bus):
-    """
-    Mount LiveKit-compatible endpoints for SIP telephony:
-    - POST /api/livekit/webhook : Receive room events (SIP participants joining)
-    - POST /api/livekit/outbound : Trigger outbound call
-    - POST /api/livekit/meeting  : Join a meeting (Zoom, Meet, etc.)
-    """
+    
     router = APIRouter()
 
     @router.post("/api/livekit/webhook")
     async def livekit_webhook(request: Request):
-        """
-        Handle LiveKit room events, particularly SIP participant events.
-        When a SIP caller joins, we route them through the AI agent.
-        """
-        body = await request.body()
-        # In production, verify the webhook signature
-        # For now, parse the event type from the body
         
-        # LiveKit sends webhook events as JSON
+        body = await request.body()
+                                                     
         try:
             import json
             event_data = json.loads(body)
@@ -39,18 +27,15 @@ def register_livekit_webhooks(app, call_agent, event_bus):
                 
                 logger.info("SIP participant joined", identity=identity, room_sid=call_sid)
                 
-                # Ensure session and greet the caller
                 session = call_agent.ensure_session(call_sid, identity)
                 greeting = call_agent.greeting_text(session)
                 
-                # Publish event to start the voice agent for this caller
                 event_bus.publish("sip_call_started", {
                     "call_sid": call_sid,
                     "caller": identity,
                     "room_sid": event_data.get("room", {}).get("sid"),
                 })
                 
-                # For LiveKit, the agent handles greeting via the room audio
                 return JSONResponse({"status": "greeting", "message": greeting})
             
             elif event_type == "sip_participant_left":
@@ -70,9 +55,7 @@ def register_livekit_webhooks(app, call_agent, event_bus):
 
     @router.post("/api/livekit/outbound")
     async def livekit_outbound(data: dict):
-        """
-        Trigger an outbound phone call via LiveKit SIP.
-        """
+        
         to = data.get("to")
         script = data.get("script", "Hi, this is AEGIS calling.")
         
@@ -96,9 +79,7 @@ def register_livekit_webhooks(app, call_agent, event_bus):
 
     @router.post("/api/livekit/meeting")
     async def livekit_meeting(data: dict):
-        """
-        Dial into a meeting (Zoom, Google Meet, etc.) via SIP.
-        """
+        
         dial_in = data.get("dial_in")
         meeting_id = data.get("meeting_id")
         passcode = data.get("passcode")
@@ -119,7 +100,7 @@ def register_livekit_webhooks(app, call_agent, event_bus):
 
     @router.get("/api/livekit/status")
     async def livekit_status():
-        """Check LiveKit SIP status."""
+        
         return JSONResponse({
             "sip_available": call_agent.outbound_supported(),
             "livekit_url": call_agent.livekit_url,

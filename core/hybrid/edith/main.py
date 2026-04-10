@@ -1,4 +1,4 @@
-# hybrid/edith/main.py
+﻿                      
 import logging
 from core.event_bus import EventBus
 
@@ -31,7 +31,6 @@ class EDITH:
             self.active = True
             logger.info("EDITH Subdomain Interface active.")
             
-            # Handle specific sub-mode transitions
             if "doctor" in command:
                 if self.brain: self.brain.set_sub_mode("Doctor")
                 self.event_bus.publish("voice_response", "EDITH Doctor Mode active. Medical sensors online.")
@@ -48,7 +47,7 @@ class EDITH:
         elif "aegis" in command:
             self.active = False
             if self.brain:
-                self.brain.set_sub_mode("Normal") # Reset to Normal core
+                self.brain.set_sub_mode("Normal")                       
                 self.brain.context["interface_mode"] = "AEGIS"
             self.event_bus.publish("voice_response", "AEGIS Core re-engaged. Welcome back, Sir.")
 

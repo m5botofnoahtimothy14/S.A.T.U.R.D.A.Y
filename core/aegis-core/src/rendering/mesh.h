@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <vector>
 #include <string>
@@ -9,10 +9,6 @@
 
 namespace aegis {
 
-/**
- * @struct Vertex
- * @brief Vertex format for 3D rendering
- */
 struct Vertex {
     float position[3];
     float normal[3];
@@ -22,88 +18,45 @@ struct Vertex {
     Vertex() : position{0, 0, 0}, normal{0, 1, 0}, texcoord{0, 0}, color{1, 1, 1, 1} {}
 };
 
-/**
- * @class Mesh
- * @brief 3D mesh with GPU buffer management
- */
 class Mesh {
 public:
     Mesh();
     ~Mesh();
     
-    // Non-copyable
     Mesh(const Mesh&) = delete;
     Mesh& operator=(const Mesh&) = delete;
     
-    // Movable
     Mesh(Mesh&& other) noexcept;
     Mesh& operator=(Mesh&& other) noexcept;
     
-    /**
-     * @brief Set vertex data
-     */
     void set_vertices(const std::vector<Vertex>& vertices);
     void set_vertices(const float* data, size_t count);
     
-    /**
-     * @brief Set index data
-     */
     void set_indices(const std::vector<uint32_t>& indices);
     void set_indices(const uint32_t* data, size_t count);
     
-    /**
-     * @brief Build mesh from data
-     */
     void build();
     
-    /**
-     * @brief Upload data to GPU
-     */
     void upload();
     
-    /**
-     * @brief Bind VAO for rendering
-     */
     void bind() const;
     
-    /**
-     * @brief Unbind VAO
-     */
     static void unbind();
     
-    /**
-     * @brief Draw the mesh
-     */
     void draw() const;
     
-    // Getters
     size_t get_vertex_count() const { return vertex_count_; }
     size_t get_index_count() const { return index_count_; }
     bool is_indexed() const { return index_count_ > 0; }
     
-    /**
-     * @brief Create a sphere mesh
-     */
     static Mesh create_sphere(float radius, int segments, int rings);
     
-    /**
-     * @brief Create a ring/torus mesh
-     */
     static Mesh create_torus(float major_radius, float minor_radius, int major_segments, int minor_segments);
     
-    /**
-     * @brief Create a plane mesh
-     */
     static Mesh create_plane(float width, float height, int segments = 1);
     
-    /**
-     * @brief Create a fullscreen quad
-     */
     static Mesh create_quad();
     
-    /**
-     * @brief Create a point cloud
-     */
     static Mesh create_particle_system(size_t count);
     
 private:
@@ -120,10 +73,6 @@ private:
     GLenum draw_mode_ = GL_TRIANGLES;
 };
 
-/**
- * @class MeshBuilder
- * @brief Fluent builder for mesh generation
- */
 class MeshBuilder {
 public:
     MeshBuilder& sphere(float radius, int segments = 32, int rings = 16);

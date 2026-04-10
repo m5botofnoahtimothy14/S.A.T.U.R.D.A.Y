@@ -42,6 +42,28 @@ You can download these manually as needed:
 
 > ⚠️ Make sure to place downloaded models and packages in the appropriate directories under `core/` or `data/` before running AEGIS.
 
+## Repository Hygiene
+
+To keep the GitHub project page clean, local/generated artifacts are intentionally ignored in `.gitignore`.
+
+Code style normalization:
+- Comments and annotation-style note lines were removed from project source files (`.py` and other code/script files) to keep the codebase minimal and uniform.
+- Dependency/vendor trees are excluded from this normalization pass (`.venv/`, `pip_packages/`, `node_modules/`, and third-party bundles).
+
+Ignored examples:
+- backup folders/files: `backup/`, `backups/`, `*.bak`, `*.backup`, `*.old`, `*.orig`
+- packaging leftovers: `*.whl`, `pip-wheel-metadata/`, `*.egg-info/`
+- local temp/cache/editor artifacts: `tmp/`, `temp/`, `.cache/`, `.pytest_cache/`, `.mypy_cache/`, `.ruff_cache/`, `.vscode/`, `.idea/`
+- runtime/build outputs: `logs/`, `build/`, `dist/`, `coverage/`, `node_modules/`, `models/`
+
+If any of these were committed before ignore rules were added, remove them from tracking once:
+
+```powershell
+git rm -r --cached backup backups logs build dist node_modules models tmp temp
+git rm --cached *.whl
+git commit -m "chore: stop tracking generated artifacts"
+```
+
 ## Quick Start (Core Runtime)
 
 ### Prerequisites

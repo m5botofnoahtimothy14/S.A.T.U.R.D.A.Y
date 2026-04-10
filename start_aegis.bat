@@ -1,25 +1,58 @@
-@echo off
+﻿@echo off
 setlocal
-REM Ensure we run from the project root (this script's directory)
 cd /d "%~dp0"
-REM AEGIS AI OS - Startup Script
-REM This starts AEGIS with Deep Learning capabilities
-
 echo.
 echo ============================================
 echo    AEGIS AI OS - Deep Learning Powered
 echo ============================================
 echo.
-
-REM Check Python
 python --version >nul 2>&1
 if errorlevel 1 (
     echo ERROR: Python not found. Please install Python 3.8+
     pause
     exit /b 1
 )
-
-REM Check if virtual environment exists
+set PYTHONPATH=%CD%\pip_packages;F:\aegis_packages;%PYTHONPATH%
+set TF_HUB_CACHE_DIR=%CD%\.tensorflow\hub
+set HF_HOME=%CD%\.huggingface
+set TORCH_HOME=%CD%\.torch
+set DEEPFACE_HOME=%CD%\.deepface
+set KERAS_HOME=%CD%\.keras
+set TMP=F:\pip_temp
+set TEMP=F:\pip_temp
+mkdir ".\.tensorflow" 2>nul
+mkdir ".\.huggingface" 2>nul
+mkdir ".\.torch" 2>nul
+mkdir ".\.deepface" 2>nul
+mkdir ".\.keras" 2>nul
+mkdir "F:\pip_temp" 2>nul
+echo.
+echo Disk Space Status:
+python -c "import psutil; c=psutil.disk_usage('C:'); print(f'  C: {c.percent:.1f}% used ({c.free/1024**3:.1f}GB free)')"
+python -c "import psutil; d=psutil.disk_usage('D:'); print(f'  D: {d.percent:.1f}% used ({d.free/1024**3:.1f}GB free)')"
+python -c "import psutil; f=psutil.disk_usage('F:'); print(f'  F: {f.percent:.1f}% used ({f.free/1024**3:.1f}GB free)')"
+echo.
+echo Package Status:
+python -c "
+import sys
+sys.path.insert(0, r'%CD%\pip_packages')
+sys.path.insert(0, r'F:\aegis_packages')
+packages = {
+    'numpy': 'numpy',
+    'scipy': 'scipy',
+    'tensorflow': 'tensorflow',
+    'torch': 'torch',
+    'transformers': 'transformers',
+    'onnxruntime': 'onnxruntime',
+}
+for name, module in packages.items():
+    try:
+        m = __import__(module)
+        ver = getattr(m, '__version__', 'installed')
+        print(f'  [OK] {name}: {ver}')
+    except Exception as e:
+        print(f'  [MISSING] {name}')
+"
 if not exist ".venv\Scripts\activate.bat" (
     echo Creating virtual environment...
     python -m venv .venv
@@ -29,8 +62,6 @@ if not exist ".venv\Scripts\activate.bat" (
         exit /b 1
     )
 )
-
-REM Activate virtual environment
 if not exist ".venv\Scripts\activate.bat" (
     echo ERROR: Virtual environment activation script not found: "%cd%\.venv\Scripts\activate.bat"
     pause
@@ -42,15 +73,12 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
-
-REM Install dependencies if needed
 pip show numpy >nul 2>&1
 if errorlevel 1 (
     echo Installing dependencies...
     pip install numpy
 )
-
-REM Start AEGIS
+echo.
 echo Starting AEGIS AI OS...
 echo.
 echo IMPORTANT: To access remotely, use ngrok:
@@ -58,7 +86,5 @@ echo   1. Download ngrok from https://ngrok.com
 echo   2. Run: ngrok http 8000
 echo   3. Update .env with your ngrok URL
 echo.
-
 python -m core.main
-
 pause

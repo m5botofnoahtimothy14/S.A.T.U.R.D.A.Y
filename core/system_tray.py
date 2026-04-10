@@ -1,4 +1,4 @@
-# core/system_tray.py
+﻿                     
 import threading
 import logging
 import os
@@ -11,7 +11,6 @@ logger = logging.getLogger("AEGIS.SystemTray")
 AEGIS_URL = "http://localhost:8000"
 
 class SystemTray:
-    """System tray icon and menu for AEGIS"""
     
     def __init__(self, aegis_core=None):
         self.aegis_core = aegis_core
@@ -20,7 +19,7 @@ class SystemTray:
         self._tray_thread = None
         
     def start(self):
-        """Start system tray"""
+        
         if self.running:
             logger.warning("System tray already running")
             return
@@ -31,7 +30,7 @@ class SystemTray:
         logger.info("System tray started")
         
     def _run_tray(self):
-        """Run system tray in background"""
+        
         try:
             from pystray import Icon, Menu, MenuItem
             from PIL import Image, ImageDraw
@@ -40,10 +39,8 @@ class SystemTray:
             self.running = False
             return
             
-        # Create icon image
         icon_image = self._create_icon()
         
-        # Define menu with proper callbacks
         menu = Menu(
             MenuItem("Open AEGIS Dashboard", self._show_window),
             Menu.SEPARATOR,
@@ -68,54 +65,52 @@ class SystemTray:
             self.running = False
         
     def _create_icon(self):
-        """Create AEGIS icon"""
+        
         from PIL import Image, ImageDraw
         width = 64
         height = 64
         image = Image.new('RGB', (width, height), 'black')
         dc = ImageDraw.Draw(image)
         
-        # Draw hexagon shape (AEGIS logo)
         dc.polygon([
             (32, 4), (56, 18), (56, 46), (32, 60), (8, 46), (8, 18)
         ], fill=(0, 200, 255), outline=(255, 255, 255))
         
-        # Draw "A" letter
         dc.text((22, 18), "A", fill=(0, 0, 0))
         
         return image
             
     def _show_window(self):
-        """Show AEGIS dashboard in browser"""
+        
         logger.info(f"Opening AEGIS dashboard at {AEGIS_URL}")
         try:
-            # Try to open in existing browser
+                                             
             webbrowser.open(AEGIS_URL)
         except Exception as e:
             logger.error(f"Failed to open browser: {e}")
-            # Fallback - try direct URL
+                                       
             try:
                 os.startfile(AEGIS_URL)
             except:
                 pass
         
     def _wake_aegis(self):
-        """Wake AEGIS"""
+        
         logger.info("Wake AEGIS triggered from tray")
         if self.aegis_core:
             self.aegis_core.event_bus.publish("wake_command", {})
-            # Also try to speak
+                               
             try:
                 self.aegis_core.speech.speak("AEGIS is awake")
             except:
                 pass
         
     def _start_voice(self):
-        """Start voice recognition"""
+        
         logger.info("Voice start triggered from tray")
         if self.aegis_core:
             self.aegis_core.event_bus.publish("voice_start", {})
-            # Try to start voice ID
+                                   
             try:
                 if hasattr(self.aegis_core.voice_id, 'start_listening'):
                     self.aegis_core.voice_id.start_listening()
@@ -123,14 +118,14 @@ class SystemTray:
                 logger.error(f"Failed to start voice: {e}")
         
     def _start_camera(self):
-        """Start camera"""
+        
         logger.info("Camera start triggered from tray")
         if self.aegis_core:
             self.aegis_core.event_bus.publish("camera_start", {})
             self.aegis_core.camera_active = True
         
     def _toggle_security(self):
-        """Toggle security mode"""
+        
         if self.aegis_core:
             self.aegis_core.security_enabled = not self.aegis_core.security_enabled
             status = "enabled" if self.aegis_core.security_enabled else "disabled"
@@ -141,7 +136,7 @@ class SystemTray:
                 pass
         
     def _show_status(self):
-        """Show system status"""
+        
         import psutil
         logger.info("Status check requested from tray")
         
@@ -164,7 +159,7 @@ class SystemTray:
             pass
         
     def _view_logs(self):
-        """Open logs folder"""
+        
         log_path = os.path.abspath("logs")
         logger.info(f"Opening logs folder: {log_path}")
         try:
@@ -173,7 +168,7 @@ class SystemTray:
             webbrowser.open(log_path)
         
     def _restart_aegis(self):
-        """Restart AEGIS"""
+        
         logger.info("Restart triggered from tray")
         if self.aegis_core:
             try:
@@ -183,7 +178,7 @@ class SystemTray:
             self.aegis_core.event_bus.publish("restart_command", {})
         
     def _quit(self):
-        """Quit AEGIS"""
+        
         logger.info("Quit requested from system tray")
         self.running = False
         if self.tray:
@@ -195,13 +190,12 @@ class SystemTray:
             self.aegis_core.running = False
             
     def stop(self):
-        """Stop system tray"""
+        
         self._quit()
         if self._tray_thread and self._tray_thread.is_alive():
             self._tray_thread.join(timeout=2)
         logger.info("System tray stopped")
 
-
 def create_system_tray(aegis_core=None):
-    """Factory function to create system tray"""
+    
     return SystemTray(aegis_core)

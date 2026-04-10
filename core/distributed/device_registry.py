@@ -1,4 +1,4 @@
-# distributed/device_registry.py
+﻿                                
 import structlog
 from core.event_bus import EventBus
 import uuid

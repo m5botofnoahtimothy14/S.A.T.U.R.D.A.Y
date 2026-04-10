@@ -1,5 +1,4 @@
-from __future__ import annotations
-
+﻿from __future__ import annotations
 import asyncio
 import json
 import logging
@@ -11,7 +10,6 @@ from datetime import datetime, timezone
 from typing import Any, TypedDict
 from urllib import error as urllib_error
 from urllib import request as urllib_request
-
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,7 +17,6 @@ from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from langgraph.graph import END, StateGraph
 from pydantic import BaseModel, ConfigDict, Field
-
 from auth_validator import AuthenticatedUser, FirebaseAuthValidator
 from command_policy import CommandPolicy, PolicyViolation, SafetyLimits
 from ros_safety_bridge import BridgeLimits, ROSSafetyBridge
@@ -27,46 +24,32 @@ from telemetry_sync import TelemetrySync
 from core.event_bus import EventBus
 from core.system_monitor import SystemMonitor
 from core.ai_agent import get_ai_agent, AIAgent
-
-
 load_dotenv()
-
-
 logger = logging.getLogger("aegis.api_gateway")
 if not logger.handlers:
     log_level = os.getenv("AEGIS_GATEWAY_LOG_LEVEL", "INFO").upper()
     logger.setLevel(log_level)
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
-
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
-
     os.makedirs("logs", exist_ok=True)
     file_handler = logging.FileHandler(os.getenv("AEGIS_GATEWAY_LOG_FILE", "logs/api_gateway.log"))
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
-
-
 class CommandRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     intent: str = Field(..., description="High-level command intent")
     parameters: dict[str, Any] = Field(default_factory=dict)
-
-
 class CommandResponse(BaseModel):
     accepted: bool
     trace: list[str]
     result: dict[str, Any]
     executed_at: str
-
-
 class WakeRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     target: str = Field(..., description="Wake target: aegis or edith")
     source: str = Field(default="remote_control_panel", min_length=1, max_length=64)
-
-
 class CommandGraphState(TypedDict, total=False):
     command: dict[str, Any]
     user_uid: str
@@ -75,8 +58,6 @@ class CommandGraphState(TypedDict, total=False):
     action_plan: list[dict[str, Any]]
     execution_result: dict[str, Any]
     trace: list[str]
-
-
 @dataclass
 class RuntimeState:
     node_id: str
@@ -90,12 +71,10 @@ class RuntimeState:
     last_heartbeat: str | None = None
     active_tasks: list[dict[str, Any]] = field(default_factory=list)
     _lock: asyncio.Lock = field(default_factory=asyncio.Lock)
-
     async def mark_online(self) -> None:
         async with self._lock:
             self.status = "ONLINE"
             self.last_heartbeat = datetime.now(timezone.utc).isoformat()
-
     async def mark_command_started(self, *, intent: str, operator_uid: str) -> None:
         async with self._lock:
             self.status = "BUSY"
@@ -111,7 +90,6 @@ class RuntimeState:
                 }
             ]
             self.last_heartbeat = datetime.now(timezone.utc).isoformat()
-
     async def mark_command_done(self, *, success: bool, error: str | None = None, mode: str | None = None) -> None:
         async with self._lock:
             if success:
@@ -133,7 +111,6 @@ class RuntimeState:
                     }
                 ]
             self.last_heartbeat = datetime.now(timezone.utc).isoformat()
-
     async def snapshot(self) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         async with self._lock:
             agent_state = {
@@ -149,15 +126,12 @@ class RuntimeState:
                 "active_pipeline": "LangGraph-Core",
             }
             return agent_state, list(self.active_tasks)
-
-
 class CommandExecutionEngine:
     def __init__(self, *, policy: CommandPolicy, ros_bridge: ROSSafetyBridge, telemetry: TelemetrySync) -> None:
         self.policy = policy
         self.ros_bridge = ros_bridge
         self.telemetry = telemetry
         self.graph = self._compile_graph()
-
     def _compile_graph(self):
         graph = StateGraph(CommandGraphState)
         graph.add_node("policy_gate", self._policy_gate_node)
@@ -170,7 +144,6 @@ class CommandExecutionEngine:
         graph.add_edge("execute", "audit")
         graph.add_edge("audit", END)
         return graph.compile()
-
     def _policy_gate_node(self, state: CommandGraphState) -> dict[str, Any]:
         runtime_context = self.ros_bridge.get_runtime_context()
         validated = self.policy.validate_and_enforce(
@@ -181,7 +154,6 @@ class CommandExecutionEngine:
         trace = list(state.get("trace", []))
         trace.append("policy_gate:passed")
         return {"validated_command": validated, "trace": trace}
-
     def _reasoning_node(self, state: CommandGraphState) -> dict[str, Any]:
         command = state["validated_command"]
         intent = command["intent"]
@@ -206,17 +178,14 @@ class CommandExecutionEngine:
             actions = [{"step": "emergency_stop", "reason": params["reason"]}]
         else:
             actions = [{"step": "clear_emergency_stop", "require_ack": params["require_ack"]}]
-
         trace = list(state.get("trace", []))
         trace.append("reasoning:plan_compiled")
         return {"action_plan": actions, "trace": trace}
-
     def _execute_node(self, state: CommandGraphState) -> dict[str, Any]:
         result = self.ros_bridge.execute_validated_command(state["validated_command"])
         trace = list(state.get("trace", []))
         trace.append("execute:hardware_ack")
         return {"execution_result": result, "trace": trace}
-
     def _audit_node(self, state: CommandGraphState) -> dict[str, Any]:
         command = state["validated_command"]
         result = state["execution_result"]
@@ -232,7 +201,6 @@ class CommandExecutionEngine:
         trace = list(state.get("trace", []))
         trace.append("audit:logged")
         return {"trace": trace}
-
     async def execute(self, *, command: dict[str, Any], user: AuthenticatedUser) -> dict[str, Any]:
         state: CommandGraphState = {
             "command": command,
@@ -241,8 +209,6 @@ class CommandExecutionEngine:
             "trace": [],
         }
         return await asyncio.to_thread(self.graph.invoke, state)
-
-
 @dataclass
 class AppComponents:
     auth: FirebaseAuthValidator
@@ -252,25 +218,18 @@ class AppComponents:
     engine: CommandExecutionEngine
     runtime: RuntimeState
     system_monitor: SystemMonitor
-    ai_agent: Any = None  # AEGIS AI Agent
-
-
+    ai_agent: Any = None                  
 bearer = HTTPBearer(auto_error=False)
-
-
 def _normalize_wake_target(raw_target: str) -> str:
     target = str(raw_target).strip().lower()
     if target not in {"aegis", "edith"}:
         raise HTTPException(status_code=400, detail="Invalid wake target. Use 'aegis' or 'edith'.")
     return target
-
-
 def _dispatch_core_wake(*, target: str, source: str, requested_by: str) -> dict[str, Any]:
     core_base = os.getenv("AEGIS_CORE_CONTROL_URL", "http://127.0.0.1:8000").rstrip("/")
     wake_url = f"{core_base}/api/control/wake"
     timeout = float(os.getenv("AEGIS_CORE_WAKE_TIMEOUT_SECONDS", "10"))
     verify_tls = os.getenv("AEGIS_CORE_VERIFY_TLS", "false").strip().lower() in {"1", "true", "yes", "on"}
-
     payload = json.dumps(
         {
             "target": target,
@@ -284,11 +243,9 @@ def _dispatch_core_wake(*, target: str, source: str, requested_by: str) -> dict[
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-
     ssl_context = None
     if wake_url.startswith("https://") and not verify_tls:
         ssl_context = ssl._create_unverified_context()
-
     try:
         with urllib_request.urlopen(request_obj, timeout=timeout, context=ssl_context) as response:
             body = response.read().decode("utf-8")
@@ -309,22 +266,16 @@ def _dispatch_core_wake(*, target: str, source: str, requested_by: str) -> dict[
             status_code=502,
             detail=f"Core wake endpoint unreachable: {exc.reason}",
         ) from exc
-
-
 def _cors_origins() -> list[str]:
     raw = os.getenv("AEGIS_DASHBOARD_ORIGINS", "")
     if not raw.strip():
         return []
     return [item.strip() for item in raw.split(",") if item.strip()]
-
-
 def _build_components() -> AppComponents:
     service_account = os.getenv("FIREBASE_SERVICE_ACCOUNT")
     project_id = os.getenv("FIREBASE_PROJECT_ID")
     node_id = os.getenv("AEGIS_NODE_ID", "aegis-node-1")
-
     auth = FirebaseAuthValidator(service_account_path=service_account, project_id=project_id)
-
     policy = CommandPolicy(
         SafetyLimits(
             max_linear_speed=float(os.getenv("AEGIS_MAX_LINEAR_SPEED", "0.8")),
@@ -334,7 +285,6 @@ def _build_components() -> AppComponents:
             min_obstacle_distance=float(os.getenv("AEGIS_MIN_OBSTACLE_DISTANCE", "0.50")),
         )
     )
-
     ros_bridge = ROSSafetyBridge(
         limits=BridgeLimits(
             max_linear_speed=float(os.getenv("AEGIS_MAX_LINEAR_SPEED", "0.8")),
@@ -344,7 +294,6 @@ def _build_components() -> AppComponents:
             command_publish_rate_hz=float(os.getenv("AEGIS_COMMAND_RATE_HZ", "20")),
         )
     )
-
     telemetry = TelemetrySync(
         node_id=node_id,
         service_account_path=service_account,
@@ -352,8 +301,6 @@ def _build_components() -> AppComponents:
     )
     runtime = RuntimeState(node_id=node_id)
     engine = CommandExecutionEngine(policy=policy, ros_bridge=ros_bridge, telemetry=telemetry)
-    
-    # System monitor can be noisy/heavy in constrained environments; keep it opt-in.
     event_bus = EventBus()
     system_monitor = SystemMonitor(event_bus)
     enable_monitor = os.getenv("AEGIS_ENABLE_SYSTEM_MONITOR", "false").strip().lower() in {
@@ -364,10 +311,7 @@ def _build_components() -> AppComponents:
     }
     if enable_monitor:
         system_monitor.start()
-    
-    # Initialize AEGIS AI Agent
     ai_agent = get_ai_agent()
-    
     return AppComponents(
         auth=auth,
         policy=policy,
@@ -378,11 +322,8 @@ def _build_components() -> AppComponents:
         system_monitor=system_monitor,
         ai_agent=ai_agent,
     )
-
-
 def _require_roles(*required_roles: str):
     normalized_required = {role.strip().lower() for role in required_roles}
-
     async def dependency(
         request: Request,
         credentials_obj: HTTPAuthorizationCredentials | None = Depends(bearer),
@@ -395,10 +336,7 @@ def _require_roles(*required_roles: str):
                 detail=f"Required role one of: {', '.join(sorted(normalized_required))}",
             )
         return user
-
     return dependency
-
-
 async def _telemetry_loop(app: FastAPI) -> None:
     components: AppComponents = app.state.components
     interval = float(os.getenv("AEGIS_TELEMETRY_INTERVAL_SECONDS", "2.0"))
@@ -416,17 +354,12 @@ async def _telemetry_loop(app: FastAPI) -> None:
         except Exception:
             logger.exception("telemetry_loop_error")
         await asyncio.sleep(interval)
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Build components synchronously to avoid hanging
     components = _build_components()
     app.state.components = components
     await components.runtime.mark_online()
     components.telemetry.push_log(level="INFO", message="API gateway started")
-    
-    # Start telemetry in background thread instead of async task
     def run_telemetry():
         import time
         interval = float(os.getenv("AEGIS_TELEMETRY_INTERVAL_SECONDS", "5.0"))
@@ -448,28 +381,22 @@ async def lifespan(app: FastAPI):
             except Exception:
                 pass
             time.sleep(interval)
-    
     import threading
     telemetry_thread = threading.Thread(target=run_telemetry, daemon=True)
     telemetry_thread.start()
-    
     app.state.telemetry_thread = telemetry_thread
-    
     try:
         yield
     finally:
         components.telemetry.push_log(level="INFO", message="API gateway stopped")
         components.system_monitor.shutdown()
         components.ros_bridge.shutdown()
-
-
 app = FastAPI(
     title="AEGIS API Gateway",
     description="Authenticated local API gateway with LangGraph orchestration and ROS2 safety controls",
     version="1.0.0",
     lifespan=lifespan,
 )
-
 origins = _cors_origins()
 if origins:
     app.add_middleware(
@@ -479,18 +406,12 @@ if origins:
         allow_methods=["GET", "POST"],
         allow_headers=["Authorization", "Content-Type"],
     )
-
-
 @app.exception_handler(PolicyViolation)
 async def policy_violation_handler(_: Request, exc: PolicyViolation) -> JSONResponse:
     return JSONResponse(status_code=400, content={"error": exc.message, "details": exc.details})
-
-
 @app.exception_handler(RuntimeError)
 async def runtime_error_handler(_: Request, exc: RuntimeError) -> JSONResponse:
     return JSONResponse(status_code=409, content={"error": str(exc)})
-
-
 @app.get("/healthz")
 async def healthz(request: Request) -> dict[str, Any]:
     components: AppComponents = request.app.state.components
@@ -505,13 +426,9 @@ async def healthz(request: Request) -> dict[str, Any]:
         "firebase_telemetry": components.telemetry.firebase_enabled,
         "mock_auth_enabled": components.auth.mock_auth_enabled,
     }
-
-
 @app.get("/v1/me")
 async def me(user: AuthenticatedUser = Depends(_require_roles("viewer", "operator", "admin"))) -> dict[str, Any]:
     return {"uid": user.uid, "email": user.email, "roles": list(user.roles)}
-
-
 @app.get("/v1/telemetry/latest")
 async def telemetry_latest(
     request: Request,
@@ -522,8 +439,6 @@ async def telemetry_latest(
     if payload is None:
         raise HTTPException(status_code=404, detail="Telemetry document not found")
     return payload
-
-
 @app.get("/v1/commands/examples")
 async def command_examples(
     _: AuthenticatedUser = Depends(_require_roles("viewer", "operator", "admin")),
@@ -541,8 +456,6 @@ async def command_examples(
         ],
         "execution_flow": ["policy_gate", "reasoning", "execute", "audit"],
     }
-
-
 @app.post("/v1/commands/execute", response_model=CommandResponse)
 async def execute_command(
     request: Request,
@@ -573,8 +486,6 @@ async def execute_command(
             context={"uid": user.uid, "intent": intent, "error": str(exc)},
         )
         raise
-
-
 @app.post("/v1/control/wake")
 async def control_wake(
     request: Request,
@@ -583,14 +494,12 @@ async def control_wake(
 ) -> dict[str, Any]:
     components: AppComponents = request.app.state.components
     target = _normalize_wake_target(wake.target)
-
     result = await asyncio.to_thread(
         _dispatch_core_wake,
         target=target,
         source=wake.source,
         requested_by=user.uid,
     )
-
     components.telemetry.push_log(
         level="INFO",
         message="Remote wake dispatched",
@@ -602,7 +511,6 @@ async def control_wake(
             "result": result,
         },
     )
-
     return {
         "accepted": True,
         "target": target,
@@ -611,8 +519,6 @@ async def control_wake(
         "result": result,
         "executed_at": datetime.now(timezone.utc).isoformat(),
     }
-
-
 @app.get("/v1/system/stats")
 async def get_system_stats(
     request: Request,
@@ -620,8 +526,6 @@ async def get_system_stats(
 ) -> dict[str, Any]:
     components: AppComponents = request.app.state.components
     return components.system_monitor.get_system_stats()
-
-
 @app.get("/v1/system/defense-status")
 async def get_defense_status(
     request: Request,
@@ -629,8 +533,6 @@ async def get_defense_status(
 ) -> dict[str, Any]:
     components: AppComponents = request.app.state.components
     return components.system_monitor.get_defense_status()
-
-
 @app.get("/v1/system/threats")
 async def get_threats(
     request: Request,
@@ -638,8 +540,6 @@ async def get_threats(
 ) -> dict[str, Any]:
     components: AppComponents = request.app.state.components
     return {"threats": components.system_monitor.get_threats()}
-
-
 @app.get("/v1/system/connections")
 async def get_connections(
     request: Request,
@@ -647,8 +547,6 @@ async def get_connections(
 ) -> dict[str, Any]:
     components: AppComponents = request.app.state.components
     return {"connections": components.system_monitor.get_network_connections()}
-
-
 @app.get("/v1/system/processes")
 async def get_processes(
     request: Request,
@@ -656,8 +554,6 @@ async def get_processes(
 ) -> dict[str, Any]:
     components: AppComponents = request.app.state.components
     return {"processes": components.system_monitor.get_process_list()}
-
-
 @app.get("/v1/system/dl-analytics")
 async def get_dl_analytics(
     request: Request,
@@ -665,8 +561,6 @@ async def get_dl_analytics(
 ) -> dict[str, Any]:
     components: AppComponents = request.app.state.components
     return components.system_monitor.get_dl_defense_analytics()
-
-
 @app.post("/v1/antivirus/scan")
 async def run_antivirus_scan(
     request: Request,
@@ -680,57 +574,39 @@ async def run_antivirus_scan(
         context={"user": user.uid, "result": result},
     )
     return result
-
-
-# AEGIS AI Agent Endpoints
 class AICommandRequest(BaseModel):
     command: str
     context: dict[str, Any] = {}
-
-
 @app.post("/v1/ai/command")
 async def ai_command(
     request: Request,
     ai_req: AICommandRequest,
     user: AuthenticatedUser = Depends(_require_roles("viewer", "operator", "admin")),
 ) -> dict[str, Any]:
-    """Process command through AEGIS AI Agent with real DL"""
     components: AppComponents = request.app.state.components
     result = components.ai_agent.process_command(ai_req.command, ai_req.context)
     return result
-
-
 @app.get("/v1/ai/status")
 async def ai_status(
     request: Request,
     user: AuthenticatedUser = Depends(_require_roles("viewer", "operator", "admin")),
 ) -> dict[str, Any]:
-    """Get AI Agent status"""
     components: AppComponents = request.app.state.components
     return components.ai_agent.get_status()
-
-
 @app.get("/v1/ai/brain")
 async def ai_brain_status(
     request: Request,
     user: AuthenticatedUser = Depends(_require_roles("viewer", "operator", "admin")),
 ) -> dict[str, Any]:
-    """Get AI Brain status"""
     components: AppComponents = request.app.state.components
     return components.ai_agent.brain.get_status()
-
-
 def run() -> None:
     import uvicorn
-
     host = os.getenv("AEGIS_API_HOST", "127.0.0.1")
     port = int(os.getenv("AEGIS_API_PORT", "8000"))
     cert_file = os.getenv("AEGIS_SSL_CERT_FILE")
     key_file = os.getenv("AEGIS_SSL_KEY_FILE")
-
-    # Allow HTTP mode for testing (no SSL)
     use_ssl = cert_file and key_file and os.path.exists(cert_file) and os.path.exists(key_file)
-    
     if not use_ssl:
         print("Running in HTTP mode (no SSL)")
         uvicorn.run(
@@ -751,7 +627,5 @@ def run() -> None:
             proxy_headers=True,
             forwarded_allow_ips="*",
         )
-
-
 if __name__ == "__main__":
     run()

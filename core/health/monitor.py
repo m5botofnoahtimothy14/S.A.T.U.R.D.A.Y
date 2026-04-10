@@ -1,11 +1,4 @@
-# health/monitor.py
-"""
-Health Monitor - DEEP LEARNING POWERED
-=====================================
-Uses neural networks to predict health issues,
-analyze system patterns, and make intelligent decisions.
-"""
-
+﻿                   
 import asyncio
 import psutil
 import time
@@ -19,7 +12,6 @@ from core.logging_config import AEGISLogger
 logger = AEGISLogger.get_logger("Health", "health")
 
 class HealthNeuralNetwork:
-    """Neural network for health prediction"""
     
     def __init__(self, input_size: int = 15, hidden_size: int = 30, output_size: int = 5):
         self.input_size = input_size
@@ -73,16 +65,7 @@ class HealthNeuralNetwork:
         self.bias2 += 0.01 * output_delta
         self.bias1 += 0.01 * hidden_delta
 
-
 class HealthMonitor:
-    """
-    DEEP LEARNING Powered Health Monitoring.
-    Uses neural networks to:
-    - Predict health issues before they occur
-    - Learn from system patterns
-    - Make intelligent health decisions
-    - Evolve over time
-    """
     
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
@@ -91,7 +74,7 @@ class HealthMonitor:
         self._init_deep_learning()
         
     def _init_deep_learning(self):
-        """Initialize DL health monitoring"""
+        
         try:
             self.health_nn = HealthNeuralNetwork()
             self.health_history = deque(maxlen=100)
@@ -107,7 +90,7 @@ class HealthMonitor:
             self.dl_active = False
 
     def _extract_features(self, stats):
-        """Extract health features"""
+        
         cpu = stats.get("cpu", 0)
         memory = stats.get("memory", 0)
         disk = stats.get("disk", 0)

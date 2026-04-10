@@ -1,11 +1,4 @@
-# ml_integration/nlp.py
-"""
-NLP Engine - Deep Learning Powered Natural Language Processing
-============================================================
-Uses neural networks and NLTK for advanced voice/text understanding.
-All voice commands are now processed through DL-powered NLP.
-"""
-
+﻿                       
 import os
 import json
 import time
@@ -19,7 +12,6 @@ import numpy as np
 logger = structlog.get_logger("AEGIS.ML.NLP")
 
 class NLPDecisionNetwork:
-    """Neural network for NLP decisions"""
     
     def __init__(self, input_size: int = 30, hidden_size: int = 60, output_size: int = 15):
         self.input_size = input_size
@@ -51,18 +43,7 @@ class NLPDecisionNetwork:
         output = self.forward(features)[0]
         return output
 
-
 class NLPEngine:
-    """
-    DEEP LEARNING Powered NLP Engine.
-    Uses neural networks + NLTK for:
-    - Voice command understanding
-    - Intent classification
-    - Entity extraction
-    - Sentiment analysis
-    - Language understanding
-    - Context awareness
-    """
     
     def __init__(self, event_bus=None):
         self.event_bus = event_bus
@@ -81,7 +62,7 @@ class NLPEngine:
         logger.info("DEEP LEARNING NLP Engine initialized - Voice understanding active")
         
     def _init_nltk(self):
-        """Initialize NLTK for NLP processing"""
+        
         try:
             import nltk
             nltk.data.path.append("data/nltk_data")
@@ -94,7 +75,7 @@ class NLPEngine:
             self.nltk_available = False
     
     def _init_deep_learning(self):
-        """Initialize neural network for NLP decisions"""
+        
         try:
             self.decision_nn = NLPDecisionNetwork()
             self.dl_active = True
@@ -105,7 +86,7 @@ class NLPEngine:
             self.dl_active = False
     
     def _load_nlp_nn(self):
-        """Load trained NLP neural network"""
+        
         try:
             nn_file = f"{self.data_dir}/nlp_nn.json"
             if os.path.exists(nn_file):
@@ -120,7 +101,7 @@ class NLPEngine:
             logger.warning(f"Failed to load NLP NN: {e}")
     
     def _save_nlp_nn(self):
-        """Save NLP neural network"""
+        
         try:
             nn_file = f"{self.data_dir}/nlp_nn.json"
             data = {
@@ -135,7 +116,7 @@ class NLPEngine:
             logger.warning(f"Failed to save NLP NN: {e}")
 
     def _load_nlp_models(self):
-        """Load persisted NLP metadata used by the engine."""
+        
         self.entity_cache = {}
         cache_file = f"{self.data_dir}/entity_cache.json"
         try:
@@ -149,9 +130,7 @@ class NLPEngine:
             logger.warning(f"Failed to load NLP metadata: {e}")
 
     def process_voice_command(self, text: str) -> Dict[str, Any]:
-        """
-        Process voice command through DL NLP pipeline.
-        """
+        
         if not text:
             return {"error": "Empty input"}
         
@@ -192,7 +171,7 @@ class NLPEngine:
         return response
     
     def _tokenize(self, text: str) -> List[str]:
-        """Tokenize text"""
+        
         if self.nltk_available:
             try:
                 import nltk
@@ -202,7 +181,7 @@ class NLPEngine:
         return re.findall(r'\w+', text.lower())
     
     def _pos_tag(self, tokens: List[str]) -> List[Tuple[str, str]]:
-        """Part-of-speech tagging"""
+        
         if self.nltk_available:
             try:
                 import nltk
@@ -212,7 +191,7 @@ class NLPEngine:
         return [(t, "NN") for t in tokens]
     
     def _extract_entities(self, text: str, tokens: List[str]) -> Dict[str, List[str]]:
-        """Extract named entities"""
+        
         entities = {
             "persons": [],
             "locations": [],
@@ -233,7 +212,7 @@ class NLPEngine:
         return entities
     
     def _analyze_sentiment(self, text: str) -> Dict[str, Any]:
-        """Analyze sentiment using neural approach"""
+        
         positive_words = ['good', 'great', 'awesome', 'thanks', 'thank', 'please', 'yes', 'love', 'perfect', 'nice']
         negative_words = ['bad', 'wrong', 'hate', 'no', 'not', 'stop', 'cancel', 'error', 'fail', 'awful']
         
@@ -255,7 +234,7 @@ class NLPEngine:
         return {"sentiment": sentiment, "score": score}
     
     def _classify_intent(self, text: str, tokens: List[str], pos_tags: List[Tuple]) -> str:
-        """Classify intent using pattern matching + learning"""
+        
         text_lower = text.lower()
         
         intent_patterns = {
@@ -280,7 +259,7 @@ class NLPEngine:
         return "general"
     
     def _extract_nlp_features(self, text: str, tokens: List[str], pos_tags: List[Tuple], intent: str, sentiment: Dict, entities: Dict) -> np.ndarray:
-        """Extract features for neural network"""
+        
         features = []
         
         features.append(len(text) / 100.0)
@@ -305,7 +284,7 @@ class NLPEngine:
         return np.array([features[:30]])
     
     def _get_context(self) -> Dict:
-        """Get conversation context"""
+        
         if not self.conversation_context:
             return {"turn": 0, "topic": None}
         
@@ -321,7 +300,7 @@ class NLPEngine:
         }
     
     def learn_from_outcome(self, text: str, outcome: bool):
-        """Learn from command execution outcome"""
+        
         if not self.dl_active:
             return
             
@@ -358,7 +337,7 @@ class NLPEngine:
         self._save_nlp_nn()
     
     def get_status(self) -> Dict:
-        """Get NLP engine status"""
+        
         return {
             "dl_active": self.dl_active,
             "nltk_available": self.nltk_available,

@@ -1,13 +1,12 @@
-# core/self_healing.py
+﻿                      
+
 import importlib
 import logging
 import threading
 import time
 import sys
 import os
-
 logger = logging.getLogger("AEGIS.SelfHealing")
-
 MODULE_PATH_MAP = {
     "brain": "core.brain",
     "ai": "ai_modules.llm_engine",
@@ -28,20 +27,14 @@ MODULE_PATH_MAP = {
     "conversation": "conversational_dl.engine",
 }
 logger.setLevel(logging.INFO)
-
 class SelfHealing:
     def __init__(self, modules: dict):
-        """
-        modules: dictionary {module_name: module_object}
-        """
         self.modules = modules
         self.monitoring = False
-
     def start_monitoring(self, interval=5):
         self.monitoring = True
         threading.Thread(target=self._monitor_loop, args=(interval,), daemon=True).start()
         logger.info("Self-Healing monitoring started.")
-
     def _monitor_loop(self, interval):
         while self.monitoring:
             for name, module in self.modules.items():
@@ -57,7 +50,6 @@ class SelfHealing:
                     logger.warning(f"Self-Healing: Module {name} crashed. Reloading...")
                     self.reload_module(name)
             time.sleep(interval)
-
     def reload_module(self, name):
         try:
             module_path = MODULE_PATH_MAP.get(name, name)

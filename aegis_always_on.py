@@ -1,10 +1,4 @@
-#!/usr/bin/env python3
-"""
-AEGIS Always-On Server
-======================
-Keeps AEGIS running 24/7 with instant access via Tailscale/Home Network.
-Health monitoring + auto-restart + instant status page.
-"""
+﻿#!/usr/bin/env python3
 import os
 import sys
 import asyncio
@@ -19,18 +13,13 @@ from pathlib import Path
 from datetime import datetime
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from functools import partial
-
 BASE_DIR = Path(__file__).parent
 sys.path.insert(0, str(BASE_DIR))
-
 os.chdir(BASE_DIR)
-
 from dotenv import load_dotenv
 load_dotenv(BASE_DIR / ".env")
-
 LOG_DIR = BASE_DIR / "logs" / "always_on"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
-
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -40,7 +29,6 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger("AEGIS.AlwaysOn")
-
 class AEGISAlwaysOnServer:
     def __init__(self):
         self.aegis_process = None
@@ -50,7 +38,6 @@ class AEGISAlwaysOnServer:
         self.health_check_interval = 10
         self.port = 8000
         self.status_port = 8001
-        
         self.server_info = {
             "status": "starting",
             "aegis_status": "offline",
@@ -62,7 +49,6 @@ class AEGISAlwaysOnServer:
             "health": "healthy"
         }
         self.start_time = time.time()
-        
     def get_local_ip(self):
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -72,7 +58,6 @@ class AEGISAlwaysOnServer:
             return ip
         except:
             return "127.0.0.1"
-    
     def get_tailscale_ip(self):
         try:
             result = subprocess.run(
@@ -84,9 +69,7 @@ class AEGISAlwaysOnServer:
         except:
             pass
         return None
-    
     def check_aegis_health(self):
-        """Check if AEGIS is responding"""
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(2)
@@ -95,16 +78,11 @@ class AEGISAlwaysOnServer:
             return result == 0
         except:
             return False
-    
     def start_aegis(self):
-        """Start AEGIS core"""
         if self.aegis_process and self.aegis_process.poll() is None:
             return
-            
         logger.info("Starting AEGIS Core...")
-        
         cmd = [sys.executable, str(BASE_DIR / "run_production.py"), "--mode", "standalone"]
-        
         self.aegis_process = subprocess.Popen(
             cmd,
             cwd=str(BASE_DIR),
@@ -112,29 +90,22 @@ class AEGISAlwaysOnServer:
             stderr=subprocess.DEVNULL,
             creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
         )
-        
         self.restart_count += 1
         self.server_info["restarts"] = self.restart_count
         logger.info(f"AEGIS started with PID: {self.aegis_process.pid}")
-    
     def stop_aegis(self):
-        """Stop AEGIS"""
         if self.aegis_process:
             try:
                 self.aegis_process.terminate()
                 self.aegis_process.wait(timeout=5)
             except:
                 self.aegis_process.kill()
-    
     def monitor_loop(self):
-        """Main monitoring loop"""
         while self.running:
             self.server_info["uptime"] = int(time.time() - self.start_time)
             self.server_info["local_ip"] = self.get_local_ip()
             self.server_info["tailscale_ip"] = self.get_tailscale_ip()
             self.server_info["last_check"] = datetime.now().isoformat()
-            
-            # Check AEGIS health
             if self.check_aegis_health():
                 self.server_info["aegis_status"] = "online"
                 self.server_info["health"] = "healthy"
@@ -144,23 +115,17 @@ class AEGISAlwaysOnServer:
                 self.server_info["status"] = "starting"
                 logger.warning("AEGIS not responding, starting...")
                 self.start_aegis()
-            
             time.sleep(self.health_check_interval)
-    
     def get_status_html(self):
-        """Generate status page HTML"""
         ip = self.server_info["local_ip"]
         ts_ip = self.server_info["tailscale_ip"]
         status = self.server_info["status"]
         aegis_status = self.server_info["aegis_status"]
         uptime = self.server_info["uptime"]
         restarts = self.server_info["restarts"]
-        
         hours = uptime // 3600
         minutes = (uptime % 3600) // 60
-        
         status_color = "#00ff00" if aegis_status == "online" else "#ffaa00"
-        
         return f'''<!DOCTYPE html>
 <html>
 <head>
@@ -270,11 +235,9 @@ class AEGISAlwaysOnServer:
         <div class="logo">⬡</div>
         <h1>AEGIS AI OS</h1>
         <p style="color:#888;font-size:18px;">Always On • Always Ready</p>
-        
         <div class="status">
             ● {status.upper()}
         </div>
-        
         <div class="info-grid">
             <div class="info-box">
                 <div class="info-label">Server Uptime</div>
@@ -293,26 +256,21 @@ class AEGISAlwaysOnServer:
                 <div class="info-value" style="color:#00ff00;">HEALTHY</div>
             </div>
         </div>
-        
         <div class="access-url">
             <div class="info-label" style="margin-bottom:10px;">ACCESS AEGIS</div>
             <div class="url">http://{ip}:8000</div>
             {f'<div class="url" style="margin-top:10px;color:#00d4ff;">http://{ts_ip}:8000</div>' if ts_ip else ''}
         </div>
-        
         <div class="progress">
             <div class="progress-bar"></div>
         </div>
-        
         <p style="color:#666;margin-top:20px;font-size:12px;">
             AEGIS Self-Owned Server • 24/7 Online
         </p>
     </div>
 </body>
 </html>'''
-    
     def status_server(self):
-        """Simple HTTP server for status page"""
         class StatusHandler(SimpleHTTPRequestHandler):
             def do_GET(self):
                 if self.path == '/' or self.path == '/status':
@@ -327,7 +285,6 @@ class AEGISAlwaysOnServer:
                     import json
                     self.wfile.write(json.dumps(self.server.server_info).encode())
                 elif self.path == '/api':
-                    # Proxy to AEGIS
                     self.send_response(200)
                     self.send_header('Content-type', 'application/json')
                     self.end_headers()
@@ -339,20 +296,14 @@ class AEGISAlwaysOnServer:
                 else:
                     self.send_response(404)
                     self.end_headers()
-            
             def log_message(self, format, *args):
                 pass
-        
         StatusHandler.server = self
-        
         server = HTTPServer(('', self.status_port), StatusHandler)
         logger.info(f"Status server running on port {self.status_port}")
         server.serve_forever()
-    
     def run(self):
-        """Run the always-on server"""
         local_ip = self.get_local_ip()
-        
         logger.info("="*60)
         logger.info("AEGIS ALWAYS-ON SERVER STARTING")
         logger.info("="*60)
@@ -360,22 +311,16 @@ class AEGISAlwaysOnServer:
         logger.info(f"Status Page: http://{local_ip}:{self.status_port}")
         logger.info(f"AEGIS: http://{local_ip}:{self.port}")
         logger.info("="*60)
-        
         self.running = True
         self.start_aegis()
-        
-        # Start status server in background
         status_thread = threading.Thread(target=self.status_server, daemon=True)
         status_thread.start()
-        
-        # Start monitor loop
         try:
             self.monitor_loop()
         except KeyboardInterrupt:
             logger.info("Shutting down...")
             self.running = False
             self.stop_aegis()
-
 if __name__ == "__main__":
     server = AEGISAlwaysOnServer()
     server.run()

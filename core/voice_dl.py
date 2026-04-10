@@ -1,20 +1,4 @@
-"""
-AEGIS Deep Learning Voice System - FULL SYSTEM CONTROL
-=====================================================
-- Continuous voice listening (no wake word)
-- LLM-powered natural language understanding
-- SYSTEM LEVEL CONTROL:
-  - CMD/PowerShell commands
-  - File system operations
-  - Process management
-  - Network commands
-  - Software installation
-  - Code execution & debugging
-  - Web scraping (news, data, songs)
-  - System repair & diagnostics
-  - Device control (authorized devices only)
-  - File editing & creation
-"""
+﻿
 import asyncio
 import logging
 import threading
@@ -34,15 +18,13 @@ logger = structlog.get_logger("AEGIS.VoiceDL")
 
 MAX_MEMORY = 100
 
-
 class SystemControl:
-    """System-level command execution"""
     
     PLATFORM = __import__("sys").platform
     
     @staticmethod
     def run_cmd(command: str) -> Dict[str, Any]:
-        """Execute CMD/PowerShell command"""
+        
         try:
             if SystemControl.PLATFORM == "win32":
                 result = subprocess.run(
@@ -73,7 +55,7 @@ class SystemControl:
     
     @staticmethod
     def get_system_info() -> Dict:
-        """Get system information"""
+        
         info = {}
         
         if SystemControl.PLATFORM == "win32":
@@ -91,7 +73,7 @@ class SystemControl:
     
     @staticmethod
     def list_processes() -> str:
-        """List running processes"""
+        
         if SystemControl.PLATFORM == "win32":
             result = SystemControl.run_cmd("tasklist /FO LIST")
         else:
@@ -100,7 +82,7 @@ class SystemControl:
     
     @staticmethod
     def kill_process(pid: int) -> str:
-        """Kill a process by PID"""
+        
         if SystemControl.PLATFORM == "win32":
             result = SystemControl.run_cmd(f"taskkill /F /PID {pid}")
         else:
@@ -109,7 +91,7 @@ class SystemControl:
     
     @staticmethod
     def install_software(package: str) -> str:
-        """Install software package"""
+        
         if SystemControl.PLATFORM == "win32":
             return f"Opening installer for {package}. Please complete installation manually."
         else:
@@ -118,13 +100,11 @@ class SystemControl:
                 return f"Successfully installed {package}"
             return f"Installation failed: {result.get('stderr', 'Unknown error')}"
 
-
 class WebFetch:
-    """Fetch data from web - news, songs, info"""
     
     @staticmethod
     async def fetch_news(topic: str = "general") -> str:
-        """Fetch latest news"""
+        
         try:
             import requests
             url = f"https://newsapi.org/v1/articles?source=bbc-news&sortBy=top&apiKey=demo"
@@ -141,7 +121,7 @@ class WebFetch:
     
     @staticmethod
     async def search_web(query: str) -> str:
-        """Search the web"""
+        
         try:
             import requests
             url = f"https://api.duckduckgo.com/"
@@ -157,7 +137,7 @@ class WebFetch:
     
     @staticmethod
     async def get_weather(city: str = "") -> str:
-        """Get weather for a city"""
+        
         try:
             import requests
             if not city:
@@ -179,7 +159,7 @@ class WebFetch:
     
     @staticmethod
     async def play_song(song_name: str) -> str:
-        """Find and play a song"""
+        
         try:
             import requests
             query = song_name.replace(" ", "+")
@@ -188,24 +168,22 @@ class WebFetch:
         except Exception as e:
             return f"Music search error: {e}"
 
-
 class CodeAssistant:
-    """Code writing, debugging, execution"""
     
     @staticmethod
     def write_code(language: str, description: str) -> str:
-        """Write code based on description"""
+        
         prompt = f"Write a {language} program that: {description}"
         return f"Creating {language} code for: {description}\n\nCode generation ready."
     
     @staticmethod
     def debug_code(code: str) -> str:
-        """Debug code"""
+        
         return f"Analyzing code for bugs...\n\nDebugging analysis complete."
     
     @staticmethod
     def run_code(code: str, language: str = "python") -> str:
-        """Execute code safely"""
+        
         try:
             if language.lower() == "python":
                 result = subprocess.run(
@@ -219,13 +197,11 @@ class CodeAssistant:
             return f"Execution error: {e}"
         return "Could not execute code"
 
-
 class FileManager:
-    """File system operations"""
     
     @staticmethod
     def list_directory(path: str = ".") -> str:
-        """List directory contents"""
+        
         try:
             files = os.listdir(path)
             return "\n".join(files[:20]) or "Directory is empty"
@@ -234,7 +210,7 @@ class FileManager:
     
     @staticmethod
     def create_file(path: str, content: str = "") -> str:
-        """Create a new file"""
+        
         try:
             with open(path, "w") as f:
                 f.write(content)
@@ -244,7 +220,7 @@ class FileManager:
     
     @staticmethod
     def read_file(path: str) -> str:
-        """Read file contents"""
+        
         try:
             with open(path, "r") as f:
                 content = f.read(5000)
@@ -254,7 +230,7 @@ class FileManager:
     
     @staticmethod
     def edit_file(path: str, old_text: str, new_text: str) -> str:
-        """Edit file content"""
+        
         try:
             with open(path, "r") as f:
                 content = f.read()
@@ -267,7 +243,7 @@ class FileManager:
     
     @staticmethod
     def delete_file(path: str) -> str:
-        """Delete a file"""
+        
         try:
             if os.path.isfile(path):
                 os.remove(path)
@@ -279,9 +255,7 @@ class FileManager:
         except Exception as e:
             return f"Error deleting: {e}"
 
-
 class HomeBotController:
-    """HomeBot integration via MQTT"""
     
     def __init__(self, event_bus=None):
         self.event_bus = event_bus
@@ -311,7 +285,7 @@ class HomeBotController:
             self.connected = False
     
     def control(self, command: str) -> str:
-        """Control HomeBot - voice commands like 'move forward', 'turn left', etc."""
+        
         if not self.connected:
             return "HomeBot is not connected. Please check the MQTT broker."
         
@@ -349,13 +323,11 @@ class HomeBotController:
             return f"HomeBot connected at {self.broker}:{self.port}"
         return "HomeBot is offline"
 
-
 class SystemRepair:
-    """System diagnostics and repair"""
     
     @staticmethod
     def diagnose() -> str:
-        """Run system diagnostics"""
+        
         report = ["=== System Diagnostic Report ===\n"]
         
         if SystemControl.PLATFORM == "win32":
@@ -372,7 +344,7 @@ class SystemRepair:
     
     @staticmethod
     def clear_temp() -> str:
-        """Clear temporary files"""
+        
         try:
             temp = os.getenv("TEMP", "/tmp")
             count = 0
@@ -388,17 +360,13 @@ class SystemRepair:
     
     @staticmethod
     def optimize_startup() -> str:
-        """Optimize startup programs"""
+        
         if SystemControl.PLATFORM == "win32":
             result = SystemControl.run_cmd("wmic startup list full")
             return f"Startup programs:\n{result.get('stdout', 'Could not retrieve')[:1000]}"
         return "Startup optimization not available on this platform"
 
-
 class AEGISVoiceDL:
-    """
-    AEGIS Deep Learning Voice System - FULL CONTROL
-    """
     
     def __init__(self, event_bus: EventBus, llm_engine=None, speech_manager=None):
         self.event_bus = event_bus
@@ -462,7 +430,7 @@ class AEGISVoiceDL:
             self.speak(text)
 
     def _listen_loop(self):
-        """Continuous listening"""
+        
         if not self.audio.recognizer or not self.audio.mic:
             logger.error("Speech recognizer not available")
             return
@@ -492,7 +460,7 @@ class AEGISVoiceDL:
                 time.sleep(1)
 
     async def _understand_and_act(self, user_input: str):
-        """Understand naturally and take action"""
+        
         text = user_input.lower()
         response = None
         
@@ -624,9 +592,8 @@ class AEGISVoiceDL:
         
         self.event_bus.publish("voice_command", user_input)
 
-
 def start_voice_dl(event_bus, llm_engine=None, speech_manager=None):
-    """Start AEGIS Voice DL with full system control"""
+    
     voice = AEGISVoiceDL(event_bus, llm_engine, speech_manager)
     voice.start()
     return voice

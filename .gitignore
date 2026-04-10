@@ -7,6 +7,14 @@ nul
 # Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Python tooling cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
 
 # Environments
 .venv/
@@ -21,6 +29,7 @@ logs/
 # Build artifacts
 build/
 dist/
+coverage/
 
 # Binaries
 *.exe
@@ -31,7 +40,44 @@ dist/
 .env
 prod.env
 
-#clean 
-logs/
+# Local runtime data
 models/
-build/
+
+# Backup and throwaway artifacts
+backup/
+backups/
+*.bak
+*.backup
+*.old
+*.orig
+*~
+*.tmp
+*.temp
+tmp/
+temp/
+*.swp
+*.swo
+
+# Python packaging leftovers
+*.whl
+pip-wheel-metadata/
+*.egg-info/
+
+# OS junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local Libraries and Large Binaries
+pip_packages/
+.deepface/
+.huggingface/
+.onnx/
+.tensorflow/
+.torch/
+.keras/
+=2.15.0
+onnxruntime-*.whl
+tensorflow_cpu-*.whl
+transformers-*.whl

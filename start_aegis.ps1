@@ -1,6 +1,4 @@
-$ErrorActionPreference = "Stop"
-
-# Resolve paths
+﻿$ErrorActionPreference = "Stop"
 $Root     = Split-Path $MyInvocation.MyCommand.Path -Parent
 $LogsDir  = Join-Path $Root "logs"
 $RunDir   = Join-Path $Root "run"
@@ -9,26 +7,17 @@ $BrokerConf  = Join-Path $Root "build\mosqdl\inst\mosq-open.conf"
 $PythonExe   = Join-Path $Root ".venv\Scripts\python.exe"
 $BackendArgs = @("-m","core.main")
 $VisualCorePath = Join-Path $Root "aegis-core\bin\Release\aegis-core.exe"
-
 New-Item -ItemType Directory -Force -Path $LogsDir | Out-Null
 New-Item -ItemType Directory -Force -Path $RunDir  | Out-Null
-
-# ============================================================================
-# AEGIS Visual Core - Startup Animation (JARVIS-style)
-# ============================================================================
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "     AEGIS VISUAL CORE INITIALIZING..." -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
-
 if (Test-Path $VisualCorePath) {
     Write-Host "[1/3] Launching Visual Core..." -ForegroundColor Yellow
-    
     try {
-        # Run visual core for startup animation (C++ JARVIS-style)
         Start-Process -FilePath $VisualCorePath -Wait -WindowStyle Hidden
-        
         Write-Host "[OK] Visual Core startup animation complete" -ForegroundColor Green
     } catch {
         Write-Host "[WARN] Visual Core failed: $_" -ForegroundColor Yellow
@@ -36,14 +25,11 @@ if (Test-Path $VisualCorePath) {
 } else {
     Write-Host "[SKIP] Visual Core not found at: $VisualCorePath" -ForegroundColor Yellow
 }
-
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "     AEGIS OS CORE INITIALIZING..." -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
-
-# Helper: check if port is already listening
 function Test-PortListening {
     param($Port)
     try {
@@ -53,8 +39,6 @@ function Test-PortListening {
         return $false
     }
 }
-
-# Start broker (1884) if not already listening
 if (Test-Path $BrokerExe) {
     if (-not (Test-PortListening 1884)) {
         Write-Host "Starting mosquitto on 0.0.0.0:1884..."
@@ -72,8 +56,6 @@ if (Test-Path $BrokerExe) {
 } else {
     Write-Warning "Mosquitto binary not found at $BrokerExe"
 }
-
-# Start backend (core.main) if not already running from our PID file
 $BackendPidFile = Join-Path $RunDir "backend.pid"
 $backendRunning = $false
 if (Test-Path $BackendPidFile) {
@@ -84,7 +66,6 @@ if (Test-Path $BackendPidFile) {
         Remove-Item $BackendPidFile -ErrorAction SilentlyContinue
     }
 }
-
 if (-not $backendRunning) {
     Write-Host "Starting AEGIS backend..."
     $backendProc = Start-Process -FilePath $PythonExe `
@@ -98,5 +79,4 @@ if (-not $backendRunning) {
 } else {
     Write-Host "AEGIS backend already running (PID recorded)."
 }
-
 Write-Host "Done. Logs: $LogsDir"

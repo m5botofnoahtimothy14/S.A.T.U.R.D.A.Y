@@ -1,4 +1,4 @@
-# services/auto_update.py
+﻿                         
 import subprocess
 import logging
 import threading
@@ -51,6 +51,6 @@ class AutoUpdateService:
                             logger.warning("Git pull failed: %s", pull.stderr.strip())
                         else:
                             logger.info("Applied update: %s", pull.stdout.strip())
-                time.sleep(3600) # Check every hour
+                time.sleep(3600)                   
             except Exception as e:
                 logger.error(f"Auto-update check failed: {e}")

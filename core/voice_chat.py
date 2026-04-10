@@ -1,9 +1,4 @@
-"""
-AEGIS Voice Chat - Continuous listening, no wake word needed
-1. AEGIS greets you
-2. You speak
-3. AEGIS recognizes and responds
-"""
+﻿
 import logging
 import threading
 import queue
@@ -14,7 +9,6 @@ from core.audio_service import CrossPlatformAudio
 from core.event_bus import EventBus
 
 logger = logging.getLogger("AEGIS.VoiceChat")
-
 
 class VoiceChat:
     def __init__(self, event_bus: EventBus, llm_engine=None, speech_manager=None):
@@ -114,7 +108,6 @@ class VoiceChat:
             except Exception as e:
                 logger.error(f"Mic error: {e}")
                 time.sleep(1)
-
 
 def start_voice_chat(event_bus, llm_engine=None, speech_manager=None):
     chat = VoiceChat(event_bus, llm_engine, speech_manager)

@@ -1,4 +1,4 @@
-# embodied/gesture_model.py
+﻿                           
 import joblib
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
@@ -9,10 +9,7 @@ class GestureModel:
         self.model = None
 
     def train(self, X, y):
-        """
-        X: list of flattened landmark vectors
-        y: gesture labels
-        """
+        
         self.model = RandomForestClassifier(n_estimators=200)
         self.model.fit(X, y)
         joblib.dump(self.model, self.model_path)

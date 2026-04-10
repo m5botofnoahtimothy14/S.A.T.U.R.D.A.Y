@@ -1,4 +1,4 @@
-# communication/__init__.py
+﻿                           
 from .speech import SpeechManager
 from .voice_command_router import VoiceCommandRouter
 from .notification_router import NotificationRouter

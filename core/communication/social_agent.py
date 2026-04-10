@@ -1,4 +1,4 @@
-# communication/social_agent.py
+﻿                               
 import logging
 import asyncio
 import email
@@ -10,7 +10,7 @@ from core.event_bus import EventBus
 logger = logging.getLogger("AEGIS.Social")
 
 class SocialAgent:
-    """Handles Gmail, Calendar, and social DM automation."""
+    
     def __init__(self, event_bus: EventBus, human_interface):
         self.event_bus = event_bus
         self.hi = human_interface
@@ -23,7 +23,6 @@ class SocialAgent:
         self.calendar_ics_url = os.getenv("AEGIS_CALENDAR_ICS_URL", "").strip()
         self.calendar_ics_path = os.getenv("AEGIS_CALENDAR_ICS_PATH", "").strip()
         
-        # Subscribe to system state
         self.event_bus.subscribe("power_mode", self._on_power_mode)
         logger.info("Social Agent initialized.")
 
@@ -31,7 +30,7 @@ class SocialAgent:
         self.idle_mode = (data.get("mode") == "low")
 
     async def check_schedules(self):
-        """Return real schedule data from an ICS source when configured."""
+        
         if not self.calendar_ics_url and not self.calendar_ics_path:
             return []
 
@@ -40,7 +39,7 @@ class SocialAgent:
         return self.last_schedule
 
     async def sync_social_dms(self):
-        """Return only real alerts. Social DM polling is disabled until a provider is configured."""
+        
         self.last_alerts = []
         return self.last_alerts
 
@@ -51,7 +50,7 @@ class SocialAgent:
         return await loop.run_in_executor(None, self._fetch_unread_emails)
 
     async def start_monitoring(self):
-        """Background loop for social syncing."""
+        
         logger.info("Social monitoring background task started.")
         while True:
             try:
@@ -70,7 +69,7 @@ class SocialAgent:
                     self.event_bus.publish("voice_response", f"New {first['source']} activity from {first['from']}.")
             except Exception as e:
                 logger.warning(f"Social monitoring error: {e}")
-            await asyncio.sleep(300) # Every 5 minutes
+            await asyncio.sleep(300)                  
 
     def get_summary(self):
         return {
