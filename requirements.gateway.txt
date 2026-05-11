@@ -6,3 +6,5 @@ firebase-admin==6.8.0
 jsonschema==4.23.0
 langgraph==0.4.8
 psutil==7.0.0
+numpy==2.3.5
+structlog==25.5.0
