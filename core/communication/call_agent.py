@@ -10,7 +10,7 @@ from typing import Optional
 import structlog
 from livekit import api
 
-logger = structlog.get_logger("AEGIS.CallAgent")
+logger = structlog.get_logger("SATURDAY.CallAgent")
 
 def _load_json(path, default=None):
     try:
@@ -98,12 +98,12 @@ class CallAgent:
 
     def greeting_text(self, session: dict) -> str:
         if session.get("contact_name"):
-            return f"Hi {session['contact_name']}, this is AEGIS. How can I help you today?"
-        return "Hi, you've reached AEGIS, the autonomous assistant. How can I help?"
+            return f"Hi {session['contact_name']}, this is SATURDAY. How can I help you today?"
+        return "Hi, you've reached SATURDAY, the autonomous assistant. How can I help?"
 
     async def generate_reply(self, call_sid: str, user_text: str) -> str:
         prompt = (
-            "You are AEGIS, a concise and capable voice agent. "
+            "You are SATURDAY, a concise and capable voice agent. "
             "Goals: understand the caller's intent, confirm key details (time, date, people, numbers), "
             "offer to act, and close clearly. "
             "Style: brief, warm, no jargon. "

@@ -12,8 +12,8 @@ from datetime import datetime
 
 import numpy as np
 
-from core.logging_config import AEGISLogger
-logger = AEGISLogger.get_logger("DL.Core", "deep_learning")
+from core.logging_config import SATURDAYLogger
+logger = SATURDAYLogger.get_logger("DL.Core", "deep_learning")
 
 @dataclass
 class NeuralState:
@@ -175,7 +175,7 @@ class DeepLearningCore:
         self._load_knowledge()
         self._subscribe_to_events()
         
-        logger.info("AEGIS Deep Learning Core initialized - Now truly intelligent")
+        logger.info("SATURDAY Deep Learning Core initialized - Now truly intelligent")
         self._initialized = True
         
     def _subscribe_to_events(self):
@@ -396,18 +396,18 @@ class DeepLearningCore:
         if experience_count > 100 and self.state.evolution_stage == 0:
             self.state.evolution_stage = 1
             self.state.creativity = min(1.0, self.state.creativity + 0.1)
-            logger.info("AEGIS evolved to Stage 1 - Enhanced Creativity")
+            logger.info("SATURDAY evolved to Stage 1 - Enhanced Creativity")
             
         if experience_count > 500 and self.state.evolution_stage == 1:
             self.state.evolution_stage = 2
             self.state.adaptability = min(1.0, self.state.adaptability + 0.15)
             self.state.memory_weight = min(1.0, self.state.memory_weight + 0.1)
-            logger.info("AEGIS evolved to Stage 2 - Advanced Adaptation")
+            logger.info("SATURDAY evolved to Stage 2 - Advanced Adaptation")
             
         if experience_count > 1000 and self.state.evolution_stage == 2:
             self.state.evolution_stage = 3
             self.state.awareness_level = min(1.0, self.state.awareness_level + 0.2)
-            logger.info("AEGIS evolved to Stage 3 - Deep Awareness")
+            logger.info("SATURDAY evolved to Stage 3 - Deep Awareness")
             
         self.train_on_experience()
         
@@ -436,7 +436,7 @@ class DeepLearningCore:
         with open(f"{self.data_dir}/knowledge.json", "w") as f:
             json.dump(knowledge, f, indent=2)
             
-        logger.info(f"AEGIS knowledge saved - {len(self.experience_buffer)} experiences")
+        logger.info(f"SATURDAY knowledge saved - {len(self.experience_buffer)} experiences")
         
     def _load_knowledge(self):
         
@@ -463,7 +463,7 @@ class DeepLearningCore:
                     self.decision_network.bias1 = np.array(weights.get("bias1"))
                     self.decision_network.bias2 = np.array(weights.get("bias2"))
                     
-                logger.info(f"AEGIS loaded knowledge - Stage {self.state.evolution_stage}")
+                logger.info(f"SATURDAY loaded knowledge - Stage {self.state.evolution_stage}")
                 
             except Exception as e:
                 logger.warning(f"Failed to load knowledge: {e}")
@@ -517,4 +517,4 @@ class DeepLearningCore:
         
         self.running = False
         self.save_knowledge()
-        logger.info("AEGIS Deep Learning Core shutdown - Knowledge preserved")
+        logger.info("SATURDAY Deep Learning Core shutdown - Knowledge preserved")

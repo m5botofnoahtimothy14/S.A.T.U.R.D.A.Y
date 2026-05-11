@@ -2,7 +2,7 @@
 import logging
 import random
 
-logger = logging.getLogger("AEGIS.ChristianityCore")
+logger = logging.getLogger("SATURDAY.ChristianityCore")
 
 class ChristianityCore:
     def __init__(self, event_bus):

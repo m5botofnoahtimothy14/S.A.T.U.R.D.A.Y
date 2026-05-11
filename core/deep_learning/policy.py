@@ -9,7 +9,7 @@ import structlog
 
 import numpy as np
 
-logger = structlog.get_logger("AEGIS.DL.Policy")
+logger = structlog.get_logger("SATURDAY.DL.Policy")
 
 class PolicyNeuralNetwork:
     

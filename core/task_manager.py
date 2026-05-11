@@ -6,7 +6,7 @@ import time
 from typing import Callable, Coroutine, Any
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.TaskManager")
+logger = logging.getLogger("SATURDAY.TaskManager")
 
 class BackgroundTask:
     def __init__(self, name: str, priority: int = 5):

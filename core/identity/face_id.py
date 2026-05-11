@@ -3,7 +3,7 @@ import logging
 import asyncio
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.Identity.FaceID")
+logger = logging.getLogger("SATURDAY.Identity.FaceID")
 
 class FaceID:
     

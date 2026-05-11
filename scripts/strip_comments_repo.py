@@ -29,7 +29,7 @@ EXCLUDED_DIRS = {
 }
 
 EXCLUDED_PREFIXES = {
-    "core/aegis-core/third_party",
+    "core/saturday-core/third_party",
 }
 
 TARGET_EXTENSIONS = {

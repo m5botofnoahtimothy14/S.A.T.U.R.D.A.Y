@@ -3,7 +3,7 @@ import logging
 import aiohttp
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.Sensors.AirQuality")
+logger = logging.getLogger("SATURDAY.Sensors.AirQuality")
 
 class AirQualitySensor:
     def __init__(self, event_bus: EventBus):

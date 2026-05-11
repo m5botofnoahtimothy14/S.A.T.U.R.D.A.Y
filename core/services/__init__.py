@@ -1,8 +1,8 @@
 ﻿                      
 def __getattr__(name):
-    if name == "AEGISWindowsService":
-        from .windows_service import AEGISWindowsService
-        return AEGISWindowsService
+    if name == "SATURDAYWindowsService":
+        from .windows_service import SATURDAYWindowsService
+        return SATURDAYWindowsService
     elif name == "TaskScheduler":
         from .task_scheduler import TaskScheduler
         return TaskScheduler
@@ -24,7 +24,7 @@ def __getattr__(name):
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
-    "AEGISWindowsService",
+    "SATURDAYWindowsService",
     "TaskScheduler", 
     "EnergyManager",
     "AutoUpdater",

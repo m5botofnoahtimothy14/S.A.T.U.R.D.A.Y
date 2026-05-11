@@ -2,7 +2,7 @@
 import logging
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.EDITH.Navigation")
+logger = logging.getLogger("SATURDAY.EDITH.Navigation")
 
 class EdithScreenNavigator:
     def __init__(self, event_bus: EventBus):

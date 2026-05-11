@@ -10,7 +10,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT)
 for extra in (
     os.path.join(ROOT, "pip_packages"),
-    "F:/aegis_packages",
+    "F:/saturday_packages",
 ):
     if os.path.isdir(extra):
         sys.path.insert(0, extra)
@@ -55,7 +55,7 @@ def clamp(v: float, lo: float, hi: float) -> float:
 
 def main():
     print("=" * 72)
-    print("AEGIS Audio Threshold Calibration")
+    print("SATURDAY Audio Threshold Calibration")
     print("=" * 72)
 
     if sr is None:
@@ -141,7 +141,7 @@ def main():
     print(f"  SOUND_MONITOR_THRESHOLD_DB={result['sound_threshold_db']}")
     print(f"  VOICE_BIOMETRIC_THRESHOLD={result['voice_biometric_threshold']}")
     print(f"  Saved: {out_path}")
-    print("\nRestart AEGIS to apply calibration automatically.")
+    print("\nRestart SATURDAY to apply calibration automatically.")
     print("=" * 72)
     return 0
 

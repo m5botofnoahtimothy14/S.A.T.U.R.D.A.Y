@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 import threading
 
-logger = logging.getLogger("AEGIS.UI.Bridge")
+logger = logging.getLogger("SATURDAY.UI.Bridge")
 
 class WebSocketBridge:
     def __init__(self, event_bus):

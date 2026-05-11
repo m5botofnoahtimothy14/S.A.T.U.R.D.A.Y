@@ -4,7 +4,7 @@ import psutil
 import asyncio
 from core.event_bus import EventBus
 
-logger = structlog.get_logger("AEGIS.Services.Energy")
+logger = structlog.get_logger("SATURDAY.Services.Energy")
 
 class EnergyManager:
     def __init__(self, event_bus: EventBus):
@@ -23,7 +23,7 @@ class EnergyManager:
                 
                 if percent < 20 and not is_plugged:
                     logger.warning("Low Power Mode Triggered")
-                    self.event_bus.publish("voice_response", "Battery low. Switching AEGIS to power-saving mode.")
+                    self.event_bus.publish("voice_response", "Battery low. Switching SATURDAY to power-saving mode.")
                     self.event_bus.publish("system_state_change", "low_power")
             
             await asyncio.sleep(300)                     

@@ -3,7 +3,7 @@
 import logging
 import threading
 import time
-logger = logging.getLogger("AEGIS.CyberDefense")
+logger = logging.getLogger("SATURDAY.CyberDefense")
 logger.setLevel(logging.INFO)
 class CyberDefense:
     def __init__(self, event_bus):

@@ -3,7 +3,7 @@ import logging
 import uuid
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.Hybrid.SessionManager")
+logger = logging.getLogger("SATURDAY.Hybrid.SessionManager")
 
 class SessionManager:
     def __init__(self, event_bus: EventBus):

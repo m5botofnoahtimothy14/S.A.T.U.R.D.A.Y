@@ -1,7 +1,7 @@
 ﻿                                  
 import logging
 
-logger = logging.getLogger("AEGIS.AI.Planner")
+logger = logging.getLogger("SATURDAY.AI.Planner")
 
 class PredictivePlanner:
     def __init__(self, event_bus):

@@ -2,7 +2,7 @@
 import logging
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.EDITH.Voice")
+logger = logging.getLogger("SATURDAY.EDITH.Voice")
 
 class EdithVoiceInterface:
     def __init__(self, event_bus: EventBus):

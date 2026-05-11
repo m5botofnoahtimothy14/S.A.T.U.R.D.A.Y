@@ -17,7 +17,7 @@ def flash_core2():
         print("2. Drivers installed")
         print("3. No other program using COM4")
         return False
-    firmware_path = os.path.join(os.path.dirname(__file__), 'homebot', 'AEGIS_Core2_Firmware.py')
+    firmware_path = os.path.join(os.path.dirname(__file__), 'homebot', 'SATURDAY_Core2_Firmware.py')
     try:
         with open(firmware_path, 'r') as f:
             firmware_code = f.read()
@@ -37,7 +37,7 @@ def flash_core2():
     print("2. Face display will show happy emotion")
     print("3. COM4 serial communication active")
     print("4. MQTT connection will attempt")
-    print("5. Ready for AEGIS commands")
+    print("5. Ready for SATURDAY commands")
     input("\nPress Enter after flashing to test connection...")
     try:
         ser = serial.Serial('COM4', 115200, timeout=5)

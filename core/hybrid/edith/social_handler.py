@@ -5,7 +5,7 @@ import threading
 import time
 from core.event_bus import EventBus
 
-logger = structlog.get_logger("AEGIS.EDITH.Social")
+logger = structlog.get_logger("SATURDAY.EDITH.Social")
 
 class EdithSocialHandler:
     

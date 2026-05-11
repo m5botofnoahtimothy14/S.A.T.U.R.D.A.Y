@@ -3,7 +3,7 @@ import structlog
 import asyncio
 from core.event_bus import EventBus
 
-logger = structlog.get_logger("AEGIS.Distributed.Sync")
+logger = structlog.get_logger("SATURDAY.Distributed.Sync")
 
 class InterDeviceSync:
     def __init__(self, event_bus: EventBus):

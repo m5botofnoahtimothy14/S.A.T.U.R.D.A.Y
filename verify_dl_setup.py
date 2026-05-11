@@ -4,10 +4,10 @@ import os
 import sys
 
                                       
-DRIVE_ROOT = r"D:\AEGIS"
-DRIVE_ROOT_ALT = r"D:/AEGIS"
+DRIVE_ROOT = r"D:\SATURDAY"
+DRIVE_ROOT_ALT = r"D:/SATURDAY"
 
-os.environ['AEGIS_ROOT'] = DRIVE_ROOT
+os.environ['SATURDAY_ROOT'] = DRIVE_ROOT
 os.environ['TF_HUB_CACHE_DIR'] = os.path.join(DRIVE_ROOT, ".tensorflow", "hub")
 os.environ['HF_HOME'] = os.path.join(DRIVE_ROOT, ".huggingface")
 os.environ['TORCH_HOME'] = os.path.join(DRIVE_ROOT, ".torch")
@@ -31,7 +31,7 @@ for _dir in [
     os.makedirs(_dir, exist_ok=True)
 
 print("=" * 60)
-print("AEGIS Deep Learning Backend Verification")
+print("SATURDAY Deep Learning Backend Verification")
 print("=" * 60)
 print(f"\nCache Location: {DRIVE_ROOT}")
 print(f"TensorFlow Hub: {os.environ['TF_HUB_CACHE_DIR']}")

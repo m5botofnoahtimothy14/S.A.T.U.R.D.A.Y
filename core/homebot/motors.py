@@ -3,13 +3,13 @@ import os
 import paho.mqtt.client as mqtt
 import logging
 
-logger = logging.getLogger("AEGIS.HomeBot.Motors")
+logger = logging.getLogger("SATURDAY.HomeBot.Motors")
 
 class OmniMotors:
     def __init__(self, mqtt_broker=None):
         self.mqtt_broker = mqtt_broker or os.getenv("MQTT_BROKER", "localhost")
         self.mqtt_port = int(os.getenv("MQTT_PORT", "1883"))
-        self.client = mqtt.Client("AEGIS-Motors")
+        self.client = mqtt.Client("SATURDAY-Motors")
         self.motors = {"FL": 0, "FR": 0, "BL": 0, "BR": 0}
         self.encoders = {"FL": 0, "FR": 0, "BL": 0, "BR": 0}
         

@@ -1,37 +1,37 @@
 ﻿@echo off
 
 echo ================================================
-echo AEGIS Deep Learning Setup - Drive D Edition
+echo SATURDAY Deep Learning Setup - Drive D Edition
 echo ================================================
 echo.
 
 setlocal enabledelayedexpansion
 
 set "DRIVE=D:"
-set "AEGIS_ROOT=%DRIVE%\AEGIS"
+set "SATURDAY_ROOT=%DRIVE%\SATURDAY"
 set "PYTHON_BIN=python"
 
 echo [1/6] Creating Drive D directories...
-mkdir "%DRIVE%\AEGIS\.tensorflow" 2>nul
-mkdir "%DRIVE%\AEGIS\.huggingface" 2>nul
-mkdir "%DRIVE%\AEGIS\.torch" 2>nul
-mkdir "%DRIVE%\AEGIS\.onnx" 2>nul
-mkdir "%DRIVE%\AEGIS\.deepface" 2>nul
-mkdir "%DRIVE%\AEGIS\.keras" 2>nul
-mkdir "%DRIVE%\AEGIS\models" 2>nul
+mkdir "%DRIVE%\SATURDAY\.tensorflow" 2>nul
+mkdir "%DRIVE%\SATURDAY\.huggingface" 2>nul
+mkdir "%DRIVE%\SATURDAY\.torch" 2>nul
+mkdir "%DRIVE%\SATURDAY\.onnx" 2>nul
+mkdir "%DRIVE%\SATURDAY\.deepface" 2>nul
+mkdir "%DRIVE%\SATURDAY\.keras" 2>nul
+mkdir "%DRIVE%\SATURDAY\models" 2>nul
 echo       Done: All cache directories created on Drive D
 echo.
 
 echo [2/6] Setting environment variables...
-setx AEGIS_ROOT "%AEGIS_ROOT%"
+setx SATURDAY_ROOT "%SATURDAY_ROOT%"
 setx TF_CPP_MIN_LOG_LEVEL "3"
-setx TF_HUB_CACHE_DIR "%DRIVE%\AEGIS\.tensorflow\hub"
-setx HF_HOME "%DRIVE%\AEGIS\.huggingface"
-setx TORCH_HOME "%DRIVE%\AEGIS\.torch"
-setx TRANSFORMERS_CACHE "%DRIVE%\AEGIS\.huggingface\transformers"
-setx DEEPFACE_HOME "%DRIVE%\AEGIS\.deepface"
-setx KERAS_HOME "%DRIVE%\AEGIS\.keras"
-setx ONNX_HOME "%DRIVE%\AEGIS\.onnx"
+setx TF_HUB_CACHE_DIR "%DRIVE%\SATURDAY\.tensorflow\hub"
+setx HF_HOME "%DRIVE%\SATURDAY\.huggingface"
+setx TORCH_HOME "%DRIVE%\SATURDAY\.torch"
+setx TRANSFORMERS_CACHE "%DRIVE%\SATURDAY\.huggingface\transformers"
+setx DEEPFACE_HOME "%DRIVE%\SATURDAY\.deepface"
+setx KERAS_HOME "%DRIVE%\SATURDAY\.keras"
+setx ONNX_HOME "%DRIVE%\SATURDAY\.onnx"
 echo       Done: Environment variables configured
 echo.
 
@@ -66,26 +66,26 @@ echo Installation Complete!
 echo ================================================
 echo.
 echo Cache locations configured on Drive D:
-echo   - TensorFlow: %DRIVE%\AEGIS\.tensorflow
-echo   - HuggingFace: %DRIVE%\AEGIS\.huggingface
-echo   - PyTorch: %DRIVE%\AEGIS\.torch
-echo   - DeepFace: %DRIVE%\AEGIS\.deepface
-echo   - Models: %DRIVE%\AEGIS\models
+echo   - TensorFlow: %DRIVE%\SATURDAY\.tensorflow
+echo   - HuggingFace: %DRIVE%\SATURDAY\.huggingface
+echo   - PyTorch: %DRIVE%\SATURDAY\.torch
+echo   - DeepFace: %DRIVE%\SATURDAY\.deepface
+echo   - Models: %DRIVE%\SATURDAY\models
 echo.
 echo Running verification...
 echo.
 
 %PYTHON_BIN% -c "
 import os
-os.environ['AEGIS_ROOT'] = r'%AEGIS_ROOT%'
-os.environ['TF_HUB_CACHE_DIR'] = r'%DRIVE%\AEGIS\.tensorflow\hub'
-os.environ['HF_HOME'] = r'%DRIVE%\AEGIS\.huggingface'
-os.environ['TORCH_HOME'] = r'%DRIVE%\AEGIS\.torch'
-os.environ['DEEPFACE_HOME'] = r'%DRIVE%\AEGIS\.deepface'
+os.environ['SATURDAY_ROOT'] = r'%SATURDAY_ROOT%'
+os.environ['TF_HUB_CACHE_DIR'] = r'%DRIVE%\SATURDAY\.tensorflow\hub'
+os.environ['HF_HOME'] = r'%DRIVE%\SATURDAY\.huggingface'
+os.environ['TORCH_HOME'] = r'%DRIVE%\SATURDAY\.torch'
+os.environ['DEEPFACE_HOME'] = r'%DRIVE%\SATURDAY\.deepface'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 print('='*50)
-print('AEGIS DL Backend Verification')
+print('SATURDAY DL Backend Verification')
 print('='*50)
 
 # TensorFlow

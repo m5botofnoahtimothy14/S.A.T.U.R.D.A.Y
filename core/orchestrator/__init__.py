@@ -1,6 +1,6 @@
 """
-AEGIS Orchestrator Package
-Central orchestration system for AEGIS
+SATURDAY Orchestrator Package
+Central orchestration system for SATURDAY
 """
 
 from .resource_manager import ResourceManager, ResourceSnapshot, ResourceAlert, ResourceType, ResourceLevel, ResourceThresholds

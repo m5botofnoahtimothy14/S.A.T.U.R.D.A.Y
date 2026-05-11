@@ -1,0 +1,25 @@
+[Unit]
+Description=SATURDAY AI OS - Advanced Engine for Global Integrated Systems
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/saturday
+EnvironmentFile=/opt/saturday/prod.env
+ExecStart=/opt/saturday/.venv/bin/python run_production.py
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=append:/opt/saturday/logs/stdout.log
+StandardError=append:/opt/saturday/logs/stderr.log
+
+# Security
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/saturday/data /opt/saturday/logs
+
+[Install]
+WantedBy=multi-user.target

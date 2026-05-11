@@ -3,7 +3,7 @@ import structlog
 from core.event_bus import EventBus
 import random
 
-logger = structlog.get_logger("AEGIS.Christianity")
+logger = structlog.get_logger("SATURDAY.Christianity")
 
 class ChristianityCore:
     def __init__(self, event_bus: EventBus):

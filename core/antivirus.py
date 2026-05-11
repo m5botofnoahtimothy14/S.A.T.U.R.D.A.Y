@@ -6,7 +6,7 @@ import hashlib
 import threading
 import time
 import shutil
-logger = logging.getLogger("AEGIS.Antivirus")
+logger = logging.getLogger("SATURDAY.Antivirus")
 logger.setLevel(logging.INFO)
 class Antivirus:
     def __init__(self, scan_paths=["./"], quarantine_folder="./quarantine"):

@@ -8,7 +8,7 @@ from typing import Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
 
-logger = logging.getLogger("AEGIS.Speaker")
+logger = logging.getLogger("SATURDAY.Speaker")
 
 try:
     import sounddevice as sd

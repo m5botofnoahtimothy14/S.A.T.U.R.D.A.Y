@@ -19,10 +19,10 @@ import servicemanager
 import subprocess
 import sys
 import os
-class AEGISService(win32serviceutil.ServiceFramework):
-    _svc_name_ = "AEGIS"
-    _svc_display_name_ = "AEGIS AI OS Server"
-    _svc_description_ = "Self-owned AEGIS AI OS Server - Runs 24/7"
+class SATURDAYService(win32serviceutil.ServiceFramework):
+    _svc_name_ = "SATURDAY"
+    _svc_display_name_ = "SATURDAY AI OS Server"
+    _svc_description_ = "Self-owned SATURDAY AI OS Server - Runs 24/7"
     def __init__(self, args):
         win32serviceutil.ServiceFramework.__init__(self, args)
         self.stop_event = win32event.CreateEvent(None, 0, 0, None)
@@ -37,7 +37,7 @@ class AEGISService(win32serviceutil.ServiceFramework):
     def main(self):
         os.chdir(r"{base_dir.replace(chr(92), chr(92)+chr(92))}")
         proc = subprocess.Popen(
-            [sys.executable, "aegis_self_server.py"],
+            [sys.executable, "saturday_self_server.py"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
@@ -47,14 +47,14 @@ class AEGISService(win32serviceutil.ServiceFramework):
                 break
             if proc.poll() is not None:
                 proc = subprocess.Popen(
-                    [sys.executable, "aegis_self_server.py"],
+                    [sys.executable, "saturday_self_server.py"],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE
                 )
 if __name__ == '__main__':
-    win32serviceutil.HandleCommandLine(AEGISService)
+    win32serviceutil.HandleCommandLine(SATURDAYService)
 '''
-    service_file = os.path.join(base_dir, "aegis_service.py")
+    service_file = os.path.join(base_dir, "saturday_service.py")
     with open(service_file, "w") as f:
         f.write(service_code)
     print(f"Service file created: {service_file}")

@@ -2,7 +2,7 @@
 import structlog
 from core.event_bus import EventBus
 
-logger = structlog.get_logger("AEGIS.SecurityAssistant")
+logger = structlog.get_logger("SATURDAY.SecurityAssistant")
 
 class SecurityAssistant:
     def __init__(self, event_bus: EventBus, ai_engine):

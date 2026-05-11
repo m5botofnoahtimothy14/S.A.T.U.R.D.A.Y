@@ -24,7 +24,7 @@ def init():
     pwm_b.duty(0)
     
     stop()
-    print("AEGIS_HOMEBOT_READY")
+    print("SATURDAY_HOMEBOT_READY")
     print("M5Stack CORE2 MicroPython v1.0")
 
 def stop():
@@ -91,7 +91,7 @@ def process(cmd):
     elif cmd == "STATUS":
         return "STATUS:OK|HOMEBOT_ONLINE|M5STACK_CORE2"
     elif cmd == "INFO":
-        return "AEGIS_HOMEBOT_V1.0|M5STACK_CORE2|2_MOTORS"
+        return "SATURDAY_HOMEBOT_V1.0|M5STACK_CORE2|2_MOTORS"
     elif cmd == "HELP":
         return "FWD|REV|LFT|RGT|RTL|RTR|STP|PING|STATUS"
     elif cmd == "FWD":

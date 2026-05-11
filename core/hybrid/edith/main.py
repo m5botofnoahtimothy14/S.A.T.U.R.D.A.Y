@@ -2,7 +2,7 @@
 import logging
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.EDITH")
+logger = logging.getLogger("SATURDAY.EDITH")
 
 class EDITH:
     def __init__(self, event_bus: EventBus, brain=None):
@@ -44,12 +44,12 @@ class EDITH:
                 if self.brain: self.brain.set_sub_mode("Normal")
                 self.event_bus.publish("voice_response", "EDITH online. How can I assist you?")
                 
-        elif "aegis" in command:
+        elif "saturday" in command:
             self.active = False
             if self.brain:
                 self.brain.set_sub_mode("Normal")                       
-                self.brain.context["interface_mode"] = "AEGIS"
-            self.event_bus.publish("voice_response", "AEGIS Core re-engaged. Welcome back, Sir.")
+                self.brain.context["interface_mode"] = "SATURDAY"
+            self.event_bus.publish("voice_response", "SATURDAY Core re-engaged. Welcome back, Sir.")
 
     def process_tactical_request(self, command):
         if "status" in command:

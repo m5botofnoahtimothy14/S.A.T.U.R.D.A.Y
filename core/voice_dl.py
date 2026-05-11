@@ -14,7 +14,7 @@ import structlog
 from core.audio_service import CrossPlatformAudio
 from core.event_bus import EventBus
 
-logger = structlog.get_logger("AEGIS.VoiceDL")
+logger = structlog.get_logger("SATURDAY.VoiceDL")
 
 MAX_MEMORY = 100
 
@@ -366,7 +366,7 @@ class SystemRepair:
             return f"Startup programs:\n{result.get('stdout', 'Could not retrieve')[:1000]}"
         return "Startup optimization not available on this platform"
 
-class AEGISVoiceDL:
+class SATURDAYVoiceDL:
     
     def __init__(self, event_bus: EventBus, llm_engine=None, speech_manager=None):
         self.event_bus = event_bus
@@ -386,7 +386,7 @@ class AEGISVoiceDL:
         
         self.event_bus.subscribe("voice_response", self._on_response)
         
-        logger.info("AEGIS Voice DL - FULL SYSTEM CONTROL",
+        logger.info("SATURDAY Voice DL - FULL SYSTEM CONTROL",
                    whisper=bool(self.audio.whisper_model),
                    llm=bool(self.llm),
                    homebot=self.homebot.connected)
@@ -398,16 +398,16 @@ class AEGISVoiceDL:
         threading.Thread(target=self._listen_loop, daemon=True).start()
         time.sleep(0.5)
         self._greet()
-        logger.info("AEGIS Voice DL ACTIVE")
+        logger.info("SATURDAY Voice DL ACTIVE")
 
     def stop(self):
         self.running = False
-        logger.info("AEGIS Voice DL stopped")
+        logger.info("SATURDAY Voice DL stopped")
 
     def _greet(self):
         greetings = [
-            "Hello. I am AEGIS with full system access. What would you like to do?",
-            "AEGIS online with complete control. Command me.",
+            "Hello. I am SATURDAY with full system access. What would you like to do?",
+            "SATURDAY online with complete control. Command me.",
             "I have system-level access. Tell me what you need.",
         ]
         import random
@@ -594,6 +594,6 @@ class AEGISVoiceDL:
 
 def start_voice_dl(event_bus, llm_engine=None, speech_manager=None):
     
-    voice = AEGISVoiceDL(event_bus, llm_engine, speech_manager)
+    voice = SATURDAYVoiceDL(event_bus, llm_engine, speech_manager)
     voice.start()
     return voice

@@ -4,7 +4,7 @@ import os
 import structlog
 from typing import Optional
 
-logger = structlog.get_logger("AEGIS.Sync")
+logger = structlog.get_logger("SATURDAY.Sync")
 
 class StateSyncNode:
     
@@ -45,14 +45,14 @@ class StateSyncNode:
             await self.redis.ping()
             self.connected = True
             pubsub = self.redis.pubsub()
-            await pubsub.subscribe("aegis:commands", "aegis:state")
+            await pubsub.subscribe("saturday:commands", "saturday:state")
             
             asyncio.create_task(self._listen_loop(pubsub))
             
             while True:
                 if self.runtime:
                     snapshot = self.runtime.get_resource_usage()
-                    await self.redis.publish("aegis:state", json.dumps(snapshot))
+                    await self.redis.publish("saturday:state", json.dumps(snapshot))
                 
                 await asyncio.sleep(10)                                          
                 

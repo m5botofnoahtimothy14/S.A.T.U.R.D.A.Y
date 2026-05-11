@@ -1,8 +1,8 @@
 ﻿                      
 from core.event_bus import EventBus
-from core.logging_config import AEGISLogger
+from core.logging_config import SATURDAYLogger
 
-logger = AEGISLogger.get_logger("Governance", "governance")
+logger = SATURDAYLogger.get_logger("Governance", "governance")
 
 class PolicyEngine:
     

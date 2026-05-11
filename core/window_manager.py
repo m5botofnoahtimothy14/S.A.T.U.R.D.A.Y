@@ -6,7 +6,7 @@ import psutil
 import pygetwindow as gw
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.WindowManager")
+logger = logging.getLogger("SATURDAY.WindowManager")
 
 class WindowManager:
     

@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Dependencies
-        run: cd core/aegis-control-panel && npm install
+        run: cd core/saturday-control-panel && npm install
       - name: Build Dashboard
         env:
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
@@ -16,10 +16,10 @@ jobs:
           VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
           VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
-          VITE_AEGIS_GATEWAY_URL: ${{ secrets.VITE_AEGIS_GATEWAY_URL }}
-        run: cd core/aegis-control-panel && npm run build
+          VITE_SATURDAY_GATEWAY_URL: ${{ secrets.VITE_SATURDAY_GATEWAY_URL }}
+        run: cd core/saturday-control-panel && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_AEGIS_OS_75256 }}'
-          projectId: aegis-os-75256
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SATURDAY_OS_75256 }}'
+          projectId: saturday-os-75256

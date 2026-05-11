@@ -5,14 +5,14 @@ import os
 from core.event_bus import EventBus
 from core.audio_service import CrossPlatformAudio
 
-logger = logging.getLogger("AEGIS.Hybrid.WakeService")
+logger = logging.getLogger("SATURDAY.Hybrid.WakeService")
 
 
 class WakeService:
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
         self.running = False
-        self.wake_word = "aegis"
+        self.wake_word = "saturday"
         self.secondary_wake_word = "edith"
         self.audio = CrossPlatformAudio()
         self.power_mode = "performance"
@@ -23,7 +23,7 @@ class WakeService:
 
     async def listen_for_wake_word(self):
         self.running = True
-        logger.info(f"AEGIS LISTENING (OFFLINE DL): '{self.wake_word}'")
+        logger.info(f"SATURDAY LISTENING (OFFLINE DL): '{self.wake_word}'")
         threading.Thread(target=self._run_listener, daemon=True).start()
 
     def _on_power_mode(self, data):
@@ -44,7 +44,7 @@ class WakeService:
                             if text:
                                 logger.info(f"STT: {text}")
                                 if self.wake_word in text or self.secondary_wake_word in text:
-                                    target = "edith" if self.secondary_wake_word in text else "aegis"
+                                    target = "edith" if self.secondary_wake_word in text else "saturday"
                                     logger.info(f"WAKE: {target.upper()}")
                                     self.event_bus.publish("voice_command", {"command": text, "target": target})
                                     

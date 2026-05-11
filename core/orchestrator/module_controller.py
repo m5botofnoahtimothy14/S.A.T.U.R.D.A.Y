@@ -1,5 +1,5 @@
 """
-AEGIS Module Controller
+SATURDAY Module Controller
 Manages module lifecycle with ducking, suspension, and lazy loading
 Optimizes resources by pausing/idling unused modules
 """

@@ -1,5 +1,5 @@
 """
-AEGIS Self-Healing Manager
+SATURDAY Self-Healing Manager
 Detects module failures, auto-restarts, and implements failsafe recovery
 Monitors for early signs of system instability
 """
@@ -47,7 +47,7 @@ class RecoveryAction:
 
 class SelfHealingManager:
     """
-    Self-healing system for AEGIS modules.
+    Self-healing system for SATURDAY modules.
     Monitors health, detects failures, and executes recovery strategies.
     """
     

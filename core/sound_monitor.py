@@ -15,7 +15,7 @@ except ImportError:
 
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.SoundMonitor")
+logger = logging.getLogger("SATURDAY.SoundMonitor")
 
 
 class SoundMonitor:

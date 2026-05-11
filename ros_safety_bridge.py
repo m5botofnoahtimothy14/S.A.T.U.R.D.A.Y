@@ -17,7 +17,7 @@ class BridgeLimits:
 
 
 class ROSSafetyBridge:
-    def __init__(self, *, limits: BridgeLimits | None = None, node_name: str = "aegis_safety_bridge") -> None:
+    def __init__(self, *, limits: BridgeLimits | None = None, node_name: str = "saturday_safety_bridge") -> None:
         self.limits = limits or BridgeLimits()
         self.node_name = node_name
         self._state_lock = threading.RLock()
@@ -67,8 +67,8 @@ class ROSSafetyBridge:
 
             self._ros_node = rclpy.create_node(self.node_name)
             self._cmd_pub = self._ros_node.create_publisher(self.Twist, "/cmd_vel", 10)
-            self._estop_pub = self._ros_node.create_publisher(self.Bool, "/aegis/estop", 10)
-            self._mode_pub = self._ros_node.create_publisher(self.String, "/aegis/mode", 10)
+            self._estop_pub = self._ros_node.create_publisher(self.Bool, "/saturday/estop", 10)
+            self._mode_pub = self._ros_node.create_publisher(self.String, "/saturday/mode", 10)
 
             self._ros_node.create_subscription(self.LaserScan, "/scan", self._on_scan, 10)
             self._ros_node.create_subscription(self.Odometry, "/odom", self._on_odom, 10)

@@ -4,7 +4,7 @@ import paho.mqtt.client as mqtt
 import structlog
 import asyncio
 
-logger = structlog.get_logger("AEGIS.HomeBot")
+logger = structlog.get_logger("SATURDAY.HomeBot")
 
 class HomeBotClient:
     def __init__(self, broker=None, port=None):

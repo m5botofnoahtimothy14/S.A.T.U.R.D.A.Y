@@ -3,7 +3,7 @@ import structlog
 import time
 from core.event_bus import EventBus
 
-logger = structlog.get_logger("AEGIS.Identity.Biometrics")
+logger = structlog.get_logger("SATURDAY.Identity.Biometrics")
 
 class BehavioralBiometrics:
     def __init__(self, event_bus: EventBus):

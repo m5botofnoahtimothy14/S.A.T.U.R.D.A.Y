@@ -2,7 +2,7 @@
 
 import structlog
 
-logger = structlog.get_logger("AEGIS.LiveKit")
+logger = structlog.get_logger("SATURDAY.LiveKit")
 
 class LiveKitBridge:
     
@@ -11,9 +11,9 @@ class LiveKitBridge:
         self.url = os.getenv("LIVEKIT_URL", "").strip()
         self.api_key = os.getenv("LIVEKIT_API_KEY", "").strip()
         self.api_secret = os.getenv("LIVEKIT_API_SECRET", "").strip()
-        self.room_name = os.getenv("LIVEKIT_ROOM", "aegis-session").strip()
-        self.identity = os.getenv("LIVEKIT_IDENTITY", "aegis-core").strip()
-        self.participant_name = os.getenv("LIVEKIT_PARTICIPANT_NAME", "AEGIS Core").strip()
+        self.room_name = os.getenv("LIVEKIT_ROOM", "saturday-session").strip()
+        self.identity = os.getenv("LIVEKIT_IDENTITY", "saturday-core").strip()
+        self.participant_name = os.getenv("LIVEKIT_PARTICIPANT_NAME", "SATURDAY Core").strip()
 
         self.room = None
         self.active = False

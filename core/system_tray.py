@@ -6,14 +6,14 @@ import sys
 import webbrowser
 import subprocess
 
-logger = logging.getLogger("AEGIS.SystemTray")
+logger = logging.getLogger("SATURDAY.SystemTray")
 
-AEGIS_URL = "http://localhost:8000"
+SATURDAY_URL = "http://localhost:8000"
 
 class SystemTray:
     
-    def __init__(self, aegis_core=None):
-        self.aegis_core = aegis_core
+    def __init__(self, saturday_core=None):
+        self.saturday_core = saturday_core
         self.tray = None
         self.running = False
         self._tray_thread = None
@@ -25,7 +25,7 @@ class SystemTray:
             return
             
         self.running = True
-        self._tray_thread = threading.Thread(target=self._run_tray, daemon=True, name="AEGIS-SystemTray")
+        self._tray_thread = threading.Thread(target=self._run_tray, daemon=True, name="SATURDAY-SystemTray")
         self._tray_thread.start()
         logger.info("System tray started")
         
@@ -42,9 +42,9 @@ class SystemTray:
         icon_image = self._create_icon()
         
         menu = Menu(
-            MenuItem("Open AEGIS Dashboard", self._show_window),
+            MenuItem("Open SATURDAY Dashboard", self._show_window),
             Menu.SEPARATOR,
-            MenuItem("Wake AEGIS", self._wake_aegis),
+            MenuItem("Wake SATURDAY", self._wake_saturday),
             MenuItem("Start Voice Recognition", self._start_voice),
             MenuItem("Start Camera", self._start_camera),
             MenuItem("Toggle Security Mode", self._toggle_security),
@@ -52,12 +52,12 @@ class SystemTray:
             MenuItem("System Status", self._show_status),
             MenuItem("View Logs", self._view_logs),
             Menu.SEPARATOR,
-            MenuItem("Restart AEGIS", self._restart_aegis),
-            MenuItem("Quit AEGIS", self._quit)
+            MenuItem("Restart SATURDAY", self._restart_saturday),
+            MenuItem("Quit SATURDAY", self._quit)
         )
         
         try:
-            self.tray = Icon("AEGIS", icon_image, "AEGIS AI OS", menu)
+            self.tray = Icon("SATURDAY", icon_image, "SATURDAY AI OS", menu)
             logger.info("System tray icon created, starting tray loop...")
             self.tray.run()
         except Exception as e:
@@ -82,56 +82,56 @@ class SystemTray:
             
     def _show_window(self):
         
-        logger.info(f"Opening AEGIS dashboard at {AEGIS_URL}")
+        logger.info(f"Opening SATURDAY dashboard at {SATURDAY_URL}")
         try:
                                              
-            webbrowser.open(AEGIS_URL)
+            webbrowser.open(SATURDAY_URL)
         except Exception as e:
             logger.error(f"Failed to open browser: {e}")
                                        
             try:
-                os.startfile(AEGIS_URL)
+                os.startfile(SATURDAY_URL)
             except:
                 pass
         
-    def _wake_aegis(self):
+    def _wake_saturday(self):
         
-        logger.info("Wake AEGIS triggered from tray")
-        if self.aegis_core:
-            self.aegis_core.event_bus.publish("wake_command", {})
+        logger.info("Wake SATURDAY triggered from tray")
+        if self.saturday_core:
+            self.saturday_core.event_bus.publish("wake_command", {})
                                
             try:
-                self.aegis_core.speech.speak("AEGIS is awake")
+                self.saturday_core.speech.speak("SATURDAY is awake")
             except:
                 pass
         
     def _start_voice(self):
         
         logger.info("Voice start triggered from tray")
-        if self.aegis_core:
-            self.aegis_core.event_bus.publish("voice_start", {})
+        if self.saturday_core:
+            self.saturday_core.event_bus.publish("voice_start", {})
                                    
             try:
-                if hasattr(self.aegis_core.voice_id, 'start_listening'):
-                    self.aegis_core.voice_id.start_listening()
+                if hasattr(self.saturday_core.voice_id, 'start_listening'):
+                    self.saturday_core.voice_id.start_listening()
             except Exception as e:
                 logger.error(f"Failed to start voice: {e}")
         
     def _start_camera(self):
         
         logger.info("Camera start triggered from tray")
-        if self.aegis_core:
-            self.aegis_core.event_bus.publish("camera_start", {})
-            self.aegis_core.camera_active = True
+        if self.saturday_core:
+            self.saturday_core.event_bus.publish("camera_start", {})
+            self.saturday_core.camera_active = True
         
     def _toggle_security(self):
         
-        if self.aegis_core:
-            self.aegis_core.security_enabled = not self.aegis_core.security_enabled
-            status = "enabled" if self.aegis_core.security_enabled else "disabled"
+        if self.saturday_core:
+            self.saturday_core.security_enabled = not self.saturday_core.security_enabled
+            status = "enabled" if self.saturday_core.security_enabled else "disabled"
             logger.info(f"Security mode {status}")
             try:
-                self.aegis_core.speech.speak(f"Security mode {status}")
+                self.saturday_core.speech.speak(f"Security mode {status}")
             except:
                 pass
         
@@ -146,15 +146,15 @@ class SystemTray:
         
         status_msg = f"CPU: {cpu}% | Memory: {mem}% | Disk: {disk}%"
         
-        if self.aegis_core:
-            status_msg += f" | Security: {'ON' if self.aegis_core.security_enabled else 'OFF'}"
-            status_msg += f" | Vision: {'ON' if self.aegis_core.vision_enabled else 'OFF'}"
-            status_msg += f" | Voice: {'ON' if self.aegis_core.voice_enabled else 'OFF'}"
+        if self.saturday_core:
+            status_msg += f" | Security: {'ON' if self.saturday_core.security_enabled else 'OFF'}"
+            status_msg += f" | Vision: {'ON' if self.saturday_core.vision_enabled else 'OFF'}"
+            status_msg += f" | Voice: {'ON' if self.saturday_core.voice_enabled else 'OFF'}"
         
         logger.info(f"System Status: {status_msg}")
         
         try:
-            self.aegis_core.speech.speak(f"System status: {status_msg}")
+            self.saturday_core.speech.speak(f"System status: {status_msg}")
         except:
             pass
         
@@ -167,15 +167,15 @@ class SystemTray:
         except:
             webbrowser.open(log_path)
         
-    def _restart_aegis(self):
+    def _restart_saturday(self):
         
         logger.info("Restart triggered from tray")
-        if self.aegis_core:
+        if self.saturday_core:
             try:
-                self.aegis_core.speak("Restarting AEGIS systems")
+                self.saturday_core.speak("Restarting SATURDAY systems")
             except:
                 pass
-            self.aegis_core.event_bus.publish("restart_command", {})
+            self.saturday_core.event_bus.publish("restart_command", {})
         
     def _quit(self):
         
@@ -186,8 +186,8 @@ class SystemTray:
                 self.tray.stop()
             except:
                 pass
-        if self.aegis_core:
-            self.aegis_core.running = False
+        if self.saturday_core:
+            self.saturday_core.running = False
             
     def stop(self):
         
@@ -196,6 +196,6 @@ class SystemTray:
             self._tray_thread.join(timeout=2)
         logger.info("System tray stopped")
 
-def create_system_tray(aegis_core=None):
+def create_system_tray(saturday_core=None):
     
-    return SystemTray(aegis_core)
+    return SystemTray(saturday_core)

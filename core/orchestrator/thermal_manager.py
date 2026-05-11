@@ -1,5 +1,5 @@
 """
-AEGIS Thermal Manager
+SATURDAY Thermal Manager
 Monitors system temperature and prevents overheating
 Implements thermal throttling and emergency cooling strategies
 """

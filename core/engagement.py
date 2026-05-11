@@ -4,7 +4,7 @@ import asyncio
 import random
 import time
 import structlog
-logger = structlog.get_logger("AEGIS.Engagement")
+logger = structlog.get_logger("SATURDAY.Engagement")
 class EngagementManager:
     def __init__(self, event_bus, idle_seconds: int = 120):
         self.event_bus = event_bus
@@ -20,9 +20,9 @@ class EngagementManager:
             "Shall I run a health check on the system?",
         ]
         self.banter_pairs = [
-            ("AEGIS", "EDITH, give me a quick security readout."),
+            ("SATURDAY", "EDITH, give me a quick security readout."),
             ("EDITH", "Perimeter nominal. Want me to watch for anomalies?"),
-            ("AEGIS", "Great. I can cue some focus music if you like."),
+            ("SATURDAY", "Great. I can cue some focus music if you like."),
         ]
     def _on_user_activity(self, *_):
         self._last_user_ts = time.time()

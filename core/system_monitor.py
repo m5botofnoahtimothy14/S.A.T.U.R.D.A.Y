@@ -8,7 +8,7 @@ from datetime import datetime
 from collections import deque
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.SystemMonitor")
+logger = logging.getLogger("SATURDAY.SystemMonitor")
 
 class SystemMonitor:
     def __init__(self, event_bus: EventBus):
@@ -172,7 +172,7 @@ class SystemMonitor:
             'ids': 'Active' if network_security else 'Inactive',
             'dl_defense': 'Neural Processing',
             'neural_network': {
-                'model': 'AEGIS-ANN-v3.0',
+                'model': 'SATURDAY-ANN-v3.0',
                 'accuracy': 99.7,
                 'threats_blocked_today': len(self.threats_detected),
                 'last_detection': self.threats_detected[-1]['timestamp'] if self.threats_detected else None
@@ -483,7 +483,7 @@ class SystemMonitor:
         
         return {
             'model_info': {
-                'name': 'AEGIS-ANN-Security',
+                'name': 'SATURDAY-ANN-Security',
                 'version': '3.0.0',
                 'architecture': 'ResNet50 + LSTM Ensemble',
                 'framework': 'PyTorch',

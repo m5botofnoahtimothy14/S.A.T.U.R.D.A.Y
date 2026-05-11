@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 import structlog
 
-logger = structlog.get_logger("AEGIS.ConvDL")
+logger = structlog.get_logger("SATURDAY.ConvDL")
 
 class ConversationMemory:
     def __init__(self, max_memory: int = 1000):
@@ -20,10 +20,10 @@ class ConversationMemory:
         self.user_profiles = defaultdict(dict)
         self.facts_learned = {}
 
-    def add_exchange(self, user_msg: str, aegis_msg: str, context: Dict | None = None):
+    def add_exchange(self, user_msg: str, saturday_msg: str, context: Dict | None = None):
         exchange = {
             "user": user_msg,
-            "aegis": aegis_msg,
+            "saturday": saturday_msg,
             "timestamp": time.time(),
             "context": context or {},
         }
@@ -64,9 +64,9 @@ class ResponseGenerator:
         return response.replace("{user}", user_name)
 
 class ConversationalDLEngine:
-    def __init__(self, event_bus=None, aegis_core=None):
+    def __init__(self, event_bus=None, saturday_core=None):
         self.event_bus = event_bus
-        self.aegis_core = aegis_core
+        self.saturday_core = saturday_core
         self.memory = ConversationMemory()
         self.response_gen = ResponseGenerator()
         self.conversation_active = False
@@ -76,7 +76,7 @@ class ConversationalDLEngine:
 
         self._init_subsystem_connections()
         self._subscribe_to_events()
-        logger.info("AEGIS Conversational DL Engine initialized")
+        logger.info("SATURDAY Conversational DL Engine initialized")
 
     def _init_subsystem_connections(self):
         self.subsystems = {
@@ -110,7 +110,7 @@ class ConversationalDLEngine:
         else:
             command = str(data or "").strip()
 
-        if not command or command.lower() in {"aegis", "edith"}:
+        if not command or command.lower() in {"saturday", "edith"}:
             return
 
         try:
@@ -162,7 +162,7 @@ class ConversationalDLEngine:
             "task_executed": task_result is not None,
             "task_result": task_result,
             "conversation_turns": self.conversation_turns,
-            "aegis_thinking": self._get_thought_process(intent, entities),
+            "saturday_thinking": self._get_thought_process(intent, entities),
         }
 
     def _preprocess_input(self, text: str) -> str:
@@ -249,7 +249,7 @@ class ConversationalDLEngine:
 
     async def _handle_music(self, entities: Dict, user_input: str) -> Dict:
         action = entities.get("music_action", "play")
-        music = getattr(self.aegis_core, "music", None) if self.aegis_core else None
+        music = getattr(self.saturday_core, "music", None) if self.saturday_core else None
         if not music or not hasattr(music, "play_request"):
             return {"status": "unavailable", "action": action, "reason": "Music service is not configured."}
 
@@ -261,7 +261,7 @@ class ConversationalDLEngine:
             return {"status": "error", "action": action, "reason": str(e)}
 
     async def _handle_weather(self, entities: Dict) -> Dict:
-        weather_service = getattr(self.aegis_core, "weather_service", None) if self.aegis_core else None
+        weather_service = getattr(self.saturday_core, "weather_service", None) if self.saturday_core else None
         if not weather_service:
             return {"status": "unavailable", "reason": "Weather service is not configured."}
         try:
@@ -272,7 +272,7 @@ class ConversationalDLEngine:
 
     async def _handle_search(self, query: str) -> Dict:
         query_clean = query.replace("search", "").replace("find", "").replace("look up", "").strip()
-        search_service = getattr(self.aegis_core, "web_search", None) if self.aegis_core else None
+        search_service = getattr(self.saturday_core, "web_search", None) if self.saturday_core else None
         if not search_service or not hasattr(search_service, "search"):
             return {"query": query_clean, "status": "unavailable", "reason": "Search service is not configured."}
         try:
@@ -282,7 +282,7 @@ class ConversationalDLEngine:
             return {"query": query_clean, "status": "error", "reason": str(e)}
 
     async def _handle_calendar(self, entities: Dict, user_input: str) -> Dict:
-        social_agent = getattr(self.aegis_core, "social_agent", None) if self.aegis_core else None
+        social_agent = getattr(self.saturday_core, "social_agent", None) if self.saturday_core else None
         if not social_agent or not hasattr(social_agent, "check_schedules"):
             return {"status": "unavailable", "reason": "Calendar integration is not configured."}
         try:
@@ -293,7 +293,7 @@ class ConversationalDLEngine:
 
     async def _handle_home_control(self, entities: Dict, user_input: str) -> Dict:
         action = entities.get("home_action", "on")
-        homebot = getattr(self.aegis_core, "homebot", None) if self.aegis_core else None
+        homebot = getattr(self.saturday_core, "homebot", None) if self.saturday_core else None
         if not homebot or not hasattr(homebot, "execute_voice_command"):
             return {"action": action, "status": "unavailable", "reason": "HomeBot integration is not configured."}
         try:

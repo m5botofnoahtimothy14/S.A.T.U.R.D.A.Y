@@ -4,7 +4,7 @@ import subprocess
 import logging
 import re
 from core.event_bus import EventBus
-logger = logging.getLogger("AEGIS.RemoteDesktop")
+logger = logging.getLogger("SATURDAY.RemoteDesktop")
 class RemoteDesktopManager:
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus

@@ -5,7 +5,7 @@ import psutil
 import logging
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.USBWatchdog")
+logger = logging.getLogger("SATURDAY.USBWatchdog")
 
 class USBWatchdog:
     def __init__(self, event_bus: EventBus, interval: float = 5.0):

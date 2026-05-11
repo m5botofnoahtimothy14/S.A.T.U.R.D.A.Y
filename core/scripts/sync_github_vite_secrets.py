@@ -11,7 +11,7 @@ REQUIRED_KEYS = [
     "VITE_FIREBASE_STORAGE_BUCKET",
     "VITE_FIREBASE_MESSAGING_SENDER_ID",
     "VITE_FIREBASE_APP_ID",
-    "VITE_AEGIS_GATEWAY_URL",
+    "VITE_SATURDAY_GATEWAY_URL",
 ]
 
 
@@ -28,7 +28,7 @@ def read_env(path: Path) -> dict[str, str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Sync VITE_* values from local env file to GitHub Actions secrets.")
-    parser.add_argument("--env-file", default="aegis-control-panel/.env")
+    parser.add_argument("--env-file", default="saturday-control-panel/.env")
     parser.add_argument("--repo", default="", help="Optional owner/repo. If omitted, gh current repo is used.")
     args = parser.parse_args()
 

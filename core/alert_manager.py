@@ -2,7 +2,7 @@
 
 import time
 import structlog
-logger = structlog.get_logger("AEGIS.AlertManager")
+logger = structlog.get_logger("SATURDAY.AlertManager")
 class AlertManager:
     def __init__(self, event_bus):
         self.event_bus = event_bus

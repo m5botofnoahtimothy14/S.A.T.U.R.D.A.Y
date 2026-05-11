@@ -22,7 +22,7 @@ def init_firebase(service_account_path: str | None, project_id: str | None) -> N
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Set Firebase custom role claims for AEGIS access control")
+    parser = argparse.ArgumentParser(description="Set Firebase custom role claims for SATURDAY access control")
     parser.add_argument("--uid", required=True)
     parser.add_argument("--role", required=True, choices=sorted(VALID_ROLES))
     parser.add_argument("--service-account", default=os.getenv("FIREBASE_SERVICE_ACCOUNT"))

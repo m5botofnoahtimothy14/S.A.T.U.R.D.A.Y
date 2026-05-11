@@ -39,7 +39,7 @@ try:
 except Exception as e:
     print("[HW] init error:", e)
 
-print("AEGIS HomeBot SAFE mode ready")
+print("SATURDAY HomeBot SAFE mode ready")
 
 while True:
     try:

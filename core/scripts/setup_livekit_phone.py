@@ -55,14 +55,14 @@ async def purchase_number(phone_number: str, dispatch_rule_id: str = None):
     
     await lk_api.aclose()
 
-async def create_dispatch_rule(room_prefix: str = "aegis"):
+async def create_dispatch_rule(room_prefix: str = "saturday"):
     
     lk_api = get_api()
     
     trunk = await lk_api.sip.create_sip_inbound_trunk(
         api.CreateSIPInboundTrunkRequest(
             trunk=api.SIPInboundTrunkInfo(
-                name="AEGIS Phone Number",
+                name="SATURDAY Phone Number",
                 numbers=[],                                         
                 krisp_enabled=True,                      
             )

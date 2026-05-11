@@ -4,7 +4,7 @@ from sensors.homebot_sensors import HomeBotSensors as Sensors
 import math
 import time
 
-logger = logging.getLogger("AEGIS.HomeBot.Navigation")
+logger = logging.getLogger("SATURDAY.HomeBot.Navigation")
 
 class Navigation:
     def __init__(self, sensors: Sensors):

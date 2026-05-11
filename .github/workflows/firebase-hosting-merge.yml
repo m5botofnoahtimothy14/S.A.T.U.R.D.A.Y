@@ -9,12 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Dependencies
-        run: cd core/aegis-control-panel && npm install
+        run: cd core/saturday-control-panel && npm install
       - name: Build Dashboard
-        run: cd core/aegis-control-panel && npm run build
+        run: cd core/saturday-control-panel && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_AEGIS_OS_75256 }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SATURDAY_OS_75256 }}'
           channelId: live
-          projectId: aegis-os-75256
+          projectId: saturday-os-75256

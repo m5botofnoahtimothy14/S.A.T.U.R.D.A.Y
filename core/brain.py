@@ -4,7 +4,7 @@ import logging
 import json
 import os
 from core.event_bus import EventBus
-logger = logging.getLogger("AEGIS.Core.Brain")
+logger = logging.getLogger("SATURDAY.Core.Brain")
 class LinkedBrain:
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
@@ -13,8 +13,8 @@ class LinkedBrain:
         self.context = {
             "current_user_type": "Main",
             "user_name": "Sir",
-            "system_hierarchy": "AEGIS",
-            "interface_mode": "AEGIS",
+            "system_hierarchy": "SATURDAY",
+            "interface_mode": "SATURDAY",
             "sub_mode": "Normal",
             "mood_context": "Neutral",
             "security_level": "Standard"
@@ -28,7 +28,7 @@ class LinkedBrain:
             self.dl_core = DeepLearningCore(self.event_bus)
             self.pattern_recognition = PatternRecognition(self.event_bus, self.dl_core)
             self.dl_active = True
-            logger.info("Deep Learning Brain initialized - AEGIS is now truly intelligent")
+            logger.info("Deep Learning Brain initialized - SATURDAY is now truly intelligent")
         except Exception as e:
             logger.warning(f"DL Brain init failed: {e}")
             self.dl_core = None
@@ -56,14 +56,14 @@ class LinkedBrain:
                 if user_type in ["Guest", "Family"]:
                     self.context["interface_mode"] = "EDITH"
                 else:
-                    self.context["interface_mode"] = "AEGIS"
+                    self.context["interface_mode"] = "SATURDAY"
             logger.info(f"DL Brain processed user detection: {decision}")
         else:
             self.context["current_user_type"] = user_type
             if user_type in ["Guest", "Family"]:
                 self.context["interface_mode"] = "EDITH"
             else:
-                self.context["interface_mode"] = "AEGIS"
+                self.context["interface_mode"] = "SATURDAY"
     def set_sub_mode(self, mode: str):
         valid_modes = ["Normal", "Doctor", "Traveling", "Public"]
         if mode in valid_modes:
@@ -101,7 +101,7 @@ class LinkedBrain:
             if result.get("confidence", 0) > 0.6:
                 return f"{user_name} - {result.get('reasoning', '')}"
         if user_type == "Guest":
-            return f"Welcome to AEGIS. I am EDITH, your guest interface. How can I assist you?"
+            return f"Welcome to SATURDAY. I am EDITH, your guest interface. How can I assist you?"
         if interface == "EDITH":
             if sub_mode == "Doctor":
                 return f"EDITH Doctor Mode active. Analyzing vitals for {user_name}."
@@ -110,7 +110,7 @@ class LinkedBrain:
             elif sub_mode == "Public":
                 return f"EDITH Public Interface active. Minimal footprint maintained."
             return f"Hello, {user_name}. EDITH subdomain active for normal conversation."
-        return f"AEGIS OS: Main Core re-engaged. Welcome back, {user_name}."
+        return f"SATURDAY OS: Main Core re-engaged. Welcome back, {user_name}."
     def get_status(self) -> dict:
         status = {
             "context": self.context,

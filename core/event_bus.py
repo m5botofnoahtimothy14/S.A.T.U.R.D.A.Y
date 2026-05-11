@@ -5,7 +5,7 @@ import inspect
 import threading
 import structlog
 from typing import Callable, Dict, List, Any
-logger = structlog.get_logger("AEGIS.EventBus")
+logger = structlog.get_logger("SATURDAY.EventBus")
 class EventBus:
     def __init__(self):
         self.subscribers: Dict[str, List[Callable]] = {}

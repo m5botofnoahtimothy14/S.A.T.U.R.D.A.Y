@@ -7,7 +7,7 @@ import os
 import time
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.Social")
+logger = logging.getLogger("SATURDAY.Social")
 
 class SocialAgent:
     
@@ -20,8 +20,8 @@ class SocialAgent:
         self.email_user = os.getenv("EMAIL_USER1", "").strip()
         self.email_pass = os.getenv("EMAIL_PASS1", "").strip()
         self.imap_server = os.getenv("IMAP_SERVER", "imap.gmail.com").strip()
-        self.calendar_ics_url = os.getenv("AEGIS_CALENDAR_ICS_URL", "").strip()
-        self.calendar_ics_path = os.getenv("AEGIS_CALENDAR_ICS_PATH", "").strip()
+        self.calendar_ics_url = os.getenv("SATURDAY_CALENDAR_ICS_URL", "").strip()
+        self.calendar_ics_path = os.getenv("SATURDAY_CALENDAR_ICS_PATH", "").strip()
         
         self.event_bus.subscribe("power_mode", self._on_power_mode)
         logger.info("Social Agent initialized.")

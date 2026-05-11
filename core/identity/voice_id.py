@@ -3,7 +3,7 @@ import logging
 import threading
 import speech_recognition as sr
 
-logger = logging.getLogger("AEGIS.Identity.VoiceID")
+logger = logging.getLogger("SATURDAY.Identity.VoiceID")
 
 class VoiceID:
     def __init__(self, event_bus):

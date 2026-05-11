@@ -3,7 +3,7 @@ import pyautogui
 import time
 import logging
 
-logger = logging.getLogger("AEGIS.ScreenNav")
+logger = logging.getLogger("SATURDAY.ScreenNav")
 logger.setLevel(logging.INFO)
 
 class ScreenNavigator:

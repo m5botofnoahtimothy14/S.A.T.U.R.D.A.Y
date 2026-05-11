@@ -2,7 +2,7 @@
 import structlog
 from core.event_bus import EventBus
 
-logger = structlog.get_logger("AEGIS.UI")
+logger = structlog.get_logger("SATURDAY.UI")
 
 class WebUI:
     def __init__(self, event_bus: EventBus):

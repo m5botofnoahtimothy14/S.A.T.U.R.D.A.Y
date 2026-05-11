@@ -2,7 +2,7 @@
 
 import structlog
 from core.event_bus import EventBus
-logger = structlog.get_logger("AEGIS.AdminMood")
+logger = structlog.get_logger("SATURDAY.AdminMood")
 class AdminMood:
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus

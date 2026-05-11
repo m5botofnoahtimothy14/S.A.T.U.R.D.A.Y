@@ -4,7 +4,7 @@ import threading
 import time
 import random
 
-logger = logging.getLogger("AEGIS.Health.Hub")
+logger = logging.getLogger("SATURDAY.Health.Hub")
 
 class SensorHub:
     def __init__(self, event_bus):

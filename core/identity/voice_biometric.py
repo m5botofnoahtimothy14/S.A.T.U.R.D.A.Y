@@ -7,7 +7,7 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 
-logger = logging.getLogger("AEGIS.Identity.VoiceBiometric")
+logger = logging.getLogger("SATURDAY.Identity.VoiceBiometric")
 
 
 class VoiceBiometricEngine:

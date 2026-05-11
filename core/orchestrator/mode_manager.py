@@ -1,5 +1,5 @@
 """
-AEGIS Mode Manager
+SATURDAY Mode Manager
 Handles power/performance modes: LOW_POWER, BALANCED, PERFORMANCE
 Dynamically adjusts system behavior based on mode and resource state
 """

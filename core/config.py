@@ -11,14 +11,14 @@ class ConfigManager:
         self.load_config()
     def create_default_config(self):
         default_config = {
-            "wake_word": "aegis",
+            "wake_word": "saturday",
             "edith_wake_word": "edith",
             "voices": {
-                "aegis": {"gender": "male", "rate": 160, "volume": 1.0},
+                "saturday": {"gender": "male", "rate": 160, "volume": 1.0},
                 "edith": {"gender": "female", "rate": 170, "volume": 1.0}
             },
             "cloud": {
-                "endpoint": "https://aegis-cloud.example.com",
+                "endpoint": "https://saturday-cloud.example.com",
                 "sync_interval": 30
             },
             "homebot": {

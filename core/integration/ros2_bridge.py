@@ -1,7 +1,7 @@
 ﻿import asyncio
 import structlog
 
-logger = structlog.get_logger("AEGIS.ROS2")
+logger = structlog.get_logger("SATURDAY.ROS2")
 
 class ROS2Bridge:
     
@@ -11,8 +11,8 @@ class ROS2Bridge:
         self.node = None
         self.publisher = None
         self.command_subscription = None
-        self.speech_topic = "aegis/speech"
-        self.command_topic = "aegis/command"
+        self.speech_topic = "saturday/speech"
+        self.command_topic = "saturday/command"
         
         try:
             import rclpy
@@ -53,7 +53,7 @@ class ROS2Bridge:
             if not self.rclpy.ok():
                 self.rclpy.init()
                 
-            self.node = self.rclpy.create_node('aegis_os_bridge')
+            self.node = self.rclpy.create_node('saturday_os_bridge')
             
             self.publisher = self.node.create_publisher(self.StringMsg, self.speech_topic, 10)
             self.command_subscription = self.node.create_subscription(
@@ -63,7 +63,7 @@ class ROS2Bridge:
                 10,
             )
             
-            logger.info("ROS2 Node 'aegis_os_bridge' started.")
+            logger.info("ROS2 Node 'saturday_os_bridge' started.")
             
             while self.rclpy.ok():
                 self.rclpy.spin_once(self.node, timeout_sec=0.01)

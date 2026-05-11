@@ -5,7 +5,7 @@ import structlog
 from typing import Dict, List, TypedDict, Union, Optional
 from langgraph.graph import StateGraph, END
 from pydantic import BaseModel
-logger = structlog.get_logger("AEGIS.Pipeline")
+logger = structlog.get_logger("SATURDAY.Pipeline")
 class PipelineState(TypedDict):
     user_input: str
     source: str
@@ -14,7 +14,7 @@ class PipelineState(TypedDict):
     lang_hint: Optional[str]
     metadata: Dict
     status: str
-class AEGISPipeline:
+class SATURDAYPipeline:
     def __init__(self, llm_engine, speech_manager, event_bus, task_manager, learning_manager=None):
         self.llm = llm_engine
         self.speech = speech_manager
@@ -30,7 +30,7 @@ class AEGISPipeline:
             except: pass
         self.use_autogen = self.config.get("ai", {}).get("use_autogen", False)
         self.graph = self._build_graph()
-        logger.info("AEGIS LangGraph pipeline initialized.", use_autogen=self.use_autogen)
+        logger.info("SATURDAY LangGraph pipeline initialized.", use_autogen=self.use_autogen)
     def _build_graph(self):
         workflow = StateGraph(PipelineState)
         workflow.add_node("input_planner", self._node_planner)
@@ -62,7 +62,7 @@ class AEGISPipeline:
         if not self.llm:
             return ""
         prompt = (
-            "You are the AEGIS planner. "
+            "You are the SATURDAY planner. "
             "Return at most three short lines. "
             "Use 'TASK:' for concrete OS or device actions. "
             "Use 'SEARCH:' when external information is required. "
@@ -100,7 +100,7 @@ class AEGISPipeline:
         autogen_info = f"\nStrategist plan: {state['metadata'].get('autogen_plan', '')}" if self.use_autogen else ""
         long_term = self.learning.get_summaries_text() if self.learning else ""
         return (
-            "You are AEGIS, a warm, concise, human-like AI operating system. "
+            "You are SATURDAY, a warm, concise, human-like AI operating system. "
             f"{autogen_info}\n\n"
             f"User input: {state['user_input']}\n"
             f"Contextual knowledge: {long_term}\n\n"

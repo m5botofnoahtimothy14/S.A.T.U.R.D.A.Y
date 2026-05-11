@@ -4,7 +4,7 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
-DEFAULT_MODEL = os.getenv("POSE_LANDMARKER_PATH", "D:/AEGIS/models/pose_landmarker_lite.task")
+DEFAULT_MODEL = os.getenv("POSE_LANDMARKER_PATH", "D:/SATURDAY/models/pose_landmarker_lite.task")
 
 class PoseTracker:
     

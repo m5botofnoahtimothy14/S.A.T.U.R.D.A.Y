@@ -1,5 +1,5 @@
 """
-AEGIS Enhanced Event Bus
+SATURDAY Enhanced Event Bus
 Priority-based pub/sub with event filtering and async support
 """
 

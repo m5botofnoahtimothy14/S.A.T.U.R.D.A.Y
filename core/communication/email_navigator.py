@@ -6,7 +6,7 @@ from core.event_bus import EventBus
 import os
 import itertools
 
-logger = structlog.get_logger("AEGIS.Communication.Email")
+logger = structlog.get_logger("SATURDAY.Communication.Email")
 
 class EmailNavigator:
     def __init__(self, event_bus: EventBus):
@@ -32,7 +32,7 @@ class EmailNavigator:
 
     async def send_email(self, data: dict):
         recipient = data.get("to")
-        subject = data.get("subject", "AEGIS Notification")
+        subject = data.get("subject", "SATURDAY Notification")
         body = data.get("body", "")
 
         if not self.account_cycle:

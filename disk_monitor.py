@@ -5,7 +5,7 @@ import psutil
 import logging
 from datetime import datetime
 
-logger = logging.getLogger("AEGIS.DiskMonitor")
+logger = logging.getLogger("SATURDAY.DiskMonitor")
 
                                       
 WARNING_THRESHOLD = 80.0                        
@@ -63,13 +63,13 @@ def get_cleanup_recommendations():
         temp_size = sum(os.path.getsize(os.path.join(temp, f)) 
                        for f in os.listdir(temp) 
                        if os.path.isfile(os.path.join(temp, f)) 
-                       and 'aegis' not in f.lower()
+                       and 'saturday' not in f.lower()
                        and 'antigrav' not in f.lower()) / (1024**2)
         recommendations.append({
             'path': temp,
             'size_mb': temp_size,
             'safe': True,
-            'description': 'Temporary files (excluding AEGIS)'
+            'description': 'Temporary files (excluding SATURDAY)'
         })
     
                   
@@ -133,7 +133,7 @@ def auto_cleanup():
                                                          
     if os.path.exists(temp):
         for f in os.listdir(temp):
-            if 'aegis' in f.lower() or 'antigrav' in f.lower():
+            if 'saturday' in f.lower() or 'antigrav' in f.lower():
                 continue
             fpath = os.path.join(temp, f)
             try:
@@ -175,13 +175,13 @@ def set_disk_alert():
                                                     
     return '''
 # Run this as Administrator to set up disk monitoring:
-schtasks /create /tn "AEGIS_DiskMonitor" /tr "python D:\\AEGIS\\disk_monitor.py" /sc hourly /ru Administrator
+schtasks /create /tn "SATURDAY_DiskMonitor" /tr "python D:\\SATURDAY\\disk_monitor.py" /sc hourly /ru Administrator
 '''
 
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("AEGIS Disk Space Monitor")
+    print("SATURDAY Disk Space Monitor")
     print("=" * 60)
     
     disks = get_disk_info()

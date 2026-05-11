@@ -4,7 +4,7 @@ import numpy as np
 import logging
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.Health.rPPG")
+logger = logging.getLogger("SATURDAY.Health.rPPG")
 
 class RPPGEngine:
     

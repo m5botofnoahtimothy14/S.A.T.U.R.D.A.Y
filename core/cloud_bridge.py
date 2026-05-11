@@ -7,9 +7,9 @@ import json
 import threading
 import os
 from core.event_bus import EventBus
-logger = logging.getLogger("AEGIS.CloudBridge")
+logger = logging.getLogger("SATURDAY.CloudBridge")
 class CloudBridge:
-    def __init__(self, event_bus: EventBus, project_id: str, node_id: str = "aegis-primary"):
+    def __init__(self, event_bus: EventBus, project_id: str, node_id: str = "saturday-primary"):
         self.event_bus = event_bus
         self.project_id = project_id
         self.node_id = node_id

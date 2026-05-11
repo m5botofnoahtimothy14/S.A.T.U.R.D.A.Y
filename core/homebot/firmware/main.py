@@ -104,7 +104,7 @@ def process_command(cmd):
     elif cmd == "STATUS":
         return "STATUS:OK|HOMEBOT_ONLINE"
     elif cmd == "INFO":
-        return "AEGIS_HOMEBOT_V1.0|ESP32|MOTORS:2"
+        return "SATURDAY_HOMEBOT_V1.0|ESP32|MOTORS:2"
     elif cmd == "HELP":
         return "FWD|REV|LFT|RGT|RTL|RTR|STP|PING|STATUS|INFO"
     elif cmd == "FWD":
@@ -137,7 +137,7 @@ def main():
     uart = machine.UART(0, 115200)
     uart.init(115200, bits=8, parity=None, stop=1)
     
-    print("AEGIS_HOMEBOT_READY")
+    print("SATURDAY_HOMEBOT_READY")
     print("ESP32 MicroPython v1.0")
     
     buffer = ""

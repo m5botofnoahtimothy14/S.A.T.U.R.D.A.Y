@@ -7,9 +7,9 @@ import asyncio
 from typing import Any, Dict, List, Optional
 from collections import deque, defaultdict
 import numpy as np
-from core.logging_config import AEGISLogger
+from core.logging_config import SATURDAYLogger
 
-logger = AEGISLogger.get_logger("ML.Core", "ml")
+logger = SATURDAYLogger.get_logger("ML.Core", "ml")
 
 class SubsystemNeuralNetwork:
     

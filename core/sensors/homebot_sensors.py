@@ -7,14 +7,14 @@ import threading
 import asyncio
 import os
 
-logger = logging.getLogger("AEGIS.Sensors.HomeBot")
+logger = logging.getLogger("SATURDAY.Sensors.HomeBot")
 
 class HomeBotSensors:
     def __init__(self, event_bus: EventBus, mqtt_broker="localhost"):
         self.event_bus = event_bus
         self.mqtt_broker = mqtt_broker
         self.mqtt_port = int(os.getenv("MQTT_PORT", "1883"))
-        self.client = mqtt.Client("AEGIS-Sensors")
+        self.client = mqtt.Client("SATURDAY-Sensors")
         self.client.on_message = self._on_mqtt_message
         self.latest_readings = {}
         

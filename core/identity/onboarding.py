@@ -4,7 +4,7 @@ from typing import Dict, Any
 from core.event_bus import EventBus
 from .database import SessionLocal, UserProfile
 
-logger = logging.getLogger("AEGIS.Identity.Onboarding")
+logger = logging.getLogger("SATURDAY.Identity.Onboarding")
 
 class OnboardingManager:
     
@@ -22,7 +22,7 @@ class OnboardingManager:
         }
         
         self.event_bus.publish("onboarding_started", {"username": username})
-        return f"Welcome {username}. Let's begin the AEGIS initialization sequence."
+        return f"Welcome {username}. Let's begin the SATURDAY initialization sequence."
 
     async def collect_user_info(self, username: str, info: Dict[str, Any]):
         
@@ -55,7 +55,7 @@ class OnboardingManager:
             logger.info(f"Onboarding finalized for {username}")
             
             self.event_bus.publish("user_onboarded", {"username": username, "id": new_user.id})
-            return f"Onboarding complete. Welcome to the AEGIS network, {username}."
+            return f"Onboarding complete. Welcome to the SATURDAY network, {username}."
         except Exception as e:
             logger.error(f"Error finalizing onboarding for {username}: {str(e)}")
             return f"Failed to finalize onboarding: {str(e)}"

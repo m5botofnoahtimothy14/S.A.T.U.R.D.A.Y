@@ -1,5 +1,5 @@
 """
-AEGIS Resource Manager
+SATURDAY Resource Manager
 Monitors CPU, RAM, Disk I/O, and System Temperature
 Provides real-time resource metrics and alerts
 """
@@ -87,7 +87,7 @@ class ResourceAlert:
 
 class ResourceManager:
     """
-    Central resource monitoring system for AEGIS.
+    Central resource monitoring system for SATURDAY.
     Tracks CPU, RAM, Disk I/O, and Temperature.
     Maintains history and triggers alerts.
     """

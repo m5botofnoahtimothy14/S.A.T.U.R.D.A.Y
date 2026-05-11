@@ -5,8 +5,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$allowRule = "AEGIS Gateway Allow LAN $GatewayPort"
-$blockRule = "AEGIS Gateway Block Internet $GatewayPort"
+$allowRule = "SATURDAY Gateway Allow LAN $GatewayPort"
+$blockRule = "SATURDAY Gateway Block Internet $GatewayPort"
 
 Get-NetFirewallRule -DisplayName $allowRule -ErrorAction SilentlyContinue | Remove-NetFirewallRule -ErrorAction SilentlyContinue
 Get-NetFirewallRule -DisplayName $blockRule -ErrorAction SilentlyContinue | Remove-NetFirewallRule -ErrorAction SilentlyContinue
@@ -29,5 +29,5 @@ New-NetFirewallRule `
     -RemoteAddress Internet `
     -Profile Any | Out-Null
 
-Write-Host "Firewall configured for AEGIS API port $GatewayPort"
+Write-Host "Firewall configured for SATURDAY API port $GatewayPort"
 Write-Host "Allowed subnet: $AllowedSubnet"

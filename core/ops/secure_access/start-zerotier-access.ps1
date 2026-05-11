@@ -22,7 +22,7 @@ if (-not $adapter) {
     throw "ZeroTier interface not detected after join. Verify network authorization in your ZeroTier controller."
 }
 
-$ruleName = "AEGIS Gateway ZeroTier $GatewayPort"
+$ruleName = "SATURDAY Gateway ZeroTier $GatewayPort"
 Get-NetFirewallRule -DisplayName $ruleName -ErrorAction SilentlyContinue | Remove-NetFirewallRule -ErrorAction SilentlyContinue
 New-NetFirewallRule `
     -DisplayName $ruleName `
@@ -34,4 +34,4 @@ New-NetFirewallRule `
     -Profile Any | Out-Null
 
 Write-Host "ZeroTier network joined: $NetworkId"
-Write-Host "Firewall allows AEGIS API on interface '$($adapter.Name)' port $GatewayPort"
+Write-Host "Firewall allows SATURDAY API on interface '$($adapter.Name)' port $GatewayPort"

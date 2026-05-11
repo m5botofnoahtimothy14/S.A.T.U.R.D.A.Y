@@ -14,7 +14,7 @@ time.sleep(2)
 if ser.in_waiting:
     ser.read(ser.in_waiting)
 
-with open('homebot/M5STACK_AEGIS/main.py', 'r') as f:
+with open('homebot/M5STACK_SATURDAY/main.py', 'r') as f:
     lines = f.readlines()
 
 print(f'Lines: {len(lines)}')

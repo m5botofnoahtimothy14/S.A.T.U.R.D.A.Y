@@ -5,7 +5,7 @@ import os
 from urllib.parse import quote_plus
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.Services.MusicManager")
+logger = logging.getLogger("SATURDAY.Services.MusicManager")
 
 class MusicManager:
     def __init__(self, event_bus: EventBus):
@@ -43,7 +43,7 @@ class MusicManager:
         }
         
         self.local_music_path = "D:/Music"
-        self.provider = os.getenv("AEGIS_MUSIC_PROVIDER", "youtube").strip().lower()
+        self.provider = os.getenv("SATURDAY_MUSIC_PROVIDER", "youtube").strip().lower()
         logger.info("MusicManager ready with mood playlists.")
 
     def _on_voice_command(self, text: str):

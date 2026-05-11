@@ -2,7 +2,7 @@
 
 from core.state import SystemState
 import logging
-logger = logging.getLogger("AEGIS.RBAC")
+logger = logging.getLogger("SATURDAY.RBAC")
 logger.setLevel(logging.INFO)
 class RBAC:
     def __init__(self, system_state: SystemState):

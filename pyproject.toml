@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "aegis-ai"
+name = "saturday-ai"
 version = "1.0.0"
 description = "Advanced Engine for Global Integrated Systems"
 dependencies = [

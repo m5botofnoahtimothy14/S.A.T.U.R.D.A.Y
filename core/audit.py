@@ -5,7 +5,7 @@ from core.state import SystemState
 import threading
 import time
 import json
-logger = logging.getLogger("AEGIS.Audit")
+logger = logging.getLogger("SATURDAY.Audit")
 logger.setLevel(logging.INFO)
 class AuditLogger:
     def __init__(self, state: SystemState):

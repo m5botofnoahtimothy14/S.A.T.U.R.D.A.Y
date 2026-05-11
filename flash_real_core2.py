@@ -38,7 +38,7 @@ def detect_com4():
         print("❌ pyserial not installed")
         return False
 def prepare_firmware():
-    firmware_path = os.path.join(os.path.dirname(__file__), 'homebot', 'AEGIS_Core2_Firmware.py')
+    firmware_path = os.path.join(os.path.dirname(__file__), 'homebot', 'SATURDAY_Core2_Firmware.py')
     if not os.path.exists(firmware_path):
         print(f"❌ Firmware file not found: {firmware_path}")
         return None

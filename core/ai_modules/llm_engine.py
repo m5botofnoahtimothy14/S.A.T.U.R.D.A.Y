@@ -4,7 +4,7 @@ import json
 import structlog
 import asyncio
 
-logger = structlog.get_logger("AEGIS.AI.LLM")
+logger = structlog.get_logger("SATURDAY.AI.LLM")
 
 class LLMEngine:
     def __init__(self, model: str = "llama3"):
@@ -12,7 +12,7 @@ class LLMEngine:
         self._ollama = None
         self._llama = None
         self._init_error = None
-        self.strict_prod = os.getenv("AEGIS_STRICT_PROD", "false").strip().lower() in {
+        self.strict_prod = os.getenv("SATURDAY_STRICT_PROD", "false").strip().lower() in {
             "1",
             "true",
             "yes",
@@ -33,7 +33,7 @@ class LLMEngine:
         self.model_path = ai_config.get("model_path", "models/llama-3-8b-instruct.Q4_K_M.gguf")
         self.n_ctx = ai_config.get("n_ctx", 2048)
         self.n_gpu_layers = ai_config.get("n_gpu_layers", -1)
-        self.preload = self.strict_prod or os.getenv("AEGIS_PRELOAD_LLM", "false").strip().lower() in {
+        self.preload = self.strict_prod or os.getenv("SATURDAY_PRELOAD_LLM", "false").strip().lower() in {
             "1",
             "true",
             "yes",

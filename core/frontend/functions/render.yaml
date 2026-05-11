@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: aegis-api
+    name: saturday-api
     env: node
     region: oregon
     buildCommand: npm install

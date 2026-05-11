@@ -6,7 +6,7 @@ import threading
 from collections import deque
 from typing import Any, Dict, Optional
 import structlog
-logger = structlog.get_logger("AEGIS.Learning")
+logger = structlog.get_logger("SATURDAY.Learning")
 class LearningManager:
     def __init__(self, event_bus, llm_engine, task_manager, log_path: str = "data/knowledge.jsonl"):
         self.event_bus = event_bus
@@ -46,7 +46,7 @@ class LearningManager:
             for item in items:
                 text_chunks.append(f"{item['event']}: {str(item['data'])[:400]}")
             prompt = (
-                "Summarize these AEGIS interactions into 3 bullet points of what was learned/observed. "
+                "Summarize these SATURDAY interactions into 3 bullet points of what was learned/observed. "
                 "Focus on user preferences, intents, and system issues.\n"
                 + "\n".join(text_chunks)
             )

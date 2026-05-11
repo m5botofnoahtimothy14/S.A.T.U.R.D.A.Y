@@ -1,15 +1,15 @@
-# AEGIS AI OS - Quick Start Guide
+# SATURDAY AI OS - Quick Start Guide
 
 ## Website (Always Available)
-The AEGIS Control Panel is hosted on Firebase and runs 24/7:
-**https://aegis-ai-os.web.app**
+The SATURDAY Control Panel is hosted on Firebase and runs 24/7:
+**https://saturday-ai-os.web.app**
 
-## To Wake AEGIS Remotely
+## To Wake SATURDAY Remotely
 
 ### Option 1: Using ngrok (Recommended for local testing)
 
 1. **Download ngrok**: https://ngrok.com/download
-2. **Start AEGIS locally**:
+2. **Start SATURDAY locally**:
    ```bash
    python run_production.py
    ```
@@ -21,28 +21,28 @@ The AEGIS Control Panel is hosted on Firebase and runs 24/7:
 
 4. **Update the gateway URL**:
    - Copy your ngrok URL (e.g., `https://abc123.ngrok.io`)
-   - Edit `aegis-control-panel/.env`
-   - Change: `VITE_AEGIS_GATEWAY_URL=https://abc123.ngrok.io/api/secure`
+   - Edit `saturday-control-panel/.env`
+   - Change: `VITE_SATURDAY_GATEWAY_URL=https://abc123.ngrok.io/api/secure`
 
 5. **Deploy updated website**:
    ```bash
-   cd aegis-control-panel
+   cd saturday-control-panel
    npm run deploy
    ```
 
-6. **Now you can wake AEGIS from the web!**
+6. **Now you can wake SATURDAY from the web!**
 
 ### Option 2: Deploy to a VPS/Server (Production)
 
-1. **Upload AEGIS to your server**
+1. **Upload SATURDAY to your server**
 2. **Set environment variables**:
    ```bash
    export HOST=0.0.0.0
    export PORT=8000
-   export VITE_AEGIS_GATEWAY_URL=https://your-server.com/api/secure
+   export VITE_SATURDAY_GATEWAY_URL=https://your-server.com/api/secure
    ```
 
-3. **Start AEGIS**:
+3. **Start SATURDAY**:
    ```bash
    python run_production.py
    ```
@@ -54,12 +54,12 @@ The AEGIS Control Panel is hosted on Firebase and runs 24/7:
 
 1. **Build container**:
    ```bash
-   gcloud builds submit --tag gcr.io/PROJECT_ID/aegis-backend
+   gcloud builds submit --tag gcr.io/PROJECT_ID/saturday-backend
    ```
 
 2. **Deploy**:
    ```bash
-   gcloud run deploy --image gcr.io/PROJECT_ID/aegis-backend
+   gcloud run deploy --image gcr.io/PROJECT_ID/saturday-backend
    ```
 
 3. **Update .env with the Cloud Run URL**
@@ -68,7 +68,7 @@ The AEGIS Control Panel is hosted on Firebase and runs 24/7:
 
 ## Quick Commands
 
-### Start AEGIS locally:
+### Start SATURDAY locally:
 ```bash
 python run_production.py
 ```
@@ -80,7 +80,7 @@ python run_production.py --dev
 
 ### Deploy website:
 ```bash
-cd aegis-control-panel
+cd saturday-control-panel
 npm run deploy
 ```
 
@@ -89,10 +89,10 @@ npm run deploy
 ## Troubleshooting
 
 **"Wake failed: Network error"**
-- AEGIS is not running, or ngrok tunnel is down
-- Start AEGIS and ngrok, then try again
+- SATURDAY is not running, or ngrok tunnel is down
+- Start SATURDAY and ngrok, then try again
 
-**"Missing VITE_AEGIS_GATEWAY_URL"**
+**"Missing VITE_SATURDAY_GATEWAY_URL"**
 - Update the .env file with your ngrok/server URL
 
 **Firebase auth errors**

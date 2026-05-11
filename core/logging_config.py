@@ -24,12 +24,12 @@ LOG_SUBSYSTEMS = {
 }
 for subdir in LOG_SUBSYSTEMS.values():
     Path(subdir).mkdir(parents=True, exist_ok=True)
-class AEGISLogger:
+class SATURDAYLogger:
     _loggers = {}
     _handlers = {}
     @classmethod
     def get_logger(cls, name: str, subsystem: str = "core"):
-        logger_name = f"AEGIS.{name}"
+        logger_name = f"SATURDAY.{name}"
         if logger_name in cls._loggers:
             return cls._loggers[logger_name]
         logger = logging.getLogger(logger_name)
@@ -44,7 +44,7 @@ class AEGISLogger:
             '{"time":"%(asctime)s","logger":"%(name)s","level":"%(levelname)s","message":"%(message)s"}',
             datefmt='%Y-%m-%dT%H:%M:%S'
         )
-        main_log_file = LOG_DIR / "aegis.log"
+        main_log_file = LOG_DIR / "saturday.log"
         main_handler = logging.FileHandler(main_log_file, encoding='utf-8')
         main_handler.setLevel(logging.DEBUG)
         main_handler.setFormatter(formatter)
@@ -64,7 +64,7 @@ class AEGISLogger:
     @classmethod
     def get_structlogger(cls, name: str, subsystem: str = "core"):
         import structlog
-        log_file = LOG_DIR / "aegis.log"
+        log_file = LOG_DIR / "saturday.log"
         if subsystem in LOG_SUBSYSTEMS:
             log_file = Path(LOG_SUBSYSTEMS[subsystem]) / f"{subsystem}.log"
         structlog.configure(
@@ -75,11 +75,11 @@ class AEGISLogger:
             logger_factory=structlog.WriteLoggerFactory(file=open(log_file, "a", encoding='utf-8')),
             wrapper_class=structlog.make_filtering_bound_logger(logging.DEBUG),
         )
-        return structlog.get_logger(f"AEGIS.{name}")
-def setup_aegis_logging():
-    main_log = LOG_DIR / "aegis.log"
-    root_logger = logging.getLogger("AEGIS")
-    if getattr(root_logger, "_aegis_configured", False):
+        return structlog.get_logger(f"SATURDAY.{name}")
+def setup_saturday_logging():
+    main_log = LOG_DIR / "saturday.log"
+    root_logger = logging.getLogger("SATURDAY")
+    if getattr(root_logger, "_saturday_configured", False):
         return root_logger
     root_logger.setLevel(logging.DEBUG)
     root_logger.propagate = False
@@ -105,9 +105,9 @@ def setup_aegis_logging():
         console_handler.setLevel(logging.INFO)
         console_handler.setFormatter(formatter)
         root_logger.addHandler(console_handler)
-    root_logger._aegis_configured = True
+    root_logger._saturday_configured = True
     return root_logger
 def get_log_file_path(subsystem: str = None) -> str:
     if subsystem and subsystem in LOG_SUBSYSTEMS:
         return str(Path(LOG_SUBSYSTEMS[subsystem]) / f"{subsystem}.log")
-    return str(LOG_DIR / "aegis.log")
+    return str(LOG_DIR / "saturday.log")

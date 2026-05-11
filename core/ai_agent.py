@@ -85,7 +85,7 @@ class NeuralBrain:
         return f"System operational. CPU: {cpu}%, Memory: {memory}%. All services running normally."
     def _generate_information(self, query: str, context: Dict) -> str:
         responses = {
-            'what are you': "I am AEGIS, an advanced AI operating system with deep learning capabilities.",
+            'what are you': "I am SATURDAY, an advanced AI operating system with deep learning capabilities.",
             'how do you work': "I use neural networks to process inputs and generate intelligent responses.",
             'what can you do': "I can control your home, monitor security, analyze threats, and assist with many tasks."
         }
@@ -97,7 +97,7 @@ class NeuralBrain:
     def _generate_conversation(self, query: str, context: Dict) -> str:
         greetings = ['hello', 'hi', 'hey']
         if any(g in query.lower() for g in greetings):
-            return f"Hello! I'm AEGIS, online and ready. How can I assist you today?"
+            return f"Hello! I'm SATURDAY, online and ready. How can I assist you today?"
         return f"I understand: '{query}'. I'm processing this through my deep learning systems."
     def _learn(self, input_text: str, response: Dict, context: Dict):
         self.conversation_history.append({

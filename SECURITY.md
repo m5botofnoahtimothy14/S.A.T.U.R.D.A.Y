@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-This section outlines which versions of AEGIS are actively maintained and receive security updates.
+This section outlines which versions of SATURDAY are actively maintained and receive security updates.
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -14,7 +14,7 @@ This section outlines which versions of AEGIS are actively maintained and receiv
 
 ## Reporting a Vulnerability
 
-We take security seriously. To report a vulnerability in AEGIS:
+We take security seriously. To report a vulnerability in SATURDAY:
 
 1. **Email:** Send a detailed report to `noahtimothy14@gmail.com`. Include:
    - Affected version(s)
@@ -35,4 +35,4 @@ We take security seriously. To report a vulnerability in AEGIS:
    - Please **do not publicly disclose** vulnerabilities before a patch is available
    - Coordinated disclosure ensures safety for all users
 
-Thank you for helping us keep AEGIS secure.
+Thank you for helping us keep SATURDAY secure.

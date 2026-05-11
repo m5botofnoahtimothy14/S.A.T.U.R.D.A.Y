@@ -2,7 +2,7 @@
 import logging
 import platform
 
-logger = logging.getLogger("AEGIS.HomeBot.Control")
+logger = logging.getLogger("SATURDAY.HomeBot.Control")
 
 class HomeBotBridgeSensors:
     def read_ultrasonic(self): return 0

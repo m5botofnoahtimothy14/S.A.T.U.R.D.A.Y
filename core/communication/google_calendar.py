@@ -8,7 +8,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-logger = structlog.get_logger("AEGIS.Communication.Calendar")
+logger = structlog.get_logger("SATURDAY.Communication.Calendar")
 
 SCOPES = [
     'https://www.googleapis.com/auth/calendar.readonly',

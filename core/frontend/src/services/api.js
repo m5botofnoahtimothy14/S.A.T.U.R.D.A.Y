@@ -1,4 +1,4 @@
-﻿const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+﻿const API_BASE_URL = import.meta.env.VITE_AEGIS_GATEWAY_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 class ApiService {
   constructor() {
@@ -63,7 +63,7 @@ class ApiService {
     return this.request('/v1/antivirus/scan', { method: 'POST' });
   }
 
-  async wakeAegis(target = 'aegis') {
+  async wakeAegis(target = 'saturday') {
     return this.request('/v1/control/wake', {
       method: 'POST',
       body: JSON.stringify({ target, source: 'web_dashboard' })

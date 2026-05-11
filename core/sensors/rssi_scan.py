@@ -2,7 +2,7 @@
 import logging
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.Sensors.RSSI")
+logger = logging.getLogger("SATURDAY.Sensors.RSSI")
 
 class RSSIScanner:
     

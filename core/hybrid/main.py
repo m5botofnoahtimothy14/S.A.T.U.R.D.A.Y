@@ -1,12 +1,12 @@
 ﻿                
 from core.event_bus import EventBus
-from core.logging_config import AEGISLogger
+from core.logging_config import SATURDAYLogger
 from .virtual_ai import VirtualAI
 from .session_manager import SessionManager
 from .wake_service import WakeService
 from .cloud_sync import CloudSync
 
-logger = AEGISLogger.get_logger("Hybrid", "hybrid")
+logger = SATURDAYLogger.get_logger("Hybrid", "hybrid")
 
 class HybridManager:
     def __init__(self, event_bus: EventBus, llm_engine=None):

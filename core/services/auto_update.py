@@ -5,7 +5,7 @@ import threading
 import time
 import os
 
-logger = logging.getLogger("AEGIS.Services.AutoUpdate")
+logger = logging.getLogger("SATURDAY.Services.AutoUpdate")
 
 class AutoUpdateService:
     def __init__(self, event_bus):
@@ -20,7 +20,7 @@ class AutoUpdateService:
     def _check_loop(self):
         while self.running:
             try:
-                logger.info("Checking for AEGIS system updates...")
+                logger.info("Checking for SATURDAY system updates...")
                 fetch = subprocess.run(
                     ["git", "fetch", "--prune"],
                     capture_output=True,
@@ -39,7 +39,7 @@ class AutoUpdateService:
                         cwd=os.getcwd(),
                     )
                     logger.info("Update status: %s", status.stdout.strip() or "up to date")
-                    if os.getenv("AEGIS_AUTO_UPDATE_APPLY", "false").strip().lower() in {"1", "true", "yes", "on"}:
+                    if os.getenv("SATURDAY_AUTO_UPDATE_APPLY", "false").strip().lower() in {"1", "true", "yes", "on"}:
                         pull = subprocess.run(
                             ["git", "pull", "--ff-only"],
                             capture_output=True,

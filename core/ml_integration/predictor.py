@@ -8,7 +8,7 @@ from collections import deque
 
 import numpy as np
 
-logger = structlog.get_logger("AEGIS.ML.Predictor")
+logger = structlog.get_logger("SATURDAY.ML.Predictor")
 
 class PredictiveEngine:
     

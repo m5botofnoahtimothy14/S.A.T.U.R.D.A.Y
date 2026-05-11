@@ -5,7 +5,7 @@ import numpy as np
 import sounddevice as sd
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.SpatialAudio")
+logger = logging.getLogger("SATURDAY.SpatialAudio")
 
 class SpatialAudioEngine:
     
@@ -60,7 +60,7 @@ class SpatialAudioEngine:
         return
 
     def set_master_volume(self, volume: float):
-                self.master_volume = np.clip(volume, 0.0, 1.0)
+        self.master_volume = np.clip(volume, 0.0, 1.0)
         logger.info(f"Master volume set to {self.master_volume:.0%}")
 
     def _on_voice(self, text: str):

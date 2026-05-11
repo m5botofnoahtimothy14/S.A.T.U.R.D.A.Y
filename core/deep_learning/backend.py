@@ -10,8 +10,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 import warnings
 
-DRIVE_ROOT = "D:/AEGIS"
-os.environ['AEGIS_ROOT'] = DRIVE_ROOT
+DRIVE_ROOT = "D:/SATURDAY"
+os.environ['SATURDAY_ROOT'] = DRIVE_ROOT
 
 TF_HOME = os.path.join(DRIVE_ROOT, ".tensorflow")
 HF_HOME = os.path.join(DRIVE_ROOT, ".huggingface")
@@ -29,7 +29,7 @@ os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 for _dir in [TF_HOME, HF_HOME, TORCH_HOME, ONNX_HOME, MODEL_CACHE]:
     os.makedirs(_dir, exist_ok=True)
 
-logger = logging.getLogger("AEGIS.DL.Backend")
+logger = logging.getLogger("SATURDAY.DL.Backend")
 
 class DLBackend(Enum):
     TENSORFLOW = "tensorflow"
@@ -263,7 +263,7 @@ class DLBackendManager:
         
         status = self._status
         logger.info("=" * 50)
-        logger.info("AEGIS DL Backend Status")
+        logger.info("SATURDAY DL Backend Status")
         logger.info("=" * 50)
         logger.info(f"TensorFlow: {'Yes' if status.tensorflow else 'No'} {'(GPU)' if status.tensorflow_gpu else '(CPU)'}")
         logger.info(f"PyTorch: {'Yes' if status.pytorch else 'No'} {'(GPU)' if status.pytorch_gpu else '(CPU)'}")

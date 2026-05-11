@@ -11,10 +11,10 @@ class ConversationMemory:
         self.user_profiles = {}
         self.facts_learned = {}
         
-    def add_exchange(self, user_msg: str, aegis_msg: str, context: dict = None):
+    def add_exchange(self, user_msg: str, saturday_msg: str, context: dict = None):
         exchange = {
             "user": user_msg,
-            "aegis": aegis_msg,
+            "saturday": saturday_msg,
             "context": context or {}
         }
         self.short_term.append(exchange)
@@ -27,7 +27,7 @@ class ConversationMemory:
         recent = self.get_recent(5)
         if not recent:
             return ""
-        return "\n".join([f"User: {ex['user']}\nAEGIS: {ex['aegis']}" for ex in recent])
+        return "\n".join([f"User: {ex['user']}\nSATURDAY: {ex['saturday']}" for ex in recent])
     
     def learn_fact(self, fact: str):
         self.facts_learned[fact] = True

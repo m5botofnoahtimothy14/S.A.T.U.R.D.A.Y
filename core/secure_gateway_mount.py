@@ -8,8 +8,8 @@ def _env_true(name: str, default: str = "false") -> bool:
 
 
 def try_mount_secure_gateway(main_app: Any, logger: Any) -> dict[str, Any]:
-    enabled = _env_true("AEGIS_ENABLE_SECURE_GATEWAY_MOUNT", "false")
-    mount_path = os.getenv("AEGIS_SECURE_GATEWAY_MOUNT_PATH", "/api/secure").strip() or "/api/secure"
+    enabled = _env_true("SATURDAY_ENABLE_SECURE_GATEWAY_MOUNT", "false")
+    mount_path = os.getenv("SATURDAY_SECURE_GATEWAY_MOUNT_PATH", "/api/secure").strip() or "/api/secure"
 
     status = {
         "enabled": enabled,

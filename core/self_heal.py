@@ -8,7 +8,7 @@ import json
 import os
 from collections import deque
 from core.event_bus import EventBus
-logger = structlog.get_logger("AEGIS.SelfHeal")
+logger = structlog.get_logger("SATURDAY.SelfHeal")
 class HealingNeuralNetwork:
     def __init__(self, input_size=15, hidden_size=30, output_size=8):
         import numpy as np
@@ -99,7 +99,7 @@ class SelfHealManager:
             self.anomaly_buffer = deque(maxlen=50)
             self._load_healing_model()
             self.dl_healing_active = True
-            logger.info("DEEP LEARNING Self-Healing initialized - AEGIS can now heal itself")
+            logger.info("DEEP LEARNING Self-Healing initialized - SATURDAY can now heal itself")
         except Exception as e:
             logger.warning(f"DL Healing init failed: {e}")
             self.dl_healing_active = False

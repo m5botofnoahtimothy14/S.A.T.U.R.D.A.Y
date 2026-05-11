@@ -8,7 +8,7 @@ from typing import Dict, Optional, Callable
 from pathlib import Path
 from core.event_bus import EventBus
 
-logger = structlog.get_logger("AEGIS.SocialManager")
+logger = structlog.get_logger("SATURDAY.SocialManager")
 
 class SocialManager:
     

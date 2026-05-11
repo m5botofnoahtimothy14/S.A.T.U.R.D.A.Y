@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -5,11 +7,16 @@ from typing import Optional, List
 import uuid
 from datetime import datetime
 
-app = FastAPI(title="AEGIS Biometric API", version="2.0.0")
+app = FastAPI(title="SATURDAY Biometric API", version="2.0.0")
+
+def _cors_origins() -> list[str]:
+    raw = os.getenv("SATURDAY_BIOMETRIC_ORIGINS", "http://localhost:5173,http://localhost:5174")
+    return [origin.strip() for origin in raw.split(",") if origin.strip()]
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,7 +37,7 @@ biometric_db = {}
 @app.get("/")
 async def root():
     return {
-        "system": "AEGIS Biometric Authentication",
+        "system": "SATURDAY Biometric Authentication",
         "version": "2.0.0",
         "status": "online",
         "ann_models": {

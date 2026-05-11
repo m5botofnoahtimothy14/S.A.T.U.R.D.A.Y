@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import datetime
 
-logger = structlog.get_logger("AEGIS.Identity.Database")
+logger = structlog.get_logger("SATURDAY.Identity.Database")
 Base = declarative_base()
 
 class UserProfile(Base):

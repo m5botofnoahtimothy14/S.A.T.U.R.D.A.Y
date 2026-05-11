@@ -7,17 +7,17 @@ import xml.etree.ElementTree as ET
 
 import requests
 
-logger = logging.getLogger("AEGIS.News")
+logger = logging.getLogger("SATURDAY.News")
 
 class NewsService:
     
     def __init__(self):
         feed_urls = os.getenv(
-            "AEGIS_NEWS_FEEDS",
+            "SATURDAY_NEWS_FEEDS",
             "https://feeds.reuters.com/reuters/worldNews,https://apnews.com/hub/ap-top-news/rss.xml",
         )
         self.feed_urls = [url.strip() for url in feed_urls.split(",") if url.strip()]
-        self.cache_ttl_seconds = int(os.getenv("AEGIS_NEWS_CACHE_TTL_SECONDS", "900"))
+        self.cache_ttl_seconds = int(os.getenv("SATURDAY_NEWS_CACHE_TTL_SECONDS", "900"))
         self.cached_headlines = []
         self.last_refresh = 0.0
 

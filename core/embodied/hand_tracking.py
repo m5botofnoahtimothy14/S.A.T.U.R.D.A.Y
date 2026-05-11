@@ -5,7 +5,7 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
-DEFAULT_MODEL = os.getenv("HAND_LANDMARKER_PATH", "D:/AEGIS/models/hand_landmarker.task")
+DEFAULT_MODEL = os.getenv("HAND_LANDMARKER_PATH", "D:/SATURDAY/models/hand_landmarker.task")
 
 class HandTracker:
     

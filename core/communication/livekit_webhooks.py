@@ -4,7 +4,7 @@ import structlog
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
 
-logger = structlog.get_logger("AEGIS.LiveKitWebhooks")
+logger = structlog.get_logger("SATURDAY.LiveKitWebhooks")
 
 def register_livekit_webhooks(app, call_agent, event_bus):
     
@@ -57,7 +57,7 @@ def register_livekit_webhooks(app, call_agent, event_bus):
     async def livekit_outbound(data: dict):
         
         to = data.get("to")
-        script = data.get("script", "Hi, this is AEGIS calling.")
+        script = data.get("script", "Hi, this is SATURDAY calling.")
         
         if not to:
             raise HTTPException(status_code=400, detail="Missing 'to' phone number")

@@ -1,8 +1,8 @@
-# AEGIS 3.0
+# SATURDAY 3.0
 
 Advanced Engine for Global Integrated Systems.
 
-AEGIS is a local-first AI operating platform with:
+SATURDAY is a local-first AI operating platform with:
 - Core runtime dashboard and automation (`core/main.py`, `run_production.py`)
 - Dual-access secure control panel stack (Firebase dashboard + local HTTPS gateway)
 - Agentic command pipeline (LangGraph), role-based control, telemetry sync, and ROS2 safety enforcement
@@ -11,28 +11,28 @@ AEGIS is a local-first AI operating platform with:
 
 The repository now has two web surfaces:
 
-1. Core AEGIS UI on port `8000` (existing FastAPI dashboard from `core/main.py`)
+1. Core SATURDAY UI on port `8000` (existing FastAPI dashboard from `core/main.py`)
 2. Secure API Gateway on port `8443` (`api_gateway.py`) for authenticated control and remote-safe access
 
 The control panel is read-only from the browser side and uses Firebase Auth + Firestore real-time telemetry.
 You can also mount the secure gateway directly into the core app path by setting:
-- `AEGIS_ENABLE_SECURE_GATEWAY_MOUNT=true`
-- `AEGIS_SECURE_GATEWAY_MOUNT_PATH=/api/secure`
+- `SATURDAY_ENABLE_SECURE_GATEWAY_MOUNT=true`
+- `SATURDAY_SECURE_GATEWAY_MOUNT_PATH=/api/secure`
 
 ## Key Components
 
-- `core/main.py`: Main AEGIS runtime, local UI, media/voice/vision/homebot orchestration
+- `core/main.py`: Main SATURDAY runtime, local UI, media/voice/vision/homebot orchestration
 - `api_gateway.py`: HTTPS gateway with Firebase JWT verification and role enforcement
 - `auth_validator.py`: Firebase token validation and role extraction
 - `command_policy.py`: Strict command schema validation and safety policy checks
 - `ros_safety_bridge.py`: ROS2 motion/safety bridge with emergency stop
 - `telemetry_sync.py`: Firestore telemetry push/pull service
-- `aegis-control-panel/`: React Firebase dashboard for live telemetry
+- `saturday-control-panel/`: React Firebase dashboard for live telemetry
 - `ops/secure_access/`: LAN and remote overlay access scripts (Tailscale, Cloudflare Tunnel, ZeroTier)
 
 🔹 Pre-trained Models & Dependencies
 
-AEGIS relies on some large models, node packages, and other resources that are **not included in this repo** to keep it lightweight.  
+SATURDAY relies on some large models, node packages, and other resources that are **not included in this repo** to keep it lightweight.  
 
 You can download these manually as needed:  
 
@@ -40,7 +40,7 @@ You can download these manually as needed:
 - **Node Packages / Dependencies** → download from your preferred source  
 - **Datasets / Embeddings** → download from your preferred source  
 
-> ⚠️ Make sure to place downloaded models and packages in the appropriate directories under `core/` or `data/` before running AEGIS.
+> ⚠️ Make sure to place downloaded models and packages in the appropriate directories under `core/` or `data/` before running SATURDAY.
 
 ## Repository Hygiene
 
@@ -71,7 +71,7 @@ git commit -m "chore: stop tracking generated artifacts"
 - Python `3.12+`
 - Virtual environment at `.\.venv`
 
-### Run Core AEGIS
+### Run Core SATURDAY
 
 ```powershell
 .\.venv\Scripts\python -m pip install -U -r requirements.txt
@@ -100,15 +100,15 @@ copy gateway.env.example gateway.env
 Set values in `gateway.env`:
 - `FIREBASE_PROJECT_ID`
 - `FIREBASE_SERVICE_ACCOUNT` (service account json path)
-- `AEGIS_SSL_CERT_FILE`
-- `AEGIS_SSL_KEY_FILE`
-- `AEGIS_CORE_CONTROL_URL` (where core runtime is reachable, default `http://127.0.0.1:8000`)
+- `SATURDAY_SSL_CERT_FILE`
+- `SATURDAY_SSL_KEY_FILE`
+- `SATURDAY_CORE_CONTROL_URL` (where core runtime is reachable, default `http://127.0.0.1:8000`)
 - safety limits if you need custom thresholds
 
 ### 3) Generate local TLS cert (if needed)
 
 ```powershell
-.\ops\secure_access\generate-local-cert.ps1 -OutputDirectory certs -CommonName aegis.local
+.\ops\secure_access\generate-local-cert.ps1 -OutputDirectory certs -CommonName saturday.local
 ```
 
 ### 4) Start HTTPS API gateway
@@ -128,19 +128,19 @@ curl -k https://127.0.0.1:8443/healthz
 Example one-shot snapshot:
 
 ```powershell
-.\.venv\Scripts\python telemetry_sync.py --node-id aegis-node-1 --service-account "<path-to-service-account.json>" --project-id "<firebase-project-id>" --example
+.\.venv\Scripts\python telemetry_sync.py --node-id saturday-node-1 --service-account "<path-to-service-account.json>" --project-id "<firebase-project-id>" --example
 ```
 
 Continuous telemetry loop:
 
 ```powershell
-.\.venv\Scripts\python telemetry_sync.py --node-id aegis-node-1 --service-account "<path-to-service-account.json>" --project-id "<firebase-project-id>" --interval 2.0
+.\.venv\Scripts\python telemetry_sync.py --node-id saturday-node-1 --service-account "<path-to-service-account.json>" --project-id "<firebase-project-id>" --interval 2.0
 ```
 
 ### 6) Build and deploy Firebase dashboard
 
 ```powershell
-cd aegis-control-panel
+cd saturday-control-panel
 copy .env.example .env
 # fill VITE_FIREBASE_* values
 npm install
@@ -152,7 +152,7 @@ firebase deploy --only hosting,firestore:rules
 Dashboard:
 - Supports email/password + Google login
 - Subscribes to Firestore telemetry in real time
-- Supports remote wake (`Wake AEGIS` / `Wake EDITH`) for Operator/Admin roles through the secure gateway
+- Supports remote wake (`Wake SATURDAY` / `Wake EDITH`) for Operator/Admin roles through the secure gateway
 
 ## Tailscale Connection (Recommended Remote Access)
 
@@ -160,7 +160,7 @@ Use Tailscale to access the local HTTPS gateway without opening public inbound p
 
 ### Prerequisites
 
-- Tailscale installed and logged in on the AEGIS host
+- Tailscale installed and logged in on the SATURDAY host
 - Tailscale installed on client devices that need access
 - API gateway running locally on `https://127.0.0.1:8443`
 
@@ -179,7 +179,7 @@ What this does:
 Use the host's MagicDNS name or Tailscale IP:
 
 ```text
-https://<aegis-hostname>.tailnet-name.ts.net
+https://<saturday-hostname>.tailnet-name.ts.net
 ```
 
 or
@@ -252,7 +252,7 @@ curl -k https://127.0.0.1:8443/v1/commands/execute `
 ## Project Layout
 
 ```text
-AEGIS/
+SATURDAY/
   core/
   ui/
   api_gateway.py
@@ -262,7 +262,7 @@ AEGIS/
   telemetry_sync.py
   requirements.gateway.txt
   gateway.env.example
-  aegis-control-panel/
+  saturday-control-panel/
   ops/secure_access/
   firebase.json
   firestore.rules

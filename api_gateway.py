@@ -25,16 +25,16 @@ from core.event_bus import EventBus
 from core.system_monitor import SystemMonitor
 from core.ai_agent import get_ai_agent, AIAgent
 load_dotenv()
-logger = logging.getLogger("aegis.api_gateway")
+logger = logging.getLogger("saturday.api_gateway")
 if not logger.handlers:
-    log_level = os.getenv("AEGIS_GATEWAY_LOG_LEVEL", "INFO").upper()
+    log_level = os.getenv("SATURDAY_GATEWAY_LOG_LEVEL", "INFO").upper()
     logger.setLevel(log_level)
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
     os.makedirs("logs", exist_ok=True)
-    file_handler = logging.FileHandler(os.getenv("AEGIS_GATEWAY_LOG_FILE", "logs/api_gateway.log"))
+    file_handler = logging.FileHandler(os.getenv("SATURDAY_GATEWAY_LOG_FILE", "logs/api_gateway.log"))
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 class CommandRequest(BaseModel):
@@ -48,7 +48,7 @@ class CommandResponse(BaseModel):
     executed_at: str
 class WakeRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    target: str = Field(..., description="Wake target: aegis or edith")
+    target: str = Field(..., description="Wake target: saturday or edith")
     source: str = Field(default="remote_control_panel", min_length=1, max_length=64)
 class CommandGraphState(TypedDict, total=False):
     command: dict[str, Any]
@@ -222,14 +222,14 @@ class AppComponents:
 bearer = HTTPBearer(auto_error=False)
 def _normalize_wake_target(raw_target: str) -> str:
     target = str(raw_target).strip().lower()
-    if target not in {"aegis", "edith"}:
-        raise HTTPException(status_code=400, detail="Invalid wake target. Use 'aegis' or 'edith'.")
+    if target not in {"saturday", "edith"}:
+        raise HTTPException(status_code=400, detail="Invalid wake target. Use 'saturday' or 'edith'.")
     return target
 def _dispatch_core_wake(*, target: str, source: str, requested_by: str) -> dict[str, Any]:
-    core_base = os.getenv("AEGIS_CORE_CONTROL_URL", "http://127.0.0.1:8000").rstrip("/")
+    core_base = os.getenv("SATURDAY_CORE_CONTROL_URL", "http://127.0.0.1:8000").rstrip("/")
     wake_url = f"{core_base}/api/control/wake"
-    timeout = float(os.getenv("AEGIS_CORE_WAKE_TIMEOUT_SECONDS", "10"))
-    verify_tls = os.getenv("AEGIS_CORE_VERIFY_TLS", "false").strip().lower() in {"1", "true", "yes", "on"}
+    timeout = float(os.getenv("SATURDAY_CORE_WAKE_TIMEOUT_SECONDS", "10"))
+    verify_tls = os.getenv("SATURDAY_CORE_VERIFY_TLS", "true").strip().lower() in {"1", "true", "yes", "on"}
     payload = json.dumps(
         {
             "target": target,
@@ -267,31 +267,31 @@ def _dispatch_core_wake(*, target: str, source: str, requested_by: str) -> dict[
             detail=f"Core wake endpoint unreachable: {exc.reason}",
         ) from exc
 def _cors_origins() -> list[str]:
-    raw = os.getenv("AEGIS_DASHBOARD_ORIGINS", "")
+    raw = os.getenv("SATURDAY_DASHBOARD_ORIGINS", "")
     if not raw.strip():
         return []
     return [item.strip() for item in raw.split(",") if item.strip()]
 def _build_components() -> AppComponents:
     service_account = os.getenv("FIREBASE_SERVICE_ACCOUNT")
     project_id = os.getenv("FIREBASE_PROJECT_ID")
-    node_id = os.getenv("AEGIS_NODE_ID", "aegis-node-1")
+    node_id = os.getenv("SATURDAY_NODE_ID", "saturday-node-1")
     auth = FirebaseAuthValidator(service_account_path=service_account, project_id=project_id)
     policy = CommandPolicy(
         SafetyLimits(
-            max_linear_speed=float(os.getenv("AEGIS_MAX_LINEAR_SPEED", "0.8")),
-            max_angular_speed=float(os.getenv("AEGIS_MAX_ANGULAR_SPEED", "1.2")),
-            max_torque=float(os.getenv("AEGIS_MAX_TORQUE", "60")),
-            max_duration=float(os.getenv("AEGIS_MAX_COMMAND_DURATION", "5")),
-            min_obstacle_distance=float(os.getenv("AEGIS_MIN_OBSTACLE_DISTANCE", "0.50")),
+            max_linear_speed=float(os.getenv("SATURDAY_MAX_LINEAR_SPEED", "0.8")),
+            max_angular_speed=float(os.getenv("SATURDAY_MAX_ANGULAR_SPEED", "1.2")),
+            max_torque=float(os.getenv("SATURDAY_MAX_TORQUE", "60")),
+            max_duration=float(os.getenv("SATURDAY_MAX_COMMAND_DURATION", "5")),
+            min_obstacle_distance=float(os.getenv("SATURDAY_MIN_OBSTACLE_DISTANCE", "0.50")),
         )
     )
     ros_bridge = ROSSafetyBridge(
         limits=BridgeLimits(
-            max_linear_speed=float(os.getenv("AEGIS_MAX_LINEAR_SPEED", "0.8")),
-            max_angular_speed=float(os.getenv("AEGIS_MAX_ANGULAR_SPEED", "1.2")),
-            max_torque=float(os.getenv("AEGIS_MAX_TORQUE", "60")),
-            min_obstacle_distance=float(os.getenv("AEGIS_MIN_OBSTACLE_DISTANCE", "0.50")),
-            command_publish_rate_hz=float(os.getenv("AEGIS_COMMAND_RATE_HZ", "20")),
+            max_linear_speed=float(os.getenv("SATURDAY_MAX_LINEAR_SPEED", "0.8")),
+            max_angular_speed=float(os.getenv("SATURDAY_MAX_ANGULAR_SPEED", "1.2")),
+            max_torque=float(os.getenv("SATURDAY_MAX_TORQUE", "60")),
+            min_obstacle_distance=float(os.getenv("SATURDAY_MIN_OBSTACLE_DISTANCE", "0.50")),
+            command_publish_rate_hz=float(os.getenv("SATURDAY_COMMAND_RATE_HZ", "20")),
         )
     )
     telemetry = TelemetrySync(
@@ -303,7 +303,7 @@ def _build_components() -> AppComponents:
     engine = CommandExecutionEngine(policy=policy, ros_bridge=ros_bridge, telemetry=telemetry)
     event_bus = EventBus()
     system_monitor = SystemMonitor(event_bus)
-    enable_monitor = os.getenv("AEGIS_ENABLE_SYSTEM_MONITOR", "false").strip().lower() in {
+    enable_monitor = os.getenv("SATURDAY_ENABLE_SYSTEM_MONITOR", "false").strip().lower() in {
         "1",
         "true",
         "yes",
@@ -339,7 +339,7 @@ def _require_roles(*required_roles: str):
     return dependency
 async def _telemetry_loop(app: FastAPI) -> None:
     components: AppComponents = app.state.components
-    interval = float(os.getenv("AEGIS_TELEMETRY_INTERVAL_SECONDS", "2.0"))
+    interval = float(os.getenv("SATURDAY_TELEMETRY_INTERVAL_SECONDS", "2.0"))
     while True:
         try:
             agent_state, tasks = await components.runtime.snapshot()
@@ -362,7 +362,7 @@ async def lifespan(app: FastAPI):
     components.telemetry.push_log(level="INFO", message="API gateway started")
     def run_telemetry():
         import time
-        interval = float(os.getenv("AEGIS_TELEMETRY_INTERVAL_SECONDS", "5.0"))
+        interval = float(os.getenv("SATURDAY_TELEMETRY_INTERVAL_SECONDS", "5.0"))
         while True:
             try:
                 import asyncio
@@ -392,7 +392,7 @@ async def lifespan(app: FastAPI):
         components.system_monitor.shutdown()
         components.ros_bridge.shutdown()
 app = FastAPI(
-    title="AEGIS API Gateway",
+    title="SATURDAY API Gateway",
     description="Authenticated local API gateway with LangGraph orchestration and ROS2 safety controls",
     version="1.0.0",
     lifespan=lifespan,
@@ -602,10 +602,10 @@ async def ai_brain_status(
     return components.ai_agent.brain.get_status()
 def run() -> None:
     import uvicorn
-    host = os.getenv("AEGIS_API_HOST", "127.0.0.1")
-    port = int(os.getenv("AEGIS_API_PORT", "8000"))
-    cert_file = os.getenv("AEGIS_SSL_CERT_FILE")
-    key_file = os.getenv("AEGIS_SSL_KEY_FILE")
+    host = os.getenv("SATURDAY_API_HOST", "127.0.0.1")
+    port = int(os.getenv("SATURDAY_API_PORT", "8000"))
+    cert_file = os.getenv("SATURDAY_SSL_CERT_FILE")
+    key_file = os.getenv("SATURDAY_SSL_KEY_FILE")
     use_ssl = cert_file and key_file and os.path.exists(cert_file) and os.path.exists(key_file)
     if not use_ssl:
         print("Running in HTTP mode (no SSL)")

@@ -62,7 +62,7 @@ class EmotionDetector:
                 logger.debug(f"DeepFace analysis skipped/failed: {e}")
         return {"primary": "Calm", "confidence": 0.8}
 
-logger = logging.getLogger("AEGIS.Vision")
+logger = logging.getLogger("SATURDAY.Vision")
 
 class VisionModule:
     

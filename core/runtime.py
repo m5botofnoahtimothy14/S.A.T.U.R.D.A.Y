@@ -4,7 +4,7 @@ import time
 import os
 import psutil
 import logging
-logger = logging.getLogger("AEGIS.Runtime")
+logger = logging.getLogger("SATURDAY.Runtime")
 class RuntimeStats:
     def __init__(self):
         self.start_time = time.time()

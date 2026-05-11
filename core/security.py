@@ -4,7 +4,7 @@ import logging
 import psutil
 import threading
 import time
-logger = logging.getLogger("AEGIS.Security")
+logger = logging.getLogger("SATURDAY.Security")
 logger.setLevel(logging.INFO)
 class SecurityMonitor:
     def __init__(self, event_bus):

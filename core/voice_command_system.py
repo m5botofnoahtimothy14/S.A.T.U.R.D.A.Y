@@ -14,7 +14,7 @@ import structlog
 from core.audio_service import CrossPlatformAudio
 from core.event_bus import EventBus
 
-logger = structlog.get_logger("AEGIS.VoiceCommand")
+logger = structlog.get_logger("SATURDAY.VoiceCommand")
 
 PLATFORM = __import__("sys").platform
 
@@ -149,7 +149,7 @@ class SubsystemRouter:
             return "Initiating system restart."
         elif "shutdown" in text:
             self.event_bus.publish("system_shutdown", {})
-            return "Shutting down AEGIS."
+            return "Shutting down SATURDAY."
         elif "status" in text or "monitor" in text:
             self.event_bus.publish("system_status", {})
             return "Retrieving system status."
@@ -327,8 +327,8 @@ class VoiceCommandSystem:
 
     def _greet(self):
         greetings = [
-            "Hello. I am AEGIS. What can I help you with?",
-            "AEGIS online. How may I assist you?",
+            "Hello. I am SATURDAY. What can I help you with?",
+            "SATURDAY online. How may I assist you?",
             "I am here. What shall we work on?"
         ]
         import random

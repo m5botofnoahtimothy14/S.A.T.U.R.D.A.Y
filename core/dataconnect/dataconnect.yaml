@@ -1,5 +1,5 @@
 ﻿specVersion: "v1"
-serviceId: "aegis"
+serviceId: "saturday"
 location: "us-east4"
 schema:
   source: "./schema"
@@ -7,5 +7,5 @@ schema:
     postgresql:
       database: "fdcdb"
       cloudSql:
-        instanceId: "aegis-fdc"
+        instanceId: "saturday-fdc"
 connectorDirs: ["./example"]

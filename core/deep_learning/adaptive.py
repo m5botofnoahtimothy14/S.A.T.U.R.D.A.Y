@@ -11,7 +11,7 @@ import structlog
 
 import numpy as np
 
-logger = structlog.get_logger("AEGIS.DL.Adaptive")
+logger = structlog.get_logger("SATURDAY.DL.Adaptive")
 
 @dataclass
 class LearningEntry:

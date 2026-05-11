@@ -57,7 +57,7 @@ from core.self_heal import SelfHealManager
 from core.self_healing import SelfHealing
 from core.admin_mood import AdminMood
 from core.self_rewrite import SelfRewriteAdvisor
-from core.voice_dl import AEGISVoiceDL
+from core.voice_dl import SATURDAYVoiceDL
 from deep_learning.core import DeepLearningCore
 from deep_learning.policy import NeuralPolicyEngine
 from deep_learning.adaptive import AdaptiveLearningEngine
@@ -104,8 +104,8 @@ def load_json_db(filepath, default=[]):
 def save_json_db(filepath, data):
     with open(filepath, 'w') as f:
         json.dump(data, f, indent=2)
-from core.logging_config import setup_aegis_logging, AEGISLogger, get_log_file_path
-setup_aegis_logging()
+from core.logging_config import setup_saturday_logging, SATURDAYLogger, get_log_file_path
+setup_saturday_logging()
 LOG_DIR = "logs"
 if not os.path.exists(LOG_DIR): os.makedirs(LOG_DIR)
 class SubsystemFileHandler(logging.Handler):
@@ -115,7 +115,7 @@ class SubsystemFileHandler(logging.Handler):
     def emit(self, record):
         try:
             msg = self.format(record)
-            with open(f"{LOG_DIR}/aegis.log", "a") as f:
+            with open(f"{LOG_DIR}/saturday.log", "a") as f:
                 f.write(msg + "\n")
             if self.subsystem:
                 sub_path = get_log_file_path(self.subsystem)
@@ -123,12 +123,12 @@ class SubsystemFileHandler(logging.Handler):
                     f.write(msg + "\n")
         except Exception:
             self.handleError(record)
-root_logger = logging.getLogger("AEGIS")
+root_logger = logging.getLogger("SATURDAY")
 root_logger.setLevel(logging.DEBUG)
 root_logger.propagate = False
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 has_main_file_handler = any(
-    isinstance(h, logging.FileHandler) and os.path.basename(getattr(h, "baseFilename", "")) == "aegis.log"
+    isinstance(h, logging.FileHandler) and os.path.basename(getattr(h, "baseFilename", "")) == "saturday.log"
     for h in root_logger.handlers
 )
 if not has_main_file_handler and not any(isinstance(h, SubsystemFileHandler) for h in root_logger.handlers):
@@ -139,18 +139,18 @@ if not any(isinstance(h, logging.StreamHandler) and not isinstance(h, logging.Fi
     console = logging.StreamHandler()
     console.setFormatter(formatter)
     root_logger.addHandler(console)
-if not getattr(structlog, "_aegis_configured", False):
+if not getattr(structlog, "_saturday_configured", False):
     structlog.configure(
         processors=[
             structlog.processors.TimeStamper(fmt="iso"), 
             structlog.processors.JSONRenderer()
         ],
-        logger_factory=structlog.WriteLoggerFactory(file=open(f"{LOG_DIR}/aegis.log", "a")),
+        logger_factory=structlog.WriteLoggerFactory(file=open(f"{LOG_DIR}/saturday.log", "a")),
         wrapper_class=structlog.make_filtering_bound_logger(logging.DEBUG),
     )
-    structlog._aegis_configured = True
-logger = structlog.get_logger("AEGIS.Core")
-app = FastAPI(title="AEGIS AI OS")
+    structlog._saturday_configured = True
+logger = structlog.get_logger("SATURDAY.Core")
+app = FastAPI(title="SATURDAY AI OS")
 templates = Jinja2Templates(directory="ui/templates")
 router = APIRouter(prefix="/v1", tags=["control-panel"])
 connected_websockets = set()
@@ -168,7 +168,17 @@ def _init_firebase():
             logger.warning("Firebase admin init failed", error=str(e))
     _firebase_initialized = True
 def _auth_disabled():
-    return os.getenv("AEGIS_DISABLE_AUTH", "false").strip().lower() in {"1", "true", "yes", "on"}
+    disabled = os.getenv("SATURDAY_DISABLE_AUTH", "false").strip().lower() in {"1", "true", "yes", "on"}
+    strict_prod = os.getenv("SATURDAY_STRICT_PROD", "false").strip().lower() in {"1", "true", "yes", "on"}
+    if disabled and strict_prod:
+        logger.warning("SATURDAY_DISABLE_AUTH ignored because SATURDAY_STRICT_PROD is enabled")
+        return False
+    return disabled
+
+
+def _cors_origins():
+    raw = os.getenv("SATURDAY_CORE_ORIGINS", "http://localhost:5173,http://localhost:5174")
+    return [origin.strip() for origin in raw.split(",") if origin.strip()]
 async def verify_firebase_token(request: Request):
     if _auth_disabled():
         return None
@@ -184,9 +194,9 @@ async def verify_firebase_token(request: Request):
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
 def _require_core():
-    if _aegis_core is None:
-        raise HTTPException(status_code=503, detail="AEGIS core is not initialized")
-    return _aegis_core
+    if _saturday_core is None:
+        raise HTTPException(status_code=503, detail="SATURDAY core is not initialized")
+    return _saturday_core
 async def _broadcast(event_type: str, data):
     dead = []
     payload = {"type": event_type, "data": data}
@@ -199,8 +209,8 @@ async def _broadcast(event_type: str, data):
         connected_websockets.discard(ws)
 def _broadcast_threadsafe(event_type: str, data):
     try:
-        if _aegis_core and getattr(_aegis_core, "loop", None):
-            asyncio.run_coroutine_threadsafe(_broadcast(event_type, data), _aegis_core.loop)
+        if _saturday_core and getattr(_saturday_core, "loop", None):
+            asyncio.run_coroutine_threadsafe(_broadcast(event_type, data), _saturday_core.loop)
     except Exception as e:
         logger.debug("WS broadcast failed", error=str(e))
 @router.get("/system/stats", dependencies=[Depends(verify_firebase_token)])
@@ -216,10 +226,10 @@ async def get_system_stats():
         "uptime_seconds": int(uptime),
     }
 @router.post("/wake", dependencies=[Depends(verify_firebase_token)])
-async def wake_aegis():
+async def wake_saturday():
     core = _require_core()
     try:
-        core.event_bus.publish("voice_command", "aegis")
+        core.event_bus.publish("voice_command", "saturday")
     except Exception as e:
         logger.warning("Wake publish failed", error=str(e))
         raise HTTPException(status_code=500, detail="Wake dispatch failed")
@@ -238,7 +248,7 @@ async def send_command(payload: dict):
     return {"status": "ok", "message": "Command dispatched"}
 @router.get("/logs", dependencies=[Depends(verify_firebase_token)])
 async def tail_logs(limit: int = 50):
-    path = os.path.join("logs", "aegis.log")
+    path = os.path.join("logs", "saturday.log")
     if not os.path.exists(path):
         return {"lines": []}
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
@@ -246,7 +256,7 @@ async def tail_logs(limit: int = 50):
     return {"lines": [l.rstrip('\n') for l in lines]}
 @router.get("/voice/logs", dependencies=[Depends(verify_firebase_token)])
 async def voice_logs(limit: int = 50):
-    path = os.path.join("logs", "aegis.log")
+    path = os.path.join("logs", "saturday.log")
     entries = []
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8", errors="ignore") as f:
@@ -323,29 +333,29 @@ async def events_ws(websocket: WebSocket):
 from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 app.include_router(router)
 _secure_gateway_mount_status = try_mount_secure_gateway(app, logger)
-_aegis_core = None
+_saturday_core = None
 @app.on_event("startup")
 async def startup_event():
-    global _aegis_core
-    if _aegis_core is None:
-        _aegis_core = AEGISCore()
+    global _saturday_core
+    if _saturday_core is None:
+        _saturday_core = SATURDAYCore()
 @app.on_event("shutdown")
 async def shutdown_event():
-    global _aegis_core
-    if _aegis_core:
-        _aegis_core.running = False
+    global _saturday_core
+    if _saturday_core:
+        _saturday_core.running = False
         try:
-            await _aegis_core.shutdown()
+            await _saturday_core.shutdown()
         except Exception as e:
             logger.warning(f"Startup/shutdown lifecycle cleanup failed: {e}")
-class AEGISCore:
+class SATURDAYCore:
     def __init__(self):
         load_dotenv()
         self.app = app
@@ -358,7 +368,7 @@ class AEGISCore:
         self.event_bus = EventBus()
         self.runtime = RuntimeStats()
         self.config_manager = ConfigManager()
-        self.strict_prod = os.getenv("AEGIS_STRICT_PROD", "false").strip().lower() in {
+        self.strict_prod = os.getenv("SATURDAY_STRICT_PROD", "false").strip().lower() in {
             "1",
             "true",
             "yes",
@@ -540,7 +550,7 @@ class AEGISCore:
             self.dl_backend = None
         try:
             self.dl_core = DeepLearningCore(self.event_bus)
-            logger.info("Deep Learning Core initialized - AEGIS is now a DL-powered AI")
+            logger.info("Deep Learning Core initialized - SATURDAY is now a DL-powered AI")
         except Exception as e:
             logger.warning(f"DeepLearningCore init failed: {e}")
             self.dl_core = None
@@ -588,7 +598,7 @@ class AEGISCore:
             self.predictor = None
         try:
             self.conversation = ConversationalDLEngine(self.event_bus, self)
-            logger.info("Conversational DL Engine initialized - AEGIS is now truly conversational!")
+            logger.info("Conversational DL Engine initialized - SATURDAY is now truly conversational!")
         except Exception as e:
             logger.warning(f"ConversationalDLEngine init failed: {e}")
             self.conversation = None
@@ -672,11 +682,11 @@ class AEGISCore:
             logger.warning(f"HumanInterface init failed: {e}")
             self.human_interface = None
         try:
-            from core.voice_dl import AEGISVoiceDL
-            self.voice_dl = AEGISVoiceDL(self.event_bus, self.ai, self.speech)
-            logger.info("AEGIS Voice DL initialized - Full system control ready")
+            from core.voice_dl import SATURDAYVoiceDL
+            self.voice_dl = SATURDAYVoiceDL(self.event_bus, self.ai, self.speech)
+            logger.info("SATURDAY Voice DL initialized - Full system control ready")
         except Exception as e:
-            logger.warning(f"AEGISVoiceDL init failed: {e}")
+            logger.warning(f"SATURDAYVoiceDL init failed: {e}")
             self.voice_dl = None
         try:
             def handle_speech_lang(payload):
@@ -751,7 +761,7 @@ class AEGISCore:
             self.event_bus.subscribe("voice_command", lambda d: asyncio.create_task(self.voice_router.process(d.get("command", "") if isinstance(d, dict) else str(d))))
         except Exception as e:
             logger.warning(f"Voice Router initialization failed: {e}")
-        self.app.aegis = self
+        self.app.saturday = self
         self.cloud_bridge = None
         firebase_project_id = self._firebase_project_id()
         if firebase_project_id:
@@ -774,7 +784,7 @@ class AEGISCore:
         self.event_bus.subscribe("rewrite_suggestion", _ws_forward("rewrite_suggestion"))
         self.event_bus.subscribe("homebot_telemetry", _ws_forward("homebot_telemetry"))
         self._emit_startup_greeting()
-        logger.info("AEGIS Core initialized successfully")
+        logger.info("SATURDAY Core initialized successfully")
     def _firebase_project_id(self) -> str:
         return (
             os.getenv("FIREBASE_PROJECT_ID", "").strip()
@@ -817,7 +827,7 @@ class AEGISCore:
             blockers.append("ROS2 bridge is enabled but rclpy is unavailable.")
         if self.config_manager.get("ai.use_sync", False) and not self.sync_node:
             blockers.append("Redis sync node is enabled but failed to initialize.")
-        if os.getenv("AEGIS_ENABLE_SECURE_GATEWAY_MOUNT", "false").strip().lower() in {"1", "true", "yes", "on"}:
+        if os.getenv("SATURDAY_ENABLE_SECURE_GATEWAY_MOUNT", "false").strip().lower() in {"1", "true", "yes", "on"}:
             if not _secure_gateway_mount_status.get("mounted", False):
                 blockers.append("Secure gateway mount is enabled but failed to mount.")
         firebase_project_id = self._firebase_project_id()
@@ -843,7 +853,7 @@ class AEGISCore:
         return "Sir"
     def _emit_startup_greeting(self):
         title = self._preferred_user_title()
-        self.event_bus.publish("voice_response", f"AEGIS OS online. Welcome back, {title}.")
+        self.event_bus.publish("voice_response", f"SATURDAY OS online. Welcome back, {title}.")
 
     def _apply_audio_calibration(self):
         try:
@@ -1331,13 +1341,13 @@ class AEGISCore:
 
     async def _wake_target(self, target: str, source: str = "local", requested_by: str | None = None):
         normalized = str(target).strip().lower()
-        if normalized not in {"aegis", "edith"}:
+        if normalized not in {"saturday", "edith"}:
             return {
                 "success": False,
                 "target": normalized,
                 "source": source,
                 "requested_by": requested_by,
-                "message": "Invalid wake target. Use 'aegis' or 'edith'.",
+                "message": "Invalid wake target. Use 'saturday' or 'edith'.",
             }
         if normalized == "edith" and self.edith is None:
             return {
@@ -1357,11 +1367,11 @@ class AEGISCore:
         else:
             self.event_bus.publish(
                 "wake_command",
-                {"source": source, "requested_by": requested_by, "target": "aegis"},
+                {"source": source, "requested_by": requested_by, "target": "saturday"},
             )
-            self.event_bus.publish("voice_command", "aegis")
-            self.event_bus.publish("voice_response", "AEGIS wake signal received.")
-            message = "AEGIS wake signal sent."
+            self.event_bus.publish("voice_command", "saturday")
+            self.event_bus.publish("voice_response", "SATURDAY wake signal received.")
+            message = "SATURDAY wake signal sent."
         payload = {
             "success": True,
             "target": normalized,
@@ -1789,7 +1799,7 @@ class AEGISCore:
         @self.app.post("/api/control/wake")
         async def api_wake(data: dict | None = None):
             payload = data or {}
-            target = payload.get("target", "aegis")
+            target = payload.get("target", "saturday")
             source = payload.get("source", "web_api")
             requested_by = payload.get("requested_by")
             return await self._wake_target(target=target, source=source, requested_by=requested_by)
@@ -2031,8 +2041,8 @@ class AEGISCore:
                 "version": "2.0.0",
                 "running": self.running
             })
-        elif msg_type in ("wake_aegis", "wake_edith"):
-            target = "edith" if msg_type == "wake_edith" else "aegis"
+        elif msg_type in ("wake_saturday", "wake_edith"):
+            target = "edith" if msg_type == "wake_edith" else "saturday"
             result = await self._wake_target(target=target, source="websocket_ui")
             await websocket.send_json({"type": "wake_ack", **result})
         elif msg_type == "terminal_command":
@@ -2064,9 +2074,9 @@ class AEGISCore:
             await self.broadcast_to_ws({"type": "system_alert", "message": "KILL SWITCH ACTIVATED"})
             self.running = False
             asyncio.create_task(self.shutdown())
-        elif msg_type == "restart_aegis":
+        elif msg_type == "restart_saturday":
             self.event_bus.publish("restart_command", {})
-            await self.broadcast_to_ws({"type": "voice_msg", "text": "Restarting AEGIS systems"})
+            await self.broadcast_to_ws({"type": "voice_msg", "text": "Restarting SATURDAY systems"})
         elif msg_type == "reset_all":
             self.event_bus.publish("reset_command", {})
             await self.broadcast_to_ws({"type": "voice_msg", "text": "Resetting all settings"})
@@ -2088,14 +2098,14 @@ class AEGISCore:
   voice on/off      - Toggle voice
   faceid on/off     - Toggle face ID
   security on/off   - Toggle security
-  wake              - Wake AEGIS
+  wake              - Wake SATURDAY
   wake edith        - Wake EDITH interface
   scan              - Run security scan
   secure status     - Secure gateway mount status
   clear             - Clear screen"""
         elif cmd == "status":
             stats = self.runtime.get_resource_usage()
-            return f"""AEGIS System Status
+            return f"""SATURDAY System Status
 Version: 2.0.0
 CPU: {psutil.cpu_percent()}%
 Memory: {psutil.virtual_memory().percent}%
@@ -2146,9 +2156,9 @@ Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
             elif "off" in cmd:
                 self.security_enabled = False
                 return "Security mode disabled"
-        elif cmd in ("wake", "wake aegis"):
-            result = await self._wake_target(target="aegis", source="terminal")
-            return result.get("message", "AEGIS wake command dispatched")
+        elif cmd in ("wake", "wake saturday"):
+            result = await self._wake_target(target="saturday", source="terminal")
+            return result.get("message", "SATURDAY wake command dispatched")
         elif cmd == "wake edith":
             result = await self._wake_target(target="edith", source="terminal")
             return result.get("message", "EDITH wake command dispatched")
@@ -2169,7 +2179,7 @@ Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
             while self.camera_active:
                 ret, frame = cap.read()
                 if ret:
-                    cv2.putText(frame, "AEGIS VISION", (10, 30), 
+                    cv2.putText(frame, "SATURDAY VISION", (10, 30), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
                     _, buffer = cv2.imencode('.jpg', frame)
                     b64 = base64.b64encode(buffer).decode()
@@ -2207,7 +2217,7 @@ Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
                     if not ret:
                         frame = None
                 if frame is not None:
-                    cv2.putText(frame, "AEGIS VISION", (10, 30), 
+                    cv2.putText(frame, "SATURDAY VISION", (10, 30), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
                     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     cv2.putText(frame, timestamp, (10, frame.shape[0] - 10), 
@@ -2261,7 +2271,7 @@ Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
     def _reset_idle(self):
         self.last_activity = time.time()
         if self.idle_mode:
-            logger.info("AEGIS RE-ENGAGED: Performance Mode Restored.", source="user_input")
+            logger.info("SATURDAY RE-ENGAGED: Performance Mode Restored.", source="user_input")
             self.idle_mode = False
             self.event_bus.publish("power_mode", {"mode": "performance"})
             self.event_bus.publish("system_active", {"timestamp": time.time()})
@@ -2294,12 +2304,12 @@ Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
             await asyncio.sleep(10)                        
             idle_time = time.time() - self.last_activity
             if idle_time > 30 and not self.idle_mode:           
-                logger.info("AEGIS IDLE: Switching to Intelligent Low-Power Mode.")
+                logger.info("SATURDAY IDLE: Switching to Intelligent Low-Power Mode.")
                 self.idle_mode = True
                 self.event_bus.publish("power_mode", {"mode": "low"})
             if idle_time > 60 and self.human_interface:             
                 if random.random() < 0.4: 
-                    logger.info(f"Triggering AEGIS-EDITH Internal Dialogue (Idle for {int(idle_time)}s)")
+                    logger.info(f"Triggering SATURDAY-EDITH Internal Dialogue (Idle for {int(idle_time)}s)")
                     news = self.news_service.get_latest()
                     env = f"{self.last_vision_summary} {self.last_env_summary}"
                     script = await self.human_interface.generate_internal_dialogue(env, news)
@@ -2307,7 +2317,7 @@ Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
                         logger.warning("Converse mode generated NO script.")
                         continue
                     for turn in script:
-                        speaker = turn.get("speaker", "AEGIS")
+                        speaker = turn.get("speaker", "SATURDAY")
                         text = turn.get("text", "")
                         if not text: continue
                         logger.info(f"Dialogue: {speaker} says: {text}")
@@ -2386,12 +2396,12 @@ Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
             self.ml_core.register_subsystem(name, inp, hid, out)
         logger.info(f"Registered {len(subsystems)} subsystems with ML Core")
     async def start(self):
-        logger.info("AEGIS System Standalone Starting...")
+        logger.info("SATURDAY System Standalone Starting...")
         config = Config(app=self.app, host="0.0.0.0", port=8000, loop="asyncio")
         self.server = Server(config)
         await self.server.serve()
     async def shutdown(self):
-        logger.info("AEGIS System Shutting Down...")
+        logger.info("SATURDAY System Shutting Down...")
         self.running = False
         try:
             self.window_manager.stop_process_monitor()
@@ -2405,13 +2415,13 @@ Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
         if hasattr(self, 'server'): 
             await self.server.shutdown()
 async def main():
-    aegis = AEGISCore()
+    saturday = SATURDAYCore()
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
-        try: loop.add_signal_handler(sig, lambda: asyncio.create_task(aegis.shutdown()))
+        try: loop.add_signal_handler(sig, lambda: asyncio.create_task(saturday.shutdown()))
         except NotImplementedError: pass
-    try: await aegis.start()
+    try: await saturday.start()
     except Exception as e: logger.error("Fatal exception", error=str(e))
-    finally: await aegis.shutdown()
+    finally: await saturday.shutdown()
 if __name__ == "__main__":
     asyncio.run(main())

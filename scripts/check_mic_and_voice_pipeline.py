@@ -6,10 +6,10 @@ import numpy as np
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT)
 
-# Keep parity with verify_aegis.py path setup so optional packages are discoverable.
+# Keep parity with verify_saturday.py path setup so optional packages are discoverable.
 for extra in (
     os.path.join(ROOT, "pip_packages"),
-    "F:/aegis_packages",
+    "F:/saturday_packages",
 ):
     if os.path.isdir(extra):
         sys.path.insert(0, extra)
@@ -26,7 +26,7 @@ except ImportError:
 
 def main():
     print("=" * 72)
-    print("AEGIS Mic + Voice Pipeline Diagnostic")
+    print("SATURDAY Mic + Voice Pipeline Diagnostic")
     print("=" * 72)
 
     audio = CrossPlatformAudio()

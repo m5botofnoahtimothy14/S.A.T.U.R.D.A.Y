@@ -2,7 +2,7 @@
 import logging
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.Hybrid.VirtualAI")
+logger = logging.getLogger("SATURDAY.Hybrid.VirtualAI")
 
 class VirtualAI:
     def __init__(self, event_bus: EventBus, llm_engine=None):

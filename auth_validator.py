@@ -11,7 +11,7 @@ ROLE_VIEWER = "viewer"
 ROLE_OPERATOR = "operator"
 ROLE_ADMIN = "admin"
 VALID_ROLES = {ROLE_VIEWER, ROLE_OPERATOR, ROLE_ADMIN}
-logger = logging.getLogger("aegis.auth")
+logger = logging.getLogger("saturday.auth")
 @dataclass(frozen=True)
 class AuthenticatedUser:
     uid: str
@@ -41,13 +41,21 @@ class FirebaseAuthValidator:
         self.role_collection = role_collection
         self.project_id = project_id or os.getenv("FIREBASE_PROJECT_ID")
         self.service_account_path = service_account_path or os.getenv("FIREBASE_SERVICE_ACCOUNT")
-        self.strict_prod = os.getenv("AEGIS_STRICT_PROD", "false").strip().lower() in {
+        self.strict_prod = os.getenv("SATURDAY_STRICT_PROD", "false").strip().lower() in {
             "1",
             "true",
             "yes",
             "on",
         }
-        self.allow_mock_auth = False
+        requested_mock_auth = os.getenv("SATURDAY_ALLOW_MOCK_AUTH", "false").strip().lower() in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+        self.allow_mock_auth = requested_mock_auth and not self.strict_prod
+        if requested_mock_auth and self.strict_prod:
+            logger.warning("Mock auth requested but blocked because SATURDAY_STRICT_PROD is enabled")
         self._db = None
         self._firebase_enabled = False
         self._try_init_firebase()
@@ -108,10 +116,10 @@ class FirebaseAuthValidator:
                         payload += '=' * padding
                     payload = payload.replace('-', '+').replace('_', '/')
                     user_data = json.loads(base64.b64decode(payload))
-                    roles = _normalize_roles([str(user_data.get("role", ROLE_ADMIN))])
+                    roles = _normalize_roles([str(user_data.get("role", ROLE_VIEWER))])
                     return AuthenticatedUser(
                         uid=user_data.get('sub') or user_data.get('uid') or user_data.get('username', 'test_user'),
-                        email=f"{user_data.get('username', 'test')}@aegis.local",
+                        email=f"{user_data.get('username', 'test')}@saturday.local",
                         roles=roles,
                         claims=user_data
                     )
@@ -121,9 +129,9 @@ class FirebaseAuthValidator:
             pass
         return AuthenticatedUser(
             uid="test_user",
-            email="test@aegis.local",
-            roles=(ROLE_ADMIN,),
-            claims={"role": "admin"}
+            email="test@saturday.local",
+            roles=(ROLE_VIEWER,),
+            claims={"role": ROLE_VIEWER}
         )
     def verify_bearer(self, credentials_obj: HTTPAuthorizationCredentials | None) -> AuthenticatedUser:
         if credentials_obj is None or credentials_obj.scheme.lower() != "bearer":

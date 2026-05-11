@@ -10,7 +10,7 @@ import structlog
 
 import numpy as np
 
-logger = structlog.get_logger("AEGIS.DL.Patterns")
+logger = structlog.get_logger("SATURDAY.DL.Patterns")
 
 class PatternMatcher:
     

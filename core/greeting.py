@@ -5,7 +5,7 @@ import asyncio
 from core.event_bus import EventBus
 from core.brain import LinkedBrain
 from communication.speech import SpeechManager
-logger = logging.getLogger("AEGIS.Core.Greeting")
+logger = logging.getLogger("SATURDAY.Core.Greeting")
 class GreetingManager:
     def __init__(self, event_bus: EventBus, brain: LinkedBrain, speech: SpeechManager):
         self.event_bus = event_bus

@@ -3,7 +3,7 @@ import threading
 import logging
 import queue
 
-logger = logging.getLogger("AEGIS.HomeBot.Comms")
+logger = logging.getLogger("SATURDAY.HomeBot.Comms")
 
 class Comms:
     

@@ -33,9 +33,9 @@ if (-not (Test-Path $KeyFile)) {
 
 Import-EnvFile -Path $EnvFile
 
-$env:AEGIS_API_HOST = $Host
-$env:AEGIS_API_PORT = "$Port"
-$env:AEGIS_SSL_CERT_FILE = (Resolve-Path $CertFile).Path
-$env:AEGIS_SSL_KEY_FILE = (Resolve-Path $KeyFile).Path
+$env:SATURDAY_API_HOST = $Host
+$env:SATURDAY_API_PORT = "$Port"
+$env:SATURDAY_SSL_CERT_FILE = (Resolve-Path $CertFile).Path
+$env:SATURDAY_SSL_KEY_FILE = (Resolve-Path $KeyFile).Path
 
 & $PythonExe .\api_gateway.py

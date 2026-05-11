@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from contextlib import contextmanager
 
-logger = logging.getLogger("AEGIS.Audio")
+logger = logging.getLogger("SATURDAY.Audio")
 
 PLATFORM = sys.platform
 IS_WINDOWS = PLATFORM.startswith("win")

@@ -4,7 +4,7 @@ import threading
 import time
 import schedule
 
-logger = logging.getLogger("AEGIS.Services.Scheduler")
+logger = logging.getLogger("SATURDAY.Services.Scheduler")
 
 class TaskScheduler:
     def __init__(self, event_bus):

@@ -2,7 +2,7 @@
 import logging
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.Hybrid.CloudSync")
+logger = logging.getLogger("SATURDAY.Hybrid.CloudSync")
 
 class CloudSync:
     def __init__(self, event_bus: EventBus):

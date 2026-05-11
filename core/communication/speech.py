@@ -12,7 +12,7 @@ try:
 except ImportError:
     sd = None
 
-logger = logging.getLogger("AEGIS.Speech")
+logger = logging.getLogger("SATURDAY.Speech")
 
 PIPER_AVAILABLE = False
 try:
@@ -91,7 +91,7 @@ class SpeechManager:
             self._speak_windows_wav(text)
             return
         try:
-            wav_path = os.path.join(tempfile.gettempdir(), "aegis_piper.wav")
+            wav_path = os.path.join(tempfile.gettempdir(), "saturday_piper.wav")
             self.piper_voice.synthesize_wav(text, wav_path)
             
             if os.path.exists(wav_path):
@@ -105,7 +105,7 @@ class SpeechManager:
         except AttributeError as e:
             if "audio" in str(e).lower() or "AudioChunk" in str(e):
                 try:
-                    wav_path = os.path.join(tempfile.gettempdir(), "aegis_piper.wav")
+                    wav_path = os.path.join(tempfile.gettempdir(), "saturday_piper.wav")
                     import subprocess
                     result = subprocess.run([
                         "python", "-m", "piper", "--model", 
@@ -139,7 +139,7 @@ class SpeechManager:
             pythoncom.CoInitialize()
             try:
                 engine = win32com.client.Dispatch("SAPI.SpVoice")
-                temp_wav = os.path.join(tempfile.gettempdir(), "aegis_temp.wav")
+                temp_wav = os.path.join(tempfile.gettempdir(), "saturday_temp.wav")
                 fs = win32com.client.Dispatch("SAPI.SpFileStream")
                 fs.Open(temp_wav, 3)
                 engine.AudioOutputStream = fs

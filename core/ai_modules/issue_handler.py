@@ -1,7 +1,7 @@
 ﻿                             
 import logging
 
-logger = logging.getLogger("AEGIS.AI.IssueHandler")
+logger = logging.getLogger("SATURDAY.AI.IssueHandler")
 
 class IssueHandler:
     def __init__(self, event_bus):

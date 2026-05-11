@@ -5,7 +5,7 @@ import structlog
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import PlainTextResponse, JSONResponse
 
-logger = structlog.get_logger("AEGIS.Twilio")
+logger = structlog.get_logger("SATURDAY.Twilio")
 
 def register_twilio_webhooks(app, call_agent):
     
@@ -38,7 +38,7 @@ def register_twilio_webhooks(app, call_agent):
     @router.post("/api/voice/outbound")
     async def voice_outbound(data: dict):
         to = data.get("to")
-        script = data.get("script", "Hi, this is AEGIS following up on your request.")
+        script = data.get("script", "Hi, this is SATURDAY following up on your request.")
         if not to:
             raise HTTPException(status_code=400, detail="Missing 'to'")
         if not call_agent.outbound_supported():
@@ -82,7 +82,7 @@ def register_twilio_webhooks(app, call_agent):
     @router.api_route("/api/voice/outbound/script/{session_id}", methods=["GET", "POST"])
     async def voice_outbound_script(session_id: str):
         session = call_agent.sessions.get(session_id) or call_agent.ensure_session(session_id, None)
-        script = session.get("one_shot_script") or "This is AEGIS. How can I help you today?"
+        script = session.get("one_shot_script") or "This is SATURDAY. How can I help you today?"
                                                                           
         action_url = f"/api/voice/inbound/gather?sid={session_id}"
         twiml = call_agent.build_twiml_gather(script, action_url)
@@ -100,8 +100,8 @@ def register_twilio_webhooks(app, call_agent):
 
 def _build_action_url(request: Request, path: str) -> str:
                                                                                        
-    if hasattr(request.app, "aegis") and request.app.aegis.call_agent.public_base_url:
-        base = request.app.aegis.call_agent.public_base_url.rstrip("/")
+    if hasattr(request.app, "saturday") and request.app.saturday.call_agent.public_base_url:
+        base = request.app.saturday.call_agent.public_base_url.rstrip("/")
         return f"{base}{path}"
     url = str(request.base_url).rstrip("/")
     return f"{url}{path}"

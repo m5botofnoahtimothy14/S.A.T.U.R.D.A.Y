@@ -2,7 +2,7 @@
 import logging
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.EDITH.Comms")
+logger = logging.getLogger("SATURDAY.EDITH.Comms")
 
 class EdithComms:
     def __init__(self, event_bus: EventBus):

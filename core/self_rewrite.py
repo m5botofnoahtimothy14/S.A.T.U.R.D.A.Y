@@ -7,7 +7,7 @@ import structlog
 import asyncio
 from collections import defaultdict, deque
 from core.event_bus import EventBus
-logger = structlog.get_logger("AEGIS.SelfRewrite")
+logger = structlog.get_logger("SATURDAY.SelfRewrite")
 class ImprovementNeuralNetwork:
     def __init__(self, input_size=20, hidden_size=40, output_size=10):
         import numpy as np
@@ -90,7 +90,7 @@ class SelfRewriteAdvisor:
             self.success_patterns = {}
             self._load_model()
             self.dl_active = True
-            logger.info("DEEP LEARNING Self-Rewrite initialized - AEGIS can now improve itself")
+            logger.info("DEEP LEARNING Self-Rewrite initialized - SATURDAY can now improve itself")
         except Exception as e:
             logger.warning(f"DL Self-Rewrite init failed: {e}")
             self.dl_active = False

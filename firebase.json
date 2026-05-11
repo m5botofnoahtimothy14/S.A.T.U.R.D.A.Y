@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "aegis-control-panel/dist",
+    "public": "saturday-control-panel/dist",
     "ignore": [
       "firebase.json",
       "**/.*",

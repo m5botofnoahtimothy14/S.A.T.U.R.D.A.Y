@@ -1,5 +1,5 @@
 """
-AEGIS Boot Orchestrator
+SATURDAY Boot Orchestrator
 Manages dependency-aware module initialization
 Ensures proper startup sequence and handles failures gracefully
 """
@@ -233,7 +233,7 @@ class BootOrchestrator:
         results = {}
         
         logger.info("=" * 60)
-        logger.info("AEGIS BOOT SEQUENCE STARTING")
+        logger.info("SATURDAY BOOT SEQUENCE STARTING")
         logger.info("=" * 60)
         
         for stage in stages:
@@ -257,7 +257,7 @@ class BootOrchestrator:
         
         total_time = time.time() - self._boot_start_time
         logger.info("\n" + "=" * 60)
-        logger.info(f"AEGIS BOOT COMPLETE ({total_time:.2f}s)")
+        logger.info(f"SATURDAY BOOT COMPLETE ({total_time:.2f}s)")
         logger.info("=" * 60)
         
         successful = sum(1 for v in results.values() if v)
@@ -297,7 +297,7 @@ class BootOrchestrator:
     
     async def shutdown(self):
         """Shutdown all modules in reverse order."""
-        logger.info("AEGIS SHUTDOWN INITIATED")
+        logger.info("SATURDAY SHUTDOWN INITIATED")
         
         for name in reversed(self._boot_order):
             spec = self._modules.get(name)
@@ -314,7 +314,7 @@ class BootOrchestrator:
         
         self._instances.clear()
         self._initialized = False
-        logger.info("AEGIS SHUTDOWN COMPLETE")
+        logger.info("SATURDAY SHUTDOWN COMPLETE")
     
     def get_boot_stats(self) -> Dict[str, Any]:
         if not self._boot_start_time:

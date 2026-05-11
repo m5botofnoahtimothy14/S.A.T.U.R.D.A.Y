@@ -1,7 +1,7 @@
 ﻿                          
 import logging
 
-logger = logging.getLogger("AEGIS.Identity.Trust")
+logger = logging.getLogger("SATURDAY.Identity.Trust")
 
 class TrustEngine:
     def __init__(self, event_bus):

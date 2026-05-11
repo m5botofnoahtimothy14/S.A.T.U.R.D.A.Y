@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional, Dict, Any
 from core.event_bus import EventBus
 
-logger = structlog.get_logger("AEGIS.OAuth")
+logger = structlog.get_logger("SATURDAY.OAuth")
 
 class OAuthManager:
     

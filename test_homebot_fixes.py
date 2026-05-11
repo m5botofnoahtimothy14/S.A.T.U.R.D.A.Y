@@ -91,9 +91,9 @@ def test_homebot_fixes():
     print("✅ Display drawing methods enhanced")
     print("✅ Fallback methods added")
     print("\n[HOMEBOT TEST] To apply fixes:")
-    print("1. Flash AEGIS_Core2_Firmware.py to M5Stack Core2")
+    print("1. Flash SATURDAY_Core2_Firmware.py to M5Stack Core2")
     print("2. Start MQTT broker: python mqtt_network.py")
-    print("3. Run AEGIS with HomeBot integration enabled")
+    print("3. Run SATURDAY with HomeBot integration enabled")
     print("4. Test COM4 serial communication if needed")
 if __name__ == "__main__":
     test_homebot_fixes()

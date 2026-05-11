@@ -12,8 +12,8 @@ Since automatic flashing failed, here's the manual method:
 
 ### 2. Open Command Prompt/Terminal
 ```bash
-# Navigate to AEGIS directory
-cd d:\AEGIS
+# Navigate to SATURDAY directory
+cd d:\SATURDAY
 
 # Check COM4 connection
 python -m esptool --port COM4 chip_id
@@ -51,7 +51,7 @@ python -c "import serial.tools.list_ports; print([p.device for p in serial.tools
 ### Alternative: Use UiFlow2 Web IDE
 1. Go to https://flow.m5stack.com
 2. Connect to M5Stack Core2
-3. Copy the firmware code from `homebot\AEGIS_Core2_Firmware.py`
+3. Copy the firmware code from `homebot\SATURDAY_Core2_Firmware.py`
 4. Paste into UiFlow2 IDE
 5. Click "Download" or "Run"
 
@@ -77,4 +77,4 @@ After successful flash:
 - Core2 screen shows reactive face
 - COM4 responds to commands (STP, FWD, LFT, RGT, etc.)
 - MQTT connection attempts
-- Ready for AEGIS integration
+- Ready for SATURDAY integration

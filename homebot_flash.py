@@ -1,7 +1,7 @@
 ﻿                                                     
 
-WIFI_SSID = "Timojoe"
-WIFI_PASSWORD = "kebajtimo"
+WIFI_SSID = "CHANGE_ME"
+WIFI_PASSWORD = "CHANGE_ME"
 SERIAL_BAUD = 115200
 SERIAL_TIMEOUT = 1000      
 MQTT_BROKER_PRIMARY = "192.168.0.1"
@@ -510,7 +510,7 @@ class MQTTManager:
             from umqtt.robust import MQTTClient
         except:
             from umqtt.simple import MQTTClient
-        client_id = "AEGIS-Core2-{}".format(int(time.time()))
+        client_id = "SATURDAY-Core2-{}".format(int(time.time()))
         try:
             self.client = MQTTClient(client_id, broker, port=port, keepalive=30)
             self.client.connect()
@@ -567,7 +567,7 @@ def run():
     import json
     import random
     print("="*50)
-    print("AEGIS HomeBot Core2 v3.0 - Full AI Edition")
+    print("SATURDAY HomeBot Core2 v3.0 - Full AI Edition")
     print("Multi-MQTT | Speech | Reactive Face")
     print("="*50)
     try:
@@ -693,14 +693,14 @@ def run():
                 print("[MQTT] Sub error:", e)
         if mqtt_connected:
             mqtt_mgr.publish("homebot/status", json.dumps({
-                "type": "AEGIS-Core2-v3",
+                "type": "SATURDAY-Core2-v3",
                 "wifi": wlan.ifconfig()[0] if wifi_ok else "disconnected",
                 "mqtt": mqtt_mgr.get_broker_info()[0],
                 "speech": True,
                 "face": True
             }))
     print("="*50)
-    print("AEGIS HomeBot v3.0 Ready!")
+    print("SATURDAY HomeBot v3.0 Ready!")
     print("Features: Multi-MQTT, Speech, Reactive Face")
     print("="*50)
     last_cmd = time.time()

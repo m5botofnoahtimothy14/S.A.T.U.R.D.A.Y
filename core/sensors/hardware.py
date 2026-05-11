@@ -2,7 +2,7 @@
 import structlog
 import cv2
 
-logger = structlog.get_logger("AEGIS.Sensors")
+logger = structlog.get_logger("SATURDAY.Sensors")
 
 class HardwareInterface:
     def __init__(self):

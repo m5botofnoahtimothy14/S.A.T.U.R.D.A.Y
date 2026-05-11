@@ -14,7 +14,7 @@ try:
     import serial
 except ImportError:
     serial = None
-logger = logging.getLogger("AEGIS.HomeBotIntegration")
+logger = logging.getLogger("SATURDAY.HomeBotIntegration")
 class HomeBotIntegration:
     def __init__(self, event_bus: EventBus, com_port: str | None = None):
         self.event_bus = event_bus
@@ -83,7 +83,7 @@ class HomeBotIntegration:
         if not self.mqtt_broker:
             self._log("error", "MQTT_BROKER is not configured for HomeBot MQTT transport.")
             return
-        self.mqtt_client = mqtt.Client(client_id="AEGIS-HomeBot")
+        self.mqtt_client = mqtt.Client(client_id="SATURDAY-HomeBot")
         self.mqtt_client.on_connect = self._on_mqtt_connect
         self.mqtt_client.on_message = self._on_mqtt_message
         self.mqtt_client.on_disconnect = self._on_mqtt_disconnect

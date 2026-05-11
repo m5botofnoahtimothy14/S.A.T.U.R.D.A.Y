@@ -1,9 +1,9 @@
 ﻿                     
 import uuid
 from core.event_bus import EventBus
-from core.logging_config import AEGISLogger
+from core.logging_config import SATURDAYLogger
 
-logger = AEGISLogger.get_logger("Identity", "identity")
+logger = SATURDAYLogger.get_logger("Identity", "identity")
 
 class IdentityManager:
     def __init__(self, event_bus: EventBus):

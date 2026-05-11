@@ -1,4 +1,4 @@
-# AEGIS Production Deployment Guide
+# SATURDAY Production Deployment Guide
 
 ## Quick Start
 
@@ -66,10 +66,10 @@ Edit `prod.env` to configure:
 
 ### Linux (systemd)
 ```bash
-sudo cp aegis.service /etc/systemd/system/
+sudo cp saturday.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable aegis
-sudo systemctl start aegis
+sudo systemctl enable saturday
+sudo systemctl start saturday
 ```
 
 ### Windows (NSSM)
@@ -78,11 +78,11 @@ sudo systemctl start aegis
 choco install nssm
 
 # Create service
-nssm install AEGIS "python" "run_production.py"
-nssm set AEGIS AppDirectory "D:\AEGIS"
-nssm set AEGIS DisplayName "AEGIS AI OS"
-nssm set AEGIS Description "Advanced Engine for Global Integrated Systems"
-nssm start AEGIS
+nssm install SATURDAY "python" "run_production.py"
+nssm set SATURDAY AppDirectory "D:\SATURDAY"
+nssm set SATURDAY DisplayName "SATURDAY AI OS"
+nssm set SATURDAY Description "Advanced Engine for Global Integrated Systems"
+nssm start SATURDAY
 ```
 
 ## Production Checklist
@@ -100,7 +100,7 @@ nssm start AEGIS
 ```nginx
 server {
     listen 443 ssl;
-    server_name aegis.yourdomain.com;
+    server_name saturday.yourdomain.com;
     
     ssl_certificate /path/to/cert.pem;
     ssl_certificate_key /path/to/key.pem;

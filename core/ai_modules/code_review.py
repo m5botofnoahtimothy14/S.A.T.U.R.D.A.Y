@@ -3,7 +3,7 @@ import structlog
 import ast
 from core.event_bus import EventBus
 
-logger = structlog.get_logger("AEGIS.AI.CodeReview")
+logger = structlog.get_logger("SATURDAY.AI.CodeReview")
 
 class CodeReviewer:
     def __init__(self, event_bus: EventBus):

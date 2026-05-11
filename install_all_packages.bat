@@ -1,12 +1,12 @@
 ﻿@echo off
 echo ================================================
-echo AEGIS Installation Script - Drive D Edition
+echo SATURDAY Installation Script - Drive D Edition
 echo ================================================
 echo.
 
-set PYTHON_TARGET=D:\AEGIS\pip_packages
-set DL_CACHE=D:\AEGIS\.cache
-set TEMP_DIR=D:\AEGIS\temp
+set PYTHON_TARGET=D:\SATURDAY\pip_packages
+set DL_CACHE=D:\SATURDAY\.cache
+set TEMP_DIR=D:\SATURDAY\temp
 
 echo Creating directories...
 mkdir "%PYTHON_TARGET%" 2>nul

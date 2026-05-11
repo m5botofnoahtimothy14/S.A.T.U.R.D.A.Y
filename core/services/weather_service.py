@@ -3,7 +3,7 @@ import os
 
 import requests
 
-logger = logging.getLogger("AEGIS.Services.Weather")
+logger = logging.getLogger("SATURDAY.Services.Weather")
 
 WEATHER_CODE_MAP = {
     0: "clear sky",
@@ -32,9 +32,9 @@ WEATHER_CODE_MAP = {
 
 class WeatherService:
     def __init__(self):
-        self.default_latitude = os.getenv("AEGIS_LATITUDE", "").strip()
-        self.default_longitude = os.getenv("AEGIS_LONGITUDE", "").strip()
-        self.default_location_name = os.getenv("AEGIS_LOCATION_NAME", "current location").strip()
+        self.default_latitude = os.getenv("SATURDAY_LATITUDE", "").strip()
+        self.default_longitude = os.getenv("SATURDAY_LONGITUDE", "").strip()
+        self.default_location_name = os.getenv("SATURDAY_LOCATION_NAME", "current location").strip()
 
     def get_current_weather(self, location_query: str = "") -> dict:
         location = self._resolve_location(location_query)
@@ -95,5 +95,5 @@ class WeatherService:
             }
 
         raise RuntimeError(
-            "Weather location is not configured. Set AEGIS_LATITUDE and AEGIS_LONGITUDE or ask for a specific place."
+            "Weather location is not configured. Set SATURDAY_LATITUDE and SATURDAY_LONGITUDE or ask for a specific place."
         )

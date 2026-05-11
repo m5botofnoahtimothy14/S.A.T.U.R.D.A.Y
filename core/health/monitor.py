@@ -7,9 +7,9 @@ import json
 from collections import deque
 import numpy as np
 from core.event_bus import EventBus
-from core.logging_config import AEGISLogger
+from core.logging_config import SATURDAYLogger
 
-logger = AEGISLogger.get_logger("Health", "health")
+logger = SATURDAYLogger.get_logger("Health", "health")
 
 class HealthNeuralNetwork:
     

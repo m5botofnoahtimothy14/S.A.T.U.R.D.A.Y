@@ -9,7 +9,7 @@ from collections import deque, defaultdict
 
 import numpy as np
 
-logger = structlog.get_logger("AEGIS.ML.NLP")
+logger = structlog.get_logger("SATURDAY.ML.NLP")
 
 class NLPDecisionNetwork:
     

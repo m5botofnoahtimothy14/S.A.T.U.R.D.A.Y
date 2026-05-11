@@ -4,8 +4,8 @@ import asyncio
 from collections import deque
 from typing import Deque, Tuple
 import structlog
-logger = structlog.get_logger("AEGIS.HumanInterface")
-from core.pipeline import AEGISPipeline
+logger = structlog.get_logger("SATURDAY.HumanInterface")
+from core.pipeline import SATURDAYPipeline
 import json
 import os
 class HumanInterface:
@@ -16,7 +16,7 @@ class HumanInterface:
         self.tasks = task_manager
         self.learning = learning_manager
         self.memory: Deque[Tuple[str, str]] = deque(maxlen=memory_size)
-        self.direct_speech = os.getenv("AEGIS_DIRECT_SPEECH", "false").lower() in ("1", "true", "yes", "on")
+        self.direct_speech = os.getenv("SATURDAY_DIRECT_SPEECH", "false").lower() in ("1", "true", "yes", "on")
         self.voice_input_enabled = True
         self.config = {}
         config_path = "core/config.json"
@@ -27,7 +27,7 @@ class HumanInterface:
             except Exception as e:
                 logger.error(f"Failed to load config for HumanInterface: {e}")
         self.use_langgraph = self.config.get("ai", {}).get("use_langgraph", False)
-        self.pipeline = AEGISPipeline(
+        self.pipeline = SATURDAYPipeline(
             llm_engine=llm_engine,
             speech_manager=speech_manager,
             event_bus=event_bus,
@@ -95,12 +95,12 @@ class HumanInterface:
     def _build_prompt(self) -> str:
         context_lines = []
         for role, text in self.memory:
-            prefix = "User:" if role == "user" else "AEGIS:"
+            prefix = "User:" if role == "user" else "SATURDAY:"
             context_lines.append(f"{prefix} {text}")
         context = "\n".join(context_lines[-10:])
         long_term = self.learning.get_summaries_text() if self.learning else ""
         return (
-            "You are AEGIS, a warm, concise, human-like assistant. "
+            "You are SATURDAY, a warm, concise, human-like assistant. "
             "Keep answers short, actionable, and conversational. "
             "Context of the recent dialogue:\n"
             f"{context}\n"
@@ -109,12 +109,12 @@ class HumanInterface:
         )
     async def generate_internal_dialogue(self, env_info: str, news: str) -> list:
         prompt = (
-            "Scenario: AEGIS and EDITH are two AI personas. AEGIS is calm and professional. "
+            "Scenario: SATURDAY and EDITH are two AI personas. SATURDAY is calm and professional. "
             "EDITH is analytical and slightly sharp. They are discussing current data. \n"
             f"Environment Info: {env_info}\n"
             f"News: {news}\n"
             "Format: Write a 4-line dialogue script in JSON format like: \n"
-            "[{\"speaker\": \"AEGIS\", \"text\": \"...\"}, {\"speaker\": \"EDITH\", \"text\": \"...\"}, ...]"
+            "[{\"speaker\": \"SATURDAY\", \"text\": \"...\"}, {\"speaker\": \"EDITH\", \"text\": \"...\"}, ...]"
         )
         try:
             raw_script = ""

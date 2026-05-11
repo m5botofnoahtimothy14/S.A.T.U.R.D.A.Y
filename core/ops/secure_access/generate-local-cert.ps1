@@ -1,6 +1,6 @@
 param(
     [string]$OutputDirectory = "certs",
-    [string]$CommonName = "aegis.local",
+    [string]$CommonName = "saturday.local",
     [int]$DaysValid = 825
 )
 

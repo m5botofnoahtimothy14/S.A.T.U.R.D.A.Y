@@ -2,7 +2,7 @@
 import asyncio
 import logging
 
-logger = logging.getLogger("AEGIS.VoiceRouter")
+logger = logging.getLogger("SATURDAY.VoiceRouter")
 
 class VoiceCommandRouter:
     def __init__(self, event_bus, speech_engine, whatsapp=None, instagram=None):

@@ -2,7 +2,7 @@
 import logging
 import requests
 
-logger = logging.getLogger("AEGIS.Services.WebSearch")
+logger = logging.getLogger("SATURDAY.Services.WebSearch")
 
 class WebSearchService:
     def __init__(self, event_bus):

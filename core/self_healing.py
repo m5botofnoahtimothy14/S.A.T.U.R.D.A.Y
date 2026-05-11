@@ -6,7 +6,7 @@ import threading
 import time
 import sys
 import os
-logger = logging.getLogger("AEGIS.SelfHealing")
+logger = logging.getLogger("SATURDAY.SelfHealing")
 MODULE_PATH_MAP = {
     "brain": "core.brain",
     "ai": "ai_modules.llm_engine",

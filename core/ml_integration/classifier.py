@@ -9,7 +9,7 @@ from typing import Dict, List, Sequence
 import numpy as np
 import structlog
 
-logger = structlog.get_logger("AEGIS.ML.Classifier")
+logger = structlog.get_logger("SATURDAY.ML.Classifier")
 
 class NeuralClassifier:
     

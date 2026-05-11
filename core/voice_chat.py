@@ -8,7 +8,7 @@ import os
 from core.audio_service import CrossPlatformAudio
 from core.event_bus import EventBus
 
-logger = logging.getLogger("AEGIS.VoiceChat")
+logger = logging.getLogger("SATURDAY.VoiceChat")
 
 class VoiceChat:
     def __init__(self, event_bus: EventBus, llm_engine=None, speech_manager=None):
@@ -44,8 +44,8 @@ class VoiceChat:
 
     def _greet(self):
         greetings = [
-            "Hello. I am AEGIS. What can I help you with?",
-            "Good day. AEGIS online. What would you like to know?",
+            "Hello. I am SATURDAY. What can I help you with?",
+            "Good day. SATURDAY online. What would you like to know?",
             "I am here. What shall we work on today?"
         ]
         import random

@@ -4,7 +4,7 @@ import asyncio
 from core.event_bus import EventBus
 from datetime import datetime
 
-logger = structlog.get_logger("AEGIS.AI.TaskAutomation")
+logger = structlog.get_logger("SATURDAY.AI.TaskAutomation")
 
 class TaskAutomator:
     def __init__(self, event_bus: EventBus):
@@ -19,7 +19,7 @@ class TaskAutomator:
                                                                  
             if now.hour == 8 and now.minute == 0:
                 logger.info("Morning routine triggered.")
-                self.event_bus.publish("voice_response", "Good morning. AEGIS is performing system health checks.")
+                self.event_bus.publish("voice_response", "Good morning. SATURDAY is performing system health checks.")
                 self.event_bus.publish("health_check_trigger")
             
             await asyncio.sleep(60)

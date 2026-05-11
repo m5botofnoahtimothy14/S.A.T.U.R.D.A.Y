@@ -15,7 +15,7 @@ try:
 except ImportError:
     win32gui = None
 
-logger = logging.getLogger("AEGIS.Screen")
+logger = logging.getLogger("SATURDAY.Screen")
 
 class ScreenNavigator:
     

@@ -8,12 +8,12 @@ import numpy as np
 from core.event_bus import EventBus
 from core.audio_service import CrossPlatformAudio
 
-logger = structlog.get_logger("AEGIS.VoiceInterface")
+logger = structlog.get_logger("SATURDAY.VoiceInterface")
 
 class VoiceInterface:
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
-        self.wake_word = "aegis"
+        self.wake_word = "saturday"
         self.audio = CrossPlatformAudio()
         self.failure_streak = 0
         self.listening = True

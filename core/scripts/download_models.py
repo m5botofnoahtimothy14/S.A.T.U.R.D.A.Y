@@ -26,7 +26,7 @@ def download_file(url, filename):
         print(f"Error downloading {url}: {e}")
 
 def main():
-    models_dir = "D:/AEGIS/models"
+    models_dir = "D:/SATURDAY/models"
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
 
@@ -40,7 +40,7 @@ def main():
     vosk_zip = os.path.join(models_dir, "vosk-model-small-en-us-0.15.zip")
     vosk_dir = os.path.join(models_dir, "vosk-model-small-en-us-0.15")
 
-    print("--- AEGIS Model Downloader ---")
+    print("--- SATURDAY Model Downloader ---")
     
     download_file(llama_url, llama_path)
     
@@ -56,7 +56,7 @@ def main():
     else:
         print("Vosk model already exists.")
 
-    print("\nAll models verified/downloaded in D:/AEGIS/models")
+    print("\nAll models verified/downloaded in D:/SATURDAY/models")
 
 if __name__ == "__main__":
     main()

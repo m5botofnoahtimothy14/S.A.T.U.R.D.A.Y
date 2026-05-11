@@ -1,6 +1,6 @@
-# AEGIS OS - System Documentation
+# SATURDAY OS - System Documentation
 
-AEGIS (Advanced Engineering & Governance Intelligence System) is a local, AI-first operating system designed for local LLM orchestration, system governance, and embodied AI.
+SATURDAY (Advanced Engineering & Governance Intelligence System) is a local, AI-first operating system designed for local LLM orchestration, system governance, and embodied AI.
 
 ## 🛠 Permanent Environment
 The system is anchored in a dedicated Python 3.12 virtual environment located at `./.venv`.
@@ -22,7 +22,7 @@ To maintain this environment, use:
 .venv\Scripts\python core/main.py
 ```
 ### Windows Service Mode
-AEGIS can run in the background as a native system service:
+SATURDAY can run in the background as a native system service:
 ```powershell
 cd services
 # Install

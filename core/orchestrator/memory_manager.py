@@ -1,5 +1,5 @@
 """
-AEGIS Memory Manager
+SATURDAY Memory Manager
 Manages memory allocation, prevents leaks, and implements caching strategies
 Handles model loading/unloading and memory optimization
 """

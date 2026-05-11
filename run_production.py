@@ -13,11 +13,11 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(BASE_DIR / "logs" / "aegis.log"),
+        logging.FileHandler(BASE_DIR / "logs" / "saturday.log"),
         logging.StreamHandler()
     ]
 )
-logger = logging.getLogger("AEGIS.Production")
+logger = logging.getLogger("SATURDAY.Production")
 def get_workers():
     return 1
 def is_port_available(host: str, port: int) -> bool:
@@ -34,11 +34,11 @@ def run_server():
     requested_workers = int(os.getenv("WORKERS", get_workers()))
     workers = 1 if requested_workers != 1 else requested_workers
     if requested_workers != 1:
-        logger.warning("Forcing WORKERS=1 for AEGIS runtime stability (requested=%s)", requested_workers)
+        logger.warning("Forcing WORKERS=1 for SATURDAY runtime stability (requested=%s)", requested_workers)
     if not is_port_available(host, port):
-        logger.error("Port %s is already in use. Stop the existing AEGIS/server process first.", port)
+        logger.error("Port %s is already in use. Stop the existing SATURDAY/server process first.", port)
         return 1
-    logger.info(f"Starting AEGIS Production Server on {host}:{port}")
+    logger.info(f"Starting SATURDAY Production Server on {host}:{port}")
     logger.info(f"Using {workers} workers")
     try:
         import uvloop
@@ -69,9 +69,9 @@ def run_standalone():
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", "8000"))
     if not is_port_available(host, port):
-        logger.error("Port %s is already in use. Stop the existing AEGIS/server process first.", port)
+        logger.error("Port %s is already in use. Stop the existing SATURDAY/server process first.", port)
         return 1
-    logger.info("Starting AEGIS in standalone mode")
+    logger.info("Starting SATURDAY in standalone mode")
     try:
         import uvloop
         loop = "uvloop"
@@ -87,7 +87,7 @@ def run_standalone():
     return 0
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="AEGIS Production Server")
+    parser = argparse.ArgumentParser(description="SATURDAY Production Server")
     parser.add_argument("--mode", choices=["server", "standalone"], default="server",
                         help="Run mode: server (multi-worker) or standalone")
     parser.add_argument("--dev", action="store_true",
@@ -99,9 +99,9 @@ def main():
         host = os.getenv("HOST", "0.0.0.0")
         port = int(os.getenv("PORT", "8000"))
         if not is_port_available(host, port):
-            logger.error("Port %s is already in use. Stop the existing AEGIS/server process first.", port)
+            logger.error("Port %s is already in use. Stop the existing SATURDAY/server process first.", port)
             return 1
-        logger.info("Starting AEGIS in development mode")
+        logger.info("Starting SATURDAY in development mode")
         try:
             import uvloop
             loop = "uvloop"
