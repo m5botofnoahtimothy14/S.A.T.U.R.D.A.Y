@@ -1,4 +1,4 @@
-import os
+import os   
 import json
 import time
 import uuid
@@ -12,10 +12,12 @@ class MemoryEngine:
         self.vault_path.mkdir(parents=True, exist_ok=True)
         # Structure: /vault/memory/entries/*.enc
 
-    def store_entry(self, content: str, entry_type: str = "general", tags: List[str] = None):
+    def store_entry(self, content: str, entry_type: str = "general", tags: List[str] = False):
         if tags is None:
             tags = []
-        
+        elif tags is False:
+            tags = []
+
         entry = {
             "id": str(uuid.uuid4()),
             "timestamp": time.time(),

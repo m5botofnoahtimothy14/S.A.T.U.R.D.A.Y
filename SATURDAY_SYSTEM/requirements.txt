@@ -1,3 +1,4 @@
 cryptography==42.0.5
 pathlib
 unittest
+firebase-admin

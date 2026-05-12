@@ -14,7 +14,7 @@ class DeadmanSwitch:
             self._save_config({
                 "timeout_seconds": 86400 * 7, # 1 week
                 "trigger_action": "release_instructions",
-                "instructions": "Contact [EMERGENCY CONTACT] for physical recovery of keys.",
+                "instructions": "Contact [+971 54 364 7837] for physical recovery of keys.",
                 "enabled": True
             })
 

@@ -14,6 +14,7 @@ import random
 import time
 import logging
 import numpy as np
+from pathlib import Path
 from threading import Thread
 from fastapi import FastAPI, Request, WebSocket, APIRouter, HTTPException, Depends
 from fastapi.templating import Jinja2Templates
@@ -21,7 +22,8 @@ from uvicorn import Config, Server
 from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import auth as fb_auth
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
 from core.event_bus import EventBus
 from core.runtime import RuntimeStats
 from core.config import ConfigManager
@@ -84,14 +86,15 @@ from communication.whatsapp_navigator import WhatsAppNavigator
 from communication.insta_navigator import InstaNavigator
 from distributed import InterDeviceSync, DeviceRegistry, RemoteControl, SessionMirror
 from core.secure_gateway_mount import try_mount_secure_gateway
-FACE_DB_FILE = "data/faces.json"
-FACE_IMAGE_DIR = "data/faces"
-DIRECTORY_FILE = "data/directory.json"
-VOICE_PROFILES_FILE = "data/voice_profiles.json"
-AUDIO_CALIBRATION_FILE = "data/audio_calibration.json"
-FIRST_BOOT_FILE = "data/first_boot_setup.json"
-os.makedirs("data", exist_ok=True)
-os.makedirs(FACE_IMAGE_DIR, exist_ok=True)
+DATA_DIR = PROJECT_ROOT / "data"
+FACE_DB_FILE = DATA_DIR / "faces.json"
+FACE_IMAGE_DIR = DATA_DIR / "faces"
+DIRECTORY_FILE = DATA_DIR / "directory.json"
+VOICE_PROFILES_FILE = DATA_DIR / "voice_profiles.json"
+AUDIO_CALIBRATION_FILE = DATA_DIR / "audio_calibration.json"
+FIRST_BOOT_FILE = DATA_DIR / "first_boot_setup.json"
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+FACE_IMAGE_DIR.mkdir(parents=True, exist_ok=True)
 app = None
 def load_json_db(filepath, default=[]):
     if os.path.exists(filepath):
@@ -106,8 +109,8 @@ def save_json_db(filepath, data):
         json.dump(data, f, indent=2)
 from core.logging_config import setup_saturday_logging, SATURDAYLogger, get_log_file_path
 setup_saturday_logging()
-LOG_DIR = "logs"
-if not os.path.exists(LOG_DIR): os.makedirs(LOG_DIR)
+LOG_DIR = PROJECT_ROOT / "logs"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 class SubsystemFileHandler(logging.Handler):
     def __init__(self, subsystem=None):
         super().__init__()
@@ -115,7 +118,8 @@ class SubsystemFileHandler(logging.Handler):
     def emit(self, record):
         try:
             msg = self.format(record)
-            with open(f"{LOG_DIR}/saturday.log", "a") as f:
+            main_log = LOG_DIR / "saturday.log"
+            with open(main_log, "a") as f:
                 f.write(msg + "\n")
             if self.subsystem:
                 sub_path = get_log_file_path(self.subsystem)
@@ -367,6 +371,8 @@ class SATURDAYCore:
             self.loop = None
         self.event_bus = EventBus()
         self.runtime = RuntimeStats()
+        self.showtime = ShowtimeManager(self.event_bus, self)
+        self.showtime.start_lineup()
         self.config_manager = ConfigManager()
         self.strict_prod = os.getenv("SATURDAY_STRICT_PROD", "false").strip().lower() in {
             "1",
@@ -474,6 +480,14 @@ class SATURDAYCore:
             self.sound_monitor = None
         self._refresh_first_boot_state()
         try:
+            self.showtime.complete_stage("foundation")
+        except Exception as e:
+            logger.warning(f"Showtime foundation stage completion failed: {e}")
+        try:
+            self.showtime.complete_stage("core", errors=["sound_monitor_unavailable"] if not self.sound_monitor else None)
+        except Exception as e:
+            logger.warning(f"Showtime core stage completion failed: {e}")
+        try:
             self.spirituality = ChristianityCore(self.event_bus)
         except Exception as e:
             logger.warning(f"ChristianityCore init failed: {e}")
@@ -518,6 +532,10 @@ class SATURDAYCore:
         except Exception as e:
             logger.warning(f"WindowManager init failed: {e}")
             self.window_manager = None
+        try:
+            self.showtime.complete_stage("essential")
+        except Exception as e:
+            logger.warning(f"Showtime essential stage completion failed: {e}")
         try:
             self.self_heal = SelfHealManager(self.event_bus)
         except Exception as e:
@@ -602,6 +620,10 @@ class SATURDAYCore:
         except Exception as e:
             logger.warning(f"ConversationalDLEngine init failed: {e}")
             self.conversation = None
+        try:
+            self.showtime.complete_stage("lazy")
+        except Exception as e:
+            logger.warning(f"Showtime lazy stage completion failed: {e}")
         try:
             self.usb_watchdog = USBWatchdog(self.event_bus)
         except Exception as e:
@@ -739,6 +761,10 @@ class SATURDAYCore:
             logger.info("System tray initialized")
         except Exception as e:
             logger.warning(f"System tray init failed: {e}")
+        try:
+            self.showtime.complete_stage("standard")
+        except Exception as e:
+            logger.warning(f"Showtime standard stage completion failed: {e}")
         self.setup_routes()
         self.running = True
         try:
@@ -771,9 +797,19 @@ class SATURDAYCore:
              logger.info("Social Agent registered with HumanInterface.")
         except Exception as e:
              logger.warning(f"Social Agent init failed: {e}")
+        try:
+            if self.showtime:
+                self.showtime.complete_stage("optional")
+        except Exception as e:
+            logger.warning(f"Showtime optional stage completion failed: {e}")
         logger.info("Validating production state", strict_prod=self.strict_prod)
         self._validate_production_state()
         self.start_background_loops()
+        try:
+            if self.showtime and self.showtime.showtime_mode != "showtime":
+                self.showtime.enter_showtime()
+        except Exception as e:
+            logger.warning(f"Showtime entry failed: {e}")
         def _ws_forward(event_type):
             return lambda payload: asyncio.create_task(
                 self.broadcast_to_ws({"type": event_type, **(payload or {})})
@@ -1283,6 +1319,8 @@ class SATURDAYCore:
         if self.predictor:
             logger.info("Predictive Engine active.")
         asyncio.create_task(self._chatter_loop())
+        asyncio.create_task(self._showtime_supervision_loop())
+        logger.info("Showtime supervision loop started.")
         self.event_bus.subscribe("vision_event", lambda data: asyncio.create_task(self._on_vision_event(data)) if isinstance(data, dict) else None)
         self.event_bus.subscribe("camera_start", lambda _: asyncio.create_task(self.vision.start_stream()) if self.vision else None)
         self.event_bus.subscribe("camera_stop", lambda _: asyncio.create_task(self.vision.stop_stream()) if self.vision else None)
@@ -1294,6 +1332,21 @@ class SATURDAYCore:
             asyncio.create_task(cloud_bridge.start())
             logger.info("Cloud Bridge remote listener started.")
         logger.info("All background loops initiated.")
+
+    async def _showtime_supervision_loop(self):
+        while self.running:
+            try:
+                if self.showtime and self.showtime.showtime_mode == "showtime":
+                    status = self.showtime.get_showtime_status()
+                    self.event_bus.publish("showtime_status", status)
+                    if status.get("stabilization_mode"):
+                        logger.debug("Showtime supervision: stabilization active.")
+                await asyncio.sleep(15)
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.warning(f"Showtime supervision loop error: {e}")
+                await asyncio.sleep(5)
     def _on_sound_update(self, data):
         level = data.get("level_db", 0)
         if level > 60:
@@ -1437,6 +1490,34 @@ class SATURDAYCore:
                 }
             except Exception as e:
                 logger.error(f"API health error: {e}")
+                return {"error": str(e)}
+
+        @self.app.get("/api/system/lineup")
+        async def api_system_lineup():
+            try:
+                return self.showtime.get_lineup_status()
+            except Exception as e:
+                logger.error(f"API lineup error: {e}")
+                return {"error": str(e)}
+
+        @self.app.get("/api/system/showtime")
+        async def api_system_showtime():
+            try:
+                return self.showtime.get_showtime_status()
+            except Exception as e:
+                logger.error(f"API showtime error: {e}")
+                return {"error": str(e)}
+
+        @self.app.get("/api/system/stabilization")
+        async def api_system_stabilization():
+            try:
+                return {
+                    "stabilization_mode": self.showtime.stabilization_mode,
+                    "health_snapshot": self.showtime.last_health_snapshot,
+                    "showtime_mode": self.showtime.showtime_mode,
+                }
+            except Exception as e:
+                logger.error(f"API stabilization error: {e}")
                 return {"error": str(e)}
         @self.app.get("/api/vitals")
         async def api_vitals():

@@ -1,12 +1,14 @@
 import os
 import base64
+from pathlib import Path
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.fernet import Fernet
 
 class FileCrypto:
-    def __init__(self, passphrase: str, salt_path: str = "config/salt.dat"):
+    def __init__(self, passphrase: str, salt_path: str = "config/salt.dat", iterations: int = 100000):
         self.salt_path = Path(salt_path)
+        self.iterations = iterations
         self.salt = self._get_or_create_salt()
         self.key = self._derive_key(passphrase)
         self.fernet = Fernet(self.key)
@@ -15,7 +17,6 @@ class FileCrypto:
         if self.salt_path.exists():
             return self.salt_path.read_bytes()
         
-        # Generate a new 16-byte random salt
         new_salt = os.urandom(16)
         self.salt_path.parent.mkdir(parents=True, exist_ok=True)
         self.salt_path.write_bytes(new_salt)
@@ -26,10 +27,9 @@ class FileCrypto:
             algorithm=hashes.SHA256(),
             length=32,
             salt=self.salt,
-            iterations=100000,
+            iterations=self.iterations,
         )
-        key = base64.urlsafe_b64encode(kdf.derive(passphrase.encode()))
-        return key
+        return base64.urlsafe_b64encode(kdf.derive(passphrase.encode()))
 
     def encrypt_data(self, data: bytes) -> bytes:
         return self.fernet.encrypt(data)
@@ -51,6 +51,8 @@ class FileCrypto:
         return self.decrypt_data(encrypted_data)
 
     def clear(self):
-        """Wipes the key from memory as much as Python allows."""
+        """Wipe the crypto state from memory."""
         self.key = None
         self.fernet = None
+        self.salt = None
+        self.iterations = None

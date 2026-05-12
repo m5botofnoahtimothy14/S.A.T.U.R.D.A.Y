@@ -1,6 +1,7 @@
 import os
 import subprocess
 import time
+import json
 from pathlib import Path
 from pmv.memory_engine import MemoryEngine
 from pmv.file_crypto import FileCrypto
@@ -13,13 +14,19 @@ class MemoryController:
     def __init__(self, passphrase: str, project_root: Path):
         self.passphrase = passphrase
         self.project_root = project_root
-        
         self.config_dir = project_root / "config"
+        self.settings = self._load_settings()
+
+        paths = self.settings.get("paths", {})
+        self.vault_dir = project_root / paths.get("vault", "./vault")
+        self.blackbox_dir = project_root / paths.get("blackbox", "./blackbox")
+        self.sync_staging = project_root / paths.get("sync_staging", "./staging")
+
+        self.auto_lock_timeout = self.settings.get("security", {}).get("auto_lock_timeout", 300)
+        self.kdf_iterations = self.settings.get("security", {}).get("kdf_iterations", 100000)
+
+        self.crypto = FileCrypto(passphrase, salt_path=str(self.config_dir / "salt.dat"), iterations=self.kdf_iterations)
         
-        # Initialize Crypto (Keys are derived from passphrase + salt)
-        self.crypto = FileCrypto(passphrase, salt_path=str(self.config_dir / "salt.dat"))
-        
-        # Sub-systems
         self.memory_engine = MemoryEngine(str(self.vault_dir / "memory"), self.crypto)
         self.deadman = DeadmanSwitch(str(self.config_dir / "deadman.json"), self.crypto)
         self.node_manager = NodeManager(str(self.config_dir / "node.json"))
@@ -27,16 +34,22 @@ class MemoryController:
         self.vault_mounted = False
         self.last_activity = time.time()
 
+    def _load_settings(self):
+        settings_path = self.project_root / "config" / "settings.json"
+        if settings_path.exists():
+            try:
+                with open(settings_path, 'r') as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return {}
+
     def mount_vaults(self):
-        """
-        Simulates Mounting VeraCrypt containers.
-        In production, this would call 'VeraCrypt.exe' with mount commands.
-        """
+        """Simulate vault mounting and prepare encrypted containers."""
         print("[PMV] Mounting encrypted containers...")
-        # Simulation: In a real system, we'd check if the drive is mounted.
-        # Here we just ensure the local directories exist and are 'ready'.
         self.vault_dir.mkdir(parents=True, exist_ok=True)
         self.blackbox_dir.mkdir(parents=True, exist_ok=True)
+        self.sync_staging.mkdir(parents=True, exist_ok=True)
         self.vault_mounted = True
         print("[PMV] Vaults mounted (Session Active).")
 
@@ -77,8 +90,13 @@ class MemoryController:
             raise Exception("Vault is locked. Mount required.")
         self.last_activity = time.time()
 
-    def auto_lock_check(self, timeout_seconds=300):
-        """Automatically dismount if inactive."""
+    def clear_credentials(self):
+        self.passphrase = None
+        self.crypto.clear()
+
+    def auto_lock_check(self, timeout_seconds: int = None):
+        if timeout_seconds is None:
+            timeout_seconds = self.auto_lock_timeout
         if self.vault_mounted and (time.time() - self.last_activity > timeout_seconds):
             print("\n[SECURITY] Inactivity timeout reached. Auto-locking...")
             self.dismount_vaults()
