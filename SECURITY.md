@@ -16,7 +16,7 @@ This section outlines which versions of SATURDAY are actively maintained and rec
 
 We take security seriously. To report a vulnerability in SATURDAY:
 
-1. **Email:** Send a detailed report to `noahtimothy14@gmail.com`. Include:
+1. **Email:** Send a detailed report to `noahtimothykeba@gmail.com`. Include:
    - Affected version(s)
    - Steps to reproduce
    - Impact assessment (if known)
