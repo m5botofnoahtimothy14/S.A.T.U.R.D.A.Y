@@ -1775,3 +1775,4 @@
 {"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 58 percent."}
 {"event": "voice_response", "data": "Shall I run a health check on the system?"}
 {"event": "voice_response", "data": "Shall I run a health check on the system?"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 61 percent."}
