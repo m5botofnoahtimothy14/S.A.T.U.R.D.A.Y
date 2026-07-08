@@ -1772,3 +1772,5 @@
 {"event": "voice_response", "data": "SATURDAY OS online. Welcome back, Sir."}
 {"event": "voice_response", "data": "Warning: system resources high. CPU 90 percent, memory 58 percent."}
 {"event": "voice_response", "data": "Do you want a quick status check or to queue some music?"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 58 percent."}
+{"event": "voice_response", "data": "Shall I run a health check on the system?"}
