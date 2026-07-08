@@ -158,6 +158,10 @@ if not getattr(structlog, "_saturday_configured", False):
 logger = structlog.get_logger("SATURDAY.Core")
 app = FastAPI(title="SATURDAY AI OS")
 templates = Jinja2Templates(directory="core/ui/templates")
+
+from fastapi.staticfiles import StaticFiles
+app.mount("/static", StaticFiles(directory="core/ui/static"), name="static")
+
 router = APIRouter(prefix="/v1", tags=["control-panel"])
 connected_websockets = set()
 _firebase_initialized = False
