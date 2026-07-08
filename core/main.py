@@ -157,7 +157,7 @@ if not getattr(structlog, "_saturday_configured", False):
     structlog._saturday_configured = True
 logger = structlog.get_logger("SATURDAY.Core")
 app = FastAPI(title="SATURDAY AI OS")
-templates = Jinja2Templates(directory="ui/templates")
+templates = Jinja2Templates(directory="core/ui/templates")
 router = APIRouter(prefix="/v1", tags=["control-panel"])
 connected_websockets = set()
 _firebase_initialized = False
@@ -1453,7 +1453,7 @@ class SATURDAYCore:
     def setup_routes(self):
         @self.app.get("/")
         async def root(request: Request):
-            return self.templates.TemplateResponse("index.html", {"request": request})
+            return self.templates.TemplateResponse(request, "index.html")
         @self.app.get("/api/debug")
         async def api_debug():
             return {

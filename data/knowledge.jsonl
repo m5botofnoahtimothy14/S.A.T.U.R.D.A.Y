@@ -1776,3 +1776,20 @@
 {"event": "voice_response", "data": "Shall I run a health check on the system?"}
 {"event": "voice_response", "data": "Shall I run a health check on the system?"}
 {"event": "voice_response", "data": "Warning: system resources high. CPU 96 percent, memory 61 percent."}
+{"event": "voice_response", "data": "Do you want a quick status check or to queue some music?"}
+{"event": "voice_response", "data": "SATURDAY: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "SATURDAY: Great. I can cue some focus music if you like."}
+{"event": "voice_response", "data": "SATURDAY: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "SATURDAY: Great. I can cue some focus music if you like."}
+{"event": "voice_response", "data": "How’s your day going? Anything you want me to handle?"}
+{"event": "voice_response", "data": "SATURDAY: EDITH, give me a quick security readout."}
+{"event": "voice_response", "data": "EDITH: Perimeter nominal. Want me to watch for anomalies?"}
+{"event": "voice_response", "data": "SATURDAY: Great. I can cue some focus music if you like."}
+{"event": "voice_response", "data": "Do you want a quick status check or to queue some music?"}
+{"event": "voice_response", "data": "Need me to draft a plan or remind you about anything?"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 62 percent."}
+{"event": "voice_response", "data": "SATURDAY OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 70 percent."}
+{"event": "voice_response", "data": "SATURDAY OS online. Welcome back, Sir."}
