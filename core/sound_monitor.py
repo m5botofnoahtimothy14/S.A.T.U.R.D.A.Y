@@ -10,7 +10,7 @@ SD_AVAILABLE = False
 try:
     import sounddevice as sd
     SD_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError):
     sd = None
 
 from core.event_bus import EventBus

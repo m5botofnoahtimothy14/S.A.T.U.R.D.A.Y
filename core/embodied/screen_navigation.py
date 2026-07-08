@@ -1,9 +1,13 @@
-﻿                               
-import pyautogui
+﻿try:
+    import pyautogui
+except (ImportError, Exception):
+    pyautogui = None
 
 class EmbodiedScreenNav:
     def move_cursor(self, x, y):
-        pyautogui.moveTo(x, y)
+        if pyautogui:
+            pyautogui.moveTo(x, y)
 
     def click(self):
-        pyautogui.click()
+        if pyautogui:
+            pyautogui.click()

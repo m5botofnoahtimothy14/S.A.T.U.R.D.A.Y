@@ -185,7 +185,8 @@ class ShowtimeManager:
     def _on_system_alert(self, data: Dict[str, Any]):
         if not isinstance(data, dict):
             return
-        if data.get("type") in ("health", "critical", "stability"):
+        alert_type = data.get("type", "")
+        if alert_type in ("health", "stability"):
             self._enter_stabilization_mode(data)
 
     def _on_restart_command(self, data: Any):
@@ -198,10 +199,10 @@ class ShowtimeManager:
         disk = health.get("disk", 0)
         state = health.get("state", "healthy")
         return (
-            cpu > 80 or
-            memory > 86 or
-            disk > 90 or
-            state in ["warning", "critical"]
+            cpu > 95 or
+            memory > 92 or
+            disk > 95 or
+            state in ["critical"]
         )
 
     def _enter_stabilization_mode(self, health: Dict[str, Any]):

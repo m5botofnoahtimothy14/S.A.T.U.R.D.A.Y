@@ -1,0 +1,21 @@
+{
+  "tensorflow": {
+    "available": false,
+    "gpu": false
+  },
+  "pytorch": {
+    "available": true,
+    "gpu": false
+  },
+  "onnx": {
+    "available": true,
+    "gpu": false
+  },
+  "cuda": false,
+  "gpu": {
+    "available": false,
+    "name": "",
+    "memory_mb": 0
+  },
+  "recommended": "pytorch"
+}

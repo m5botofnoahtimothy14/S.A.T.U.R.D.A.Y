@@ -3,8 +3,15 @@ import json
 import os
 import structlog
 from typing import Dict, List, TypedDict, Union, Optional
-from langgraph.graph import StateGraph, END
-from pydantic import BaseModel
+
+try:
+    from langgraph.graph import StateGraph, END
+    from pydantic import BaseModel
+except ImportError:
+    StateGraph = None
+    END = None
+    BaseModel = None
+
 logger = structlog.get_logger("SATURDAY.Pipeline")
 class PipelineState(TypedDict):
     user_input: str

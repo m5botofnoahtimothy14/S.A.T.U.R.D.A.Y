@@ -1,13 +1,14 @@
-﻿                             
-import win32serviceutil
-import win32service
-import win32event
-import servicemanager
-import socket
-import sys
+﻿import sys
 import os
 import asyncio
 import logging
+
+if sys.platform == 'win32':
+    import win32serviceutil
+    import win32service
+    import win32event
+    import servicemanager
+    import socket
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 

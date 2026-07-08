@@ -24,6 +24,7 @@ import firebase_admin
 from firebase_admin import auth as fb_auth
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from core.event_bus import EventBus
 from core.runtime import RuntimeStats
 from core.config import ConfigManager
@@ -86,6 +87,7 @@ from communication.whatsapp_navigator import WhatsAppNavigator
 from communication.insta_navigator import InstaNavigator
 from distributed import InterDeviceSync, DeviceRegistry, RemoteControl, SessionMirror
 from core.secure_gateway_mount import try_mount_secure_gateway
+from orchestrator.showtime_manager import ShowtimeManager
 DATA_DIR = PROJECT_ROOT / "data"
 FACE_DB_FILE = DATA_DIR / "faces.json"
 FACE_IMAGE_DIR = DATA_DIR / "faces"
@@ -1243,11 +1245,24 @@ class SATURDAYCore:
 
     def start_background_loops(self):
         logger.info("Starting background autonomous loops...")
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
+
+        def _safe_create_task(coro):
+            if loop and loop.is_running():
+                asyncio.create_task(coro)
+            else:
+                threading.Thread(target=lambda: asyncio.run(coro), daemon=True).start()
+
+        self._safe_create_task_compat = _safe_create_task
+
         if self.health:
-            asyncio.create_task(self.health.start())
+            _safe_create_task(self.health.start())
             logger.info("Health monitoring loop started.")
         if self.self_heal:
-            asyncio.create_task(self.self_heal.start())
+            _safe_create_task(self.self_heal.start())
             logger.info("Self-healing resource monitor started.")
         if self.reloader:
             self.reloader.start_monitoring(interval=10)
@@ -1260,11 +1275,11 @@ class SATURDAYCore:
                 logger.warning(f"Failed to start Window Manager monitor: {e}")
         if self.vision:
             try:
-                asyncio.create_task(self.vision.start())
+                self._safe_create_task_compat(self.vision.start())
                 logger.info("Vision System loops started.")
             except Exception as e:
                 logger.warning(f"Vision System failed to start: {e}")
-        asyncio.create_task(self._broadcast_stats_loop())
+        self._safe_create_task_compat(self._broadcast_stats_loop())
         logger.info("Stats broadcast loop started.")
         if self.sound_monitor:
             try:
@@ -1274,7 +1289,7 @@ class SATURDAYCore:
                 logger.warning(f"Sound monitor could not start: {e}")
         if self.hybrid:
             try:
-                asyncio.create_task(self.hybrid.start())
+                self._safe_create_task_compat(self.hybrid.start())
                 logger.info("Hybrid services started.")
             except Exception as e:
                 logger.warning(f"Hybrid start failed: {e}")
@@ -1297,39 +1312,39 @@ class SATURDAYCore:
             except Exception as e:
                 logger.warning(f"System tray start failed: {e}")
         if self.dl_core:
-            asyncio.create_task(self.dl_core.start_autonomous_learning())
-            asyncio.create_task(self.dl_core.start_periodic_save())
+            self._safe_create_task_compat(self.dl_core.start_autonomous_learning())
+            self._safe_create_task_compat(self.dl_core.start_periodic_save())
             logger.info("Deep Learning Core autonomous loops started.")
         if self.neural_policy and self.dl_core:
-            asyncio.create_task(self._neural_policy_loop())
+            self._safe_create_task_compat(self._neural_policy_loop())
             logger.info("Neural Policy learning loop started.")
         if self.pattern_recognition:
-            asyncio.create_task(self._pattern_update_loop())
+            self._safe_create_task_compat(self._pattern_update_loop())
             logger.info("Pattern Recognition loop started.")
         if self.self_evolution:
-            asyncio.create_task(self._evolution_loop())
+            self._safe_create_task_compat(self._evolution_loop())
             logger.info("Self Evolution loop started.")
         if self.ml_core:
-            asyncio.create_task(self.ml_core.start_autonomous_learning())
-            asyncio.create_task(self.ml_core.start_periodic_save())
+            self._safe_create_task_compat(self.ml_core.start_autonomous_learning())
+            self._safe_create_task_compat(self.ml_core.start_periodic_save())
             self._register_subsystems_with_ml()
             logger.info("ML Integration Core learning loops started.")
         if self.nlp_engine:
             logger.info("NLP Engine active for voice understanding.")
         if self.predictor:
             logger.info("Predictive Engine active.")
-        asyncio.create_task(self._chatter_loop())
-        asyncio.create_task(self._showtime_supervision_loop())
+        self._safe_create_task_compat(self._chatter_loop())
+        self._safe_create_task_compat(self._showtime_supervision_loop())
         logger.info("Showtime supervision loop started.")
         self.event_bus.subscribe("vision_event", lambda data: asyncio.create_task(self._on_vision_event(data)) if isinstance(data, dict) else None)
         self.event_bus.subscribe("camera_start", lambda _: asyncio.create_task(self.vision.start_stream()) if self.vision else None)
         self.event_bus.subscribe("camera_stop", lambda _: asyncio.create_task(self.vision.stop_stream()) if self.vision else None)
         if self.social_agent:
-            asyncio.create_task(self.social_agent.start_monitoring())
+            self._safe_create_task_compat(self.social_agent.start_monitoring())
             logger.info("Social/Gmail monitor started.")
         cloud_bridge = getattr(self, "cloud_bridge", None)
         if cloud_bridge:
-            asyncio.create_task(cloud_bridge.start())
+            self._safe_create_task_compat(cloud_bridge.start())
             logger.info("Cloud Bridge remote listener started.")
         logger.info("All background loops initiated.")
 
@@ -1472,7 +1487,7 @@ class SATURDAYCore:
                 stats.update({
                     "cpu_percent": psutil.cpu_percent(interval=0.1),
                     "memory_percent": psutil.virtual_memory().percent,
-                    "disk_percent": psutil.disk_usage(os.getenv('SystemDrive', 'C:\\')).percent,
+                    "disk_percent": psutil.disk_usage('/').percent,
                     "first_boot_pending": self._first_boot_status_payload().get("pending", False),
                 })
                 return stats
@@ -2190,7 +2205,7 @@ class SATURDAYCore:
 Version: 2.0.0
 CPU: {psutil.cpu_percent()}%
 Memory: {psutil.virtual_memory().percent}%
-Disk: {psutil.disk_usage(os.getenv('SystemDrive', 'C:\\')).percent}%
+Disk: {psutil.disk_usage('/').percent}%
 Vision: {'Enabled' if self.vision_enabled else 'Disabled'}
 Voice: {'Enabled' if self.voice_enabled else 'Disabled'}
 Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
@@ -2207,7 +2222,7 @@ Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
             vm = psutil.virtual_memory()
             return f"Memory: {vm.percent}% ({vm.used // (1024**2)}MB / {vm.total // (1024**2)}MB)"
         elif cmd == "disk":
-            du = psutil.disk_usage(os.getenv('SystemDrive', 'C:\\'))
+            du = psutil.disk_usage('/')
             return f"Disk: {du.percent}% ({du.used // (1024**3)}GB / {du.total // (1024**3)}GB)"
         elif cmd.startswith("vision"):
             if "on" in cmd:
@@ -2283,20 +2298,33 @@ Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
         from datetime import datetime
         cap = None
         own_capture = False
+        camera_unavailable = False
         while self.camera_active:
             try:
                 frame = None
                 if self.vision and getattr(self.vision, 'last_camera_frame', None) is not None:
                     frame = self.vision.last_camera_frame.copy()
-                else:
+                elif not camera_unavailable:
                     if cap is None:
-                        cap = cv2.VideoCapture(0)
-                        cap.set(3, 640)
-                        cap.set(4, 480)
-                        own_capture = True
-                    ret, frame = cap.read()
-                    if not ret:
-                        frame = None
+                        try:
+                            cap = cv2.VideoCapture(0)
+                            cap.set(3, 640)
+                            cap.set(4, 480)
+                            own_capture = True
+                        except Exception:
+                            camera_unavailable = True
+                            logger.info("Camera not available for broadcast")
+                            return
+                    if cap and cap.isOpened():
+                        ret, frame = cap.read()
+                        if not ret:
+                            frame = None
+                    else:
+                        camera_unavailable = True
+                        if cap:
+                            cap.release()
+                            cap = None
+                        return
                 if frame is not None:
                     cv2.putText(frame, "SATURDAY VISION", (10, 30), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
@@ -2324,7 +2352,7 @@ Face ID: {'Enabled' if self.faceid_enabled else 'Disabled'}"""
             try:
                 cpu = psutil.cpu_percent(interval=None)
                 memory = psutil.virtual_memory()
-                disk = psutil.disk_usage(os.getenv('SystemDrive', 'C:\\'))
+                disk = psutil.disk_usage('/')
                 stats = {
                     "type": "system_status",
                     "cpu_percent": cpu,

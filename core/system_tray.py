@@ -81,18 +81,11 @@ class SystemTray:
         return image
             
     def _show_window(self):
-        
         logger.info(f"Opening SATURDAY dashboard at {SATURDAY_URL}")
         try:
-                                             
             webbrowser.open(SATURDAY_URL)
         except Exception as e:
             logger.error(f"Failed to open browser: {e}")
-                                       
-            try:
-                os.startfile(SATURDAY_URL)
-            except:
-                pass
         
     def _wake_saturday(self):
         
@@ -142,7 +135,7 @@ class SystemTray:
         
         cpu = psutil.cpu_percent()
         mem = psutil.virtual_memory().percent
-        disk = psutil.disk_usage(os.getenv('SystemDrive', 'C:\\')).percent
+        disk = psutil.disk_usage('/').percent
         
         status_msg = f"CPU: {cpu}% | Memory: {mem}% | Disk: {disk}%"
         
@@ -159,11 +152,15 @@ class SystemTray:
             pass
         
     def _view_logs(self):
-        
         log_path = os.path.abspath("logs")
         logger.info(f"Opening logs folder: {log_path}")
         try:
-            os.startfile(log_path)
+            if sys.platform == 'darwin':
+                subprocess.Popen(["open", log_path])
+            elif sys.platform == 'win32':
+                os.startfile(log_path)
+            else:
+                subprocess.Popen(["xdg-open", log_path])
         except:
             webbrowser.open(log_path)
         

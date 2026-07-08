@@ -1,0 +1,110 @@
+# requirements_mac.txt
+# SATURDAY - macOS Compatible Dependencies
+# =========================================
+
+# ==================
+# Core
+# ==================
+fastapi
+uvicorn[standard]
+pydantic>=2.0
+structlog
+python-dotenv
+sqlalchemy
+aiosqlite
+sentence-transformers
+scikit-learn
+numpy
+
+# ==================
+# Audio & Speech (macOS)
+# ==================
+# Install portaudio first: brew install portaudio
+sounddevice
+SpeechRecognition
+pyaudio
+faster-whisper
+pyttsx3
+
+# ==================
+# Deep Learning
+# ==================
+tensorflow>=2.15.0
+torch>=2.0.0
+torchvision
+onnxruntime
+deepface
+retina-face
+facenet-pytorch
+
+# ==================
+# Vision & Computer Vision
+# ==================
+opencv-python-headless
+mediapipe
+face_recognition
+Pillow
+# dlib requires cmake: brew install cmake
+dlib
+ultralytics
+
+# ==================
+# System
+# ==================
+psutil
+pyserial
+
+# ==================
+# Networking & IoT
+# ==================
+paho-mqtt
+aiohttp
+requests
+
+# ==================
+# UI & Frontend
+# ==================
+jinja2
+python-multipart
+pyautogui
+
+# ==================
+# Security & Auth
+# ==================
+firebase-admin
+jsonschema
+cryptography
+
+# ==================
+# AI & Agents
+# ==================
+langgraph
+langchain-core
+langchain-community
+autogen
+
+# ==================
+# Communication
+# ==================
+livekit
+livekit-api
+livekit-agents
+twilio
+
+# ==================
+# NLP & Sentiment
+# ==================
+vaderSentiment
+nltk
+
+# ==================
+# Utilities
+# ==================
+Pillow
+selenium
+redis
+llama-cpp-python
+mss
+schedule
+google-api-python-client
+google-auth-oauthlib

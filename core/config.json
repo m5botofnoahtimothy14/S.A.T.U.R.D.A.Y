@@ -1,16 +1,21 @@
 {
     "wake_word": "saturday",
     "edith_wake_word": "edith",
+    "system_name": "SATURDAY",
     "voices": {
         "saturday": {
             "gender": "male",
-            "rate": 160,
-            "volume": 1.0
+            "rate": 155,
+            "volume": 1.0,
+            "pitch": 0,
+            "voice_index": 0
         },
         "edith": {
             "gender": "female",
-            "rate": 170,
-            "volume": 1.0
+            "rate": 165,
+            "volume": 1.0,
+            "pitch": 0,
+            "voice_index": 1
         }
     },
     "cloud": {
@@ -33,15 +38,15 @@
         "security_log": "logs/security.log"
     },
     "ai": {
-        "use_llama_cpp": true,
+        "use_llama_cpp": false,
         "use_langgraph": true,
-        "use_autogen": true,
-        "use_livekit": true,
-        "use_ros2": true,
-        "use_sync": true,
+        "use_autogen": false,
+        "use_livekit": false,
+        "use_ros2": false,
+        "use_sync": false,
         "model_path": "models/llama-3-8b-instruct.Q4_K_M.gguf",
         "n_ctx": 2048,
-        "n_gpu_layers": -1
+        "n_gpu_layers": 0
     },
     "voice": {
         "use_deep_learning": true,
@@ -57,15 +62,15 @@
     },
     "subsystems": {
         "system_control": true,
-        "vision": true,
-        "home_automation": true,
+        "vision": false,
+        "home_automation": false,
         "communication": true,
         "media": true,
         "code": true,
         "security": true,
         "search": true,
         "file": true,
-        "calendar": true,
+        "calendar": false,
         "health": true
     }
 }

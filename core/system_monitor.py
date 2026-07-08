@@ -91,7 +91,7 @@ class SystemMonitor:
         try:
             cpu = psutil.cpu_percent(interval=0.1)
             memory = psutil.virtual_memory()
-            disk = psutil.disk_usage(os.getenv('SystemDrive', 'C:\\'))
+            disk = psutil.disk_usage('/')
             network = psutil.net_io_counters()
             
             stats = {
@@ -120,7 +120,7 @@ class SystemMonitor:
         
         cpu = psutil.cpu_percent(interval=0.5)
         memory = psutil.virtual_memory()
-        disk = psutil.disk_usage(os.getenv('SystemDrive', 'C:\\'))
+        disk = psutil.disk_usage('/')
         network = psutil.net_io_counters()
         
         battery = None

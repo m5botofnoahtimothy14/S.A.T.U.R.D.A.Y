@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AEGIS | Command Center</title>
+    <title>SATURDAY | Command Center</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -817,7 +817,7 @@
     <header class="topbar">
         <div class="logo">
             <div class="logo-icon">⌬</div>
-            <h1>AEGIS</h1>
+            <h1>SATURDAY</h1>
         </div>
         <div class="status-indicators">
             <div class="indicator">
@@ -995,7 +995,7 @@
                         <div class="form-group">
                             <label>Training Phrases</label>
                             <div style="color: var(--text-dim); font-size: 0.9rem;">
-                                <p style="margin-bottom: 0.5rem;">1. "Hello AEGIS, how are you?"</p>
+                                <p style="margin-bottom: 0.5rem;">1. "Hello SATURDAY, how are you?"</p>
                                 <p style="margin-bottom: 0.5rem;">2. "Turn on the living room lights"</p>
                                 <p style="margin-bottom: 0.5rem;">3. "What's the weather today?"</p>
                                 <p>4. "Play my favorite music"</p>
@@ -1046,20 +1046,20 @@
             <div class="page" id="page-terminal">
                 <div class="panel">
                     <div class="panel-header">
-                        <h2>AEGIS Terminal</h2>
+                        <h2>SATURDAY Terminal</h2>
                         <button class="btn" onclick="clearTerminal()">Clear</button>
                     </div>
                     <div class="panel-content">
                         <div class="terminal" id="terminal">
                             <div class="terminal-line">
-                                <span class="terminal-prompt">AEGIS@System:~$</span>
-                                <span class="terminal-output">AEGIS Command Interface v1.0</span>
+                                <span class="terminal-prompt">SATURDAY@System:~$</span>
+                                <span class="terminal-output">SATURDAY Command Interface v1.0</span>
                             </div>
                             <div class="terminal-line">
                                 <span class="terminal-output">Type 'help' for available commands.</span>
                             </div>
                             <div class="terminal-line">
-                                <span class="terminal-prompt">AEGIS@System:~$</span>
+                                <span class="terminal-prompt">SATURDAY@System:~$</span>
                                 <input type="text" class="terminal-input" id="terminal-input" autofocus>
                             </div>
                         </div>
@@ -1151,7 +1151,7 @@
             <div class="page" id="page-controls">
                 <div class="alert-box danger" id="kill-switch-warning" style="display: none;">
                     <span>⚠️</span>
-                    <span>KILL SWITCH ACTIVATED - AEGIS is shutting down all systems!</span>
+                    <span>KILL SWITCH ACTIVATED - SATURDAY is shutting down all systems!</span>
                 </div>
 
                 <div class="panel" style="margin-bottom: 1rem;">
@@ -1161,8 +1161,8 @@
                     <div class="panel-content">
                         <div class="system-controls">
                             <div class="control-row">
-                                <span class="control-label">🔊 Wake AEGIS (Voice)</span>
-                                <button class="btn btn-primary" onclick="wakeAegis()">Wake Now</button>
+                                <span class="control-label">🔊 Wake SATURDAY (Voice)</span>
+                                <button class="btn btn-primary" onclick="wakeSATURDAY()">Wake Now</button>
                             </div>
                             <div class="control-row">
                                 <span class="control-label">🛡️ Security Mode</span>
@@ -1191,10 +1191,10 @@
                     <div class="panel-content">
                         <div class="alert-box warning">
                             <span>⚠️</span>
-                            <span>These actions affect core AEGIS functionality. Use with caution.</span>
+                            <span>These actions affect core SATURDAY functionality. Use with caution.</span>
                         </div>
                         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                            <button class="btn btn-warning" onclick="restartAegis()">🔄 Restart AEGIS</button>
+                            <button class="btn btn-warning" onclick="restartSATURDAY()">🔄 Restart SATURDAY</button>
                             <button class="btn btn-danger" onclick="activateKillSwitch()">☠️ KILL SWITCH</button>
                             <button class="btn" onclick="resetAll()">⚙️ Reset All Settings</button>
                         </div>
@@ -1245,7 +1245,7 @@
                 </div>
                 <div class="panel-content">
                     <div class="quick-actions">
-                        <button class="quick-btn" onclick="wakeAegis()">☀️ Wake</button>
+                        <button class="quick-btn" onclick="wakeSATURDAY()">☀️ Wake</button>
                         <button class="quick-btn" onclick="toggleSidebarMic()">🎤 Listen</button>
                         <button class="quick-btn" onclick="switchTab('camera')">📷 Camera</button>
                         <button class="quick-btn danger" onclick="activateKillSwitch()">☠️ Kill</button>
@@ -1255,7 +1255,7 @@
 
             <div class="panel">
                 <div class="panel-header">
-                    <h2>AEGIS Status</h2>
+                    <h2>SATURDAY Status</h2>
                 </div>
                 <div class="panel-content">
                     <div class="control-row" style="margin-bottom: 0.5rem;">
@@ -1264,7 +1264,7 @@
                     </div>
                     <div class="control-row" style="margin-bottom: 0.5rem;">
                         <span>Status</span>
-                        <span id="aegis-status" style="color: var(--green);">Active</span>
+                        <span id="saturday-status" style="color: var(--green);">Active</span>
                     </div>
                     <div class="control-row">
                         <span>Version</span>
@@ -1279,7 +1279,7 @@
         <div class="firstboot-card">
             <div class="firstboot-header">
                 <div class="firstboot-kicker">First Boot Setup</div>
-                <h2 id="firstboot-title">Welcome to AEGIS</h2>
+                <h2 id="firstboot-title">Welcome to SATURDAY</h2>
                 <div id="firstboot-subtitle" class="firstboot-status">Complete guided setup to unlock the full system.</div>
                 <div class="firstboot-progress">
                     <div id="firstboot-progress-fill" class="firstboot-progress-fill"></div>
@@ -1291,14 +1291,14 @@
                 <div class="firstboot-step" data-step="1">
                     <div class="alert-box success">
                         <span>🛠️</span>
-                        <span>This one-time setup is required before AEGIS enters normal operation.</span>
+                        <span>This one-time setup is required before SATURDAY enters normal operation.</span>
                     </div>
                     <div class="form-group">
                         <label>Preferred Greeting Name</label>
                         <input type="text" class="input-field" id="firstboot-display-name" placeholder="Sir">
                     </div>
                     <div class="firstboot-status">
-                        AEGIS will use this name for startup greetings and confirmations.
+                        SATURDAY will use this name for startup greetings and confirmations.
                     </div>
                 </div>
 
@@ -1366,7 +1366,7 @@
                 <div class="firstboot-step" data-step="5">
                     <div class="alert-box success">
                         <span>✅</span>
-                        <span>Final confirmation. AEGIS will switch to normal operation after this step.</span>
+                        <span>Final confirmation. SATURDAY will switch to normal operation after this step.</span>
                     </div>
                     <div class="firstboot-status">
                         <strong>Checklist:</strong><br>
@@ -1421,12 +1421,12 @@
 
         // Socket events
         socket.on('connect', () => {
-            addLog('Connected to AEGIS Core', 'info', 'system');
+            addLog('Connected to SATURDAY Core', 'info', 'system');
             socket.emit('register_ui');
         });
 
         socket.on('disconnect', () => {
-            addLog('Disconnected from AEGIS Core', 'warn', 'system');
+            addLog('Disconnected from SATURDAY Core', 'warn', 'system');
         });
 
         socket.on('system_status', (data) => {
@@ -1455,7 +1455,7 @@
         });
 
         socket.on('voice_msg', (data) => {
-            addLog(`AEGIS: "${data.text}"`, 'info', 'voice');
+            addLog(`SATURDAY: "${data.text}"`, 'info', 'voice');
         });
 
         socket.on('terminal_output', (data) => {
@@ -1555,7 +1555,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `aegis-logs-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `saturday-logs-${new Date().toISOString().split('T')[0]}.json`;
             a.click();
             addLog('Logs exported successfully', 'info');
         }
@@ -1947,7 +1947,7 @@
 
             if (!title || !subtitle || !nextBtn) return;
             if (firstBoot.step === 1) {
-                title.textContent = 'Welcome to AEGIS';
+                title.textContent = 'Welcome to SATURDAY';
                 subtitle.textContent = 'Step 1/5: confirm your startup identity.';
                 nextBtn.textContent = 'Next';
             } else if (firstBoot.step === 2) {
@@ -2283,7 +2283,7 @@
                 showFirstBootOverlay(false);
                 const currentUser = document.getElementById('current-user');
                 if (currentUser) currentUser.textContent = displayName;
-                addLog('First-boot setup completed. AEGIS is now fully operational.', 'info', 'system');
+                addLog('First-boot setup completed. SATURDAY is now fully operational.', 'info', 'system');
             } catch (err) {
                 setFirstBootAlert(`Setup completion failed: ${err.message}`, 'danger');
             }
@@ -2385,7 +2385,7 @@
             
             // Try backend streaming first
             socket.emit('camera_start');
-            addLog('Camera feed started - connecting to AEGIS vision', 'info', 'system');
+            addLog('Camera feed started - connecting to SATURDAY vision', 'info', 'system');
             
             // Fallback: use local browser camera
             try {
@@ -2419,7 +2419,7 @@
         document.getElementById('terminal-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const cmd = e.target.value;
-                appendTerminal('AEGIS@System:~$ ' + cmd, false);
+                appendTerminal('SATURDAY@System:~$ ' + cmd, false);
                 socket.emit('terminal_command', { command: cmd });
                 e.target.value = '';
             }
@@ -2440,9 +2440,9 @@
         }
 
         // Control functions
-        function wakeAegis() {
-            socket.emit('wake_aegis');
-            addLog('AEGIS wake command sent');
+        function wakeSATURDAY() {
+            socket.emit('wake_saturday');
+            addLog('SATURDAY wake command sent');
         }
 
         function toggleSecurity() {
@@ -2470,24 +2470,24 @@
         }
 
         function activateKillSwitch() {
-            if (confirm('⚠️ WARNING: This will shut down ALL AEGIS systems. Are you sure?')) {
-                if (confirm('This is your final warning. AEGIS will be completely disabled. Continue?')) {
+            if (confirm('⚠️ WARNING: This will shut down ALL SATURDAY systems. Are you sure?')) {
+                if (confirm('This is your final warning. SATURDAY will be completely disabled. Continue?')) {
                     document.getElementById('kill-switch-warning').style.display = 'flex';
-                    document.getElementById('aegis-status').textContent = 'SHUTTING DOWN';
-                    document.getElementById('aegis-status').style.color = 'var(--red)';
+                    document.getElementById('saturday-status').textContent = 'SHUTTING DOWN';
+                    document.getElementById('saturday-status').style.color = 'var(--red)';
                     socket.emit('kill_switch');
                     addLog('KILL SWITCH ACTIVATED', 'error');
                 }
             }
         }
 
-        function restartAegis() {
-            socket.emit('restart_aegis');
-            addLog('AEGIS restart initiated');
+        function restartSATURDAY() {
+            socket.emit('restart_saturday');
+            addLog('SATURDAY restart initiated');
         }
 
         function resetAll() {
-            if (confirm('This will reset all AEGIS settings to defaults. Continue?')) {
+            if (confirm('This will reset all SATURDAY settings to defaults. Continue?')) {
                 socket.emit('reset_all');
                 addLog('Settings reset to defaults');
             }
@@ -2600,7 +2600,7 @@
         loadDirectory();
         loadVoiceProfiles();
         initFirstBootWizard();
-        addLog('AEGIS Command Center initialized', 'info', 'system');
+        addLog('SATURDAY Command Center initialized', 'info', 'system');
     </script>
 </body>
 </html>

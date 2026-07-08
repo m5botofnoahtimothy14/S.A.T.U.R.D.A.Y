@@ -2,6 +2,7 @@
 import logging
 import subprocess
 import os
+import sys
 from urllib.parse import quote_plus
 from core.event_bus import EventBus
 
@@ -42,7 +43,7 @@ class MusicManager:
             ],
         }
         
-        self.local_music_path = "D:/Music"
+        self.local_music_path = os.path.expanduser("~/Music")
         self.provider = os.getenv("SATURDAY_MUSIC_PROVIDER", "youtube").strip().lower()
         logger.info("MusicManager ready with mood playlists.")
 
@@ -132,6 +133,8 @@ class MusicManager:
         try:
             if os.name == 'nt':
                 subprocess.Popen(["cmd", "/c", "start", "", url], shell=True)
+            elif sys.platform == 'darwin':
+                subprocess.Popen(["open", url])
             else:
                 subprocess.Popen(["xdg-open", url])
             logger.info(f"Opened: {url}")
@@ -153,23 +156,25 @@ class MusicManager:
 
     def _play_vlc(self, filepath: str):
         self._stop_playback()
-        
+
         vlc_paths = [
             r"C:\Program Files\VideoLAN\VLC\vlc.exe",
             r"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe",
+            "/Applications/VLC.app/Contents/MacOS/VLC",
+            "/usr/bin/vlc",
         ]
-        
+
         vlc_exe = None
         for p in vlc_paths:
             if os.path.exists(p):
                 vlc_exe = p
                 break
-        
+
         if not vlc_exe:
             logger.warning("VLC not found, using default handler")
             self._open_url(filepath)
             return
-            
+
         try:
             self.vlc_process = subprocess.Popen(
                 [vlc_exe, "--play-and-pause", filepath],
@@ -189,11 +194,12 @@ class MusicManager:
                 self.vlc_process = None
             except:
                 pass
-        try:
-            subprocess.Popen(["taskkill", "/F", "/IM", "vlc.exe"], 
-                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except:
-            pass
+        if os.name == 'nt':
+            try:
+                subprocess.Popen(["taskkill", "/F", "/IM", "vlc.exe"],
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            except:
+                pass
 
     def _detect_mood(self, text: str):
         mapping = {

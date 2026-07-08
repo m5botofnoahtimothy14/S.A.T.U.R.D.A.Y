@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import re
 import time
 from collections import defaultdict, deque
@@ -310,7 +311,7 @@ class ConversationalDLEngine:
         return {
             "cpu": f"{psutil.cpu_percent()}%",
             "memory": f"{psutil.virtual_memory().percent}%",
-            "disk": f"{psutil.disk_usage(os.getenv('SystemDrive', 'C:\\')).percent}%",
+            "disk": f"{psutil.disk_usage('/').percent}%",
         }
 
     async def _generate_response(

@@ -1,8 +1,11 @@
-﻿
-import logging
+﻿import logging
 import threading
 import numpy as np
-import sounddevice as sd
+
+try:
+    import sounddevice as sd
+except (ImportError, OSError):
+    sd = None
 from core.event_bus import EventBus
 
 logger = logging.getLogger("SATURDAY.SpatialAudio")

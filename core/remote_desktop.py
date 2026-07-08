@@ -3,6 +3,7 @@
 import subprocess
 import logging
 import re
+import sys
 from core.event_bus import EventBus
 logger = logging.getLogger("SATURDAY.RemoteDesktop")
 class RemoteDesktopManager:
@@ -22,10 +23,10 @@ class RemoteDesktopManager:
             else:
                 self.event_bus.publish("voice_response", "Say 'remote to hostname or IP' to connect.")
     def _extract_host(self, text: str):
-        m = re.search(r"remote .*? to ([\\w\\.\\-]+)", text)
+        m = re.search(r"remote .*? to ([\w.\-]+)", text)
         if m:
             return m.group(1)
-        m = re.search(r"(\\d+\\.\\d+\\.\\d+\\.\\d+)", text)
+        m = re.search(r"(\d+\.\d+\.\d+\.\d+)", text)
         if m:
             return m.group(1)
         return None
@@ -39,7 +40,13 @@ class RemoteDesktopManager:
             self.connect(host)
     def connect(self, host: str):
         try:
-            subprocess.Popen(["mstsc.exe", "/v", host], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if sys.platform == "darwin":
+                cmd = ["open", f"vnc://{host}"]
+            elif sys.platform == "win32":
+                cmd = ["mstsc.exe", "/v", host]
+            else:
+                cmd = ["xdg-open", f"vnc://{host}"]
+            subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             logger.info(f"Remote Desktop launched to {host}")
         except Exception as e:
             logger.error(f"Failed to launch remote desktop: {e}")

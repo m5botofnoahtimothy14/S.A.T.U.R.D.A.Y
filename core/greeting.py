@@ -1,10 +1,13 @@
-﻿                  
-
-import logging
+﻿import logging
 import asyncio
 from core.event_bus import EventBus
 from core.brain import LinkedBrain
-from communication.speech import SpeechManager
+
+try:
+    from communication.speech import SpeechManager
+except ImportError:
+    from core.communication.speech import SpeechManager
+
 logger = logging.getLogger("SATURDAY.Core.Greeting")
 class GreetingManager:
     def __init__(self, event_bus: EventBus, brain: LinkedBrain, speech: SpeechManager):

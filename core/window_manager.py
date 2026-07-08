@@ -1,9 +1,14 @@
-﻿                        
-import logging
+﻿import logging
 import threading
 import time
+import sys
 import psutil
-import pygetwindow as gw
+
+try:
+    import pygetwindow as gw
+except (ImportError, NotImplementedError):
+    gw = None
+
 from core.event_bus import EventBus
 
 logger = logging.getLogger("SATURDAY.WindowManager")
@@ -74,6 +79,8 @@ class WindowManager:
         return False
 
     def _get_active_windows(self):
+        if gw is None:
+            return []
         try:
             return [w for w in gw.getAllWindows() if w.title.strip() and w.visible]
         except Exception:

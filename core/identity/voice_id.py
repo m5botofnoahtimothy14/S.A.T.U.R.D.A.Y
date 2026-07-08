@@ -1,7 +1,10 @@
-﻿                      
-import logging
+﻿import logging
 import threading
-import speech_recognition as sr
+
+try:
+    import speech_recognition as sr
+except ImportError:
+    sr = None
 
 logger = logging.getLogger("SATURDAY.Identity.VoiceID")
 

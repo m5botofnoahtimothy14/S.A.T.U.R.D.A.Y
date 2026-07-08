@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 import warnings
 
-DRIVE_ROOT = "D:/SATURDAY"
+DRIVE_ROOT = os.path.expanduser("~/SATURDAY")
 os.environ['SATURDAY_ROOT'] = DRIVE_ROOT
 
 TF_HOME = os.path.join(DRIVE_ROOT, ".tensorflow")
@@ -373,7 +373,7 @@ class DLBackendManager:
     
     def setup_deepface(self):
         
-        logger.info("Setting up DeepFace environment on Drive D...")
+        logger.info("Setting up DeepFace environment...")
         
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'

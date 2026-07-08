@@ -1,41 +1,56 @@
-﻿                    
-import logging
+﻿import logging
 import cv2
 import asyncio
 import numpy as np
 import threading
 import time
 from typing import Optional
-from health.rppg_engine import RPPGEngine
+
+try:
+    from core.health.rppg_engine import RPPGEngine
+except ImportError:
+    RPPGEngine = None
 
 try:
     import mss
 except ImportError:
     mss = None
 
-from core.deep_learning import setup_for_deepface, get_backend_manager
+try:
+    from core.deep_learning import setup_for_deepface, get_backend_manager
+except ImportError:
+    setup_for_deepface = None
+    get_backend_manager = None
+
+logger = logging.getLogger("SATURDAY.Vision")
+
 
 class EmotionDetector:
     def __init__(self):
         self.DeepFace = None
         self.backend = None
-        
-        backend_mgr = get_backend_manager()
-        tf_available = backend_mgr._status.tensorflow if hasattr(backend_mgr, '_status') else False
-        
+
+        if get_backend_manager is None:
+            logger.warning("Deep learning backend not available. Emotion detection will use mock.")
+            return
+
+        try:
+            backend_mgr = get_backend_manager()
+            tf_available = backend_mgr._status.tensorflow if hasattr(backend_mgr, '_status') else False
+        except Exception:
+            tf_available = False
+
         if tf_available:
             try:
-                from core.deep_learning import setup_for_deepface
-                if setup_for_deepface():
+                if setup_for_deepface and setup_for_deepface():
                     from deepface import DeepFace
                     self.DeepFace = DeepFace
                     self.backend = "tensorflow"
-                    
-                    import numpy as np
+
                     dummy_face = np.zeros((224, 224, 3), dtype=np.uint8)
                     try:
                         self.DeepFace.analyze(dummy_face, actions=['emotion'], enforce_detection=False)
-                        logger.info("DeepFace initialized with TensorFlow backend on Drive D")
+                        logger.info("DeepFace initialized with TensorFlow backend")
                     except Exception as e:
                         logger.warning(f"DeepFace warmup failed: {e}")
                 else:
@@ -62,8 +77,6 @@ class EmotionDetector:
                 logger.debug(f"DeepFace analysis skipped/failed: {e}")
         return {"primary": "Calm", "confidence": 0.8}
 
-logger = logging.getLogger("SATURDAY.Vision")
-
 class VisionModule:
     
     def __init__(self, event_bus):
@@ -75,8 +88,8 @@ class VisionModule:
         self.last_screen_frame = None
         
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        self.last_camera_frame = None                                     
-        self.rppg = RPPGEngine(event_bus)
+        self.last_camera_frame = None
+        self.rppg = RPPGEngine(event_bus) if RPPGEngine else None
         self.emotions = EmotionDetector()
         
         self.power_mode = "performance"
@@ -95,9 +108,13 @@ class VisionModule:
         self.power_mode = data.get("mode", "performance")
 
     def _camera_loop(self):
-        self.cap = cv2.VideoCapture(0)
-        if not self.cap.isOpened():
-            logger.error("Vision System: Physical camera unavailable.")
+        try:
+            self.cap = cv2.VideoCapture(0)
+        except Exception as e:
+            logger.warning(f"Vision System: Camera initialization failed: {e}")
+            return
+        if not self.cap or not self.cap.isOpened():
+            logger.info("Vision System: No camera available, running without video feed.")
             return
         
         while self.active:
@@ -115,8 +132,8 @@ class VisionModule:
             faces = self.face_cascade.detectMultiScale(gray, 1.1, 4)
             
             if len(faces) > 0:
-                                             
-                self.rppg.process_frame(frame, faces)
+                if self.rppg:
+                    self.rppg.process_frame(frame, faces)
                 
                 x, y, w, h = faces[0]
                 face_crop = frame[y:y+h, x:x+w]

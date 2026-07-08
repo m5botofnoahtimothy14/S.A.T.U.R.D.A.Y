@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>AEGIS OS | Dashboard</title>
+    <title>SATURDAY OS | Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
@@ -196,7 +196,7 @@
         </div>
         
         <div class="main-view">
-            <h2 style="margin-top:0;">AEGIS NEURAL INTERFACE</h2>
+            <h2 style="margin-top:0;">SATURDAY NEURAL INTERFACE</h2>
             
             <div class="panel">
                 <h3>HomeBot Telemetry</h3>
@@ -212,7 +212,7 @@
             </div>
             
             <div class="log-vessel" id="logs">
-                <div>[SYSTEM] AEGIS Kernel Version 2.0.0 Online.</div>
+                <div>[SYSTEM] SATURDAY Kernel Version 2.0.0 Online.</div>
                 <div>[SYSTEM] Listening for neural input...</div>
             </div>
             
@@ -230,7 +230,7 @@
                 fetch(`/chat?prompt=${encodeURIComponent(cmd)}`, { method: 'POST' })
                     .then(r => r.json())
                     .then(data => {
-                        addLog(`AEGIS: ${data.response}`);
+                        addLog(`SATURDAY: ${data.response}`);
                     });
                 e.target.value = '';
             }

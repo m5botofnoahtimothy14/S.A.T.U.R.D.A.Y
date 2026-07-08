@@ -1,10 +1,15 @@
-﻿                     
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+﻿try:
+    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+except ImportError:
+    SentimentIntensityAnalyzer = None
 
 class SentimentEngine:
 
     def __init__(self):
-        self.analyzer = SentimentIntensityAnalyzer()
+        if SentimentIntensityAnalyzer:
+            self.analyzer = SentimentIntensityAnalyzer()
+        else:
+            self.analyzer = None
 
     def analyze(self, text: str) -> dict:
         scores = self.analyzer.polarity_scores(text)

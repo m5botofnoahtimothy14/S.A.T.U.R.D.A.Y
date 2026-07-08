@@ -7,7 +7,7 @@ from typing import Optional
 try:
     import pyautogui
     pyautogui.FAILSAFE = True
-except ImportError:
+except (ImportError, Exception):
     pyautogui = None
 
 try:
@@ -29,11 +29,13 @@ class ScreenNavigator:
         logger.info("Screen Navigator initialized.")
 
     async def open_app(self, app_name: str):
-        
         if not pyautogui: return
-        
+        import sys
         logger.info(f"Navigating screen to open: {app_name}")
-        pyautogui.press('win')
+        if sys.platform == "darwin":
+            pyautogui.hotkey('command', 'space')
+        else:
+            pyautogui.press('win')
         await asyncio.sleep(0.5)
         pyautogui.write(app_name, interval=0.1)
         await asyncio.sleep(0.5)
@@ -48,10 +50,13 @@ class ScreenNavigator:
         pyautogui.press('space')                    
 
     async def search_on_screen(self, query: str):
-        
         if not pyautogui: return
+        import sys
         logger.info(f"Searching on screen for: {query}")
-        pyautogui.hotkey('ctrl', 't')                           
+        if sys.platform == "darwin":
+            pyautogui.hotkey('command', 't')
+        else:
+            pyautogui.hotkey('ctrl', 't')
         await asyncio.sleep(0.5)
         pyautogui.write(query)
         pyautogui.press('enter')

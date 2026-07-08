@@ -27,7 +27,7 @@ SD_AVAILABLE = False
 try:
     import sounddevice as sd
     SD_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError):
     sd = None
 
 PYAUDIO_AVAILABLE = False
