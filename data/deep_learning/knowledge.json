@@ -1,15 +1,15 @@
 {
   "state": {
     "awareness_level": 1.0,
-    "confidence": 0.13210647997658856,
+    "confidence": 0.1327293775692808,
     "learning_rate": 0.001,
     "evolution_stage": 1,
     "memory_weight": 0.7,
     "creativity": 0.6,
     "adaptability": 0.5
   },
-  "experience_count": 35,
-  "decision_count": 0,
+  "experience_count": 18,
+  "decision_count": 4,
   "weights": {
     "weights1": [
       [

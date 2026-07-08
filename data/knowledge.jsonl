@@ -1793,3 +1793,21 @@
 {"event": "voice_response", "data": "SATURDAY OS online. Welcome back, Sir."}
 {"event": "voice_response", "data": "Warning: system resources high. CPU 99 percent, memory 70 percent."}
 {"event": "voice_response", "data": "SATURDAY OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 72 percent."}
+{"event": "voice_response", "data": "Need me to draft a plan or remind you about anything?"}
+{"event": "voice_response", "data": "Do you want a quick status check or to queue some music?"}
+{"event": "voice_command", "data": "saturday"}
+{"event": "voice_response", "data": "SATURDAY wake signal received."}
+{"event": "voice_response", "data": "SATURDAY Core re-engaged. Welcome back, Sir."}
+{"event": "exchange", "data": {"user": "saturday", "reply": "Evening. Everything's running. What can I help with?"}}
+{"event": "voice_response", "data": "Evening. Everything's running. What can I help with?"}
+{"event": "voice_command", "data": "saturday"}
+{"event": "voice_response", "data": "SATURDAY wake signal received."}
+{"event": "voice_response", "data": "SATURDAY Core re-engaged. Welcome back, Sir."}
+{"event": "exchange", "data": {"user": "saturday", "reply": "Evening. Everything's running. What can I help with?"}}
+{"event": "voice_response", "data": "Evening. Everything's running. What can I help with?"}
+{"event": "voice_command", "data": "saturday"}
+{"event": "voice_response", "data": "SATURDAY wake signal received."}
+{"event": "voice_response", "data": "SATURDAY Core re-engaged. Welcome back, Sir."}
+{"event": "exchange", "data": {"user": "saturday", "reply": "Good evening. SATURDAY is at your service."}}
+{"event": "voice_response", "data": "Good evening. SATURDAY is at your service."}

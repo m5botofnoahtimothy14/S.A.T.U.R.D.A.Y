@@ -1,0 +1,11 @@
+{
+  "completed": true,
+  "completed_at": 1783535041.3983305,
+  "display_name": "Noah Sir",
+  "steps": {
+    "welcome": true,
+    "voice_profile": true,
+    "face_profile": true,
+    "calibration": true
+  }
+}
