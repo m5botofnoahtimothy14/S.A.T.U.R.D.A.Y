@@ -8,6 +8,10 @@ python-dotenv
 sqlalchemy
 aiosqlite
 
+# Web (required by websocket_bridge.py)
+flask
+flask-socketio
+
 # Audio & Speech (cloud-friendly)
 edge-tts
 pyttsx3
