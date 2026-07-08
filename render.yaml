@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: saturday-ai
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python run_production.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: HOST
+        value: "0.0.0.0"
+      - key: PORT
+        value: "8000"
+      - key: SATURDAY_STRICT_PROD
+        value: "false"
+      - key: SATURDAY_DISABLE_AUTH
+        value: "true"
+      - key: SATURDAY_TTS_VOICE
+        value: "en-US-ChristopherNeural"
+      - key: SATURDAY_TTS_RATE
+        value: "+15%"
+      - key: SATURDAY_ENABLE_ROS2
+        value: "false"
+      - key: SATURDAY_ENABLE_LIVEKIT
+        value: "false"
+      - key: SATURDAY_ENABLE_SYNC
+        value: "false"
+      - key: LOG_LEVEL
+        value: "info"

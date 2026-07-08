@@ -1,0 +1,46 @@
+# requirements-cloud.txt - Lightweight for cloud deployment
+# Core
+fastapi
+uvicorn[standard]
+pydantic>=2.0
+structlog
+python-dotenv
+sqlalchemy
+aiosqlite
+
+# Audio & Speech (cloud-friendly)
+edge-tts
+pyttsx3
+SpeechRecognition
+pyaudio
+
+# AI & NLP
+sentence-transformers
+scikit-learn
+numpy
+
+# Vision (headless)
+opencv-python-headless
+Pillow
+
+# System
+psutil
+aiohttp
+requests
+
+# UI
+jinja2
+python-multipart
+
+# Security
+firebase-admin
+jsonschema
+cryptography
+
+# AI Agents
+langchain-core
+langchain-community
+
+# Utilities
+httptools
+websockets

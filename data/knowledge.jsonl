@@ -1815,3 +1815,6 @@
 {"event": "voice_response", "data": "Need me to draft a plan or remind you about anything?"}
 {"event": "voice_response", "data": "Warning: system resources high. CPU 98 percent, memory 72 percent."}
 {"event": "voice_response", "data": "SATURDAY OS online. Welcome back, Sir."}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 95 percent, memory 71 percent."}
+{"event": "voice_response", "data": "Do you want a quick status check or to queue some music?"}
+{"event": "voice_response", "data": "Warning: system resources high. CPU 97 percent, memory 72 percent."}
