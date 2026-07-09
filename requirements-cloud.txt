@@ -35,6 +35,7 @@ requests
 # UI
 jinja2
 python-multipart
+plyer
 
 # Security
 firebase-admin
