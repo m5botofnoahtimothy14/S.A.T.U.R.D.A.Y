@@ -25,6 +25,26 @@ from firebase_admin import auth as fb_auth
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+app = FastAPI(title="SATURDAY AI OS")
+
+@app.get("/api/debug")
+async def early_healthcheck():
+    core = globals().get("_saturday_core")
+    if core is None:
+        return {"status": "initializing", "initialized": False}
+    return {
+        "status": "ok",
+        "runtime": core.runtime is not None,
+        "event_bus": core.event_bus is not None,
+        "initialized": True,
+    }
+
+templates = Jinja2Templates(directory="core/ui/templates")
+
+from fastapi.staticfiles import StaticFiles
+app.mount("/static", StaticFiles(directory="core/ui/static"), name="static")
+
 from core.event_bus import EventBus
 from core.runtime import RuntimeStats
 from core.config import ConfigManager
@@ -97,7 +117,6 @@ AUDIO_CALIBRATION_FILE = DATA_DIR / "audio_calibration.json"
 FIRST_BOOT_FILE = DATA_DIR / "first_boot_setup.json"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 FACE_IMAGE_DIR.mkdir(parents=True, exist_ok=True)
-app = None
 def load_json_db(filepath, default=[]):
     if os.path.exists(filepath):
         try:
@@ -156,25 +175,6 @@ if not getattr(structlog, "_saturday_configured", False):
     )
     structlog._saturday_configured = True
 logger = structlog.get_logger("SATURDAY.Core")
-app = FastAPI(title="SATURDAY AI OS")
-
-@app.get("/api/debug")
-async def early_healthcheck():
-    core = globals().get("_saturday_core")
-    if core is None:
-        return {"status": "initializing", "initialized": False}
-    return {
-        "status": "ok",
-        "runtime": core.runtime is not None,
-        "event_bus": core.event_bus is not None,
-        "initialized": True,
-    }
-
-templates = Jinja2Templates(directory="core/ui/templates")
-
-from fastapi.staticfiles import StaticFiles
-app.mount("/static", StaticFiles(directory="core/ui/static"), name="static")
-
 router = APIRouter(prefix="/v1", tags=["control-panel"])
 connected_websockets = set()
 _firebase_initialized = False

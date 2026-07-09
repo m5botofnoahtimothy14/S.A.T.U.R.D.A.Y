@@ -1,21 +1,19 @@
 # SATURDAY Environment Configuration
 # ===============================
-# Point to the SATURDAY virtual environment Python
+# Local Linux paths (replaces Windows D: drive config)
 
-SATURDAY_VENV_PYTHON = "D:/SATURDAY/.venv/Scripts/python.exe"
-SATURDAY_VENV_PIP = "D:/SATURDAY/.venv/Scripts/pip.exe"
+from pathlib import Path
+import os
 
-# Package locations
-SATURDAY_ROOT = "D:/SATURDAY"
-PACKAGES_PATH = "D:/SATURDAY/.venv/Lib/site-packages"
+SATURDAY_ROOT = str(Path(__file__).parent.resolve())
+VENV_DIR = os.path.join(SATURDAY_ROOT, ".venv")
+PACKAGES_PATH = os.path.join(VENV_DIR, "lib", "python3.12", "site-packages")
 
-# Deep Learning cache directories (on D drive)
-TF_HUB_CACHE_DIR = "D:/SATURDAY/.tensorflow/hub"
-HF_HOME = "D:/SATURDAY/.huggingface"
-TORCH_HOME = "D:/SATURDAY/.torch"
-DEEPFACE_HOME = "D:/SATURDAY/.deepface"
-KERAS_HOME = "D:/SATURDAY/.keras"
-
-# Temp directories (on F drive to save C drive)
-TMP = "F:/pip_temp"
-TEMP = "F:/pip_temp"
+# Deep Learning cache directories (local)
+CACHE_DIR = os.path.join(SATURDAY_ROOT, ".cache")
+TF_HUB_CACHE_DIR = os.path.join(CACHE_DIR, "tensorflow", "hub")
+HF_HOME = os.path.join(CACHE_DIR, "huggingface")
+TORCH_HOME = os.path.join(CACHE_DIR, "torch")
+DEEPFACE_HOME = os.path.join(CACHE_DIR, "deepface")
+KERAS_HOME = os.path.join(CACHE_DIR, "keras")
+MODELS_DIR = os.path.join(SATURDAY_ROOT, "models")

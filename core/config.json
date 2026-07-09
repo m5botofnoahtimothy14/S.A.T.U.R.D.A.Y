@@ -2,6 +2,7 @@
     "wake_word": "saturday",
     "edith_wake_word": "edith",
     "system_name": "SATURDAY",
+    "offline_mode": true,
     "voices": {
         "saturday": {
             "gender": "male",
@@ -19,12 +20,14 @@
         }
     },
     "cloud": {
-        "endpoint": "https://saturday-cloud.example.com",
-        "sync_interval": 30
+        "endpoint": "",
+        "sync_interval": 0,
+        "enabled": false
     },
     "homebot": {
         "device_ip": "192.168.0.100",
-        "motor_max_speed": 100
+        "motor_max_speed": 100,
+        "enabled": false
     },
     "security": {
         "cpu_threshold": 85,
@@ -71,6 +74,10 @@
         "search": true,
         "file": true,
         "calendar": false,
-        "health": true
+        "health": true,
+        "cloud_sync": false,
+        "livekit": false,
+        "twilio": false,
+        "firebase": false
     }
 }
