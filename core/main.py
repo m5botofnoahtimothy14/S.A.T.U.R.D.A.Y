@@ -157,6 +157,19 @@ if not getattr(structlog, "_saturday_configured", False):
     structlog._saturday_configured = True
 logger = structlog.get_logger("SATURDAY.Core")
 app = FastAPI(title="SATURDAY AI OS")
+
+@app.get("/api/debug")
+async def early_healthcheck():
+    core = globals().get("_saturday_core")
+    if core is None:
+        return {"status": "initializing", "initialized": False}
+    return {
+        "status": "ok",
+        "runtime": core.runtime is not None,
+        "event_bus": core.event_bus is not None,
+        "initialized": True,
+    }
+
 templates = Jinja2Templates(directory="core/ui/templates")
 
 from fastapi.staticfiles import StaticFiles
@@ -1458,14 +1471,7 @@ class SATURDAYCore:
         @self.app.get("/")
         async def root(request: Request):
             return self.templates.TemplateResponse(request, "index.html")
-        @self.app.get("/api/debug")
-        async def api_debug():
-            return {
-                "status": "ok",
-                "runtime": self.runtime is not None,
-                "event_bus": self.event_bus is not None,
-                "initialized": True
-            }
+
         @self.app.get("/api/secure/mount-status")
         async def api_secure_mount_status():
             return _secure_gateway_mount_status
