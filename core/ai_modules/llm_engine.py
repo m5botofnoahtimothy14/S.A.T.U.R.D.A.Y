@@ -10,129 +10,21 @@ from pathlib import Path
 logger = structlog.get_logger("SATURDAY.AI.LLM")
 
 
+
 class BuiltinBrain:
-    """Built-in conversational brain when no local LLM is available."""
-
-    PERSONALITY = (
-        "You are SATURDAY, a warm, concise, human-like AI assistant. "
-        "You speak naturally like a trusted colleague. "
-        "Keep responses short and helpful. "
-        "You are running on the user's local machine."
-    )
-
+    """Professional fallback brain for SATURDAY when LLMs are offline."""
+    
     def __init__(self):
         self.context = []
-        self.last_topic = None
 
     def respond(self, user_input: str, persona: str = "SATURDAY") -> str:
-        persona = persona.upper()
-        # Prompts from the orchestration layer include a dialogue transcript.  The
-        # final user line is the actual request to answer.
-        if "User:" in user_input:
-            user_input = user_input.rsplit("User:", 1)[-1].split("\n", 1)[0].strip()
-        elif "User input:" in user_input:
-            user_input = user_input.rsplit("User input:", 1)[-1].split("\n", 1)[0].strip()
         text = user_input.strip().lower()
-        now = datetime.now()
-        hour = now.hour
+        if any(w in text for w in ["status", "system", "online"]):
+            return f"[{persona}] All core systems are nominal. I am currently operating in fallback mode. Please check Ollama/Llama-cpp connectivity for full reasoning."
+        if any(w in text for w in ["hello", "hi", "hey"]):
+            return f"[{persona}] Online and ready, Sir. How can I assist your operations today?"
+        return f"[{persona}] I've received your input, but my advanced reasoning engine is currently offline. I am operating in basic fallback mode."
 
-        greetings = ["hello", "hi", "hey", "good morning", "good afternoon", "good evening", "howdy", "sup"]
-        if any(g in text for g in greetings):
-            if hour < 12:
-                return random.choice([
-                    f"Good morning. {persona} is online and ready.",
-                    "Morning. What can I do for you?",
-                    "Hey there. Systems are running smooth. What's up?",
-                ])
-            elif hour < 17:
-                return random.choice([
-                    f"Hey. {persona} here. What do you need?",
-                    "Good afternoon. All systems nominal. How can I help?",
-                ])
-            else:
-                return random.choice([
-                    f"Good evening. {persona} is at your service.",
-                    "Evening. Everything's running. What can I help with?",
-                ])
-
-        if any(w in text for w in ["how are you", "how are you doing", "how's it going", "you good"]):
-            return random.choice([
-                "All systems running smooth. How can I help you?",
-                "I'm doing great, thanks for asking. What do you need?",
-                "Running at full capacity. What can I do for you?",
-            ])
-
-        if any(w in text for w in ["who are you", "what are you", "your name", "tell me about yourself"]):
-            role = "SATURDAY's specialized subdomain" if persona == "EDITH" else "your primary AI operating system"
-            return f"I'm {persona}, {role}. I can help with tasks, answer questions, manage your system, and keep things running smoothly."
-
-        if any(w in text for w in ["what time", "what's the time", "current time", "tell me the time"]):
-            return f"It's {now.strftime('%I:%M %p')}."
-
-        if any(w in text for w in ["what date", "what's the date", "today's date", "what day"]):
-            return f"Today is {now.strftime('%A, %B %d, %Y')}."
-
-        if any(w in text for w in ["thank", "thanks", "appreciate"]):
-            return random.choice([
-                "You're welcome. Let me know if you need anything else.",
-                "Happy to help.",
-                "Anytime.",
-            ])
-
-        if any(w in text for w in ["status", "system status", "how's the system", "are you running"]):
-            return "All systems are online and running. Voice, web interface, and core modules are active."
-
-        if any(w in text for w in ["help", "what can you do", "capabilities", "features"]):
-            return (
-                "I can help with quite a bit. Here's what I do: "
-                "voice commands, web search, task management, system monitoring, "
-                "file operations, communication, and general conversation. "
-                "Just ask naturally."
-            )
-
-        if any(w in text for w in ["shut down", "shutdown", "turn off", "sleep", "goodbye", "bye"]):
-            return "Shutting down gracefully. See you next time."
-
-        if any(w in text for w in ["joke", "funny", "make me laugh"]):
-            jokes = [
-                "Why do programmers prefer dark mode? Because light attracts bugs.",
-                "There are only 10 types of people in the world: those who understand binary and those who don't.",
-                "A SQL query walks into a bar, sees two tables and asks: Can I join you?",
-                "Why was the JavaScript developer sad? Because he didn't Node how to Express himself.",
-            ]
-            return random.choice(jokes)
-
-        if any(w in text for w in ["weather", "forecast"]):
-            return "I don't have weather data right now, but I can help you check it if you connect a weather service."
-
-        if any(w in text for w in ["music", "play", "song"]):
-            return "Music playback is available through the web interface. Want me to help set that up?"
-
-        if any(w in text for w in ["search", "look up", "google", "find"]):
-            query = text
-            for word in ["search for", "look up", "google", "find"]:
-                query = query.replace(word, "").strip()
-            return f"I'd search for '{query}' but the web search module needs configuration. Check the web interface for search options."
-
-        if any(w in text for w in ["task", "remind", "schedule", "todo"]):
-            return "Task management is available. You can manage tasks through the web interface or tell me what you need scheduled."
-
-        if any(w in text for w in ["run", "execute", "command", "terminal"]):
-            return "System commands are available through the web interface dashboard. What specifically do you need executed?"
-
-        if len(text) > 3:
-            self.context.append(("user", user_input))
-            if len(self.context) > 10:
-                self.context = self.context[-10:]
-
-        responses = [
-            "Got it. Let me know if you need anything specific.",
-            "Understood. What else can I help with?",
-            "Noted. Is there something specific you'd like me to do?",
-            "I hear you. Let me know how I can assist.",
-            "Alright. What would you like me to focus on?",
-        ]
-        return random.choice(responses)
 
 
 class LLMEngine:
@@ -163,6 +55,11 @@ class LLMEngine:
         ai_config = self.config.get("ai", {})
         self.use_llama_cpp = ai_config.get("use_llama_cpp", False) or _env_flag("SATURDAY_USE_LLAMA_CPP")
         self.model_path = ai_config.get("model_path", "models/llama-3-8b-instruct.Q4_K_M.gguf")
+        self.backup_models = [
+            str(p).strip()
+            for p in ai_config.get("backup_models", [])
+            if str(p).strip()
+        ]
         self.n_ctx = ai_config.get("n_ctx", 2048)
         self.n_gpu_layers = ai_config.get("n_gpu_layers", 0)
         self.preload = self.strict_prod or os.getenv("SATURDAY_PRELOAD_LLM", "false").strip().lower() in {
@@ -197,54 +94,75 @@ class LLMEngine:
     def available(self) -> bool:
         return True
 
-    def _resolve_model_path(self) -> str:
-        if os.path.exists(self.model_path):
-            return self.model_path
-        search_dirs = ["models"]
+    def _model_candidates(self) -> list[str]:
+        """Ordered list of model paths to try, best-first (tiered backup chain)."""
+        candidates: list[str] = []
+
+        def _add(path: str) -> None:
+            path = path.strip()
+            if path and path not in candidates:
+                candidates.append(path)
+
+        _add(self.model_path)
+        for backup in self.backup_models:
+            _add(backup)
+
         extra = os.getenv("SATURDAY_MODELS_DIR", "").strip()
-        if extra:
-            search_dirs.insert(0, extra)
-        for directory in search_dirs:
+        for directory in ("models", extra):
+            if not directory:
+                continue
             base = Path(directory)
             if not base.is_dir():
                 continue
-            matches = sorted(base.glob("*.gguf"))
-            if matches:
-                logger.info("Auto-discovered GGUF model", model=str(matches[0]))
-                return str(matches[0])
+            for match in sorted(base.glob("*.gguf"), key=lambda p: (p.stat().st_size, p.name), reverse=True):
+                _add(str(match))
+        return candidates
+
+    def _resolve_model_path(self) -> str:
+        for candidate in self._model_candidates():
+            if os.path.exists(candidate):
+                logger.info("Resolved llama-cpp model", model=candidate)
+                return candidate
         return self.model_path
 
     def _get_llama_cpp(self):
         if self._llama is None:
             try:
                 from llama_cpp import Llama
-
-                model_path = self._resolve_model_path()
-                if not os.path.exists(model_path):
-                    self._init_error = f"Llama model file not found: {model_path}"
-                    logger.warning(self._init_error)
-                    self._use_builtin = True
-                    return None
-
-                self._llama = Llama(
-                    model_path=model_path,
-                    n_ctx=self.n_ctx,
-                    n_gpu_layers=self.n_gpu_layers,
-                    verbose=False,
-                )
-                self._init_error = None
-                self._use_builtin = False
-                logger.info("llama-cpp model loaded successfully", model=model_path)
             except ImportError:
                 self._init_error = "llama-cpp-python is not installed."
                 logger.warning(self._init_error)
                 self._llama = False
                 self._use_builtin = True
-            except Exception as e:
-                self._init_error = f"Failed to initialize llama-cpp: {e}"
-                logger.warning(self._init_error)
-                self._llama = False
-                self._use_builtin = True
+                return None
+
+            last_error: Exception | None = None
+            for model_path in self._model_candidates():
+                if not os.path.exists(model_path):
+                    continue
+                try:
+                    self._llama = Llama(
+                        model_path=model_path,
+                        n_ctx=self.n_ctx,
+                        n_gpu_layers=self.n_gpu_layers,
+                        verbose=False,
+                    )
+                    self._init_error = None
+                    self._use_builtin = False
+                    logger.info("llama-cpp model loaded successfully", model=model_path)
+                    return self._llama
+                except Exception as e:
+                    last_error = e
+                    logger.warning("llama-cpp candidate failed; trying next tier", model=model_path, error=str(e))
+
+            self._init_error = (
+                f"All llama-cpp models failed to load: {last_error}"
+                if last_error
+                else "No llama-cpp GGUF model file found on disk."
+            )
+            logger.warning(self._init_error)
+            self._llama = False
+            self._use_builtin = True
         return self._llama
 
     def _check_ollama(self) -> bool:

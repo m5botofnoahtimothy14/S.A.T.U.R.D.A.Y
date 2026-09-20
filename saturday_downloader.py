@@ -69,6 +69,20 @@ MODELS: dict[str, list[dict]] = {
             "size": 2351 * 1024 * 1024,  # ~2.3 GB
             "desc": "Higher quality local LLM. Needs ~2.5 GB RAM.",
         },
+        {
+            "name": "Qwen3-0.6B (GGUF Q4_K_M) — compact backup",
+            "file": "qwen3-0.6b-q4_k_m.gguf",
+            "url": _hf("bartowski/Qwen_Qwen3-0.6B-GGUF/Qwen3-0.6B-Q4_K_M.gguf"),
+            "size": 484 * 1024 * 1024,  # ~484 MB
+            "desc": "Compact (0.6B) backup LLM. Full llama-cpp support including thinking-mode toggle.",
+        },
+        {
+            "name": "Falcon-H1-Tiny-R-90M (GGUF Q4_K_M) — emergency tiny",
+            "file": "falcon-h1-tiny-r-90m-q4_k_m.gguf",
+            "url": _hf("tiiuae/Falcon-H1-Tiny-R-90M-GGUF/Falcon-H1-Tiny-R-90M-GGUF-Q4_K_M.gguf"),
+            "size": 68 * 1024 * 1024,  # ~68 MB
+            "desc": "Extremely small 90M emergency brain. Runs anywhere; lower quality but always available.",
+        },
     ],
     "voice-stt": [
         {

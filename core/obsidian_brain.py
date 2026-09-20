@@ -25,7 +25,7 @@ class ObsidianBrainLogger:
         self._setup_vault()
         self._subscribe_events()
 
-        logger.info("ObsidianBrainLogger initialized", vault=self.vault_path)
+        logger.info(f"ObsidianBrainLogger initialized, vault={self.vault_path}")
 
     def _setup_vault(self):
         dirs = [

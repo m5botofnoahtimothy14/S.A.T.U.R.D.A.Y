@@ -1,7 +1,10 @@
 import time
 import json
+import logging
 import os
 from pathlib import Path
+
+logger = logging.getLogger("SATURDAY.Deadman")
 
 class DeadmanSwitch:
     def __init__(self, config_path: str, crypto):
@@ -21,22 +24,30 @@ class DeadmanSwitch:
     def _save_config(self, config: dict):
         self.config_path.parent.mkdir(parents=True, exist_ok=True)
         encrypted_data = self.crypto.encrypt_data(json.dumps(config).encode())
-        with open(self.config_path, 'wb') as f:
+        tmp_path = self.config_path.with_suffix(self.config_path.suffix + ".tmp")
+        with open(tmp_path, 'wb') as f:
             f.write(encrypted_data)
+        os.replace(tmp_path, self.config_path)
 
     def _load_config(self) -> dict:
         if not self.config_path.exists():
             return {}
-        encrypted_data = self.config_path.read_bytes()
-        decrypted_data = self.crypto.decrypt_data(encrypted_data)
-        return json.loads(decrypted_data.decode())
+        try:
+            encrypted_data = self.config_path.read_bytes()
+            decrypted_data = self.crypto.decrypt_data(encrypted_data)
+            return json.loads(decrypted_data.decode())
+        except Exception as e:
+            logger.warning(f"Deadman config unreadable (wrong passphrase or corrupt file): {e}")
+            return {}
 
     def update_heartbeat(self):
         """Update the heartbeat timestamp securely."""
         heartbeat_data = {"last_seen": time.time()}
         encrypted_data = self.crypto.encrypt_data(json.dumps(heartbeat_data).encode())
-        with open(self.last_heartbeat_file, 'wb') as f:
+        tmp_path = self.last_heartbeat_file.with_suffix(".tmp")
+        with open(tmp_path, 'wb') as f:
             f.write(encrypted_data)
+        os.replace(tmp_path, self.last_heartbeat_file)
         print("Heartbeat updated.")
 
     def check_status(self):
@@ -57,7 +68,8 @@ class DeadmanSwitch:
             if elapsed > config.get("timeout_seconds", 86400):
                 return "TRIGGERED"
             return f"Active (Last seen {elapsed:.1f}s ago)"
-        except:
+        except Exception as e:
+            logger.warning(f"Deadman status check failed: {e}")
             return "Error checking status"
 
     def get_release_data(self):

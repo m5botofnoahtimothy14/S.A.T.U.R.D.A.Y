@@ -15,13 +15,54 @@ try:
 except ImportError:
     serial = None
 logger = logging.getLogger("SATURDAY.HomeBotIntegration")
+
+# ============================================================
+# SATURDAY HOME BOT - FIRMWARE V3 MQTT PROTOCOL
+#
+# Firmware: core/homebot/firmware/flash (v3.0.0, config.py)
+#
+# Per-device topic namespace using MQTT_ROOT + DEVICE_ID:
+#   command   saturday/saturday_homebot_01/command
+#   telemetry saturday/saturday_homebot_01/telemetry
+#   status    saturday/saturday_homebot_01/status
+#   intent    saturday/saturday_homebot_01/intent
+#   voice     saturday/saturday_homebot_01/voice
+#   events    saturday/saturday_homebot_01/events
+#   heartbeat saturday/saturday_homebot_01/heartbeat
+#
+# Command payloads expected by the firmware:
+#   {"motion": {"vx": -1..1, "vy": -1..1, "wz": -1..1}}
+#   {"stop": true}
+#   {"emergency_stop": true}
+#   {"clear_emergency": true}
+#   {"autonomy": true|false}
+#   {"expression": "..."}
+# ============================================================
+
+HOMEBOT_MQTT_ROOT = "saturday"
+HOMEBOT_DEVICE_ID = "saturday_homebot_01"
+
+HOMEBOT_CMD_TOPIC = f"{HOMEBOT_MQTT_ROOT}/{HOMEBOT_DEVICE_ID}/command"
+HOMEBOT_TELE_TOPIC = f"{HOMEBOT_MQTT_ROOT}/{HOMEBOT_DEVICE_ID}/telemetry"
+HOMEBOT_STATUS_TOPIC = f"{HOMEBOT_MQTT_ROOT}/{HOMEBOT_DEVICE_ID}/status"
+HOMEBOT_EVENTS_TOPIC = f"{HOMEBOT_MQTT_ROOT}/{HOMEBOT_DEVICE_ID}/events"
+HOMEBOT_HEARTBEAT_TOPIC = f"{HOMEBOT_MQTT_ROOT}/{HOMEBOT_DEVICE_ID}/heartbeat"
+HOMEBOT_SUB_WILDCARD = f"{HOMEBOT_MQTT_ROOT}/{HOMEBOT_DEVICE_ID}/#"
+
+
 class HomeBotIntegration:
-    def __init__(self, event_bus: EventBus, com_port: str | None = None):
+    def __init__(self, event_bus: EventBus, com_port: str | None = None, mqtt_broker: str | None = None, mqtt_port: int | None = None):
         self.event_bus = event_bus
         self.backend = os.getenv("HOMEBOT_BACKEND", "auto").strip().lower()
         self.com_port = com_port or os.getenv("HOMEBOT_COM_PORT", "").strip()
-        self.mqtt_broker = os.getenv("MQTT_BROKER", "").strip()
-        self.mqtt_port = int(os.getenv("MQTT_PORT", "1883"))
+        self.mqtt_broker = mqtt_broker or os.getenv("MQTT_BROKER", "").strip()
+        self.mqtt_port = mqtt_port or int(os.getenv("MQTT_PORT", "1883"))
+        self.device_id = HOMEBOT_DEVICE_ID
+        self.command_topic = HOMEBOT_CMD_TOPIC
+        self.telemetry_topic = HOMEBOT_TELE_TOPIC
+        self.status_topic = HOMEBOT_STATUS_TOPIC
+        self.events_topic = HOMEBOT_EVENTS_TOPIC
+        self.heartbeat_topic = HOMEBOT_HEARTBEAT_TOPIC
         self.serial_conn = None
         self.mqtt_client = None
         self.connected = False
@@ -120,9 +161,8 @@ class HomeBotIntegration:
             self.broker_connected = False
             return
         self.broker_connected = True
-        client.subscribe("homebot/status")
-        client.subscribe("homebot/sensors/data")
-        client.subscribe("homebot/nav/scan")
+        client.subscribe(HOMEBOT_SUB_WILDCARD)
+        client.subscribe("saturday/#")
         self.request_sensor_refresh()
     def _on_mqtt_disconnect(self, client, userdata, rc, properties=None):
         self.broker_connected = False
@@ -136,13 +176,25 @@ class HomeBotIntegration:
             data = {"raw": payload}
         self.last_seen = time.time()
         self.connected = True
-        if msg.topic == "homebot/status":
+        if msg.topic == HOMEBOT_TELE_TOPIC:
             self.latest_status = data
-        elif msg.topic == "homebot/sensors/data":
-            self.latest_sensors = data
+            self.latest_sensors = self._extract_sensors(data)
             self.event_bus.publish("homebot_telemetry", data)
-        elif msg.topic == "homebot/nav/scan":
-            self.latest_nav_scan = data
+        elif msg.topic == HOMEBOT_HEARTBEAT_TOPIC:
+            self.latest_status = data
+        elif msg.topic == HOMEBOT_STATUS_TOPIC:
+            self.latest_status = data
+        elif msg.topic == HOMEBOT_EVENTS_TOPIC:
+            self.latest_status = data
+            self.event_bus.publish("homebot_event", data)
+    @staticmethod
+    def _extract_sensors(data):
+        if not isinstance(data, dict):
+            return {}
+        sensors = data.get("sensors")
+        if isinstance(sensors, dict):
+            return sensors
+        return data
     def _process_command(self, command_str):
         if isinstance(command_str, dict):
             command_str = command_str.get("command", "")
@@ -203,27 +255,28 @@ class HomeBotIntegration:
         topic = None
         payload = None
         speed = max(0, min(int(speed), 100))
+        magnitude = round(speed / 100.0, 3)
         if command == "FWD":
-            topic = "homebot/motors/omni"
-            payload = {"x": 0, "y": speed, "rotation": 0}
+            topic = self.command_topic
+            payload = {"motion": {"vx": magnitude, "vy": 0.0, "wz": 0.0}}
         elif command == "REV":
-            topic = "homebot/motors/omni"
-            payload = {"x": 0, "y": -speed, "rotation": 0}
+            topic = self.command_topic
+            payload = {"motion": {"vx": -magnitude, "vy": 0.0, "wz": 0.0}}
         elif command == "LFT":
-            topic = "homebot/motors/omni"
-            payload = {"x": -speed, "y": 0, "rotation": 0}
+            topic = self.command_topic
+            payload = {"motion": {"vx": 0.0, "vy": -magnitude, "wz": 0.0}}
         elif command == "RGT":
-            topic = "homebot/motors/omni"
-            payload = {"x": speed, "y": 0, "rotation": 0}
+            topic = self.command_topic
+            payload = {"motion": {"vx": 0.0, "vy": magnitude, "wz": 0.0}}
         elif command == "RTL":
-            topic = "homebot/motors/omni"
-            payload = {"x": 0, "y": 0, "rotation": -speed}
+            topic = self.command_topic
+            payload = {"motion": {"vx": 0.0, "vy": 0.0, "wz": magnitude}}
         elif command == "RTR":
-            topic = "homebot/motors/omni"
-            payload = {"x": 0, "y": 0, "rotation": speed}
+            topic = self.command_topic
+            payload = {"motion": {"vx": 0.0, "vy": 0.0, "wz": -magnitude}}
         elif command == "STP":
-            topic = "homebot/motors/stop"
-            payload = "1"
+            topic = self.command_topic
+            payload = {"stop": True}
         if not topic:
             return {"status": "unavailable", "reason": f"Unsupported HomeBot command '{command}'."}
         try:
@@ -240,15 +293,15 @@ class HomeBotIntegration:
             return {"status": "error", "reason": str(e)}
     def request_sensor_refresh(self):
         if self.mqtt_client and self.broker_connected:
-            self.mqtt_client.publish("homebot/sensors/read", "1")
+            self.mqtt_client.publish(self.status_topic, json.dumps({"type": "status_request"}))
     def autonomous_navigation(self, target_pos):
         if self.transport == "serial":
             return {"status": "unavailable", "reason": "Autonomous navigation is only implemented on MQTT HomeBot firmware."}
         if not self.mqtt_client or not self.broker_connected:
             return {"status": "unavailable", "reason": "HomeBot MQTT transport is not connected."}
         try:
-            payload = json.dumps({"x": int(target_pos[0]), "y": int(target_pos[1])})
-            info = self.mqtt_client.publish("homebot/nav/autonomous", payload)
+            payload = json.dumps({"intent": {"action": "navigate", "target": [int(target_pos[0]), int(target_pos[1])]}})
+            info = self.mqtt_client.publish(self.command_topic, payload)
             if info.rc != mqtt.MQTT_ERR_SUCCESS:
                 raise RuntimeError(f"MQTT publish failed with rc={info.rc}")
             self.current_command = f"NAV {target_pos[0]} {target_pos[1]}"

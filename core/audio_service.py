@@ -872,10 +872,10 @@ class CrossPlatformAudio:
         if SPEECH_RECOG_AVAILABLE:
             try:
                 self.recognizer = sr.Recognizer()
+                self.mic = sr.Microphone(device_index=self.mic_index)
                 self.recognizer.energy_threshold = 200
                 self.recognizer.dynamic_energy_threshold = True
-                # Skip Microphone init - use sounddevice backend instead
-                logger.info(f"SR ready (sounddevice backend), mic index: {self.mic_index}")
+                logger.info(f"SR ready, mic index: {self.mic_index}")
             except Exception as e:
                 logger.warning(f"SR init failed: {e}")
     

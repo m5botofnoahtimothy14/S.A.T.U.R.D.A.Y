@@ -102,7 +102,7 @@ class RealIntegrationEngine:
         self._shot_count = 0
         self._clip_hist: deque = deque(maxlen=50)
         self._build_app_index()
-        logger.info("RealIntegrationEngine ready", os=self.os_type, capabilities=60)
+        logger.info(f"RealIntegrationEngine ready, os={self.os_type}, capabilities=60")
 
     def _build_app_index(self):
         if not self.is_win:
@@ -1106,8 +1106,18 @@ class RealIntegrationEngine:
             return self.firewall_status()
         if "defender" in c:
             return self.defender_status()
-        if "window" in c and ("list" in c or "all" in c):
-            return self.list_windows()
+        if "window" in c:
+            if "list" in c or "all" in c:
+                return self.list_windows()
+            if "focus" in c or "activate" in c or "bring to front" in c:
+                title = c.split("window")[-1].replace("focus", "").replace("activate", "").strip()
+                return self.focus_window(title)
+            if "minimize" in c:
+                title = c.split("window")[-1].replace("minimize", "").strip()
+                return self.minimize_window(title)
+            if "maximize" in c:
+                title = c.split("window")[-1].replace("maximize", "").strip()
+                return self.maximize_window(title)
         if "disk" in c:
             return self.disk_info()
         if "network" in c or "connection" in c:
@@ -1117,6 +1127,25 @@ class RealIntegrationEngine:
             title = parts[1] if len(parts) > 1 else "SATURDAY"
             msg = parts[2] if len(parts) > 2 else command
             return self.notify(title, msg)
+
+        # --- Keyboard & Mouse Routing ---
+        if "type" in c and "text" in c:
+            text = c.split("type")[-1].replace("text", "").strip()
+            return self.type_text(text)
+        if "press" in c and "key" in c:
+            key = c.split("key")[-1].strip()
+            return self.press_key(key)
+        if "click" in c:
+            # Simple parser for "click at X Y"
+            import re as _re
+            m = _re.search(r"(\d+)\s+(\d+)", c)
+            if m:
+                return self.click(int(m.group(1)), int(m.group(2)))
+            return self.click()
+        if "hotkey" in c:
+            keys = c.split("hotkey")[-1].replace("and", ",").split(",")
+            keys = [k.strip() for k in keys]
+            return self.hotkey(*keys)
 
         if any(w in c for w in ["demo", "showcase", "autonomous demo", "show me what you can do", "what can you do"]):
             try:

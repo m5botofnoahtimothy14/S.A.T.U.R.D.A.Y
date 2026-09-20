@@ -28,6 +28,7 @@ class SATURDAYCore:
             "status": self._handle_status,
             "sync": self._handle_sync,
             "heartbeat": self._handle_heartbeat,
+            "delete": self._handle_delete,
             "help": self._handle_help,
         }
 
@@ -58,7 +59,7 @@ class SATURDAYCore:
         try:
             return handler(args, cmd_string)
         except Exception as exc:
-            logger.exception("Command processing failed", error=str(exc))
+            logger.exception("Command processing failed")
             return f"❌ System Error: {str(exc)}"
 
     def _handle_store(self, args, raw_text):
@@ -93,7 +94,11 @@ class SATURDAYCore:
             return "🔎 No matches found."
 
         results = sorted(results, key=lambda e: e.get("timestamp", 0), reverse=True)
-        summary = [f"   - [{r['id'][:8]}] {r['content'][:60]}..." for r in results[:5]]
+        summary = []
+        for r in results[:5]:
+            rid = str(r.get('id', '?'))[:8]
+            content = str(r.get('content', ''))[:60]
+            summary.append(f"   - [{rid}] {content}...")
         return f"🔎 Found {len(results)} matches:\n" + "\n".join(summary)
 
     def _handle_status(self, args, raw_text):
@@ -113,11 +118,18 @@ class SATURDAYCore:
         self.pmv.update_heartbeat()
         return "💓 Heartbeat updated."
 
+    def _handle_delete(self, args, raw_text):
+        if not args:
+            return "❌ Provide the entry ID to delete. Example: delete <entry_id>"
+        ok = self.pmv.secure_delete(args[0])
+        return "🗑️ Entry deleted." if ok else "❌ Entry not found."
+
     def _handle_help(self, args, raw_text):
         return (
             "Available commands:\n"
             " - store [content] tag:[tags] : Store encrypted memory.\n"
             " - retrieve [id] : Retrieve a stored entry.\n"
+            " - delete [id] : Permanently delete a stored entry.\n"
             " - search tag:[tag] : Search memory by tag.\n"
             " - search : List recent entries.\n"
             " - status : Show system and vault status.\n"

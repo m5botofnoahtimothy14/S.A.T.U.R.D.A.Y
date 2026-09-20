@@ -209,6 +209,13 @@ a = Analysis(
         'christianity_core.spirituality',
         # HomeBot
         'core.homebot_integration',
+        'core.homebot.ble_transport',
+        'core.homebot.mapping',
+        # Sensors
+        'core.sensors.wifi_sensing',
+        'core.sensors.wifi_thermal',
+        'core.sensors.rssi_scan',
+        'bleak',
         # Orchestrator
         'orchestrator.showtime_manager',
         # Obsidian
@@ -222,12 +229,55 @@ a = Analysis(
     runtime_hooks=[],
     excludes=[
         'pytest',
+        # torch & tensorflow native pyds hang PyInstaller's isolated import_library /
+        # bindepend on this machine (loading _load_dll_libraries / _pywrap_... hangs).
+        # Both are guarded with try/except in core.deep_learning.backend, so the frozen
+        # app runs and reports torch/tf "off" rather than blocking the build.
+        'torch',
+        'torch._C',
+        'torch.utils',
+        'torch.cuda',
+        'torch.distributed',
+        'torchvision',
+        'tensorflow',
+        'tensorflow.python',
+        'tensorflow_core',
+        'keras',
+        '_pywrap_tensorflow_common',
+        '_pywrap_tensorflow_internal',
+        # Heavy optional native stacks that bindepend churns on (large .dll sets) and
+        # that are only used behind feature flags / try-except guards in the app:
+        # NOTE: ctranslate2 is deliberately NOT excluded - faster_whisper (STT) needs it.
+        'mediapipe',
+        'onnxruntime',
+        # avoid pulling the ML stacks' heavy transitive deps into the frozen package
+        'sympy',
+        'absl',
+        'grpcio',
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
 )
+
+# Bindepend on this machine hangs when the isolated import_library subprocess tries to
+# load torch/tensorflow/ctranslate2 native .pyd/.dll files. Even though the Python
+# modules are excluded, their DLLs can still leak into a.binaries via transitive hooks.
+# Filter them out so the dynamic-lib resolution never touches them, and so the frozen
+# app never bundles a dormant torch/TF runtime (both are guarded try/except off).
+import re as _re
+_DIRTY_NATIVE = _re.compile(
+    r"(torch|tensorflow|tensorflow_core|_pywrap_tensorflow|keras|ctranslate2|_rocm_sdk|llama|ggml)",
+    _re.IGNORECASE,
+)
+_cleaned = []
+for _b in a.binaries:
+    _p = _b[0] if isinstance(_b, tuple) else str(_b)
+    if _DIRTY_NATIVE.search(_p):
+        continue
+    _cleaned.append(_b)
+a.binaries = _cleaned
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 

@@ -43,6 +43,7 @@ class SATURDAYCLI:
     -------------------
     - store [content] tag:[tags] : Store data securely in PMV.
     - retrieve [id]            : Retrieve specific entry by ID.
+    - delete [id]              : Delete a stored entry.
     - search tag:[tag]         : Search memory by tag.
     - search                   : List recent memory entries.
     - status                   : Show system, vault, and node status.

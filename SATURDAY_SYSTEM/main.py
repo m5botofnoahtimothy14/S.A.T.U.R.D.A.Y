@@ -27,7 +27,11 @@ from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).parent.resolve()
 sys.path.insert(0, str(PROJECT_ROOT))
-load_dotenv(PROJECT_ROOT / ".env")
+try:
+    from dotenv import load_dotenv
+    load_dotenv(PROJECT_ROOT / ".env")
+except ImportError:
+    pass  # dotenv is optional; env vars can be set directly
 
 from saturday.saturday_core import SATURDAYCore
 from interface.cli import SATURDAYCLI
@@ -119,10 +123,18 @@ def main():
     passphrase = None
     core = None
     realtime_bridge = None
+    _shutdown_done = False
 
     def shutdown_system():
+        nonlocal _shutdown_done
+        if _shutdown_done:
+            return
+        _shutdown_done = True
         if realtime_bridge:
-            realtime_bridge.stop()
+            try:
+                realtime_bridge.stop()
+            except Exception:
+                pass
         if core:
             core.shutdown()
             try:
@@ -138,7 +150,10 @@ def main():
         sys.exit(0)
 
     signal.signal(signal.SIGINT, shutdown_handler)
-    signal.signal(signal.SIGTERM, shutdown_handler)
+    try:
+        signal.signal(signal.SIGTERM, shutdown_handler)
+    except (AttributeError, ValueError, OSError):
+        pass  # SIGTERM unavailable on some Windows configs
     atexit.register(shutdown_system)
 
     try:
@@ -166,7 +181,7 @@ def main():
         print(f"\n  ❌ {exc}")
         logger.warning(str(exc))
     except Exception as exc:
-        logger.exception("Fatal startup error", exc_info=exc)
+        logger.exception("Fatal startup error")
         print(f"\n  ❌ Fatal error: {exc}")
     finally:
         if passphrase is not None:

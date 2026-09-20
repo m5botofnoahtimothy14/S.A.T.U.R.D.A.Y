@@ -59,10 +59,10 @@ async def early_healthcheck():
         "initialized": True,
     }
 
-templates = Jinja2Templates(directory="core/ui/templates")
+templates = Jinja2Templates(directory=str(PROJECT_ROOT / "core/ui/templates"))
 
 from fastapi.staticfiles import StaticFiles
-app.mount("/static", StaticFiles(directory="core/ui/static"), name="static")
+app.mount("/static", StaticFiles(directory=str(PROJECT_ROOT / "core/ui/static")), name="static")
 
 EventBus = _optional_import("core.event_bus", "EventBus")
 RuntimeStats = _optional_import("core.runtime", "RuntimeStats")
@@ -948,7 +948,11 @@ async def startup_event():
         def _build_core():
             global _saturday_core
             try:
-                _saturday_core = SATURDAYCore()
+                core = SATURDAYCore()
+                _saturday_core = core
+                # Start the core's background services and then run the loop forever
+                core.loop.run_until_complete(core.start_all())
+                core.loop.run_forever()
             except Exception as exc:
                 logger.warning("Full SATURDAY core initialization failed; falling back to lightweight mode: %s", exc)
                 _saturday_core = LightweightSATURDAYCore()
@@ -972,7 +976,8 @@ class SATURDAYCore:
         try:
             self.loop = asyncio.get_event_loop()
         except RuntimeError:
-            self.loop = None
+            self.loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self.loop)
         self.event_bus = EventBus()
         self.personas = get_persona_manager()
         self.runtime = RuntimeStats()
@@ -1098,7 +1103,8 @@ class SATURDAYCore:
             logger.warning(f"ChristianityCore init failed: {e}")
             self.spirituality = None
         try:
-            self.homebot = HomeBotIntegration(self.event_bus)
+            homebot_ip = self.config_manager.get("homebot.device_ip")
+            self.homebot = HomeBotIntegration(self.event_bus, mqtt_broker=homebot_ip)
         except Exception as e:
             logger.warning(f"HomeBotIntegration init failed: {e}")
             self.homebot = None
@@ -1115,6 +1121,29 @@ class SATURDAYCore:
         except Exception as e:
             logger.warning(f"WiFi Sensing init failed: {e}")
             self.wifi_sensing = None
+        self.wifi_thermal = None
+        try:
+            from core.sensors.wifi_thermal import WiFiThermalMap
+            self.wifi_thermal = WiFiThermalMap(grid_size=20, sampling=4)
+            self.wifi_thermal.start()
+            threading.Thread(target=self._wifi_thermal_feed_loop, daemon=True, name="wifi-thermal-feed").start()
+            logger.info("WiFi-Thermal CSI spatial map started (per-network multipath fusion).")
+        except Exception as e:
+            logger.warning(f"WiFi-Thermal init failed: {e}")
+            self.wifi_thermal = None
+        # RadarDrive autopilot: fuse WiFi radar house imaging + HomeBot sensor readings
+        # to autonomously patrol the house whenever the robocar is present.
+        if (
+            self.homebot
+            and os.getenv("HOMEBOT_RADAR_AUTOPILOT", "true").strip().lower()
+            in {"1", "true", "yes", "on"}
+        ):
+            try:
+                ap = self.homebot.get_autopilot(getattr(self, "wifi_sensing", None))
+                ap.start()
+                logger.info("HomeBot RadarDrive autopilot started (WiFi radar imaging + sensor fusion).")
+            except Exception as e:
+                logger.warning(f"HomeBot RadarDrive autopilot start failed: {e}")
         try:
             self.voice = VoiceInterface(self.event_bus)
         except Exception as e:
@@ -1301,8 +1330,7 @@ class SATURDAYCore:
             try:
                 from communication.livekit_bridge import LiveKitBridge
                 self.livekit = LiveKitBridge(self.event_bus)
-                asyncio.create_task(self.livekit.start())
-                logger.info("LiveKit bridge enabled and starting.")
+                logger.info("LiveKit bridge enabled.")
             except Exception as e:
                 logger.warning(f"LiveKit bridge failed to initialize: {e}")
                 self.livekit = None
@@ -1311,8 +1339,7 @@ class SATURDAYCore:
             try:
                 from integration.ros2_bridge import ROS2Bridge
                 self.ros2 = ROS2Bridge(self.event_bus)
-                asyncio.create_task(self.ros2.start())
-                logger.info("ROS2 bridge enabled and starting.")
+                logger.info("ROS2 bridge enabled.")
             except Exception as e:
                 logger.warning(f"ROS2 bridge failed to initialize: {e}")
                 self.ros2 = None
@@ -1321,8 +1348,7 @@ class SATURDAYCore:
             try:
                 from integration.sync_node import StateSyncNode
                 self.sync_node = StateSyncNode(self.event_bus, self.runtime)
-                asyncio.create_task(self.sync_node.start())
-                logger.info("Sync Node enabled and starting.")
+                logger.info("Sync Node enabled.")
             except Exception as e:
                 logger.warning(f"Sync Node failed to initialize: {e}")
                 self.sync_node = None
@@ -1472,12 +1498,6 @@ class SATURDAYCore:
             logger.warning(f"Showtime optional stage completion failed: {e}")
         logger.info("Validating production state", strict_prod=self.strict_prod)
         self._validate_production_state()
-        self.start_background_loops()
-        try:
-            if self.showtime and self.showtime.showtime_mode != "showtime":
-                self.showtime.enter_showtime()
-        except Exception as e:
-            logger.warning(f"Showtime entry failed: {e}")
         def _ws_forward(event_type):
             return lambda payload: asyncio.create_task(
                 self.broadcast_to_ws({"type": event_type, **(payload or {})})
@@ -1494,14 +1514,13 @@ class SATURDAYCore:
         if self.spatial_audio:
             self.spatial_audio.play_startup_chime()
         if self.greet:
-            asyncio.create_task(self.greet.greet_user("admin"))
+            pass
         # Auto-start camera and mic on every boot (original or demo)
         # Camera
         if self.vision:
             try:
-                asyncio.create_task(self.vision.start_stream())
                 self.camera_active = True
-                logger.info("Camera stream auto-started on boot")
+                logger.info("Camera stream configured to auto-start")
             except Exception as e:
                 logger.warning(f"Camera auto-start failed: {e}")
         # Mic - intensity-based auto-select + capture
@@ -1853,6 +1872,42 @@ class SATURDAYCore:
         self.first_boot_state = safe
         return safe
 
+    def _wifi_thermal_feed_loop(self):
+        """Continuously sample per-network RSSI and feed the WiFi-thermal spatial mapper."""
+        if not getattr(self, "wifi_thermal", None):
+            return
+        import time as _t
+        while True:
+            try:
+                networks = []
+                try:
+                    from core.sensors.rssi_scan import RSSIScanner
+                    networks = RSSIScanner(self.event_bus)._collect_rssi()
+                except Exception:
+                    networks = []
+                if networks:
+                    for n in networks:
+                        try:
+                            self.wifi_thermal.feed_network(
+                                str(n.get("bssid") or n.get("ssid") or "ap"),
+                                str(n.get("ssid") or "AP"),
+                                float(n.get("rssi", 50) if "rssi" in n else n.get("signal", 50)),
+                            )
+                        except Exception:
+                            pass
+                # occasionally also feed the aggregate CSI amplitude as an extra node input
+                ws = getattr(self, "wifi_sensing", None)
+                if ws and ws.buf and hasattr(self, "event_bus"):
+                    try:
+                        import random as _r
+                        agg = float(list(ws.buf)[-1]) + _r.uniform(-0.4, 0.4)
+                        self.wifi_thermal.feed_network("aggregate-csi", "CSI-envelope", agg)
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+            _t.sleep(max(2.0, self.wifi_thermal.sampling / 2.0))
+
     def _first_boot_status_payload(self) -> dict:
         state = self._refresh_first_boot_state()
         requirements = {
@@ -1950,6 +2005,40 @@ class SATURDAYCore:
         if self.sound_monitor:
             self.sound_monitor.threshold_db = self.sound_threshold_db
         return result
+
+    async def start_all(self):
+        logger.info("Initializing all background services...")
+        # Now that we are running in the event loop, start all loops
+        self.start_background_loops()
+
+        # Fix: enable face identification
+        if self.face_id:
+            self.face_id.start_recognition()
+            logger.info("FaceID recognition started.")
+
+        # Activate showtime mode
+        if self.showtime and self.showtime.showtime_mode != "showtime":
+            self.showtime.enter_showtime()
+            logger.info("Showtime mode entered.")
+
+        # Start other async services
+        if self.livekit:
+            asyncio.create_task(self.livekit.start())
+            logger.info("LiveKit bridge started.")
+        if self.ros2:
+            asyncio.create_task(self.ros2.start())
+            logger.info("ROS2 bridge started.")
+        if self.sync_node:
+            asyncio.create_task(self.sync_node.start())
+            logger.info("Sync Node started.")
+        if self.greet:
+            asyncio.create_task(self.greet.greet_user("admin"))
+            logger.info("Admin greeting scheduled.")
+        if self.vision:
+            asyncio.create_task(self.vision.start_stream())
+            logger.info("Camera stream started.")
+
+        logger.info("All background services started successfully.")
 
     def start_background_loops(self):
         logger.info("Starting background autonomous loops...")
@@ -2746,6 +2835,19 @@ class SATURDAYCore:
             secs = float((payload or {}).get("seconds", 6))
             res = ws.calibrate(seconds=secs)
             return {"success": True, **res}
+        @self.app.get("/api/wifi/thermal")
+        async def api_wifi_thermal():
+            """WiFi-Thermal CSI spatial map — 2D heat-grid of where radio-human energy sits.
+
+            Fuses each nearby transmitter's RSSI multipath signature into an inverse-distance
+            thermal model; returns a normalized grid for a thermographic-style overlay.
+            """
+            wt = getattr(self, 'wifi_thermal', None)
+            if not wt:
+                return {"error": "WiFi-Thermal mapping unavailable",
+                        "grid_w": 20, "grid_h": 20, "grid": [[0.0] * 20 for _ in range(20)],
+                        "live": False, "nodes": []}
+            return wt.snapshot()
         @self.app.post("/api/device/wake")
         async def api_device_wake(payload: dict = None):
             """World-accessible: wake/start SATURDAY on THIS host where it is installed."""
@@ -2778,6 +2880,27 @@ class SATURDAYCore:
                 return {"success": False, "error": "HomeBot integration unavailable."}
             result = self.homebot.autonomous_navigation((x, y))
             return {"success": result.get("status") == "success", **result}
+        @self.app.post("/api/homebot/autopilot/start")
+        async def api_homebot_autopilot_start():
+            """Fuses WiFi radar house imaging + HomeBot sensor readings to autonomously drive around the house."""
+            if not self.homebot:
+                return {"success": False, "error": "HomeBot integration unavailable."}
+            ap = self.homebot.get_autopilot(getattr(self, "wifi_sensing", None))
+            ap.start()
+            return {"success": True, "state": "driving", "status": ap.snapshot}
+        @self.app.post("/api/homebot/autopilot/stop")
+        async def api_homebot_autopilot_stop():
+            if not self.homebot:
+                return {"success": False, "error": "HomeBot integration unavailable."}
+            ap = self.homebot.get_autopilot(getattr(self, "wifi_sensing", None))
+            ap.stop()
+            self.homebot.execute_command("STP")
+            return {"success": True, "state": "stopped"}
+        @self.app.get("/api/homebot/autopilot/status")
+        async def api_homebot_autopilot_status():
+            if not self.homebot or not self.homebot.autopilot:
+                return {"running": False}
+            return {"running": self.homebot.autopilot.running, **self.homebot.autopilot.snapshot}
         @self.app.get("/api/music/playlists")
         async def api_music_playlists():
             return {"playlists": self.music.playlists if self.music else {}}

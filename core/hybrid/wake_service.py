@@ -17,9 +17,7 @@ class WakeService:
         self.audio = CrossPlatformAudio()
         self.power_mode = "performance"
         
-        logger.info("WakeService initialized", 
-                    whisper_ready=self.audio.whisper_model is not None,
-                    mic_count=len(self.audio.mics))
+        logger.info(f"WakeService initialized, whisper_ready={self.audio.whisper_model is not None}, mic_count={len(self.audio.mics)}")
 
     async def listen_for_wake_word(self):
         self.running = True

@@ -2,7 +2,7 @@
 
 import json
 import os
-CONFIG_FILE = "core/config.json"
+CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config.json")
 class ConfigManager:
     def __init__(self):
         self.config = {}

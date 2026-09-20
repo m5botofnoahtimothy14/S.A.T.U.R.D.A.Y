@@ -2,11 +2,14 @@ import os
 import subprocess
 import time
 import json
+import logging
 from pathlib import Path
 from pmv.memory_engine import MemoryEngine
 from pmv.file_crypto import FileCrypto
 from pmv.deadman import DeadmanSwitch
 from pmv.node_manager import NodeManager
+
+logger = logging.getLogger("SATURDAY.Controller")
 
 class MemoryController:
     """The controlled interface between SATURDAY CORE and PMV."""
@@ -18,9 +21,9 @@ class MemoryController:
         self.settings = self._load_settings()
 
         paths = self.settings.get("paths", {})
-        self.vault_dir = project_root / paths.get("vault", "./vault")
-        self.blackbox_dir = project_root / paths.get("blackbox", "./blackbox")
-        self.sync_staging = project_root / paths.get("sync_staging", "./staging")
+        self.vault_dir = self._resolve_dir(paths.get("vault"), "./vault")
+        self.blackbox_dir = self._resolve_dir(paths.get("blackbox"), "./blackbox")
+        self.sync_staging = self._resolve_dir(paths.get("sync_staging"), "./staging")
 
         self.auto_lock_timeout = self.settings.get("security", {}).get("auto_lock_timeout", 300)
         self.kdf_iterations = self.settings.get("security", {}).get("kdf_iterations", 100000)
@@ -39,10 +42,20 @@ class MemoryController:
         if settings_path.exists():
             try:
                 with open(settings_path, 'r') as f:
-                    return json.load(f)
-            except Exception:
-                pass
+                    data = json.load(f)
+                if isinstance(data, dict):
+                    return data
+                logger.warning("settings.json is not an object; using defaults.")
+            except Exception as e:
+                logger.warning(f"Could not parse settings.json ({e}); using defaults.")
         return {}
+
+    def _resolve_dir(self, configured: str, default: str) -> Path:
+        raw = configured or default
+        p = Path(raw)
+        if not p.is_absolute():
+            p = self.project_root / p
+        return p.resolve()
 
     def mount_vaults(self):
         """Simulate vault mounting and prepare encrypted containers."""
@@ -68,13 +81,22 @@ class MemoryController:
         self._check_lock()
         return self.memory_engine.retrieve_entry(entry_id)
 
-    def secure_search(self, tag: str = None, start_time: float = None, end_time: float = None):
+    def secure_search(self, tag: str = None, start_time: float = None, end_time: float = None, limit: int = 50):
         self._check_lock()
         if tag:
-            return self.memory_engine.search_by_tag(tag)
-        if start_time and end_time:
-            return self.memory_engine.search_by_time(start_time, end_time)
-        return self.memory_engine.retrieve_all_entries()
+            results = self.memory_engine.search_by_tag(tag)
+        elif start_time and end_time:
+            results = self.memory_engine.search_by_time(start_time, end_time)
+        else:
+            results = self.memory_engine.retrieve_all_entries(limit=limit * 4)
+        return results[:limit]
+
+    def secure_delete(self, entry_id: str) -> bool:
+        self._check_lock()
+        return self.memory_engine.delete_entry(entry_id)
+
+    def is_locked(self) -> bool:
+        return not self.vault_mounted
 
     def update_heartbeat(self):
         self.deadman.update_heartbeat()

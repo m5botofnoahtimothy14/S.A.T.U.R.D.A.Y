@@ -31,48 +31,67 @@ class SATURDAYVoice:
         return self.core.process_command(transcription)
 
     def speak(self, text: str):
-        """Outputs text through local TTS engine (like Piper or Coqui)."""
+        """Outputs text through local TTS engine (Piper, platform TTS, or pyttsx3 fallback)."""
         logger.info(f"SATURDAY Speaking: {text}")
+        if not text:
+            return
         try:
             import os
-            if os.getenv("SATURDAY_TTS", "piper").lower() == "piper":
-                import shutil
-                import subprocess
-                import tempfile
-                piper = shutil.which("piper")
-                if piper:
-                    model = os.getenv("PIPER_MODEL_PATH", "")
-                    if model and os.path.exists(model):
-                        tmp_wav = os.path.join(tempfile.gettempdir(), "saturday_tts.wav")
-                        subprocess.run(
-                            ["piper", "--model", model, "--output_file", tmp_wav],
-                            input=text, capture_output=True, text=True, check=True,
-                        )
-                        player = shutil.which("aplay") or shutil.which("afplay") or shutil.which("play")
-                        if player:
-                            subprocess.Popen([player, tmp_wav])
-                        return
-                    raise FileNotFoundError("Piper model not found")
-            try:
-                import subprocess
-                tts_cli = os.getenv("SATURDAY_TTS_CLI")
-                if tts_cli and os.path.exists(tts_cli):
-                    subprocess.run([tts_cli, text], check=True)
+            import shutil
+            import subprocess
+            import sys
+            import tempfile
+            # 1. Custom CLI override wins when explicitly configured.
+            tts_cli = os.getenv("SATURDAY_TTS_CLI", "")
+            if tts_cli:
+                cli_path = shutil.which(tts_cli) or (tts_cli if os.path.exists(tts_cli) else None)
+                if cli_path:
+                    subprocess.run([cli_path, text], check=True)
                     return
+            # 2. Piper when selected AND a valid model is configured.
+            if os.getenv("SATURDAY_TTS", "auto").lower() in ("piper", "auto"):
+                piper = shutil.which("piper")
+                model = os.getenv("PIPER_MODEL_PATH", "")
+                if piper and model and os.path.exists(model):
+                    tmp_wav = os.path.join(tempfile.gettempdir(), "saturday_tts.wav")
+                    subprocess.run(
+                        ["piper", "--model", model, "--output_file", tmp_wav],
+                        input=text, capture_output=True, text=True, check=True,
+                    )
+                    player = shutil.which("aplay") or shutil.which("afplay") or shutil.which("play")
+                    if player:
+                        subprocess.Popen([player, tmp_wav])
+                    return
+            # 3. Platform text-to-speech
+            if sys.platform == "darwin":
+                subprocess.Popen(["say", text])
+                return
+            elif sys.platform.startswith("win"):
+                if self._windows_speak(text):
+                    return
+            self._fallback_voice(text)
+        except Exception as e:
+            logger.warning(f"TTS failed, falling back: {e}")
+            try:
+                self._fallback_voice(text)
             except Exception:
                 pass
-            # Fallback: platform text-to-speech
-            import sys
-            if sys.platform == "darwin":
-                import subprocess
-                subprocess.Popen(["say", text])
-            elif sys.platform.startswith("win"):
-                import winsound
-                winsound.MessageBeep()
-            else:
-                self._fallback_voice(text)
+
+    def _windows_speak(self, text: str) -> bool:
+        """Best-effort Windows speech via System.Speech; returns True on success."""
+        try:
+            import subprocess
+            safe = text.replace("'", "''").replace('"', '""')[:1000]
+            ps = (
+                "Add-Type -AssemblyName System.Speech; "
+                f"$s=New-Object System.Speech.Synthesis.SpeechSynthesizer; "
+                f"$s.Speak('{safe}')"
+            )
+            subprocess.run(["powershell", "-NoProfile", "-Command", ps], check=True, timeout=30)
+            return True
         except Exception as e:
-            logger.error(f"TTS failed: {e}")
+            logger.debug(f"Windows SAPI speech unavailable: {e}")
+            return False
 
     def _fallback_voice(self, text: str):
         try:

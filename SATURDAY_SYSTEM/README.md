@@ -46,6 +46,37 @@ Run the automated test suite to verify the security and logic layers:
 python tests/system_test.py
 ```
 
+All 10 tests (crypto round-trip, wrong-passphrase rejection, memory E2E,
+deadman, lock enforcement, error-path regression, corrupt-config recovery)
+must pass. Isolated temp dirs/salts are used — tests never touch your real
+`config/salt.dat` or vault.
+
+```bash
+python healthcheck.py   # production smoke check (temp dirs only)
+```
+
+## 🏭 Production Deployment
+
+1. `pip install -r requirements.txt` (Python 3.10+)
+2. Copy `.env.example` to `.env` only if you use Firebase realtime or custom TTS.
+3. `python main.py` → set a strong vault passphrase (min 8 chars, 20+ recommended).
+4. **Back up `config/salt.dat` offline.** Losing it = losing the vault permanently,
+   even with the correct passphrase. Never commit it (see `.gitignore`).
+5. Optional Docker: `docker build -t saturday .` with `/app/vault /app/blackbox
+   /app/staging /app/config` as persistent volumes.
+6. New command: `delete [id]` permanently removes an entry.
+
+### Reality-check notes (v1.1.0 hardening)
+- Fixed: any command-handler exception previously re-crashed inside
+  `logger.exception(error=...)` with `TypeError`; error path now returns a clean message.
+- Fixed: `tags=False` default, path-traversal IDs (`../`), undecryptable entries
+  crashing search, silent settings/JSON failures, double-shutdown, `SIGTERM` crash
+  on Windows, TTS fallback chain on Windows (now uses System.Speech), realtime
+  listener/publish thread leaks.
+- KDF remains PBKDF2-HMAC-SHA256 @ 100k iterations for backward compatibility
+  with existing vaults. Do not raise it on an existing vault or old entries
+  become unreadable.
+
 ## 📖 Command Guide
 
 Once active, the SATURDAY CLI accepts the following:

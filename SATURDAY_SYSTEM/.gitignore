@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.env
+vault/
+blackbox/
+staging/
+test_env/
+*.enc
+*.tmp
+config/salt.dat
+config/node.json
+config/deadman.json
+config/heartbeat.enc

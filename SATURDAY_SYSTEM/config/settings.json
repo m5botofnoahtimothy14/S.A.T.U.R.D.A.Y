@@ -1,9 +1,10 @@
 {
     "system_name": "SATURDAY-PMV-UNIT-01",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "security": {
         "auto_lock_timeout": 300,
-        "encryption_algorithm": "Fernet/AES-128",
+        "encryption_algorithm": "Fernet/AES-128-CBC+HMAC",
+        "kdf": "PBKDF2-HMAC-SHA256",
         "kdf_iterations": 100000
     },
     "paths": {
@@ -14,5 +15,16 @@
     "sync": {
         "p2p_enabled": true,
         "backend": "syncthing"
+    },
+    "deadman": {
+        "timeout_seconds": 604800,
+        "enabled": true
+    },
+    "realtime": {
+        "enabled": false,
+        "publish_interval_seconds": 10
+    },
+    "logging": {
+        "level": "INFO"
     }
 }

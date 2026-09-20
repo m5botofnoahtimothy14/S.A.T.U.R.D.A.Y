@@ -7,16 +7,26 @@ from cryptography.fernet import Fernet
 
 class FileCrypto:
     def __init__(self, passphrase: str, salt_path: str = "config/salt.dat", iterations: int = 100000):
+        if not passphrase or len(passphrase) < 8:
+            raise ValueError("Passphrase must be at least 8 characters.")
         self.salt_path = Path(salt_path)
         self.iterations = iterations
         self.salt = self._get_or_create_salt()
         self.key = self._derive_key(passphrase)
         self.fernet = Fernet(self.key)
+        self._cleared = False
 
     def _get_or_create_salt(self) -> bytes:
         if self.salt_path.exists():
-            return self.salt_path.read_bytes()
-        
+            existing = self.salt_path.read_bytes()
+            if len(existing) >= 16:
+                return existing
+            # Corrupt/short salt: back it up and regenerate.
+            try:
+                self.salt_path.rename(str(self.salt_path) + ".corrupt.bak")
+            except Exception:
+                pass
+
         new_salt = os.urandom(16)
         self.salt_path.parent.mkdir(parents=True, exist_ok=True)
         self.salt_path.write_bytes(new_salt)
@@ -32,9 +42,13 @@ class FileCrypto:
         return base64.urlsafe_b64encode(kdf.derive(passphrase.encode()))
 
     def encrypt_data(self, data: bytes) -> bytes:
+        if self._cleared or self.fernet is None:
+            raise RuntimeError("Crypto state has been cleared.")
         return self.fernet.encrypt(data)
 
     def decrypt_data(self, token: bytes) -> bytes:
+        if self._cleared or self.fernet is None:
+            raise RuntimeError("Crypto state has been cleared.")
         return self.fernet.decrypt(token)
 
     def encrypt_file(self, file_path: str, destination_path: str = None):
@@ -55,4 +69,6 @@ class FileCrypto:
         self.key = None
         self.fernet = None
         self.salt = None
-        self.iterations = None
+        self._cleared = True
+        # NOTE: iterations intentionally preserved so accidental reuse
+        # raises a clear RuntimeError instead of failing obscurely.

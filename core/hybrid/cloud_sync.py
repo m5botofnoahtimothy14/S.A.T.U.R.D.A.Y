@@ -17,7 +17,7 @@ class CloudSync:
         if result is not None:
             self.last_sync = result
             self.event_bus.publish("cloud_sync_complete", {"status": "ok", "timestamp": result})
-            logger.info("Cloud sync complete", timestamp=result)
+            logger.info(f"Cloud sync complete, timestamp={result}")
         else:
             self.event_bus.publish("cloud_sync_complete", {"status": "unavailable"})
             logger.warning("Cloud sync unavailable; keeping local state authoritative.")
@@ -30,7 +30,7 @@ class CloudSync:
             state = SystemState()
             payload = {"system": state.get_all() if hasattr(state, "get_all") else {}}
         except Exception as e:
-            logger.debug("Could not collect full local state", error=str(e))
+            logger.debug(f"Could not collect full local state, error={str(e)}")
         payload["_sync_at"] = None
         return payload
 
@@ -44,5 +44,5 @@ class CloudSync:
             response = requests.post(endpoint, json=state, timeout=10)
             return time.time() if response.ok else None
         except Exception as e:
-            logger.debug("Cloud push failed", error=str(e))
+            logger.debug(f"Cloud push failed, error={str(e)}")
             return None

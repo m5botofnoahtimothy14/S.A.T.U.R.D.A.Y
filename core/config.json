@@ -48,6 +48,10 @@
         "use_ros2": false,
         "use_sync": false,
         "model_path": "models/llama-3-8b-instruct.Q4_K_M.gguf",
+        "backup_models": [
+            "models/qwen3-0.6b-q4_k_m.gguf",
+            "models/falcon-h1-tiny-r-90m-q4_k_m.gguf"
+        ],
         "n_ctx": 2048,
         "n_gpu_layers": 0
     },

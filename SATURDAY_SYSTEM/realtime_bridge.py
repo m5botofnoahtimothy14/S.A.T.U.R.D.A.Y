@@ -12,16 +12,21 @@ except ImportError:
 logger = logging.getLogger("SATURDAY.RealtimeBridge")
 
 class RealtimeDatabaseBridge:
-    def __init__(self, service_account: str, database_url: str, node_id: str = "saturday-node"):
+    def __init__(self, service_account: str, database_url: str, node_id: str = "saturday-node", publish_interval: float = 10.0):
         self.service_account = service_account
         self.database_url = database_url
         self.node_id = node_id
+        self.publish_interval = max(2.0, float(publish_interval))
         self.app = None
         self.root_ref = None
         self.commands_ref = None
         self.status_ref = None
         self.listener = None
         self.running = False
+        self.status_provider = None
+        self.command_callback = None
+        self.listener_thread = None
+        self.publisher_thread = None
         self._initialize()
 
     def _initialize(self):
@@ -34,8 +39,11 @@ class RealtimeDatabaseBridge:
             raise RuntimeError("FIREBASE_DATABASE_URL is required for Realtime Database integration.")
 
         if not firebase_admin._apps:
-            cred = credentials.Certificate(self.service_account)
-            self.app = firebase_admin.initialize_app(cred, {"databaseURL": self.database_url})
+            try:
+                self.app = firebase_admin.get_app()
+            except ValueError:
+                cred = credentials.Certificate(self.service_account)
+                self.app = firebase_admin.initialize_app(cred, {"databaseURL": self.database_url})
         else:
             self.app = firebase_admin.get_app()
 
@@ -72,7 +80,11 @@ class RealtimeDatabaseBridge:
         return result
 
     def _on_command_event(self, event):
-        data = event.data
+        try:
+            data = event.data
+        except Exception as exc:
+            logger.warning(f"Ignoring malformed realtime event: {exc}")
+            return
         if not data:
             return
 
@@ -99,7 +111,10 @@ class RealtimeDatabaseBridge:
                     self.publish_status(payload)
             except Exception as exc:
                 logger.warning(f"Realtime publish loop error: {exc}")
-            time.sleep(10)
+            for _ in range(int(self.publish_interval * 2)):
+                if not self.running:
+                    break
+                time.sleep(0.5)
 
     def start(self, status_provider, command_callback):
         if not callable(status_provider) or not callable(command_callback):
@@ -121,4 +136,10 @@ class RealtimeDatabaseBridge:
                 self.listener.close()
         except Exception:
             pass
+        for thread in (getattr(self, "listener_thread", None), getattr(self, "publisher_thread", None)):
+            try:
+                if thread and thread.is_alive():
+                    thread.join(timeout=3.0)
+            except Exception:
+                pass
         logger.info("RealtimeDatabaseBridge stopped.")
