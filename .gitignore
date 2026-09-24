@@ -39,6 +39,8 @@ coverage/
 # Secrets
 .env
 prod.env
+secrets.py
+**/secrets.py
 
 # Local runtime data
 models/

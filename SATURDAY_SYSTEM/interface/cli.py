@@ -49,6 +49,35 @@ class SATURDAYCLI:
     - status                   : Show system, vault, and node status.
     - heartbeat                : Manually update deadman switch.
     - sync                     : Trigger peer-to-peer sync.
+    Screen (offline, drives real apps — no APIs needed):
+    - open [app|url]           : Open app or site (e.g. open gmail).
+    - see                      : Screenshot the screen for review.
+    - click [x] [y]            : Click coordinates (see first).
+    - type [text]              : Type into the focused window.
+    - press / hotkey / scroll  : Keys and scrolling.
+    - read                     : Read text off the screen.
+    - clicktext [word]         : Click on-screen text, no coordinates.
+    Autonomy (SATURDAY acts by itself):
+    - research [topic]         : Search, read, vault findings alone.
+    - do [goal]                : Work a goal alone (asks when unsure).
+    - brain [goal]             : Unsupervised, local LLM decides.
+    - tasks                    : Recent autonomous tasks.
+    Senses (real local camera):
+    - sense / mood / hr / wellness : People, mood, heart rate, composite.
+    - drink [ml] / water       : Hydration log and level.
+    Voice (local whisper + speech):
+    - hear [sec] / say [text] / listen : Transcribe, speak, Jarvis loop.
+    Identity + mind:
+    - enroll / who / enrollvoice / voiceid / claps / mind / learn.
+    Self-running:
+    - glow / heal / assign / inbox / briefing / announce.
+    Online free + cloud DB:
+    - share [on|off] / cloudsetup / cloudbackup / cloudrestore.
+    HUD + HomeBot Core2:
+    - dashboard [port] / bot [cmd] / botstatus : HUD, drive, link status.
+    Session (always-on):
+    - services / cam / queue [goal] : Services, snapshot, background tasks.
+    - docker [args] / maps / route : Containers, OSM maps + routing.
     - exit / quit              : Securely shut down and lock vaults.
         """
         print(help_text)

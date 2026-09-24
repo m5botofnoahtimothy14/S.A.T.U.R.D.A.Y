@@ -9,6 +9,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from pmv.file_crypto import FileCrypto
 from saturday.controller import MemoryController
 from saturday.saturday_core import SATURDAYCore
+from saturday.screen_operator import ScreenOperator
 
 
 def main():
@@ -19,6 +20,8 @@ def main():
         core = SATURDAYCore.__new__(SATURDAYCore)
         core.project_root = tmp
         core.pmv = controller
+        core.screen = ScreenOperator()
+        core._current_trusted = True
         core.is_running = True
         core._command_handlers = SATURDAYCore._build_command_handlers(core)
 

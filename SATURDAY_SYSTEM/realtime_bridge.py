@@ -52,13 +52,15 @@ class RealtimeDatabaseBridge:
         self.status_ref = self.root_ref.child("status")
         logger.info("RealtimeDatabaseBridge initialized.")
 
-    def publish_status(self, payload: dict):
+    def publish_status(self, payload: dict) -> bool:
         if not self.status_ref:
-            return
+            return False
         try:
             self.status_ref.set(payload)
+            return True
         except Exception as exc:
             logger.warning(f"Realtime status publish failed: {exc}")
+            return False
 
     def _execute_remote_command(self, key: str, command_data: dict):
         result = None
@@ -104,14 +106,21 @@ class RealtimeDatabaseBridge:
             logger.error(f"Realtime listener failed: {exc}")
 
     def _publish_loop(self):
+        failures = 0
         while self.running:
             try:
                 if self.status_provider:
-                    payload = self.status_provider()
-                    self.publish_status(payload)
+                    ok = self.publish_status(self.status_provider())
+                    failures = 0 if ok else failures + 1
+                else:
+                    failures = 0
             except Exception as exc:
+                failures += 1
                 logger.warning(f"Realtime publish loop error: {exc}")
-            for _ in range(int(self.publish_interval * 2)):
+            # Backoff on repeated failure so a dead backend can't hot-spin
+            # the loop for months: 0.5s steps up to 60s between attempts.
+            wait = min(60.0, self.publish_interval * (2 ** min(failures, 4)))
+            for _ in range(int(wait * 2)):
                 if not self.running:
                     break
                 time.sleep(0.5)

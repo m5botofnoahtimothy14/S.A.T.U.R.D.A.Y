@@ -1,5 +1,22 @@
 cryptography>=42.0.5,<49
 python-dotenv>=1.0.0
 firebase-admin>=6.0.0
+# Screen Operator (offline GUI automation: see/click/type). Local only.
+pyautogui>=0.9.54
+pillow>=10.0.0
+# Self-reading (OCR): needs the Tesseract binary too, e.g.
+#   winget install UB-Mannheim.TesseractOCR
+pytesseract>=0.3.10
+# Ears (local mic + offline whisper STT)
+sounddevice>=0.4.6
+faster-whisper>=1.0.0
+# HomeBot Core2 link (MQTT + USB serial)
+paho-mqtt>=1.6
+pyserial>=3.5
+# Senses + identity (real local camera + signal processing, all offline)
+opencv-contrib-python>=4.8  # LBPH face recognition needs contrib
+numpy>=1.26,<3
+scipy>=1.11
+onnxruntime>=1.17
 # Optional: local TTS fallback (uncomment if needed)
 # pyttsx3>=2.90

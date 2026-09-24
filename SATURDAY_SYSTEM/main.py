@@ -23,10 +23,14 @@ import ctypes
 import logging
 import json
 from pathlib import Path
-from dotenv import load_dotenv
 
-PROJECT_ROOT = Path(__file__).parent.resolve()
-sys.path.insert(0, str(PROJECT_ROOT))
+if getattr(sys, "frozen", False):
+    # PyInstaller one-dir: live next to the exe (vault/config/dashboard
+    # resolve beside SATURDAY.exe, not inside _internal).
+    PROJECT_ROOT = Path(sys.executable).resolve().parent
+else:
+    PROJECT_ROOT = Path(__file__).parent.resolve()
+    sys.path.insert(0, str(PROJECT_ROOT))
 try:
     from dotenv import load_dotenv
     load_dotenv(PROJECT_ROOT / ".env")
@@ -44,6 +48,11 @@ logger = logging.getLogger("SATURDAY.Main")
 
 
 def initialize_logging(level: str = "INFO"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
     logging.basicConfig(level=level, format=LOG_FORMAT, datefmt=DATE_FORMAT)
     logger.setLevel(level)
     return logger
@@ -59,9 +68,40 @@ def _secure_clear_string(value: str) -> None:
         pass
 
 
+def run_smoke() -> int:
+    """Frozen-exe self-test: full vault E2E in temp dirs, no user input."""
+    import shutil
+    import tempfile
+
+    print("SATURDAY self-test (temp dirs, nothing touched)...")
+    tmp = Path(tempfile.mkdtemp(prefix="saturday_smoke_"))
+    try:
+        core = SATURDAYCore(passphrase="SmokeTestPass123!", project_root=tmp)
+        core.initialize()
+        out = core.process_command("store smoke payload tag:smoke")
+        assert "Stored securely" in out, out
+        entry_id = out.rsplit(":", 1)[-1].strip()
+        out = core.process_command(f"retrieve {entry_id}")
+        assert "smoke payload" in out, out
+        payload = core.get_status_payload()
+        assert payload["online"] and payload["vault_mounted"], payload
+        core.shutdown()
+        print("SMOKE: PASS (vault E2E + status, frozen boot OK)")
+        return 0
+    except Exception as e:
+        print(f"SMOKE: FAIL: {e}")
+        import traceback
+        traceback.print_exc()
+        return 1
+    finally:
+        try:
+            shutil.rmtree(tmp, ignore_errors=True)
+        except Exception:
+            pass
+
+
 def create_realtime_bridge(args: argparse.Namespace):
     service_account = args.service_account or os.getenv("FIREBASE_SERVICE_ACCOUNT", "")
-    database_url = args.database_url or os.getenv("FIREBASE_DATABASE_URL", "")
     node_id = args.node_id or os.getenv("FIREBASE_NODE_ID", "saturday-node")
     if not service_account or not database_url:
         raise RuntimeError("Firebase realtime requires FIREBASE_SERVICE_ACCOUNT and FIREBASE_DATABASE_URL.")
@@ -114,11 +154,32 @@ def main():
     parser.add_argument("--database-url", help="Firebase Realtime Database URL.")
     parser.add_argument("--node-id", help="Node ID used for realtime updates.")
     parser.add_argument("--log-level", default="INFO", help="Logging level.")
+    parser.add_argument("--smoke", action="store_true",
+                        help="Self-test: temp-dir vault E2E + status, no passphrase needed.")
     args = parser.parse_args()
 
     initialize_logging(args.log_level.upper())
+    if args.smoke:
+        return run_smoke()
     print(BANNER)
     logger.info("SATURDAY Intelligence System starting...")
+
+    if getattr(sys, "frozen", False):
+        # First run beside the exe: seed user config from bundled defaults
+        # so vault/config live OUTSIDE _internal (survive rebuilds).
+        try:
+            import shutil
+
+            meipass = Path(getattr(sys, "_MEIPASS", PROJECT_ROOT))
+            for name in ("settings.json",):
+                src = meipass / "config" / name
+                dst = PROJECT_ROOT / "config" / name
+                if not dst.exists() and src.exists():
+                    dst.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy(src, dst)
+                    logger.info(f"Seeded {dst} from bundled defaults.")
+        except Exception as e:
+            logger.warning(f"Config seeding skipped: {e}")
 
     passphrase = None
     core = None
@@ -167,7 +228,8 @@ def main():
                 realtime_bridge = create_realtime_bridge(args)
                 realtime_bridge.start(
                     lambda: core.get_status_payload(),
-                    lambda command_text, metadata: core.process_command(command_text),
+                    # Remote commands are untrusted: screen-driving is refused.
+                    lambda command_text, metadata: core.process_command(command_text, trusted=False),
                 )
             except Exception as exc:
                 logger.warning(f"Realtime bridge unavailable: {exc}")

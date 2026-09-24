@@ -60,11 +60,14 @@ class SATURDAYVoice:
                     )
                     player = shutil.which("aplay") or shutil.which("afplay") or shutil.which("play")
                     if player:
-                        subprocess.Popen([player, tmp_wav])
-                    return
+                        subprocess.Popen([player, tmp_wav],
+                                         stdout=subprocess.DEVNULL,
+                                         stderr=subprocess.DEVNULL)
+                        return
             # 3. Platform text-to-speech
             if sys.platform == "darwin":
-                subprocess.Popen(["say", text])
+                subprocess.Popen(["say", text],
+                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 return
             elif sys.platform.startswith("win"):
                 if self._windows_speak(text):
@@ -79,12 +82,16 @@ class SATURDAYVoice:
 
     def _windows_speak(self, text: str) -> bool:
         """Best-effort Windows speech via System.Speech; returns True on success."""
+        import os
         try:
             import subprocess
+            volume = min(100, max(0, int(os.getenv("SATURDAY_TTS_VOLUME", "80"))))
+            rate = min(10, max(-10, int(os.getenv("SATURDAY_TTS_RATE", "0"))))
             safe = text.replace("'", "''").replace('"', '""')[:1000]
             ps = (
                 "Add-Type -AssemblyName System.Speech; "
-                f"$s=New-Object System.Speech.Synthesis.SpeechSynthesizer; "
+                "$s=New-Object System.Speech.Synthesis.SpeechSynthesizer; "
+                f"$s.Volume={volume}; $s.Rate={rate}; "
                 f"$s.Speak('{safe}')"
             )
             subprocess.run(["powershell", "-NoProfile", "-Command", ps], check=True, timeout=30)

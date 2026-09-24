@@ -11,3 +11,7 @@ config/salt.dat
 config/node.json
 config/deadman.json
 config/heartbeat.enc
+models/
+dist/
+build/
+*.spec.log

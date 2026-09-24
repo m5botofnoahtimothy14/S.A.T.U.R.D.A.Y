@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SATURDAY // NEURAL HUD</title>
+<style>
+:root{
+  --bg:#020409; --glass:rgba(13,22,38,.72); --line:rgba(34,211,238,.25);
+  --cyan:#22d3ee; --green:#34d399; --amber:#fbbf24; --red:#f87171;
+  --violet:#a78bfa; --text:#dcf2ff; --dim:#7d93ad;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{height:100%}
+body{background:var(--bg); color:var(--text); font-family:"Segoe UI",Consolas,monospace; overflow-x:hidden}
+#stars{position:fixed; inset:0; z-index:0}
+#boot{position:fixed; inset:0; z-index:50; background:#020409; display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:14px; transition:opacity .8s}
+#boot.gone{opacity:0; pointer-events:none}
+#boot h1{letter-spacing:8px; font-size:26px; color:var(--cyan); text-shadow:0 0 24px var(--cyan)}
+#bootlog{font-size:12px; color:var(--dim); height:120px; text-align:center}
+header{position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:18px; padding:12px 22px;
+  background:rgba(3,7,14,.82); backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+#core{width:58px; height:58px; filter:drop-shadow(0 0 10px var(--cyan))}
+h1{font-size:19px; letter-spacing:5px}
+h1 small{display:block; font-size:10px; letter-spacing:3px; color:var(--dim)}
+#conn{margin-left:auto; font-size:12px; padding:6px 16px; border-radius:20px; border:1px solid var(--line)}
+#conn.on{color:var(--green); border-color:var(--green); box-shadow:0 0 12px #34d39955}
+#conn.off{color:var(--red); border-color:var(--red)}
+main{position:relative; z-index:1; display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+  gap:14px; padding:16px 22px 40px}
+.card{background:var(--glass); backdrop-filter:blur(12px); border:1px solid var(--line); border-radius:14px;
+  padding:14px 16px; box-shadow:0 0 24px #22d3ee11, inset 0 0 40px #22d3ee08}
+.card h2{font-size:11px; letter-spacing:4px; color:var(--cyan); margin-bottom:10px}
+.kv{display:flex; justify-content:space-between; font-size:13px; padding:3px 0; border-bottom:1px dashed #152238}
+.ok{color:var(--green)} .warn{color:var(--amber)} .bad{color:var(--red)} .dim{color:var(--dim)} .vio{color:var(--violet)}
+#eye{width:100%; border-radius:10px; border:1px solid var(--line); aspect-ratio:16/9; object-fit:cover; background:#000}
+#console{grid-column:1/-1}
+#out{height:260px; overflow-y:auto; background:rgba(0,0,0,.55); border:1px solid var(--line); border-radius:10px;
+  padding:10px 12px; font-size:13px; white-space:pre-wrap; margin-bottom:10px}
+#out .me{color:var(--cyan)} #out .sys{color:var(--dim)} #out .bot{color:var(--green)}
+.row{display:flex; gap:8px; margin-top:8px}
+input,button,select{background:#060c16; color:var(--text); border:1px solid var(--line); border-radius:8px;
+  padding:9px 12px; font-size:13px; font-family:inherit}
+input{flex:1}
+button{cursor:pointer; border-color:var(--cyan); color:var(--cyan); transition:.15s}
+button:hover{background:#22d3ee26; box-shadow:0 0 12px #22d3ee55}
+button.danger{border-color:var(--red); color:var(--red)}
+.chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+.chips button{font-size:11px; padding:5px 10px}
+.pad{display:grid; grid-template-columns:repeat(3,62px); gap:6px; justify-content:center; margin:8px 0}
+.pad button{padding:11px 0}
+#tasks div,#elog div,#inbox div{font-size:12px; padding:4px 0; border-bottom:1px dashed #152238}
+footer{position:relative; z-index:1; text-align:center; color:var(--dim); font-size:11px; padding:14px; letter-spacing:3px}
+.pulse{animation:pl 2s infinite}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.5}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div id="boot"><h1>SATURDAY</h1><div id="bootlog">initializing…</div></div>
+<header>
+  <canvas id="core" width="116" height="116"></canvas>
+  <h1>SATURDAY<small>NEURAL HUD // LOCAL ONLY</small></h1>
+  <div id="conn" class="off">CONNECTING…</div>
+</header>
+<main>
+  <div class="card"><h2>◆ CORE</h2><div id="coreStatus"><span class="dim">…</span></div></div>
+  <div class="card"><h2>◆ IDENTITY — I KNOW YOU</h2><div id="ident"><span class="dim">…</span></div></div>
+  <div class="card"><h2>◉ LIVE EYE</h2><img id="eye" alt="camera offline"><div id="eyeAge" class="dim" style="font-size:11px"></div></div>
+  <div class="card"><h2>◆ SUBSYSTEMS</h2><div id="subs"><span class="dim">…</span></div></div>
+  <div class="card"><h2>◆ HOMEBOT CORE2</h2><div id="bot">…</div>
+    <div class="pad"><span></span><button data-bot="forward">▲</button><span></span>
+      <button data-bot="left">◀</button><button data-bot="stop" class="danger">■</button><button data-bot="right">▶</button>
+      <button data-bot="spinleft">⟲</button><button data-bot="back">▼</button><button data-bot="spinright">⟳</button></div>
+  </div>
+  <div class="card"><h2>◆ MIND + TASKS</h2><div id="mind">…</div><div id="inbox"></div><div id="tasks"></div></div>
+  <div class="card" id="console"><h2>◆ COMMAND CONSOLE</h2>
+    <div id="out"><div class="sys">HUD online. Everything here runs on the real core.</div></div>
+    <div class="row"><input id="cmd" placeholder="status | who | sense | research … | heal | glow off" autocomplete="off"><button id="send">EXEC</button></div>
+    <div class="row"><input id="apiBase" placeholder="API base (empty = this host, e.g. https://x.trycloudflare.com)"><input id="tokIn" placeholder="token" style="max-width:180px"><button id="saveCfg">LINK</button></div>
+    <div class="chips"><button data-c="status">status</button><button data-c="services">services</button><button data-c="who">who</button><button data-c="sense">sense</button><button data-c="tasks">tasks</button><button data-c="heal">heal</button><button data-c="briefing">briefing</button></div>
+  </div>
+  <div class="card"><h2>◆ EVENTS</h2><div id="elog"><span class="dim">—</span></div></div>
+</main>
+<footer>SATURDAY v<span id="ver">?</span> // 127.0.0.1 ONLY // NOTHING LEAVES THIS PC</footer>
+<script>
+const $=id=>document.getElementById(id);
+let failStreak=0, timer=2000, booted=false, glowCol='#22d3ee';
+// starfield
+const sc=$('stars'),sx=sc.getContext('2d');let stars=[];
+function starInit(){sc.width=innerWidth;sc.height=innerHeight;stars=Array.from({length:130},()=>({x:Math.random()*sc.width,y:Math.random()*sc.height,z:Math.random()*1.5+.3}));}
+addEventListener('resize',starInit);starInit();
+setInterval(()=>{sx.clearRect(0,0,sc.width,sc.height);sx.fillStyle='#22d3ee';
+  for(const s of stars){s.y+=s.z;if(s.y>sc.height)s.y=0;sx.globalAlpha=.12*s.z;sx.fillRect(s.x,s.y,2,2);}sx.globalAlpha=1;},50);
+// arc core
+const cv=$('core'),cx=cv.getContext('2d');let t=0;
+(function draw(){t+=0.035;cx.clearRect(0,0,116,116);
+  for(let r=3;r>0;r--){cx.beginPath();cx.arc(58,58,11+r*8+Math.sin(t+r)*3,0,7);
+    cx.strokeStyle=glowCol+'55';cx.lineWidth=3;cx.stroke();}
+  const g=cx.createRadialGradient(58,58,2,58,58,12);g.addColorStop(0,'#fff');g.addColorStop(1,glowCol);
+  cx.beginPath();cx.arc(58,58,10+Math.sin(t*2)*2,0,7);cx.fillStyle=g;cx.fill();
+  requestAnimationFrame(draw);})();
+const GLOWC={idle:'#22d3ee',listening:'#34d399',thinking:'#a78bfa',speaking:'#5eead4',alert:'#f87171',off:'#22d3ee'};
+const QS=new URLSearchParams(location.search);
+const API=(QS.get('api')||localStorage.getItem('sat_api')||'').replace(/\/$/,'');
+const TOKEN=QS.get('token')||localStorage.getItem('sat_token')||'';
+if(QS.get('api'))localStorage.setItem('sat_api',QS.get('api'));
+if(QS.get('token'))localStorage.setItem('sat_token',QS.get('token'));
+async function api(path,opts){opts=opts||{};opts.headers=opts.headers||{};
+  if(TOKEN)opts.headers['X-Saturday-Token']=TOKEN;
+  const r=await fetch(API+path,opts);if(!r.ok)throw new Error(r.status);return r.json();}
+function setConn(on,txt){const e=$('conn');e.className=on?'on':'off';e.textContent=txt;}
+function pill(v){return `<b class="${v?'ok':'bad'}">${v?'ONLINE':'OFFLINE'}</b>`;}
+function kv(k,v){return `<div class="kv"><span class="dim">${k}</span><span>${v}</span></div>`;}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function bootline(t){if(!booted)$('bootlog').innerHTML+=`<div>${esc(t)}</div>`;}
+async function refresh(){
+  try{
+    const s=await api('/api/status');
+    failStreak=0;setConn(true,'● LIVE');timer=2000;
+    if(!booted){booted=true;setTimeout(()=>$('boot').classList.add('gone'),600);}
+    glowCol=GLOWC[s.glow]||'#22d3ee';
+    $('ver').textContent=s.version||'?';
+    $('coreStatus').innerHTML=kv('Core',s.online?'<b class="ok pulse">ONLINE</b>':'<b class="bad">OFFLINE</b>')
+      +kv('Vault',s.vault_mounted?'<b class="ok">MOUNTED</b>':'<b class="warn">LOCKED</b>')
+      +kv('Deadman',esc(String(s.deadman_status??'?')))+kv('Glow',`<b>${esc(String(s.glow||'?'))}</b>`);
+    const idn=s.identity||{};
+    $('ident').innerHTML=kv('Known',`<b class="vio">${(idn.known_faces||[]).join(', ')||'nobody yet'}</b>`)
+      +kv('Voice',idn.voice_enrolled?'<b class="ok">ENROLLED</b>':'<b class="dim">not enrolled</b>')
+      +kv('Quiet mode',idn.dnd?'<b class="warn">ON</b>':'<b class="dim">off</b>')
+      +kv('Mind ticks',`<b>${idn.mind_ticks??0}</b>`);
+    $('subs').innerHTML=kv('Brain LLM',pill(s.brain_available))+kv('Screen',pill(s.screen_backend))
+      +kv('OCR',pill(s.ocr_available))+kv('Mic',pill(s.mic_available))+kv('STT',pill(s.stt_available))
+      +kv('Agent tasks',`<b>${s.agent_tasks??0}</b>`)
+      +kv('Node','<span class="dim">'+esc(String(s.node_status??'')).slice(0,44)+'</span>');
+    const ses=s.session||{};
+    const b=s.homebot||{};
+    const blink=b.link||'never';
+    $('bot').innerHTML=kv('Link',blink==='live'?'<b class="ok">BOT LIVE</b>':blink==='stale'?'<b class="warn">BOT STALE</b>':b.broker_connected?'<b class="warn">BROKER, NO BOT</b>':'<b class="bad">NO LINK</b>')
+      +kv('Command','<b>'+esc(String(b.current_command??'idle'))+'</b>')
+      +kv('Uptime',Math.round(ses.uptime_s||s.dashboard_uptime_s||0)+'s');
+    const tk=await api('/api/tasks');
+    $('inbox').innerHTML=(tk.inbox||[]).length?'<div class="dim">INBOX</div>'+tk.inbox.map(i=>`<div>[${esc(i.id)}|p${i.priority}|${esc(i.status)}] ${esc(i.text)}</div>`).join(''):'';
+    $('tasks').innerHTML=(tk.tasks||[]).length?tk.tasks.slice(-5).reverse().map(x=>`<div>${esc(x)}</div>`).join(''):'<span class="dim">none yet</span>';
+    $('mind').innerHTML=kv('DND',(ses.dnd||idn.dnd)?'<b class="warn">ON</b>':'<b class="dim">off</b>')+kv('Bg jobs',`<b>${ses.queued??0}</b>`);
+    const lg=await api('/api/log');
+    $('elog').innerHTML=lg.events.length?lg.events.slice(-8).reverse().map(e=>`<div><span class="dim">${new Date(e.ts*1000).toLocaleTimeString()}</span> ${esc(e.message)}</div>`).join(''):'<span class="dim">—</span>';
+    try{const f=await api('/api/frame');
+      if(f.available){$('eye').src='data:image/jpeg;base64,'+f.image;$('eyeAge').textContent='live • '+f.age_s+'s old';}
+      else{$('eyeAge').textContent='camera offline';}}catch(e){}
+  }catch(e){failStreak++;setConn(false,'○ RETRY '+failStreak);timer=Math.min(15000,timer*1.5);}
+  setTimeout(refresh,timer);
+}
+function say(who,txt,cls){const o=$('out'),d=document.createElement('div');d.className=cls;d.textContent=(who?who+' ':'')+txt;o.appendChild(d);o.scrollTop=o.scrollHeight;}
+async function sendCmd(raw){const i=$('cmd');const c=(raw??i.value).trim();if(!c)return;i.value='';
+  say('❯',c,'me');try{const r=await api('/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:c})});
+  say('',r.response||'(empty)','bot');}catch(e){say('','❌ HUD link error — retrying.','sys');}}
+$('send').onclick=()=>sendCmd();$('cmd').onkeydown=e=>{if(e.key==='Enter')sendCmd();};
+$('saveCfg').onclick=()=>{const a=$('apiBase').value.trim(),k=$('tokIn').value.trim();
+  if(a)localStorage.setItem('sat_api',a.replace(/\/$/,''));if(k)localStorage.setItem('sat_token',k);
+  say('','🔗 Backend linked. Reloading…','sys');setTimeout(()=>location.reload(),600);};
+(function(){if(API)$('apiBase').value=API;if(TOKEN)$('tokIn').value='••••••';})();
+document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>sendCmd(b.dataset.c));
+document.querySelectorAll('[data-bot]').forEach(b=>b.onclick=async()=>{
+  try{const r=await api('/api/homebot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:b.dataset.bot,duration:1.0,speed:80})});
+  say('🤖','bot '+b.dataset.bot+': '+(r.message||r.reason||r.status),'sys');}catch(e){say('','❌ link error','sys');}});
+bootline('SATURDAY neural HUD');bootline('binding local core…');refresh();
+</script>
+</body>
+</html>
