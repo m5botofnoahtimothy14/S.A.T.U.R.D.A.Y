@@ -47,6 +47,27 @@ STT_MODEL = os.getenv("SATURDAY_STT_MODEL", "tiny")
 _stt_model = None
 
 
+def _prefer_offline_stt():
+    """If a whisper model is already cached, stay offline (frozen exes and
+    flaky networks must not depend on hub roundtrips to hear)."""
+    try:
+        hub = os.path.join(os.path.expanduser("~"), ".cache", "huggingface", "hub")
+        if not os.path.isdir(hub):
+            return
+        for entry in os.listdir(hub):
+            if entry.startswith(("models--Systran--faster-whisper-",
+                                 "models--openai--whisper-")):
+                snap = os.path.join(hub, entry, "snapshots")
+                if os.path.isdir(snap) and os.listdir(snap):
+                    os.environ.setdefault("HF_HUB_OFFLINE", "1")
+                    return
+    except Exception:
+        pass
+
+
+_prefer_offline_stt()
+
+
 def mic_available() -> bool:
     return _MIC_AVAILABLE
 
