@@ -54,6 +54,17 @@ def initialize_logging(level: str = "INFO"):
     except Exception:
         pass
     logging.basicConfig(level=level, format=LOG_FORMAT, datefmt=DATE_FORMAT)
+    # File log: console windows close on crash, files don't. Rotating, tiny.
+    try:
+        from logging.handlers import RotatingFileHandler
+        logdir = PROJECT_ROOT / "logs"
+        logdir.mkdir(parents=True, exist_ok=True)
+        fh = RotatingFileHandler(str(logdir / "saturday.log"), maxBytes=512 * 1024,
+                                 backupCount=3, encoding="utf-8")
+        fh.setFormatter(logging.Formatter(LOG_FORMAT, DATE_FORMAT))
+        logging.getLogger().addHandler(fh)
+    except Exception:
+        pass
     logger.setLevel(level)
     return logger
 
@@ -73,6 +84,8 @@ def run_smoke() -> int:
     import shutil
     import tempfile
 
+    # Self-test must NEVER open tunnels/share: force local-only.
+    os.environ["SATURDAY_SHARE_PERSIST"] = ""
     print("SATURDAY self-test (temp dirs, nothing touched)...")
     tmp = Path(tempfile.mkdtemp(prefix="saturday_smoke_"))
     try:

@@ -126,13 +126,14 @@ class EdgeGlow:
             root.attributes("-topmost", True)
             sw, sh = root.winfo_screenwidth(), root.winfo_screenheight()
             root.geometry(f"{sw}x{sh}+0+0")
-            # Layered + click-through: the window is a PURE overlay — no
-            # background, no text, nothing over the screen content itself.
-            if not self._make_transparent(root):
-                root.attributes("-transparentcolor", "black")
-                root.configure(bg="black")
+            # PURE overlay: root bg pure black vanishes via Tk transparentcolor,
+            # canvas near-black (#000001) vanishes via layered colorkey=1.
+            # Only colored arcs remain. bg is ALWAYS a valid color string.
+            root.attributes("-transparentcolor", "black")
+            root.configure(bg="black")
+            self._make_transparent(root)
             canvas = tk.Canvas(root, width=sw, height=sh, highlightthickness=0, bd=0,
-                               bg="#000001" if not self._layered(root) else "")
+                               bg="#000001")
             canvas.pack()
             self._click_through(root)
             t = 0.0
@@ -181,16 +182,6 @@ class EdgeGlow:
             except Exception:
                 pass
             logger.info("Edge glow off.")
-
-    @staticmethod
-    def _layered(root) -> bool:
-        try:
-            import ctypes
-            hwnd = ctypes.windll.user32.GetParent(root.winfo_id()) or root.winfo_id()
-            ex = ctypes.windll.user32.GetWindowLongW(hwnd, -20)
-            return bool(ex & 0x80000)
-        except Exception:
-            return False
 
     @staticmethod
     def _make_transparent(root) -> bool:
