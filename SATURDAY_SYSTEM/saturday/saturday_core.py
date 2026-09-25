@@ -976,19 +976,34 @@ class SATURDAYCore:
     def _handle_share(self, args, raw_text):
         arg = (args[0].lower() if args else "status")
         link = self._share_link()
+        session = getattr(self, "session", None)
         if arg == "on":
+            hostname = args[1] if len(args) > 1 else ""
             if self._dashboard is None:
                 self.process_command("dashboard 8099", trusted=True)
             port = self._dashboard.port if self._dashboard else 8099
             tok = self._dashboard.share() if self._dashboard else {"token": ""}
-            res = link.start(port)
+            res = link.start(port, hostname=hostname)
             if not res.get("success"):
                 return f"❌ Share failed: {res.get('error')}"
             return (f"🌐 SATURDAY is ONLINE: {res['url']}\n"
                     f"   🔑 Token (show once, guard it): {tok.get('token', '')}\n"
                     f"   Open {res['url']}?token=TOKEN on your phone.\n"
-                    f"   `share off` kills it. Tunnel + token = your free server.")
+                    f"   `share persist` keeps it up for months. `share off` kills it.")
+        if arg == "persist":
+            if session is None:
+                return "⚠️ Session not booted."
+            if args[1:] and args[1].lower() == "off":
+                session.share_persist = False
+                return "🌐 Persist OFF (tunnel keeps running until `share off`)."
+            session.share_hostname = args[1] if len(args) > 1 else ""
+            session.share_persist = True
+            session._bg("share-watch", session._share_watch_loop)
+            return ("🌐 Persist ON — watchdog re-opens the tunnel if it ever drops.\n"
+                    f"   Hostname: {session.share_hostname or '(rotating quick URL)'}.")
         if arg == "off":
+            if session is not None:
+                session.share_persist = False
             link.stop()
             try:
                 if self._dashboard is not None:
@@ -998,8 +1013,13 @@ class SATURDAYCore:
             return "🌐 Share closed. Back to localhost-only."
         st = link.status()
         if st["running"]:
-            return f"🌐 Sharing LIVE: {st['url']} (port {st['port']})."
-        return "🌐 Not sharing. Use: share on"
+            extra = " (+persist watchdog)" if session and session.share_persist else ""
+            host = f" host={session.share_hostname}" if session and session.share_hostname else ""
+            return f"🌐 Sharing LIVE: {st['url']} (port {st['port']}){extra}{host}."
+        persist = ""
+        if session and session.share_persist:
+            persist = f" (persist armed{f' host={session.share_hostname}' if session.share_hostname else ''})"
+        return "🌐 Not sharing. Use: share on [hostname] | share persist" + persist
 
     def _cloud_creds(self):
         cfg = getattr(self, "cloud_config", {}) or {}
@@ -1118,13 +1138,17 @@ class SATURDAYCore:
             pass
 
     def _speak(self, text: str) -> None:
-        """Best-effort speech; never raises, never blocks the command."""
+        """Speak like a human: strip machine markers, soften, never read
+        raw readouts (BPM/JSON/raw tags) aloud. Best-effort, never raises."""
         self._glow_pulse("speaking", 4.0)
         try:
+            from saturday import humanvoice as hv
+
+            spoken = hv.naturalize(str(text)) if hasattr(hv, "naturalize") else str(text)
             from interface.voice import SATURDAYVoice
             if getattr(self, "_voice", None) is None:
                 self._voice = SATURDAYVoice(self)
-            self._voice.speak(str(text)[:300])
+            self._voice.speak(spoken[:300])
         except Exception:
             pass
 
@@ -1167,21 +1191,39 @@ class SATURDAYCore:
             turns += 1
             try:
                 self._glow_pulse("listening", 8.0)
-                res = ears.hear_once(secs)
+                cap = ears.capture(secs)
+                if not cap.get("success"):
+                    print(f"   (mic: {cap.get('error')})")
+                    continue
+                if not ears.heard(cap["samples"]):
+                    print("   (silence)")
+                    continue
+                gate = getattr(getattr(self, "session", None), "voice_gate", None)
+                who = {"verdict": "open", "authorized": True}
+                if gate is not None:
+                    who = gate.who_authorized(cap["samples"])
+                res = ears.transcribe(samples=cap["samples"],
+                                      samplerate=cap["samplerate"])
             except KeyboardInterrupt:
                 return "👂 Stopped listening."
             if not res.get("success"):
-                print(f"   (hear error: {res.get('error')})")
+                print(f"   (hear: {res.get('error')})")
                 continue
             text = (res.get("text") or "").strip()
             if not text:
-                print("   (silence)")
+                print("   (nothing understood)")
                 continue
             print(f"👂 You said: {text}")
             if text.lower().rstrip(".!").strip() in ("goodbye", "stop", "stop listening",
                                                      "exit", "quit", "bye"):
                 self._speak("Powering down listening mode.")
                 return "👂 Stopped listening. Goodbye."
+            if not who.get("authorized"):
+                from saturday import humanvoice as hv
+
+                self._speak(hv.refusal_line(who.get("verdict", "guest")))
+                print(f"🔒 Not owner ({who.get('verdict')}) — command ignored.")
+                continue
             out = self.process_command(text, trusted=True)
             print(f"🤖 {out[:500]}")
             self._speak(out)

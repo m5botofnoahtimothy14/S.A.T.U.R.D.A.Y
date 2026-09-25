@@ -173,7 +173,8 @@ class TestShareLink(TestCase):
             "2026 init...\n",
             "https://random-name-123.trycloudflare.com arrived\n",
         ]
-        with patch("subprocess.Popen", return_value=proc):
+        with patch("subprocess.Popen", return_value=proc), \
+             patch.object(ShareLink, "_verify_public", return_value=True):
             res = link.start(8099, timeout=10)
             self.assertTrue(res["success"])
             self.assertIn("trycloudflare.com", res["url"])
@@ -224,6 +225,76 @@ class TestCloudCommands(TestCase):
             out = core.process_command("share", trusted=True)
             self.assertIn("Not sharing", out)
         print("DONE: share status test passed.")
+
+    def test_share_persist_arms_watchdog(self):
+        core = self._core()
+        core.session = MagicMock()
+        out = core.process_command("share persist mybot.example.com", trusted=True)
+        self.assertIn("Persist ON", out)
+        self.assertTrue(core.session.share_persist)
+        self.assertEqual(core.session.share_hostname, "mybot.example.com")
+        print("DONE: share persist test passed.")
+
+    def test_reap_stale_clean(self):
+        from saturday.share import reap_stale
+        self.assertGreaterEqual(reap_stale(8099), 0)
+        print("DONE: reap stale test passed.")
+
+    def test_share_on_with_hostname(self):
+        core = self._core()
+        core._dashboard = MagicMock()
+        core._dashboard.port = 8099
+        core._dashboard.share.return_value = {"token": "T"}
+        with patch("saturday.share.ShareLink") as SL:
+            SL.return_value.start.return_value = {"success": True, "url": "https://h"}
+            out = core.process_command("share on mybot.cfargotunnel.com", trusted=True)
+            self.assertIn("ONLINE", out)
+            _, kwargs = SL.return_value.start.call_args
+            self.assertEqual(kwargs.get("hostname"), "mybot.cfargotunnel.com")
+        print("DONE: share hostname test passed.")
+
+
+class TestCORSAndPersist(TestCase):
+    def test_cors_headers(self):
+        import os
+        srv = DashboardServer(fake_core(), port=0)
+        srv.start()
+        try:
+            port = srv.port
+            with patch.dict("os.environ", {"SATURDAY_CORS_ORIGIN": "https://x.vercel.app"}):
+                req = urllib.request.Request(
+                    f"http://127.0.0.1:{port}/api/status",
+                    headers={"Origin": "https://x.vercel.app"})
+                with urllib.request.urlopen(req, timeout=5) as r:
+                    self.assertEqual(r.headers.get("Access-Control-Allow-Origin"),
+                                     "https://x.vercel.app")
+                evil = urllib.request.Request(
+                    f"http://127.0.0.1:{port}/api/status",
+                    headers={"Origin": "https://evil.test"})
+                with urllib.request.urlopen(evil, timeout=5) as r:
+                    self.assertIsNone(r.headers.get("Access-Control-Allow-Origin"))
+        finally:
+            srv.stop()
+        print("DONE: CORS test passed.")
+
+    def test_persist_restarts_tunnel(self):
+        from saturday.session import SessionManager
+        core = MagicMock()
+        core._dashboard = MagicMock()
+        core._dashboard.running = True
+        core._dashboard.port = 8099
+        core._dashboard.share.return_value = {"token": "T"}
+        link = MagicMock()
+        link.running = False
+        link.start.return_value = {"success": True, "url": "https://u"}
+        core._share_link.return_value = link
+        mgr = SessionManager(core)
+        mgr.share_persist = True
+        res = mgr.ensure_shared()
+        self.assertTrue(res["success"])
+        self.assertEqual(res["url"], "https://u")
+        link.start.assert_called_once()
+        print("DONE: persist ensure test passed.")
 
 
 if __name__ == "__main__":

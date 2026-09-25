@@ -28,13 +28,17 @@ except Exception:
     _TK_AVAILABLE = False
 
 STATES: Dict[str, Dict] = {
-    "idle":      {"color": (34, 211, 238),  "speed": 0.6, "width": 3,  "bands": 10},
-    "listening": {"color": (52, 211, 153),  "speed": 2.2, "width": 6,  "bands": 14},
-    "thinking":  {"color": (167, 139, 250), "speed": 3.0, "width": 5,  "bands": 14},
-    "speaking":  {"color": (94, 234, 212),  "speed": 4.0, "width": 5,  "bands": 12},
-    "alert":     {"color": (248, 113, 113), "speed": 5.0, "width": 7,  "bands": 14},
-    "off":       {"color": (0, 0, 0),       "speed": 0.0, "width": 0,  "bands": 0},
+    "idle":      {"color": (56, 189, 248),  "speed": 0.5, "bands": 1, "width": 2},
+    "listening": {"color": (52, 211, 153),  "speed": 2.0, "bands": 2, "width": 2},
+    "thinking":  {"color": (167, 139, 250), "speed": 2.6, "bands": 3, "width": 2},
+    "speaking":  {"color": (94, 234, 212),  "speed": 3.4, "bands": 3, "width": 2},
+    "alert":     {"color": (248, 113, 113), "speed": 4.4, "bands": 4, "width": 2},
+    "off":       {"color": (0, 0, 0),       "speed": 0.0, "bands": 0, "width": 0},
 }
+
+CORNER = 150          # corner arc size (px)
+ARC_GAP = 6           # spacing between concentric corner arcs
+EDGE = 3              # inset from the physical screen edge (px)
 
 
 def band_colors(base: Tuple[int, int, int], bands: int, phase: float,
@@ -119,30 +123,50 @@ class EdgeGlow:
             return
         try:
             root.overrideredirect(True)
-            root.attributes("-topmost", True, "-transparentcolor", "black")
+            root.attributes("-topmost", True)
             sw, sh = root.winfo_screenwidth(), root.winfo_screenheight()
             root.geometry(f"{sw}x{sh}+0+0")
-            root.configure(bg="black")
-            self._click_through(root)
-            canvas = tk.Canvas(root, width=sw, height=sh, bg="black",
-                               highlightthickness=0, bd=0)
+            # Layered + click-through: the window is a PURE overlay — no
+            # background, no text, nothing over the screen content itself.
+            if not self._make_transparent(root):
+                root.attributes("-transparentcolor", "black")
+                root.configure(bg="black")
+            canvas = tk.Canvas(root, width=sw, height=sh, highlightthickness=0, bd=0,
+                               bg="#000001" if not self._layered(root) else "")
             canvas.pack()
+            self._click_through(root)
             t = 0.0
-            gap = 7
             while not self._stop.is_set():
                 state = self.current()
                 cfg = STATES.get(state, STATES["idle"])
                 canvas.delete("all")
                 if cfg["bands"]:
                     t += 0.09
-                    colors = band_colors(cfg["color"], cfg["bands"], t * cfg["speed"],
-                                         pulse_brightness(state, t))
-                    w = cfg["width"]
-                    for i, col in enumerate(colors):
-                        inset = i * gap
-                        canvas.create_rectangle(
-                            inset, inset, sw - inset, sh - inset,
-                            outline=col, width=w)
+                    brightness = pulse_brightness(state, t)
+                    for i in range(cfg["bands"]):
+                        col = band_colors(cfg["color"], 1, t * cfg["speed"],
+                                          brightness * (1.0 - 0.22 * i))[0]
+                        inset = EDGE + i * ARC_GAP
+                        r = CORNER - i * ARC_GAP
+                        if r <= 6:
+                            break
+                        w = cfg["width"]
+                        # Four corner arcs only — screen stays fully readable.
+                        canvas.create_arc(inset, inset, inset + 2 * r, inset + 2 * r,
+                                          start=0, extent=90, style="arc",
+                                          outline=col, width=w)
+                        canvas.create_arc(sw - inset - 2 * r, inset,
+                                          sw - inset, inset + 2 * r,
+                                          start=90, extent=90, style="arc",
+                                          outline=col, width=w)
+                        canvas.create_arc(sw - inset - 2 * r, sh - inset - 2 * r,
+                                          sw - inset, sh - inset,
+                                          start=180, extent=90, style="arc",
+                                          outline=col, width=w)
+                        canvas.create_arc(inset, sh - inset - 2 * r,
+                                          inset + 2 * r, sh - inset,
+                                          start=270, extent=90, style="arc",
+                                          outline=col, width=w)
                 try:
                     root.update_idletasks()
                     root.update()
@@ -157,6 +181,32 @@ class EdgeGlow:
             except Exception:
                 pass
             logger.info("Edge glow off.")
+
+    @staticmethod
+    def _layered(root) -> bool:
+        try:
+            import ctypes
+            hwnd = ctypes.windll.user32.GetParent(root.winfo_id()) or root.winfo_id()
+            ex = ctypes.windll.user32.GetWindowLongW(hwnd, -20)
+            return bool(ex & 0x80000)
+        except Exception:
+            return False
+
+    @staticmethod
+    def _make_transparent(root) -> bool:
+        """Layered window: black alpha 0 → nothing shows except what we draw."""
+        try:
+            import ctypes
+            hwnd = ctypes.windll.user32.GetParent(root.winfo_id()) or root.winfo_id()
+            gwl, layered, transparent = -20, 0x00080000, 0x00000020
+            ex = ctypes.windll.user32.GetWindowLongW(hwnd, gwl)
+            ok = ctypes.windll.user32.SetWindowLongW(hwnd, gwl, ex | layered | transparent)
+            if not ok:
+                return False
+            # LWA_COLORKEY = 1, key = 1 (near-black canvas background).
+            return bool(ctypes.windll.user32.SetLayeredWindowAttributes(hwnd, 1, 0, 1))
+        except Exception:
+            return False
 
     @staticmethod
     def _click_through(root) -> bool:

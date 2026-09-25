@@ -68,9 +68,17 @@ class TestEars(TestCase):
         core._current_trusted = True
         core.is_running = True
         core._command_handlers = SATURDAYCore._build_command_handlers(core)
-        heard = [{"success": True, "text": "status", "heard_something": True},
-                 {"success": True, "text": "goodbye", "heard_something": True}]
-        with patch.object(ears, "hear_once", side_effect=heard), \
+
+        def cap(seconds=5.0, samplerate=16000):
+            return {"success": True, "samples": loud_samples(1600),
+                    "samplerate": samplerate, "rms": 2121.0}
+
+        heard_texts = iter(["status", "goodbye"])
+        tr = {"success": True, "language": "en", "heard_something": True}
+        with patch.object(ears, "capture", side_effect=cap), \
+             patch.object(ears, "heard", return_value=True), \
+             patch.object(ears, "transcribe",
+                          side_effect=lambda **kw: {**tr, "text": next(heard_texts)}), \
              patch.object(SATURDAYCore, "_speak") as mock_speak:
             out = core.process_command("listen 1", trusted=True)
             self.assertIn("Goodbye", out)

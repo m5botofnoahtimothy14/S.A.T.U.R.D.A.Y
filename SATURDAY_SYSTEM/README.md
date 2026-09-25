@@ -189,6 +189,34 @@ Once active, the SATURDAY CLI accepts the following:
 | `enroll` / `who` / `enrollvoice` / `voiceid` | Face + voice identity. |
 | `claps` / `mind` / `learn` / `glow` / `heal` | Claps, mind, glow, watchdog. |
 | `assign` / `inbox` / `briefing` / `announce` | Self-tasking + voice comms. |
+| `share` / `cloudsetup` / `cloudbackup` | Free tunnel online + encrypted cloud DB. |
+
+## 🌐 Online server + cloud DB + deployment (v1.9.0, all free)
+
+**Phone access (now):** in SATURDAY run `share on` → open the printed
+`https://*.trycloudflare.com/?token=TOKEN` on your phone. Token auth is
+enforced on every route. `share persist` re-opens drops for months;
+`share off` kills everything. No account, no card, outbound-only tunnel.
+
+**Stable address:** `cloudflared tunnel login` (one browser click, free
+account) → `share on mybot.cfargotunnel.com`. No more rotating URLs.
+
+**Vercel HUD:** `cd vercel-web && python sync.py && npx vercel --prod`
+(free hobby, no card). Set `SATURDAY_CORS_ORIGIN=https://<you>.vercel.app`,
+then open `https://<you>.vercel.app/?api=TUNNEL_URL&token=TOKEN`.
+
+**Firebase cloud DB (project aegis-os-75256, region asia-southeast1):**
+DB URL: `https://aegis-os-75256-default-rtdb.asia-southeast1.firebasedatabase.app`
+1. Console → Realtime Database → Rules → locked mode (your DB currently
+   answers the whole internet — lock it BEFORE backing up).
+2. Project settings → Service accounts → Generate key → save the .json
+   privately (NEVER paste the private key anywhere).
+3. In SATURDAY: `cloudsetup <path-to.json> <db-url-above>` →
+   `cloudbackup` (ciphertext only) / `cloudrestore` (fills gaps only).
+
+**Full cloud VM (later):** Oracle free tier (4 OCPU/24GB ARM, forever free,
+card verified at signup only) → install Python + Ollama + this repo.
+Nothing here assumes a cloud — the PC remains the primary brain.
 
 ## 🛡️ Security Best Practices
 

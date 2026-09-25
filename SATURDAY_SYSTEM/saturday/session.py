@@ -146,6 +146,9 @@ class SessionManager:
         self.claps = None
         self.glow = None
         self.healer = None
+        self.presence = None
+        self.voice_gate = None
+        self._startup_hello_thread = None
         self.inbox: List[Dict[str, Any]] = []
         self._inbox_seq = 0
         self._inbox_event = threading.Event()
@@ -185,6 +188,14 @@ class SessionManager:
         self._bg("glow-start", self._start_glow)
         self._bg("heal-start", self._start_healer)
         self._start_inbox_worker()
+        self._bg("voice-gate", self._start_voice_gate)
+        self._bg("presence-start", self._start_presence)
+        self._bg("startup-hello", self._startup_hello)
+        import os as _os
+        if _os.getenv("SATURDAY_SHARE_PERSIST", "") == "1":
+            self.share_persist = True
+            self.share_hostname = _os.getenv("SATURDAY_SHARE_HOSTNAME", "")
+            self._bg("share-watch", self._share_watch_loop)
         logger.info("Session boot dispatched (services warming up).")
 
     def _preload_stt(self):
@@ -313,6 +324,69 @@ class SessionManager:
             logger.info("Session: self-heal watchdog running.")
         except Exception as e:
             logger.warning(f"Healer start failed: {e}")
+
+    def _start_voice_gate(self):
+        try:
+            from saturday.humanvoice import VoiceGate
+
+            self.voice_gate = VoiceGate(self.core)
+            logger.info("Session: voice gate ready.")
+        except Exception as e:
+            logger.warning(f"Voice gate failed: {e}")
+
+    def _start_presence(self):
+        try:
+            from saturday.presence import PresenceLoop
+
+            self.presence = PresenceLoop(self)
+            self.presence.start()
+            logger.info("Session: presence loop live (sees and greets you).")
+        except Exception as e:
+            logger.warning(f"Presence failed: {e}")
+
+    def _startup_hello(self):
+        try:
+            if self.presence is None:
+                from saturday.presence import PresenceLoop
+                self.presence = PresenceLoop(self)
+            self.presence.startup_hello()
+        except Exception as e:
+            logger.warning(f"Startup hello failed: {e}")
+
+    # -- share keep-alive: tunnel stays up for months --------------------------
+    def ensure_shared(self) -> dict:
+        """Dashboard + token + tunnel, idempotent. Returns {url, token} or error."""
+        try:
+            if self.core._dashboard is None:
+                self.core.process_command("dashboard 8099", trusted=True)
+            dash = self.core._dashboard
+            if dash is None or not dash.running:
+                return {"success": False, "error": "dashboard would not start"}
+            tok = dash.share()
+            link = self.core._share_link()
+            res = link.start(dash.port, hostname=self.share_hostname)
+            if not res.get("success"):
+                return res
+            return {"success": True, "url": res["url"], "token": tok.get("token", "")}
+        except Exception as e:
+            return {"success": False, "error": str(e)[:200]}
+
+    def _share_watch_loop(self):
+        while not self._dead:
+            try:
+                if self.share_persist:
+                    link = self.core._share_link()
+                    if not link.running:
+                        res = self.ensure_shared()
+                        logger.info(f"Share watch: {res.get('url', res.get('error'))}")
+            except Exception as e:
+                logger.debug(f"Share watch failed: {e}")
+            self._stop_watch_wait(30.0)
+
+    def _stop_watch_wait(self, seconds: float):
+        end = time.time() + seconds
+        while time.time() < end and not self._dead:
+            time.sleep(1.0)
 
     # -- task inbox: ONE worker, priority order (self task controller) -------
     def inbox_add(self, goal: str = "", kind: str = "agent", text: str = "",
@@ -495,11 +569,24 @@ class SessionManager:
             "known_faces": gallery_names,
             "glow": (self.glow.current() if self.glow and self.glow.enabled else "off"),
             "healer": ("on" if self.healer and self.healer._thread else "off"),
+            "presence": (self.presence.status() if self.presence else {"running": False}),
+            "voice_gate": (self.voice_gate.stats() if self.voice_gate else {}),
         }
 
     def shutdown(self):
         self._dead = True
         self._inbox_event.set()
+        self.share_persist = False
+        try:
+            if self.presence:
+                self.presence.stop()
+        except Exception:
+            pass
+        try:
+            link = self.core._share_link()
+            link.stop()
+        except Exception:
+            pass
         try:
             self.camera.stop()
         except Exception:

@@ -38,6 +38,42 @@ def find_cloudflared() -> str:
     return ""
 
 
+def reap_stale(port: int) -> int:
+    """Kill lingering cloudflared processes serving OUR local port.
+
+    Only matches our exact tunnel target (127.0.0.1:<port>) — never
+    touches tunnels the user runs themselves. Best-effort, Windows.
+    Returns number reaped.
+    """
+    import subprocess as _sp
+
+    killed = 0
+    try:
+        ps = _sp.run(["powershell", "-NoProfile", "-Command",
+                      "Get-CimInstance Win32_Process -Filter \"Name='cloudflared.exe'\" | "
+                      "Select-Object -ExpandProperty CommandLine"],
+                     capture_output=True, text=True, timeout=20)
+        lines = (ps.stdout or "").splitlines()
+        pids = _sp.run(["powershell", "-NoProfile", "-Command",
+                        "Get-CimInstance Win32_Process -Filter \"Name='cloudflared.exe'\" | "
+                        "Select-Object -ExpandProperty ProcessId"],
+                       capture_output=True, text=True, timeout=20)
+        ids = (pids.stdout or "").splitlines()
+        needle = f"127.0.0.1:{port}"
+        for cmd, pid in zip(lines, ids):
+            if needle in (cmd or "") and (pid or "").strip().isdigit():
+                r = _sp.run(["taskkill", "/PID", pid.strip(), "/F"],
+                            capture_output=True, timeout=15)
+                if r.returncode == 0:
+                    killed += 1
+    except Exception as e:
+        logger.debug(f"Stale reap skipped: {e}")
+    if killed:
+        logger.info(f"Reaped {killed} stale tunnel(s) on :{port}.")
+        time.sleep(2.0)
+    return killed
+
+
 class ShareLink:
     """One tunnel lifetime. start() blocks ≤60s hunting the public URL."""
 
@@ -53,14 +89,18 @@ class ShareLink:
     def running(self) -> bool:
         return self.proc is not None and self.proc.poll() is None
 
-    def start(self, port: int, timeout: float = 60.0, hostname: str = "") -> Dict[str, Any]:
-        """Quick tunnel (rotating URL) or --hostname stable endpoint (free account)."""
+    def start(self, port: int, timeout: float = 150.0, hostname: str = "") -> Dict[str, Any]:
+        """Quick tunnel (rotating URL) or --hostname stable endpoint (free account).
+
+        Quick-tunnel issuance can take minutes when Cloudflare rate-limits
+        rapid creation — generous defaults keep `share on` honest."""
         if self.running:
             return {"success": True, "url": self.url, "note": "already shared"}
         if not self.binary:
             return {"success": False, "error": (
                 "cloudflared missing. Install: winget install Cloudflare.cloudflared")}
         self.stop()
+        reap_stale(port)
         cmd = [self.binary, "tunnel", "--url", f"http://127.0.0.1:{port}", "--no-autoupdate"]
         if hostname:
             cmd += ["--hostname", hostname]
@@ -94,10 +134,39 @@ class ShareLink:
                     return {"success": False,
                             "error": f"No tunnel URL in {timeout:g}s. cloudflared says: {tail[:300]}"}
             logger.warning(f"Internet share LIVE at {self.url} — guard the token.")
-            return {"success": True, "url": self.url}
+            if self._verify_public(timeout=90.0):
+                return {"success": True, "url": self.url}
+            self.stop()
+            return {"success": False,
+                    "error": "Tunnel registered but never served traffic (DNS/propagation). Retry `share on`."}
         except Exception as e:
             self.stop()
             return {"success": False, "error": str(e)[:200]}
+
+    def _verify_public(self, timeout: float = 120.0) -> bool:
+        """The URL must actually answer from the world.
+
+        Fresh trycloudflare names can NXDOMAIN locally for minutes
+        (Windows caches the negative) — flush once, then poll patiently.
+        """
+        import time as _t
+        import urllib.request as _u
+
+        try:
+            import subprocess as _sp
+            _sp.run(["ipconfig", "/flushdns"], capture_output=True, timeout=15)
+        except Exception:
+            pass
+        deadline = _t.time() + timeout
+        while _t.time() < deadline and self.running:
+            try:
+                with _u.urlopen(self.url + "/api/status", timeout=10) as r:
+                    if r.status in (200, 403):
+                        return True
+            except Exception:
+                pass
+            _t.sleep(5.0)
+        return False
 
     def status(self) -> Dict[str, Any]:
         return {"running": self.running, "url": self.url, "port": self.port,
