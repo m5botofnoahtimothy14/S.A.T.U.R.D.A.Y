@@ -388,8 +388,8 @@ class SessionManager:
         try:
             from pathlib import Path as _P
             p = _P(self.core.pmv.project_root) / "share_url.txt"
-            p.write_text(f"URL={url}\nTOKEN={token}\nHUD=https://saturdayagenticai.vercel.app"
-                         f"/?api={url}&token={token}\n")
+            p.write_text(f"URL={url}\nTOKEN={token}\nHUD=https://saturdayagenticai.vercel.app/vercel-web/"
+                         f"?api={url}&token={token}\n")
         except Exception:
             pass
 

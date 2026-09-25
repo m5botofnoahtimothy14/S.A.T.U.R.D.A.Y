@@ -72,9 +72,15 @@ class DashboardServer:
         self._thread = None
 
     def share(self, token: str = "") -> Dict[str, Any]:
-        """Internet-share mode: ALL routes require the token. Returns it (show once)."""
+        """Internet-share mode: ALL routes require the token. Returns it (show once).
+
+        Idempotent: sharing twice without a new token KEEPS the current one
+        (prevents concurrent callers from desyncing URL files vs memory).
+        Pass an explicit token (or unshare first) to rotate."""
         import secrets as _secrets
 
+        if self.shared and self.token and not token:
+            return {"success": True, "token": self.token, "note": "already shared"}
         if not token:
             token = _secrets.token_urlsafe(24)
         self.token = token

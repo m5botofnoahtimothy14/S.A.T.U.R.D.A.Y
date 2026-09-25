@@ -14,7 +14,8 @@ faster-whisper>=1.0.0
 paho-mqtt>=1.6
 pyserial>=3.5
 # Senses + identity (real local camera + signal processing, all offline)
-opencv-contrib-python>=4.8  # LBPH face recognition needs contrib
+# ONLY this opencv package — plain/headless fight over cv2/ and break the exe.
+opencv-contrib-python==4.13.0.90
 numpy>=1.26,<3
 scipy>=1.11
 onnxruntime>=1.17

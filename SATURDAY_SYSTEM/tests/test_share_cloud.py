@@ -54,6 +54,8 @@ class TestShareAuth(TestCase):
             tok = srv.share()["token"]
             TOK[0] = tok
             self.assertTrue(len(tok) > 20)
+            again = srv.share()["token"]
+            self.assertEqual(again, tok)  # idempotent: no rotation, no desync
             code, _ = req(port, "/api/status")
             self.assertEqual(code, 403)  # locked now
             code, ok = req(port, f"/api/status?token={tok}")
