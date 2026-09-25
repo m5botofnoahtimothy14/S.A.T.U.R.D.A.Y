@@ -220,6 +220,13 @@ def main():
     try:
         passphrase = prompt_passphrase()
         core = SATURDAYCore(passphrase=passphrase, project_root=PROJECT_ROOT)
+        # Server legs arm from env BEFORE session boot (memory only):
+        # Firebase RTDB presence/commands + tunnel persist live in AlwaysOnServer.
+        _sa = os.getenv("FIREBASE_SERVICE_ACCOUNT", "")
+        _db = os.getenv("FIREBASE_DATABASE_URL", "")
+        if _sa or _db:
+            core.cloud_config = {"service_account": _sa, "database_url": _db,
+                                 "node": os.getenv("FIREBASE_NODE_ID", "saturday-node")}
         core.initialize()
         logger.info("SATURDAY Core initialized successfully.")
 

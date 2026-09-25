@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SATURDAY // NEURAL HUD</title>
+<title>SATURDAY // CONTROL PLANE</title>
 <style>
 :root{
   --bg:#020409; --glass:rgba(13,22,38,.72); --line:rgba(34,211,238,.25);
@@ -61,7 +61,7 @@ footer{position:relative; z-index:1; text-align:center; color:var(--dim); font-s
 <div id="boot"><h1>SATURDAY</h1><div id="bootlog">initializing…</div></div>
 <header>
   <canvas id="core" width="116" height="116"></canvas>
-  <h1>SATURDAY<small>NEURAL HUD // LOCAL ONLY</small></h1>
+  <h1>SATURDAY<small>CONTROL PLANE // REPORTS · HEALTH · MAINTENANCE</small></h1>
   <div id="conn" class="off">CONNECTING…</div>
 </header>
 <main>
@@ -75,6 +75,9 @@ footer{position:relative; z-index:1; text-align:center; color:var(--dim); font-s
       <button data-bot="spinleft">⟲</button><button data-bot="back">▼</button><button data-bot="spinright">⟳</button></div>
   </div>
   <div class="card"><h2>◆ MIND + TASKS</h2><div id="mind">…</div><div id="inbox"></div><div id="tasks"></div></div>
+  <div class="card"><h2>✚ MAINTENANCE</h2>
+    <div class="chips"><button data-c="heal">HEAL</button><button data-c="services">SERVICES</button><button data-c="botstatus">BOT LINK</button><button data-c="share status">TUNNEL</button><button data-c="inbox">INBOX</button><button data-c="glow off">GLOW OFF</button></div>
+    <div id="serverline" class="dim" style="font-size:12px;margin-top:8px">server: …</div></div>
   <div class="card" id="console"><h2>◆ COMMAND CONSOLE</h2>
     <div id="out"><div class="sys">HUD online. Everything here runs on the real core.</div></div>
     <div class="row"><input id="cmd" placeholder="status | who | sense | research … | heal | glow off" autocomplete="off"><button id="send">EXEC</button></div>
@@ -144,6 +147,11 @@ async function refresh(){
     $('inbox').innerHTML=(tk.inbox||[]).length?'<div class="dim">INBOX</div>'+tk.inbox.map(i=>`<div>[${esc(i.id)}|p${i.priority}|${esc(i.status)}] ${esc(i.text)}</div>`).join(''):'';
     $('tasks').innerHTML=(tk.tasks||[]).length?tk.tasks.slice(-5).reverse().map(x=>`<div>${esc(x)}</div>`).join(''):'<span class="dim">none yet</span>';
     $('mind').innerHTML=kv('DND',(ses.dnd||idn.dnd)?'<b class="warn">ON</b>':'<b class="dim">off</b>')+kv('Bg jobs',`<b>${ses.queued??0}</b>`);
+    const sv=ses.server||{};
+    const tn=(sv.tunnel||{}).url||'';
+    $('serverline').textContent='server: '+(tn?('tunnel '+tn):'tunnel off')
+      +' • rtdb '+(sv.rtdb?'ONLINE':'offline')
+      +' • heartbeat '+(sv.last_heartbeat_s_ago==null?'—':sv.last_heartbeat_s_ago+'s ago');
     const lg=await api('/api/log');
     $('elog').innerHTML=lg.events.length?lg.events.slice(-8).reverse().map(e=>`<div><span class="dim">${new Date(e.ts*1000).toLocaleTimeString()}</span> ${esc(e.message)}</div>`).join(''):'<span class="dim">—</span>';
     try{const f=await api('/api/frame');

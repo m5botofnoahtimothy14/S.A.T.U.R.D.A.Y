@@ -105,6 +105,7 @@ class SATURDAYCore:
             "briefing": self._handle_briefing,
             "announce": self._handle_announce,
             "share": self._handle_share,
+            "server": self._handle_server,
             "cloudsetup": self._handle_cloudsetup,
             "cloudbackup": self._handle_cloudbackup,
             "cloudrestore": self._handle_cloudrestore,
@@ -973,6 +974,21 @@ class SATURDAYCore:
             self._share_obj = ShareLink()
         return self._share_obj
 
+    def _handle_server(self, args, raw_text):
+        session = getattr(self, "session", None)
+        if session is None or session.server is None:
+            return "🛰️ Server layer not running (session degraded)."
+        st = session.server.status()
+        tn = st.get("tunnel", {})
+        lines = ["🛰️ Always-on server (separate from the humanoid):",
+                 f"   Tunnel: {'LIVE '+tn.get('url','') if tn.get('running') else 'off'}"
+                 f" (persist {'on' if st.get('persist') else 'off'})",
+                 f"   RTDB presence/commands: {'ONLINE' if st.get('rtdb') else 'offline (no Firebase creds)'}"]
+        if st.get("last_heartbeat_s_ago") is not None:
+            lines.append(f"   Last heartbeat: {st['last_heartbeat_s_ago']}s ago")
+        lines.append("   Humanoid runs on top of this — `services` shows the body.")
+        return "\n".join(lines)
+
     def _handle_share(self, args, raw_text):
         arg = (args[0].lower() if args else "status")
         link = self._share_link()
@@ -986,6 +1002,12 @@ class SATURDAYCore:
             res = link.start(port, hostname=hostname)
             if not res.get("success"):
                 return f"❌ Share failed: {res.get('error')}"
+            try:
+                session = getattr(self, "session", None)
+                if session is not None:
+                    session._write_share_url(res["url"], tok.get("token", ""))
+            except Exception:
+                pass
             return (f"🌐 SATURDAY is ONLINE: {res['url']}\n"
                     f"   🔑 Token (show once, guard it): {tok.get('token', '')}\n"
                     f"   Open {res['url']}?token=TOKEN on your phone.\n"
@@ -1317,6 +1339,7 @@ class SATURDAYCore:
             " - briefing / announce [text] : Spoken status / proclamation.\n"
             "Online (free) + cloud DB:\n"
             " - share [on|off] : Public tunnel URL + token for your phone.\n"
+            " - server : Always-on layer status (tunnel + RTDB, not the AI).\n"
             " - cloudsetup/cloudbackup/cloudrestore : Encrypted Firebase backup.\n"
             " - help : Show this help text."
         )

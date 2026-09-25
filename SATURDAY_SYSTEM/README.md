@@ -218,6 +218,16 @@ DB URL: `https://aegis-os-75256-default-rtdb.asia-southeast1.firebasedatabase.ap
 card verified at signup only) → install Python + Ollama + this repo.
 Nothing here assumes a cloud — the PC remains the primary brain.
 
+## 🛰️ Architecture: server vs humanoid (v2.0.0)
+
+- **Always-on server** (`saturday/server.py`): tunnel + persist watchdog,
+  RTDB presence heartbeat + untrusted command inbox. Carries bytes only —
+  never holds the passphrase, never decides. `server` shows its truth.
+- **Humanoid** (brain, voice, hands, mind, presence): lives on this PC,
+  thinks and acts, speaks like a person.
+- **Website/HUD**: pure CONTROL plane — reports, checks, health,
+  maintenance. No AI chat lives there; commands are control inputs.
+
 ## 🛡️ Security Best Practices
 
 1.  **Memory Wiping:** CPython doesn't guarantee immediate memory clearing, but the system uses `ctypes` as a best-effort to wipe passphrase strings.

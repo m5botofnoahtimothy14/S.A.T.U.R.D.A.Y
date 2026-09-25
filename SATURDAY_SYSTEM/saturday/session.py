@@ -148,6 +148,7 @@ class SessionManager:
         self.healer = None
         self.presence = None
         self.voice_gate = None
+        self.server = None
         self._startup_hello_thread = None
         self.inbox: List[Dict[str, Any]] = []
         self._inbox_seq = 0
@@ -191,6 +192,7 @@ class SessionManager:
         self._bg("voice-gate", self._start_voice_gate)
         self._bg("presence-start", self._start_presence)
         self._bg("startup-hello", self._startup_hello)
+        self._bg("server-start", self._start_server)
         import os as _os
         if _os.getenv("SATURDAY_SHARE_PERSIST", "") == "1":
             self.share_persist = True
@@ -353,6 +355,16 @@ class SessionManager:
         except Exception as e:
             logger.warning(f"Startup hello failed: {e}")
 
+    def _start_server(self):
+        try:
+            from saturday.server import AlwaysOnServer
+
+            self.server = AlwaysOnServer(self.core, self)
+            self.server.start()
+            logger.info("Session: always-on server live (tunnel + RTDB).")
+        except Exception as e:
+            logger.warning(f"Server start failed: {e}")
+
     # -- share keep-alive: tunnel stays up for months --------------------------
     def ensure_shared(self) -> dict:
         """Dashboard + token + tunnel, idempotent. Returns {url, token} or error."""
@@ -371,6 +383,16 @@ class SessionManager:
         except Exception as e:
             return {"success": False, "error": str(e)[:200]}
 
+    def _write_share_url(self, url: str, token: str) -> None:
+        """Persist the current public URL so it's never lost in scrollback."""
+        try:
+            from pathlib import Path as _P
+            p = _P(self.core.pmv.project_root) / "share_url.txt"
+            p.write_text(f"URL={url}\nTOKEN={token}\nHUD=https://saturdayagenticai.vercel.app"
+                         f"/?api={url}&token={token}\n")
+        except Exception:
+            pass
+
     def _share_watch_loop(self):
         while not self._dead:
             try:
@@ -378,7 +400,12 @@ class SessionManager:
                     link = self.core._share_link()
                     if not link.running:
                         res = self.ensure_shared()
+                        if res.get("success"):
+                            self._write_share_url(res["url"], res.get("token", ""))
                         logger.info(f"Share watch: {res.get('url', res.get('error'))}")
+                    elif link.url:
+                        self._write_share_url(link.url,
+                                              getattr(self.core._dashboard, "token", ""))
             except Exception as e:
                 logger.debug(f"Share watch failed: {e}")
             self._stop_watch_wait(30.0)
@@ -569,6 +596,10 @@ class SessionManager:
             "known_faces": gallery_names,
             "glow": (self.glow.current() if self.glow and self.glow.enabled else "off"),
             "healer": ("on" if self.healer and self.healer._thread else "off"),
+            "server": (self.server.status() if self.server else
+                       {"tunnel": {"running": False, "url": ""}, "rtdb": False,
+                        "persist": self.share_persist}),
+            "server": (self.server.status() if self.server else {"tunnel": {}, "rtdb": False}),
             "presence": (self.presence.status() if self.presence else {"running": False}),
             "voice_gate": (self.voice_gate.stats() if self.voice_gate else {}),
         }
@@ -580,6 +611,11 @@ class SessionManager:
         try:
             if self.presence:
                 self.presence.stop()
+        except Exception:
+            pass
+        try:
+            if self.server:
+                self.server.stop()
         except Exception:
             pass
         try:
