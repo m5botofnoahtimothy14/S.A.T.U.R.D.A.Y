@@ -83,6 +83,24 @@ class TestSenses(TestCase):
         self.assertEqual(senses.today_total(old, now), 0.0)
         print("DONE: hydration test passed.")
 
+    def test_missing_cascade_fails_once_quietly(self):
+        import saturday.senses as _s
+        blank = np.zeros((480, 640, 3), dtype=np.uint8)
+        old_ok, old_cas = _s._face_ok, _s._face_cascade
+        try:
+            _s._face_ok = False
+            _s._face_cascade = None
+            r1 = senses.find_faces(blank)
+            r2 = senses.find_faces(blank)
+            self.assertFalse(r1["success"])
+            self.assertIn("unavailable", r1["error"])
+            self.assertFalse(r2["success"])
+            vals, seen = senses.forehead_series([blank])
+            self.assertEqual((vals, seen), ([], 0))
+        finally:
+            _s._face_ok, _s._face_cascade = old_ok, old_cas
+        print("DONE: missing-cascade test passed.")
+
 
 if __name__ == "__main__":
     test_main(verbosity=2)

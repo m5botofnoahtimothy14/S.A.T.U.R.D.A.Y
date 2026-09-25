@@ -121,6 +121,7 @@ def capture_series(seconds: float, fps_target: float = 30.0,
 # -- people & faces ------------------------------------------------------
 _hog = None
 _face_cascade = None
+_face_ok = None  # None=untested, True/False cached (a broken cascade must fail ONCE, not per frame)
 
 
 def _hog_detector():
@@ -132,10 +133,23 @@ def _hog_detector():
 
 
 def _face_detector():
-    global _face_cascade
+    """Haar cascade or None (missing XML in frozen builds fails once, loudly)."""
+    global _face_cascade, _face_ok
+    if _face_ok is False:
+        return None
     if _face_cascade is None:
         path = Path(cv2.data.haarcascades) / "haarcascade_frontalface_default.xml"
+        if not path.exists():
+            _face_ok = False
+            logger.warning(f"Face model XML missing: {path} (frozen build needs cv2/data).")
+            return None
         _face_cascade = cv2.CascadeClassifier(str(path))
+        if _face_cascade.empty():
+            _face_ok = False
+            _face_cascade = None
+            logger.warning("Face cascade loaded empty — face detection unavailable.")
+            return None
+        _face_ok = True
     return _face_cascade
 
 
@@ -156,6 +170,8 @@ def find_faces(frame) -> Dict[str, Any]:
     missing = _need_cv()
     if missing:
         return missing
+    if _face_detector() is None:
+        return {"success": False, "error": "Face model unavailable (missing cascade XML)."}
     try:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         raw = _face_detector().detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5,
@@ -220,6 +236,8 @@ def mood(frame, model_path: Optional[str] = None) -> Dict[str, Any]:
 def forehead_series(frames: list) -> Tuple[list, int]:
     """Green-channel mean of the forehead ROI per frame. Returns (values, faces_seen)."""
     values: list = []
+    if _face_detector() is None:
+        return values, 0
     seen = 0
     for frame in frames:
         small = cv2.resize(frame, (320, 240))

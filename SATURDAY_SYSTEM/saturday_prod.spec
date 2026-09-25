@@ -16,6 +16,15 @@ from PyInstaller.utils.hooks import collect_data_files
 
 SYS = os.path.dirname(os.path.abspath(SPEC)) if "SPEC" in globals() else os.getcwd()
 
+try:
+    import cv2 as _cv_build
+
+    _CV_DATA = os.path.join(os.path.dirname(_cv_build.__file__), "data")
+except Exception:
+    _CV_DATA = None
+
+_cv_datas = [(_CV_DATA, "cv2/data")] if _CV_DATA and os.path.isdir(_CV_DATA) else []
+
 a = Analysis(
     [os.path.join(SYS, "main.py")],
     pathex=[SYS],
@@ -27,6 +36,7 @@ a = Analysis(
         (os.path.join(SYS, ".env.example"), "."),
         (os.path.join(SYS, "README.md"), "."),
     ]
+    + _cv_datas
     + collect_data_files("sounddevice")
     + collect_data_files("faster_whisper"),
     hiddenimports=[
