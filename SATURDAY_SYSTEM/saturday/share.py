@@ -84,6 +84,7 @@ class ShareLink:
         self.port = 0
         self._reader = None
         self._lines: list = []
+        self._start_lock = threading.Lock()
 
     @property
     def running(self) -> bool:
@@ -93,7 +94,13 @@ class ShareLink:
         """Quick tunnel (rotating URL) or --hostname stable endpoint (free account).
 
         Quick-tunnel issuance can take minutes when Cloudflare rate-limits
-        rapid creation — generous defaults keep `share on` honest."""
+        rapid creation — generous defaults keep `share on` honest.
+        Single-flight: concurrent callers (user + watchdog) can never
+        launch two tunnels for one dashboard."""
+        with self._start_lock:
+            return self._start_inner(port, timeout, hostname)
+
+    def _start_inner(self, port: int, timeout: float, hostname: str) -> Dict[str, Any]:
         if self.running:
             return {"success": True, "url": self.url, "note": "already shared"}
         if not self.binary:
