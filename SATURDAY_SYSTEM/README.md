@@ -191,19 +191,24 @@ Once active, the SATURDAY CLI accepts the following:
 | `assign` / `inbox` / `briefing` / `announce` | Self-tasking + voice comms. |
 | `share` / `cloudsetup` / `cloudbackup` | Free tunnel online + encrypted cloud DB. |
 
-## 🌐 Online server + cloud DB + deployment (v1.9.0, all free)
+## 🌐 Online server + cloud DB + deployment (v2.1.0, all free)
 
-**Phone access (now):** in SATURDAY run `share on` → open the printed
-`https://*.trycloudflare.com/?token=TOKEN` on your phone. Token auth is
-enforced on every route. `share persist` re-opens drops for months;
-`share off` kills everything. No account, no card, outbound-only tunnel.
+**Fused setup (open the site = instantly live, no pasting):**
+1. `cloudflared tunnel login` (one browser click, free account).
+2. In `.env`: `SATURDAY_SHARED_TOKEN=<40 random chars you invent>`.
+3. In SATURDAY: `share on yourname.cfargotunnel.com` (stable forever).
+4. Vercel → project → Settings → Environment Variables:
+   `SAT_API=https://yourname.cfargotunnel.com`,
+   `SAT_TOKEN=<same token>`, `SAT_PIN=<a PIN you invent>` → Redeploy.
+5. Open `https://<you>.vercel.app` → LIVE. PIN asked once per tab.
+   Token never touches the browser; long brain jobs still use CLI/direct.
 
-**Stable address:** `cloudflared tunnel login` (one browser click, free
-account) → `share on mybot.cfargotunnel.com`. No more rotating URLs.
+**Phone/quick mode (no accounts at all):** `share on` → printed
+`https://*.trycloudflare.com/?token=TOKEN`. `share persist` re-opens
+drops; `share off` kills everything. Outbound-only tunnel.
 
 **Vercel HUD:** `cd vercel-web && python sync.py && npx vercel --prod`
-(free hobby, no card). Set `SATURDAY_CORS_ORIGIN=https://<you>.vercel.app`,
-then open `https://<you>.vercel.app/?api=TUNNEL_URL&token=TOKEN`.
+(free hobby, no card). Direct mode still works via the LINK bar.
 
 **Firebase cloud DB (project aegis-os-75256, region asia-southeast1):**
 DB URL: `https://aegis-os-75256-default-rtdb.asia-southeast1.firebasedatabase.app`

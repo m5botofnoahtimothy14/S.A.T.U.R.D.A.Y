@@ -76,13 +76,16 @@ class DashboardServer:
 
         Idempotent: sharing twice without a new token KEEPS the current one
         (prevents concurrent callers from desyncing URL files vs memory).
-        Pass an explicit token (or unshare first) to rotate."""
+        Pass an explicit token (or unshare first) to rotate.
+        SATURDAY_SHARED_TOKEN env pins one permanent token so Vercel/front
+        doors never need re-linking after restarts."""
+        import os as _os
         import secrets as _secrets
 
         if self.shared and self.token and not token:
             return {"success": True, "token": self.token, "note": "already shared"}
         if not token:
-            token = _secrets.token_urlsafe(24)
+            token = _os.getenv("SATURDAY_SHARED_TOKEN", "") or _secrets.token_urlsafe(24)
         self.token = token
         self.shared = True
         self.note("server", "Internet share ON — token required on all routes.")

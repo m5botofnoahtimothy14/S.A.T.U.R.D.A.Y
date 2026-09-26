@@ -1,6 +1,6 @@
 {
     "system_name": "SATURDAY-PMV-UNIT-01",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "security": {
         "auto_lock_timeout": 300,
         "encryption_algorithm": "Fernet/AES-128-CBC+HMAC",

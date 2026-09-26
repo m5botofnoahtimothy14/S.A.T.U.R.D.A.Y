@@ -113,9 +113,17 @@ const API=(QS.get('api')||localStorage.getItem('sat_api')||'').replace(/\/$/,'')
 const TOKEN=QS.get('token')||localStorage.getItem('sat_token')||'';
 if(QS.get('api'))localStorage.setItem('sat_api',QS.get('api'));
 if(QS.get('token'))localStorage.setItem('sat_token',QS.get('token'));
+let PIN=sessionStorage.getItem('sat_pin')||'';
 async function api(path,opts){opts=opts||{};opts.headers=opts.headers||{};
   if(TOKEN)opts.headers['X-Saturday-Token']=TOKEN;
-  const r=await fetch(API+path,opts);if(!r.ok)throw new Error(r.status);return r.json();}
+  if(PIN)opts.headers['X-Sat-Pin']=PIN;
+  let r=await fetch(API+path,opts);
+  if(r.status===401&&!opts._retried){
+    const p=prompt('Site PIN:');
+    if(p){PIN=p;sessionStorage.setItem('sat_pin',p);opts._retried=true;
+      opts.headers['X-Sat-Pin']=p;r=await fetch(API+path,opts);}
+  }
+  if(!r.ok)throw new Error(r.status);return r.json();}
 function setConn(on,txt){const e=$('conn');e.className=on?'on':'off';e.textContent=txt;}
 function pill(v){return `<b class="${v?'ok':'bad'}">${v?'ONLINE':'OFFLINE'}</b>`;}
 function kv(k,v){return `<div class="kv"><span class="dim">${k}</span><span>${v}</span></div>`;}

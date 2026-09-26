@@ -56,9 +56,15 @@ class TestShareAuth(TestCase):
             self.assertTrue(len(tok) > 20)
             again = srv.share()["token"]
             self.assertEqual(again, tok)  # idempotent: no rotation, no desync
+            with patch.dict("os.environ", {"SATURDAY_SHARED_TOKEN": "FIXED-123"}):
+                srv.unshare()
+                pinned = srv.share()["token"]
+                self.assertEqual(pinned, "FIXED-123")
+                self.assertEqual(srv.share()["token"], "FIXED-123")
+            TOK[0] = "FIXED-123"  # token is now the pinned one
             code, _ = req(port, "/api/status")
             self.assertEqual(code, 403)  # locked now
-            code, ok = req(port, f"/api/status?token={tok}")
+            code, ok = req(port, f"/api/status?token={TOK[0]}")
             self.assertEqual(code, 200)
             self.assertTrue(ok["online"])
             code, _ = req(port, "/api/command", post={"command": "x"})
