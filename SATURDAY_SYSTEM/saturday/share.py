@@ -148,9 +148,12 @@ class ShareLink:
 
         Fresh trycloudflare names can NXDOMAIN locally for minutes
         (Windows caches the negative) — flush once, then poll patiently.
+        Any HTTP status (even 403 behind the token gate) proves the edge
+        routes to us; only connection failures mean dead.
         """
         import time as _t
         import urllib.request as _u
+        import urllib.error as _e
 
         try:
             import subprocess as _sp
@@ -161,8 +164,10 @@ class ShareLink:
         while _t.time() < deadline and self.running:
             try:
                 with _u.urlopen(self.url + "/api/status", timeout=10) as r:
-                    if r.status in (200, 403):
-                        return True
+                    return True
+            except _e.HTTPError as he:
+                if he.code in (200, 401, 403, 404):
+                    return True
             except Exception:
                 pass
             _t.sleep(5.0)

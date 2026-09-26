@@ -87,6 +87,8 @@ class HomeBotLink:
         self.latest_status: Dict[str, Any] = {}
         self.latest_sensors: Dict[str, Any] = {}
         self.logs: List[Dict[str, Any]] = []
+        self._patrol_stop = threading.Event()
+        self._patrol_thread = None
         self._stop_event = threading.Event()
         self._supervisor = None
         if autostart:
@@ -103,6 +105,10 @@ class HomeBotLink:
 
     def stop(self):
         self._stop_event.set()
+        try:
+            self.cancel_patrol()
+        except Exception:
+            pass
         try:
             if self.client:
                 self.client.loop_stop()
@@ -234,6 +240,8 @@ class HomeBotLink:
     def command(self, name: str, duration: float = 1.0, speed: int = 80) -> Dict[str, Any]:
         name = (name or "").strip().lower()
         if name in ("stop", "halt", "estop"):
+            self.cancel_patrol()  # any stop kills a running patrol first
+        if name in ("stop", "halt", "estop"):
             return self._send({"stop": True} if name == "stop" else
                               ({"emergency_stop": True} if name == "estop" else {"stop": True}),
                               label="STP", duration=0)
@@ -307,4 +315,53 @@ class HomeBotLink:
                     "telemetry": self.latest_status,
                     "sensors": self.latest_sensors,
                     "ports": scan_ports(),
-                    "recent_logs": self.logs[-10:]}
+                    "recent_logs": self.logs[-10:],
+                    "patrolling": bool(self._patrol_thread and self._patrol_thread.is_alive())}
+
+    # -- patrol: SATURDAY-side autonomous wandering (MQTT) -----------------------
+    def patrol(self, minutes: float = 2.0, speed: int = 50) -> Dict[str, Any]:
+        """Roam safely on its own: random short moves, pauses, auto-stop.
+        `bot stop` (or estop) cancels instantly. One patrol at a time."""
+        if self._patrol_thread and self._patrol_thread.is_alive():
+            return {"status": "unavailable", "reason": "Already patrolling. `bot stop` first."}
+        with self.lock:
+            mqtt_ok = self.broker_connected and self.client is not None
+        if not mqtt_ok:
+            return {"status": "unavailable",
+                    "reason": "Patrol needs the MQTT link (bot silent). Try `bot autonomy_on` for on-device autonomy."}
+        minutes = min(max(float(minutes or 2.0), 0.1), 30.0)
+        self._patrol_stop.clear()
+        self._patrol_thread = threading.Thread(
+            target=self._patrol_loop, args=(minutes, int(speed)), daemon=True,
+            name="bot-patrol")
+        self._patrol_thread.start()
+        return {"status": "success", "minutes": minutes,
+                "message": f"Patrolling for {minutes:g} min. `bot stop` cancels."}
+
+    def cancel_patrol(self):
+        self._patrol_stop.set()
+
+    def _patrol_loop(self, minutes: float, speed: int):
+        import random as _rand
+
+        moves = ["forward", "forward", "left", "right", "spinleft", "spinright", "back"]
+        end = time.time() + minutes * 60.0
+        self._log("info", f"Patrol started ({minutes:g} min).")
+        try:
+            while time.time() < end and not self._patrol_stop.is_set():
+                move = _rand.choice(moves)
+                dur = round(_rand.uniform(0.8, 2.0), 1)
+                self.command(move, duration=dur, speed=speed)
+                for _ in range(int(dur * 2) + 2):
+                    if self._patrol_stop.is_set():
+                        break
+                    time.sleep(0.5)
+                if self._patrol_stop.is_set():
+                    break
+                time.sleep(round(_rand.uniform(0.3, 1.0), 1))
+        finally:
+            try:
+                self._send({"stop": True}, "STP", 0)
+            except Exception:
+                pass
+            self._log("info", "Patrol ended (auto-stop sent).")

@@ -242,6 +242,18 @@ class TestCloudCommands(TestCase):
         self.assertGreaterEqual(reap_stale(8099), 0)
         print("DONE: reap stale test passed.")
 
+    def test_verify_accepts_locked(self):
+        import urllib.error
+        from saturday.share import ShareLink
+        link = ShareLink(binary="cloudflared")
+        link.url = "https://x.trycloudflare.com"
+        link.proc = MagicMock()
+        link.proc.poll.return_value = None
+        err403 = urllib.error.HTTPError(link.url, 403, "Forbidden", {}, None)
+        with patch("urllib.request.urlopen", side_effect=err403):
+            self.assertTrue(link._verify_public(timeout=5))
+        print("DONE: verify-locked test passed.")
+
     def test_share_on_with_hostname(self):
         core = self._core()
         core._dashboard = MagicMock()

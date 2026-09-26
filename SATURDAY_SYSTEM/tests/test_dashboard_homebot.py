@@ -139,6 +139,40 @@ class TestHomeBot(TestCase):
         self.assertEqual(res["status"], "unavailable")
         print("DONE: homebot unknown-cmd test passed.")
 
+    def _mqtt_link(self):
+        import paho.mqtt.client as mqtt_mod
+        link = HomeBotLink(broker="127.0.0.1", autostart=False)
+        fake_client = MagicMock()
+        fake_info = MagicMock()
+        fake_info.rc = mqtt_mod.MQTT_ERR_SUCCESS
+        fake_client.publish.return_value = fake_info
+        link.client = fake_client
+        link.broker_connected = True
+        return link, fake_client
+
+    def test_patrol_moves_and_autostops(self):
+        import json as _json
+        link, fake_client = self._mqtt_link()
+        res = link.patrol(minutes=0.1, speed=50)
+        self.assertEqual(res["status"], "success")
+        busy = link.patrol(minutes=1)
+        self.assertEqual(busy["status"], "unavailable")
+        link._patrol_thread.join(timeout=15)
+        topics = [c[0][0] for c in fake_client.publish.call_args_list]
+        self.assertTrue(all(t == CMD_TOPIC for t in topics))
+        last = _json.loads(fake_client.publish.call_args_list[-1][0][1])
+        self.assertTrue(last.get("stop"))
+        print("DONE: patrol auto-stop test passed.")
+
+    def test_stop_cancels_patrol(self):
+        link, _ = self._mqtt_link()
+        res = link.patrol(minutes=5, speed=50)
+        self.assertEqual(res["status"], "success")
+        link.command("stop")
+        link._patrol_thread.join(timeout=10)
+        self.assertFalse(link._patrol_thread.is_alive())
+        print("DONE: patrol cancel test passed.")
+
     def test_own_echo_does_not_mark_seen(self):
         link = HomeBotLink(broker="", autostart=False)
         msg = MagicMock()

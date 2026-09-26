@@ -361,8 +361,8 @@ class SATURDAYCore:
     def _handle_bot(self, args, raw_text):
         if not args:
             return ("❌ Usage: bot <forward|back|left|right|spinleft|spinright|stop|"
-                    "autonomy_on|autonomy_off|express WORD> [seconds] [speed]. "
-                    "Example: bot forward 2 80")
+                    "patrol|autonomy_on|autonomy_off|express WORD> [seconds] [speed]. "
+                    "Example: bot forward 2 80 | bot patrol 3")
         name = args[0]
         if name == "express" and len(args) > 1:
             name = "express " + " ".join(args[1:])
@@ -376,6 +376,11 @@ class SATURDAYCore:
                 speed = int(args[2]) if len(args) > 2 else 80
             except ValueError:
                 return "❌ Speed must be 0-100."
+        if name == "patrol":
+            res = self._homebot_link().patrol(minutes=duration, speed=speed)
+            if res.get("status") == "success":
+                return f"🤖 {res['message']}"
+            return f"❌ {res.get('reason', res.get('status'))}"
         res = self._homebot_link().command(name, duration=duration, speed=speed)
         if res.get("status") == "success":
             return f"🤖 Bot {res['command']} via {res.get('via')}."
