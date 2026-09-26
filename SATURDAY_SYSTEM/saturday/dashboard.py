@@ -181,6 +181,21 @@ def _frame_payload(ref: DashboardServer) -> Dict[str, Any]:
         return {"available": False, "error": str(e)[:120]}
 
 
+def _mic_payload(ref: DashboardServer) -> Dict[str, Any]:
+    """Live mic activity for the HUD meter (clap-listener stream levels)."""
+    try:
+        session = getattr(ref.core, "session", None)
+        claps = getattr(session, "claps", None) if session else None
+        if claps is None:
+            return {"live": False, "reason": "clap listener not running"}
+        st = claps.status()
+        return {"live": bool(st.get("live")), "floor": st.get("noise_floor", 0),
+                "peak": st.get("peak", 0), "peak_age_s": st.get("peak_age_s", 0),
+                "singles": st.get("singles", 0), "doubles": st.get("doubles", 0)}
+    except Exception as e:
+        return {"live": False, "error": str(e)[:120]}
+
+
 class _Handler(BaseHTTPRequestHandler):
     def __init__(self, *args, server_ref: DashboardServer = None, **kwargs):
         self.server_ref = server_ref
@@ -255,14 +270,16 @@ class _Handler(BaseHTTPRequestHandler):
                 except Exception:
                     pass
                 return self._send(200, {"tasks": items, "inbox": inbox})
-            if self.path == "/api/homebot":
+            if route == "/api/homebot":
                 if ref.homebot_link:
                     return self._send(200, ref.homebot_link.status())
                 return self._send(200, {"error": "homebot link not started"})
-            if self.path == "/api/log":
+            if route == "/api/log":
                 return self._send(200, {"events": ref.events[-50:]})
-            if self.path == "/api/frame":
+            if route == "/api/frame":
                 return self._send(200, _frame_payload(ref))
+            if route == "/api/miclevel":
+                return self._send(200, _mic_payload(ref))
             return self._send(404, {"error": "unknown route"})
         except Exception as e:
             ref.note("error", f"GET {self.path}: {e}")
@@ -273,13 +290,15 @@ class _Handler(BaseHTTPRequestHandler):
         try:
             if not ref._authorized(self):
                 return self._send(403, {"error": "token required (X-Saturday-Token)"})
+            import urllib.parse as _up2
+            route = _up2.urlparse(self.path).path
             length = min(int(self.headers.get("Content-Length", 0) or 0), MAX_BODY)
             raw = self.rfile.read(length) if length else b""
             try:
                 data = json.loads(raw.decode() or "{}")
             except Exception:
                 return self._send(400, {"error": "invalid JSON"})
-            if self.path == "/api/command":
+            if route == "/api/command":
                 cmd = str(data.get("command", "")).strip()
                 if not cmd:
                     return self._send(400, {"error": "empty command"})
@@ -291,7 +310,7 @@ class _Handler(BaseHTTPRequestHandler):
                     out = f"❌ System Error: {e}"
                 ref.note("cmd", cmd[:120])
                 return self._send(200, {"response": out})
-            if self.path == "/api/homebot":
+            if route == "/api/homebot":
                 if not ref.homebot_link:
                     return self._send(200, {"status": "unavailable",
                                             "reason": "homebot link not started"})

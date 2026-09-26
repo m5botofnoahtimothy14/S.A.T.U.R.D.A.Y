@@ -80,6 +80,27 @@ class TestDashboard(TestCase):
             srv.stop()
         print("DONE: dashboard error-envelope test passed.")
 
+    def test_query_routes_and_miclevel(self):
+        core = fake_core()
+        core.session = None
+        srv = DashboardServer(core, port=0)
+        srv.start()
+        try:
+            port = srv.port
+            tok = srv.share()["token"]
+            # Token-in-query must route, not 404 (phone HUD uses ?token=).
+            code, out = http_get(port, f"/api/homebot?token={tok}")
+            self.assertEqual(code, 200)
+            code, out = http_get(port, f"/api/log?token={tok}")
+            self.assertEqual(code, 200)
+            code, out = http_get(port, f"/api/miclevel?token={tok}")
+            self.assertEqual(code, 200)
+            self.assertIn("live", out)
+            self.assertFalse(out["live"])  # no session/claps here
+        finally:
+            srv.stop()
+        print("DONE: query-route + miclevel test passed.")
+
 
 class TestHomeBot(TestCase):
     def test_no_hardware_honest(self):

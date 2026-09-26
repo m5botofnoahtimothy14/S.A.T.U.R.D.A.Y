@@ -97,12 +97,17 @@ class SelfHeal:
         except Exception as e:
             out.append(self._bad("camera", str(e)[:100]))
         # Dashboard: re-ping, restart server object if silent.
+        # Token-aware: a shared dashboard 403s strangers but answers its token.
         try:
             dash = self.core._dashboard
             alive = False
             if dash and dash.running:
                 import urllib.request
-                with urllib.request.urlopen(dash.url() + "api/status", timeout=4) as r:
+                headers = {}
+                if getattr(dash, "shared", False) and getattr(dash, "token", ""):
+                    headers["X-Saturday-Token"] = dash.token
+                req = urllib.request.Request(dash.url() + "api/status", headers=headers)
+                with urllib.request.urlopen(req, timeout=4) as r:
                     alive = r.status == 200
             if alive:
                 out.append(self._ok("dashboard", dash.url()))

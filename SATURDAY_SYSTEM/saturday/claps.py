@@ -37,12 +37,16 @@ FLOOR_ATTACK = 0.02  # noise floor tracks quiet slowly, never chases claps.
 class ClapListener:
     def __init__(self, on_single: Optional[Callable] = None,
                  on_double: Optional[Callable] = None,
-                 samplerate: int = 16000, threshold_ratio: float = 8.0):
+                 samplerate: int = 16000, threshold_ratio: float = 8.0,
+                 device=None):
         self.on_single = on_single
         self.on_double = on_double
         self.samplerate = samplerate
         self.threshold_ratio = threshold_ratio
+        self.device = device
         self.floor = 60.0
+        self.peak = 0.0
+        self.peak_at = 0.0
         self.last_hit = 0.0
         self.pending_single = 0.0
         self.lockout_until = 0.0
@@ -63,6 +67,11 @@ class ClapListener:
         peak = float(abs(x).max())
         rms = float((np.mean(x ** 2)) ** 0.5)
         now = time.time()
+        # Peak-hold meter (decays) — drives the HUD mic activity bar.
+        with self._lock:
+            if peak >= self.peak or now - self.peak_at > 1.0:
+                self.peak = peak
+                self.peak_at = now
         # Noise floor tracks quiet, never chases loud.
         if rms < self.floor * 3:
             self.floor += (rms - self.floor) * FLOOR_ATTACK
@@ -103,11 +112,20 @@ class ClapListener:
             logger.warning(f"Clap callback failed: {e}")
 
     # -- live stream -----------------------------------------------------------
-    def start(self) -> Dict[str, Any]:
+    def start(self, device=None) -> Dict[str, Any]:
         if not _MIC_AVAILABLE:
             return {"success": False, "error": "mic backend missing"}
         if self._stream:
             return {"success": True, "note": "already listening"}
+        if device is None:
+            device = self.device
+        if device is None:
+            try:
+                from saturday import ears as _ears
+                cands = _ears._candidate_inputs()
+                device = cands[0] if cands else None
+            except Exception:
+                device = None
         try:
             def cb(indata, frames, t, status):
                 try:
@@ -116,11 +134,12 @@ class ClapListener:
                     pass
 
             self._stream = sd.InputStream(samplerate=self.samplerate, channels=1,
-                                          dtype="float32", blocksize=2048, callback=cb)
+                                          dtype="float32", blocksize=2048,
+                                          callback=cb, device=device)
             self._stream.start()
             self.enabled = True
-            logger.info("Clap listener live.")
-            return {"success": True}
+            logger.info(f"Clap listener live (device {device}).")
+            return {"success": True, "device": device}
         except Exception as e:
             logger.warning(f"Clap stream failed: {e}")
             return {"success": False, "error": str(e)}
@@ -138,4 +157,6 @@ class ClapListener:
     def status(self) -> Dict[str, Any]:
         return {"enabled": self.enabled, "live": self._stream is not None,
                 "singles": self.singles, "doubles": self.doubles,
-                "noise_floor": round(self.floor, 1)}
+                "noise_floor": round(self.floor, 1),
+                "peak": round(self.peak, 1),
+                "peak_age_s": round(time.time() - self.peak_at, 1)}

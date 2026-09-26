@@ -65,6 +65,8 @@ class EdgeGlow:
         self._until = 0.0  # temporary pulse expiry
         self._base = "idle"
         self.enabled = False
+        self.click_through = False  # read-back verified, not assumed
+        self._hwnd_ref = 0
         self._lock = threading.Lock()
         self._stop = threading.Event()
         self._thread = None
@@ -126,24 +128,45 @@ class EdgeGlow:
             root.attributes("-topmost", True)
             sw, sh = root.winfo_screenwidth(), root.winfo_screenheight()
             root.geometry(f"{sw}x{sh}+0+0")
-            # PURE overlay: root bg pure black vanishes via Tk transparentcolor,
-            # canvas near-black (#000001) vanishes via layered colorkey=1.
-            # Only colored arcs remain. bg is ALWAYS a valid color string.
+            # PURE overlay, Tk-native path: root AND canvas are pure black,
+            # Tk's transparentcolor key removes black itself. No manual
+            # layered/colorkey calls — those fight Tk's style management
+            # and leave an opaque film over the screen.
             root.attributes("-transparentcolor", "black")
             root.configure(bg="black")
-            self._make_transparent(root)
             canvas = tk.Canvas(root, width=sw, height=sh, highlightthickness=0, bd=0,
-                               bg="#000001")
+                               bg="black", background="black")
             canvas.pack()
-            self._click_through(root)
+            self._hwnd_ref = self._hwnd(root)
+            self.click_through = self._click_through(root) and self.verify_click_through()
+            if not self.click_through:
+                logger.warning("Edge glow: click-through NOT verified — overlay may block input.")
             t = 0.0
+            frames = 0
             while not self._stop.is_set():
                 state = self.current()
                 cfg = STATES.get(state, STATES["idle"])
                 canvas.delete("all")
+                frames += 1
+                # Re-assert click-through: Tk can reset ex-style on redraws.
+                if frames % 24 == 0:
+                    try:
+                        self.click_through = (self._click_through(root)
+                                              and self.verify_click_through())
+                    except Exception:
+                        pass
                 if cfg["bands"]:
                     t += 0.09
                     brightness = pulse_brightness(state, t)
+                    # Thin full-perimeter lines (dim) + bright corner arcs:
+                    # reads as edge glow, stays 2px thin, screen untouched.
+                    line_col = band_colors(cfg["color"], 1, t * cfg["speed"],
+                                           brightness * 0.45)[0]
+                    m = EDGE
+                    canvas.create_line(m, m, sw - m, m, fill=line_col, width=1)
+                    canvas.create_line(m, sh - m, sw - m, sh - m, fill=line_col, width=1)
+                    canvas.create_line(m, m, m, sh - m, fill=line_col, width=1)
+                    canvas.create_line(sw - m, m, sw - m, sh - m, fill=line_col, width=1)
                     for i in range(cfg["bands"]):
                         col = band_colors(cfg["color"], 1, t * cfg["speed"],
                                           brightness * (1.0 - 0.22 * i))[0]
@@ -184,11 +207,34 @@ class EdgeGlow:
             logger.info("Edge glow off.")
 
     @staticmethod
+    def _hwnd(root) -> int:
+        """A Tk toplevel's winfo_id IS its HWND (GetParent returns 0/desktop
+        and silently targets the wrong window — the old click-block bug)."""
+        try:
+            return int(root.winfo_id())
+        except Exception:
+            return 0
+
+    def verify_click_through(self) -> bool:
+        """Read back WS_EX_TRANSPARENT — True only if clicks REALLY pass."""
+        try:
+            import ctypes
+            hwnd = self._hwnd_ref or 0
+            if not hwnd:
+                return False
+            ex = ctypes.windll.user32.GetWindowLongW(hwnd, -20)
+            return bool(ex & 0x20)
+        except Exception:
+            return False
+
+    @staticmethod
     def _make_transparent(root) -> bool:
         """Layered window: black alpha 0 → nothing shows except what we draw."""
         try:
             import ctypes
-            hwnd = ctypes.windll.user32.GetParent(root.winfo_id()) or root.winfo_id()
+            hwnd = EdgeGlow._hwnd(root)
+            if not hwnd:
+                return False
             gwl, layered, transparent = -20, 0x00080000, 0x00000020
             ex = ctypes.windll.user32.GetWindowLongW(hwnd, gwl)
             ok = ctypes.windll.user32.SetWindowLongW(hwnd, gwl, ex | layered | transparent)
@@ -205,12 +251,14 @@ class EdgeGlow:
         try:
             import ctypes
 
-            hwnd = ctypes.windll.user32.GetParent(root.winfo_id())
+            hwnd = EdgeGlow._hwnd(root)
+            if not hwnd:
+                return False
             gwl = -20
             layered, transparent = 0x80000, 0x20
             cur = ctypes.windll.user32.GetWindowLongW(hwnd, gwl)
-            ctypes.windll.user32.SetWindowLongW(hwnd, gwl, cur | layered | transparent)
-            return True
+            ok = ctypes.windll.user32.SetWindowLongW(hwnd, gwl, cur | layered | transparent)
+            return bool(ok)
         except Exception as e:
             logger.debug(f"Click-through unavailable: {e}")
             return False

@@ -68,6 +68,9 @@ footer{position:relative; z-index:1; text-align:center; color:var(--dim); font-s
   <div class="card"><h2>◆ CORE</h2><div id="coreStatus"><span class="dim">…</span></div></div>
   <div class="card"><h2>◆ IDENTITY — I KNOW YOU</h2><div id="ident"><span class="dim">…</span></div></div>
   <div class="card"><h2>◉ LIVE EYE</h2><img id="eye" alt="camera offline"><div id="eyeAge" class="dim" style="font-size:11px"></div></div>
+  <div class="card"><h2>♪ MIC ACTIVITY</h2>
+    <div style="background:#020409;border:1px solid var(--line);border-radius:8px;height:22px;overflow:hidden"><div id="micbar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div>
+    <div id="micnum" class="dim" style="font-size:11px;margin-top:4px">mic offline</div></div>
   <div class="card"><h2>◆ SUBSYSTEMS</h2><div id="subs"><span class="dim">…</span></div></div>
   <div class="card"><h2>◆ HOMEBOT CORE2</h2><div id="bot">…</div>
     <div class="pad"><span></span><button data-bot="forward">▲</button><span></span>
@@ -157,6 +160,11 @@ async function refresh(){
     try{const f=await api('/api/frame');
       if(f.available){$('eye').src='data:image/jpeg;base64,'+f.image;$('eyeAge').textContent='live • '+f.age_s+'s old';}
       else{$('eyeAge').textContent='camera offline';}}catch(e){}
+    try{const m=await api('/api/miclevel');
+      if(m.live){const pct=Math.min(100,Math.round((m.peak||0)/3000*100));
+        $('micbar').style.width=pct+'%';
+        $('micnum').textContent='level '+Math.round(m.peak||0)+' • floor '+Math.round(m.floor||0)+(m.peak_age_s<1?' • HEARING YOU':'');}
+      else{$('micbar').style.width='0%';$('micnum').textContent='mic offline ('+esc(String(m.reason||''))+')';}}catch(e){}
   }catch(e){failStreak++;setConn(false,'○ RETRY '+failStreak);timer=Math.min(15000,timer*1.5);}
   setTimeout(refresh,timer);
 }

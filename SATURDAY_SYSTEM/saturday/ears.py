@@ -43,7 +43,9 @@ except Exception as e:  # pragma: no cover
     _STT_AVAILABLE = False
     _STT_ERROR = str(e)
 
-STT_MODEL = os.getenv("SATURDAY_STT_MODEL", "tiny")
+STT_MODEL = os.getenv("SATURDAY_STT_MODEL", "base")
+MIC_GAIN = float(os.getenv("SATURDAY_MIC_GAIN", "2.0") or 2.0)
+MIC_DEVICE = os.getenv("SATURDAY_MIC_DEVICE", "").strip()
 _stt_model = None
 
 
@@ -90,27 +92,90 @@ def list_mics() -> Dict[str, Any]:
         return {"success": False, "error": str(e)}
 
 
+def _candidate_inputs():
+    """Real mics first (array/mic/realtek), virtual mappers last.
+    SATURDAY_MIC_DEVICE pins one (locked in after live calibration)."""
+    if MIC_DEVICE and MIC_DEVICE.lstrip("-").isdigit():
+        return [int(MIC_DEVICE)]
+    try:
+        devices = sd.query_devices()
+    except Exception:
+        return []
+    ranked, fallback = [], []
+    for i, d in enumerate(devices):
+        try:
+            if d["max_input_channels"] <= 0:
+                continue
+        except Exception:
+            continue
+        name = str(d.get("name", "")).lower()
+        if any(k in name for k in ("stereo mix", "mapper", "virtual", "capturer")):
+            fallback.append(i)
+            continue
+        score = 0
+        if "microphone array" in name:
+            score += 3
+        if "microphone" in name or " mic" in name or name.startswith("mic"):
+            score += 2
+        if "realtek" in name:
+            score += 1
+        ranked.append((-score, i))
+    ranked.sort()
+    return [i for _, i in ranked] + fallback
+
+
+def _record_once(device, seconds: float, samplerate: int, out: dict):
+    try:
+        rec = sd.rec(int(seconds * samplerate), samplerate=samplerate,
+                     channels=1, dtype="int16", device=device)
+        sd.wait()
+        out["samples"] = rec.flatten()
+    except Exception as e:
+        out["error"] = str(e)[:160]
+
+
 def capture(seconds: float = 5.0, samplerate: int = 16000) -> Dict[str, Any]:
-    """Record mono int16 audio. Returns samples + level stats."""
+    """Record mono int16 audio. Tries real mics in order, watchdog-guarded
+    (a dead default device can block forever — never hang the caller)."""
     if not _MIC_AVAILABLE:
         return {"success": False, "error": f"mic backend missing ({_MIC_ERROR})"}
     seconds = min(max(float(seconds or 5.0), 1.0), 30.0)
-    try:
-        rec = sd.rec(int(seconds * samplerate), samplerate=samplerate,
-                     channels=1, dtype="int16")
-        sd.wait()
-        samples = rec.flatten()
+    import threading as _th
+
+    tried = []
+    for device in _candidate_inputs() or [None]:
+        out: dict = {}
+        worker = _th.Thread(target=_record_once,
+                            args=(device, seconds, samplerate, out), daemon=True)
+        worker.start()
+        worker.join(timeout=seconds + 10.0)
+        try:
+            sd.stop()
+        except Exception:
+            pass
+        if worker.is_alive() or "samples" not in out:
+            tried.append(device)
+            continue
+        samples = out["samples"].astype(np.float64)
+        if MIC_GAIN and MIC_GAIN != 1.0:
+            samples = np.clip(samples * MIC_GAIN, -32768, 32767).astype(np.int16)
+        else:
+            samples = samples.astype(np.int16)
         peak = int(abs(samples).max()) if len(samples) else 0
         rms = float((np.abs(samples.astype(np.float64) ** 2).mean()) ** 0.5)
         return {"success": True, "samples": samples, "samplerate": samplerate,
-                "seconds": seconds, "peak": peak, "rms": round(rms, 1)}
-    except Exception as e:
-        logger.warning(f"mic capture failed: {e}")
-        return {"success": False, "error": str(e)}
+                "seconds": seconds, "peak": peak, "rms": round(rms, 1),
+                "device": device}
+    err = "no microphone responded"
+    if out.get("error"):
+        err = out["error"]
+    logger.warning(f"mic capture failed (tried {tried}): {err}")
+    return {"success": False, "error": f"{err} (tried devices {tried})"}
 
 
-def heard(samples, silence_rms: float = 60.0) -> bool:
-    """Energy gate: was anything actually said?"""
+def heard(samples, silence_rms: float = 120.0) -> bool:
+    """Energy gate: was anything actually said?
+    Calibrated 2026-09: room floor ~35 ungained (~70 at 2x gain)."""
     try:
         import numpy as _np
 
@@ -139,7 +204,7 @@ def _get_model():
 
 
 def transcribe(samples=None, wav_path: Optional[str] = None,
-               samplerate: int = 16000) -> Dict[str, Any]:
+               samplerate: int = 16000, vad: bool = True) -> Dict[str, Any]:
     """Speech → text, local whisper. Empty speech → text '' (not an error)."""
     if not _STT_AVAILABLE:
         return {"success": False, "error": f"faster-whisper missing ({_STT_ERROR})"}
@@ -149,7 +214,9 @@ def transcribe(samples=None, wav_path: Optional[str] = None,
                 return {"success": False, "error": "Nothing to transcribe."}
             wav_path = save_wav(samples, samplerate)
         model = _get_model()
-        segments, info = model.transcribe(wav_path, beam_size=5)
+        # VAD prefilter: music/silence segments never reach the decoder,
+        # which is where tiny-model hallucinations come from.
+        segments, info = model.transcribe(wav_path, beam_size=5, vad_filter=vad)
         text = " ".join(s.text.strip() for s in segments).strip()
         return {"success": True, "text": text,
                 "language": getattr(info, "language", "?"),
@@ -168,5 +235,12 @@ def hear_once(seconds: float = 5.0) -> Dict[str, Any]:
         return {"success": True, "text": "", "heard_something": False,
                 "note": f"Silence (rms {cap['rms']}). Nothing said."}
     res = transcribe(samples=cap["samples"], samplerate=cap["samplerate"])
+    # Loud but VAD-empty = over-aggressive filter, not silence: decode direct.
+    if res.get("success") and not res.get("text") and cap.get("rms", 0) > 300:
+        res = transcribe(samples=cap["samples"], samplerate=cap["samplerate"],
+                         vad=False)
+        res["vad_fallback"] = True
     res["rms"] = cap["rms"]
+    res["samples"] = cap["samples"]  # owner-gate needs the raw audio
+    res["samplerate"] = cap["samplerate"]
     return res

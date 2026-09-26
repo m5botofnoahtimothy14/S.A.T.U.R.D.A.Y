@@ -1114,7 +1114,9 @@ class SATURDAYCore:
                 return f"✨ Glow → {arg}."
             return "❌ Glow not running. Use: glow on"
         if session and session.glow:
-            return f"✨ Glow: {session.glow.current()}, enabled={session.glow.enabled}."
+            ct = "clicks pass ✅" if session.glow.click_through else "clicks MAY block ⚠️"
+            return (f"✨ Glow: {session.glow.current()}, enabled={session.glow.enabled}, "
+                    f"{ct}.")
         return "✨ Glow not running. Use: glow on"
 
     def _handle_heal(self, args, raw_text):
