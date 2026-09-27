@@ -1028,6 +1028,28 @@ class SATURDAYCore:
             session._bg("share-watch", session._share_watch_loop)
             return ("🌐 Persist ON — watchdog re-opens the tunnel if it ever drops.\n"
                     f"   Hostname: {session.share_hostname or '(rotating quick URL)'}.")
+        if arg == "token":
+            # Zero Trust token tunnel: NO cert, NO zone, NO domain needed.
+            # Token lives in memory only — never written anywhere.
+            if len(args) < 3:
+                return ("❌ Usage: share token <TOKEN> <public-hostname>\n"
+                        "   Zero Trust → Tunnels → tunnel → copy Token.\n"
+                        "   Hostname = the public hostname you routed there.")
+            if self._dashboard is None:
+                self.process_command("dashboard 8099", trusted=True)
+            tok = self._dashboard.share() if self._dashboard else {"token": ""}
+            res = link.start_token(args[1], args[2])
+            if not res.get("success"):
+                return f"❌ Token tunnel failed: {res.get('error')}"
+            try:
+                session = getattr(self, "session", None)
+                if session is not None:
+                    session._write_share_url(res["url"], tok.get("token", ""))
+            except Exception:
+                pass
+            return (f"🌐 SATURDAY is ONLINE (stable): {res['url']}\n"
+                    f"   🔑 Token (show once, guard it): {tok.get('token', '')}\n"
+                    f"   This address never rotates. `share off` kills it.")
         if arg == "off":
             if session is not None:
                 session.share_persist = False

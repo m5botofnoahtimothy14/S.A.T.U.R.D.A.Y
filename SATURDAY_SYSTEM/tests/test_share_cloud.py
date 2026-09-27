@@ -248,6 +248,25 @@ class TestCloudCommands(TestCase):
         self.assertGreaterEqual(reap_stale(8099), 0)
         print("DONE: reap stale test passed.")
 
+    def test_token_tunnel(self):
+        from saturday.share import ShareLink
+        link = ShareLink(binary="cloudflared")
+        proc = MagicMock()
+        proc.poll.return_value = None
+        with patch("subprocess.Popen", return_value=proc) as mock_pop, \
+             patch.object(ShareLink, "_verify_public", return_value=True):
+            res = link.start_token("TOK123", "sat.example.com")
+            self.assertTrue(res["success"])
+            self.assertEqual(res["url"], "https://sat.example.com")
+            self.assertEqual(res["mode"], "token")
+            cmd = mock_pop.call_args[0][0]
+            self.assertIn("run", cmd)
+            self.assertIn("TOK123", cmd)
+            link.stop()
+        bad = link.start_token("", "")
+        self.assertFalse(bad["success"])
+        print("DONE: token tunnel test passed.")
+
     def test_verify_accepts_locked(self):
         import urllib.error
         from saturday.share import ShareLink

@@ -82,6 +82,7 @@ class ShareLink:
         self.proc = None
         self.url = ""
         self.port = 0
+        self.mode = "quick"
         self._reader = None
         self._lines: list = []
         self._start_lock = threading.Lock()
@@ -182,7 +183,35 @@ class ShareLink:
 
     def status(self) -> Dict[str, Any]:
         return {"running": self.running, "url": self.url, "port": self.port,
-                "binary": bool(self.binary)}
+                "binary": bool(self.binary), "mode": getattr(self, "mode", "quick")}
+
+    def start_token(self, token: str, display_url: str, timeout: float = 90.0) -> Dict[str, Any]:
+        """Zero Trust token tunnel: `cloudflared tunnel run --token`.
+        Needs NO cert, NO zone, NO domain — the dashboard configured the
+        public hostname already. display_url is what the world opens."""
+        with self._start_lock:
+            if self.running:
+                return {"success": True, "url": self.url, "note": "already shared"}
+            if not self.binary:
+                return {"success": False, "error": "cloudflared missing"}
+            if not token or not display_url:
+                return {"success": False, "error": "token + public URL required"}
+            self.stop()
+            try:
+                self.proc = subprocess.Popen(
+                    [self.binary, "tunnel", "run", "--token", token],
+                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                    text=True, bufsize=1)
+            except Exception as e:
+                return {"success": False, "error": f"cloudflared launch failed: {e}"}
+            self.url = display_url if display_url.startswith("http") else f"https://{display_url}"
+            self.mode = "token"
+            if self._verify_public(timeout=timeout):
+                logger.warning(f"Internet share LIVE at {self.url} — guard the token.")
+                return {"success": True, "url": self.url, "mode": "token"}
+            self.stop()
+            return {"success": False,
+                    "error": "Token tunnel registered but never served traffic. Check the hostname route in Zero Trust."}
 
     def stop(self):
         if self._reader:
