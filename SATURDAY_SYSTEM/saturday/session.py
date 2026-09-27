@@ -367,8 +367,10 @@ class SessionManager:
 
     # -- share keep-alive: tunnel stays up for months --------------------------
     def ensure_shared(self) -> dict:
-        """Dashboard + token + tunnel, idempotent. Returns {url, token} or error."""
+        """Dashboard + token + tunnel, idempotent. Returns {url, token} or error.
+        Prefers the stable Zero Trust token tunnel when configured in env."""
         try:
+            import os as _os
             if self.core._dashboard is None:
                 self.core.process_command("dashboard 8099", trusted=True)
             dash = self.core._dashboard
@@ -376,7 +378,15 @@ class SessionManager:
                 return {"success": False, "error": "dashboard would not start"}
             tok = dash.share()
             link = self.core._share_link()
-            res = link.start(dash.port, hostname=self.share_hostname)
+            env_tok = _os.getenv("SATURDAY_TUNNEL_TOKEN", "")
+            env_host = _os.getenv("SATURDAY_TUNNEL_HOSTNAME", "")
+            if env_tok and env_host:
+                res = link.start_token(env_tok, env_host)
+                if not res.get("success"):
+                    logger.warning(f"Token tunnel failed ({res.get('error')}) — falling back to quick tunnel.")
+                    res = link.start(dash.port, hostname=self.share_hostname)
+            else:
+                res = link.start(dash.port, hostname=self.share_hostname)
             if not res.get("success"):
                 return res
             return {"success": True, "url": res["url"], "token": tok.get("token", "")}

@@ -1031,14 +1031,23 @@ class SATURDAYCore:
         if arg == "token":
             # Zero Trust token tunnel: NO cert, NO zone, NO domain needed.
             # Token lives in memory only — never written anywhere.
-            if len(args) < 3:
+            # Bare `share token` uses SATURDAY_TUNNEL_TOKEN/_HOSTNAME env (the default).
+            import os as _os
+            tok_arg = args[1] if len(args) > 1 else ""
+            host_arg = args[2] if len(args) > 2 else ""
+            env_tok = _os.getenv("SATURDAY_TUNNEL_TOKEN", "")
+            env_host = _os.getenv("SATURDAY_TUNNEL_HOSTNAME", "")
+            use_tok = tok_arg or env_tok
+            use_host = host_arg or env_host
+            if not use_tok or not use_host:
                 return ("❌ Usage: share token <TOKEN> <public-hostname>\n"
-                        "   Zero Trust → Tunnels → tunnel → copy Token.\n"
-                        "   Hostname = the public hostname you routed there.")
+                        "   Or set SATURDAY_TUNNEL_TOKEN + SATURDAY_TUNNEL_HOSTNAME "
+                        "in .env, then bare `share token`.\n"
+                        "   Zero Trust → Tunnels → tunnel → copy Token; route the hostname there.")
             if self._dashboard is None:
                 self.process_command("dashboard 8099", trusted=True)
             tok = self._dashboard.share() if self._dashboard else {"token": ""}
-            res = link.start_token(args[1], args[2])
+            res = link.start_token(use_tok, use_host)
             if not res.get("success"):
                 return f"❌ Token tunnel failed: {res.get('error')}"
             try:
