@@ -31,5 +31,10 @@
         "mic_device": "",
         "mic_gain": 2.0,
         "comment": "mic_device: '' = auto (WASAPI Realtek array first). Or index ('9') or name substring. Env SATURDAY_MIC_DEVICE overrides this."
+    },
+    "agent": {
+        "allowed_apps": ["notepad", "calculator", "mspaint", "opera", "chrome", "firefox", "explorer", "settings"],
+        "allowed_actions": [],
+        "comment": "allowed_actions empty = all schema actions (destructive still needs YES-confirm). Kill switch: Ctrl+Alt+Shift+X or 'stop'."
     }
 }

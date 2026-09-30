@@ -72,6 +72,7 @@ class SATURDAYCore:
             "do": self._handle_do,
             "research": self._handle_research,
             "tasks": self._handle_tasks,
+            "stop": self._handle_agent_stop,
             "brain": self._handle_brain,
             "sense": self._handle_sense,
             "mood": self._handle_mood,
@@ -314,22 +315,42 @@ class SATURDAYCore:
     def _run_agent_task(self, task: AgentTask) -> str:
         trusted = self._current_trusted
         prompter = None
+        confirm_fn = None
         if trusted:
             def prompter(question, observation):
                 print(f"\n🤖 SATURDAY asks: {question}")
                 return input("   You ❯ ").strip()
+
+            def confirm_fn(question):
+                print(f"\n⚠️ {question}")
+                return input("   Confirm (type YES) ❯ ").strip() == "YES"
+        agent_cfg = {}
+        try:
+            agent_cfg = (self.pmv.settings.get("agent", {}) or {})
+        except Exception:
+            pass
         runner = AgentRunner(
             operator=self.screen,
             brain=TemplateBrain(),
             store_fn=lambda content, tags: self.pmv.secure_store(content, tags=tags),
             prompter=prompter,
             confirm=trusted,
+            confirm_fn=confirm_fn,
+            allowed_apps=agent_cfg.get("allowed_apps", []),
+            allowed_actions=agent_cfg.get("allowed_actions", []),
         )
         print(f"\n🤖 Working on it by myself: {task.goal}")
+        print("   (failsafe ON + kill switch Ctrl+Alt+Shift+X or say 'stop')")
         finished = runner.run(task)
         self.agent_history.append(finished)
         self.agent_history = self.agent_history[-50:]  # bounded for long runs
         return "\n" + finished.summary() + "\n"
+
+    def _handle_agent_stop(self, args, raw_text):
+        from saturday import agent as _agent
+
+        _agent.request_stop()
+        return "⏹️ Stop requested — all agent task execution halts immediately."
 
     def _homebot_link(self):
         if self._homebot is None:
@@ -1310,8 +1331,9 @@ class SATURDAYCore:
             brain=brain,
             store_fn=lambda content, tags: self.pmv.secure_store(content, tags=tags),
             prompter=None,  # unsupervised: no human in the loop
-            max_steps=20,
+            max_steps=15,
             confirm=True,   # local CLI = present user
+            confirm_fn=None,  # ...but destructive steps are REFUSED, never assumed
         )
         print(f"\n🧠 Brain engaged, working alone: {goal}")
         print("   (failsafe active — slam mouse to a corner to abort motion)")

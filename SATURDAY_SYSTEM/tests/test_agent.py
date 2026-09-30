@@ -53,7 +53,9 @@ class TestAgent(TestCase):
         task = runner.run(AgentTask("open notepad for me", supervised_plan("open notepad for me")))
         self.assertEqual(task.status, "done")
         op.open_app.assert_called_once()
-        op.screenshot.assert_called_once()
+        # Observe step screenshots every iteration (spec: Observe→Plan→Act→Verify),
+        # so the count is the "see" action shot PLUS observe shots — never just 1.
+        self.assertGreaterEqual(op.screenshot.call_count, 2)
         print("DONE: supervised do test passed.")
 
     def test_remote_without_prompter_fails_gracefully(self):

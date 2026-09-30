@@ -20,6 +20,8 @@ import time
 from collections import deque
 from typing import Any, Callable, Dict, List, Optional
 
+from saturday import senses  # top-level: camera open must not race a lazy import
+
 logger = logging.getLogger("SATURDAY.Session")
 
 
@@ -65,8 +67,6 @@ class CameraService:
         self._thread = None
 
     def _open(self):
-        from saturday import senses
-
         cap, backend, idx = senses.open_camera()
         self.backend = f"{backend}/{idx}"
         return cap
@@ -259,8 +259,6 @@ class SessionManager:
             frame = self.camera.get_frame(max_age=8.0)
             if frame is None:
                 return obs
-            from saturday import senses
-
             faces = senses.find_faces(frame)
             boxes = faces.get("boxes", []) if faces.get("success") else []
             obs["face_seen"] = bool(boxes)

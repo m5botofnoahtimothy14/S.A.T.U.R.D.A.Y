@@ -21,7 +21,9 @@ class FakeCap:
 
     def read(self):
         self.n += 1
-        return True, np.zeros((480, 640, 3), dtype=np.uint8)
+        # Non-black: open_camera() honestly rejects black/dead streams,
+        # so the fake must look like a live camera (mid-gray).
+        return True, np.full((480, 640, 3), 128, dtype=np.uint8)
 
     def release(self):
         pass
