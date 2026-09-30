@@ -71,6 +71,7 @@ footer{position:relative; z-index:1; text-align:center; color:var(--dim); font-s
   <div class="card"><h2>♪ MIC ACTIVITY</h2>
     <div style="background:#020409;border:1px solid var(--line);border-radius:8px;height:22px;overflow:hidden"><div id="micbar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div>
     <div id="micnum" class="dim" style="font-size:11px;margin-top:4px">mic offline</div></div>
+  <div class="card"><h2>☺ MOOD</h2><div id="moodline" class="dim" style="font-size:12px">mood unknown</div></div>
   <div class="card"><h2>◆ SUBSYSTEMS</h2><div id="subs"><span class="dim">…</span></div></div>
   <div class="card"><h2>◆ HOMEBOT CORE2</h2><div id="bot">…</div>
     <div class="pad"><span></span><button data-bot="forward">▲</button><span></span>
@@ -173,6 +174,8 @@ async function refresh(){
         $('micbar').style.width=pct+'%';
         $('micnum').textContent='level '+Math.round(m.peak||0)+' • floor '+Math.round(m.floor||0)+(m.peak_age_s<1?' • HEARING YOU':'');}
       else{$('micbar').style.width='0%';$('micnum').textContent='mic offline ('+esc(String(m.reason||''))+')';}}catch(e){}
+    try{const md=await api('/api/mood');
+      $('moodline').innerHTML=md.available?`<b class="vio">${esc(String(md.mood))}</b> <span class="dim">${Math.round((md.confidence||0)*100)}% • stable ${Math.round((md.stability||0)*100)}% • ${md.age_s}s ago</span>`:`<span class="dim">${esc(String(md.context||'mood unknown'))}</span>`;}catch(e){}
   }catch(e){failStreak++;setConn(false,'○ RETRY '+failStreak);timer=Math.min(15000,timer*1.5);}
   setTimeout(refresh,timer);
 }

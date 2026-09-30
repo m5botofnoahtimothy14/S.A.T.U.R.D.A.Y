@@ -1402,6 +1402,10 @@ class SATURDAYCore:
             session_snapshot = session.status() if session is not None else None
         except Exception:
             session_snapshot = None
+        try:
+            mood_snapshot = getattr(self.session, "last_mood", None)
+        except Exception:
+            mood_snapshot = None
         return {
             "online": self.is_running,
             "version": self.pmv.settings.get("version", "?"),
@@ -1417,6 +1421,7 @@ class SATURDAYCore:
             "agent_tasks": len(getattr(self, "agent_history", [])),
             "identity": self._identity_snapshot(),
             "session": session_snapshot,
+            "mood": mood_snapshot,
             "glow": self._glow_snapshot(),
             "last_activity": self.pmv.last_activity,
             "timestamp": time.time(),

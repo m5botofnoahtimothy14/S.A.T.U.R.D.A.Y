@@ -199,6 +199,27 @@ def _mic_payload(ref: DashboardServer) -> Dict[str, Any]:
         return {"live": False, "error": str(e)[:120]}
 
 
+def _mood_payload(ref: DashboardServer) -> Dict[str, Any]:
+    """Last smoothed mood for the HUD (cached by session.observe, ~4fps).
+    Never runs inference here — the /api/status poll must stay cheap."""
+    try:
+        session = getattr(ref.core, "session", None)
+        lm = getattr(session, "last_mood", None) if session else None
+        if not lm:
+            try:
+                ctx = session.mood_context() if session else "mood unknown"
+            except Exception:
+                ctx = "mood unknown"
+            return {"available": False, "context": ctx}
+        age = round(time.time() - float(lm.get("at", 0)), 1)
+        return {"available": True, "mood": lm.get("mood"),
+                "confidence": lm.get("confidence"),
+                "stability": lm.get("stability"), "age_s": age,
+                "context": f"mood {lm.get('mood')} ({age}s ago)"}
+    except Exception as e:
+        return {"available": False, "error": str(e)[:120]}
+
+
 class _Handler(BaseHTTPRequestHandler):
     def __init__(self, *args, server_ref: DashboardServer = None, **kwargs):
         self.server_ref = server_ref
@@ -283,6 +304,8 @@ class _Handler(BaseHTTPRequestHandler):
                 return self._send(200, _frame_payload(ref))
             if route == "/api/miclevel":
                 return self._send(200, _mic_payload(ref))
+            if route == "/api/mood":
+                return self._send(200, _mood_payload(ref))
             return self._send(404, {"error": "unknown route"})
         except Exception as e:
             ref.note("error", f"GET {self.path}: {e}")

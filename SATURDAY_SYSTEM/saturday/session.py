@@ -65,14 +65,10 @@ class CameraService:
         self._thread = None
 
     def _open(self):
-        import cv2
+        from saturday import senses
 
-        cap = cv2.VideoCapture(0)
-        if not cap.isOpened():
-            raise RuntimeError("device 0 would not open")
-        # Discard warmup frames (auto-exposure settles; first frames black).
-        for _ in range(5):
-            cap.read()
+        cap, backend, idx = senses.open_camera()
+        self.backend = f"{backend}/{idx}"
         return cap
 
     def _loop(self):
@@ -139,6 +135,7 @@ class SessionManager:
         self.core = core
         self.started_at = 0.0
         self.camera = CameraService()
+        self.last_mood: Optional[Dict[str, Any]] = None  # cached by observe()
         self.stt_ready = False
         self.brain_ready: Optional[bool] = None
         self.dashboard_url = ""
@@ -278,9 +275,17 @@ class SessionManager:
                 except Exception:
                     obs["present"] = None
                 try:
-                    mood = senses.mood(frame)
+                    mood = senses.mood_live(frame)
                     if mood.get("success"):
                         obs["mood"] = mood["mood"]
+                        obs["mood_confidence"] = mood.get("confidence")
+                        obs["mood_stability"] = mood.get("stability")
+                        self.last_mood = {"mood": mood["mood"],
+                                          "confidence": mood.get("confidence"),
+                                          "stability": mood.get("stability"),
+                                          "at": time.time()}
+                    else:
+                        obs["mood_error"] = mood.get("error")
                 except Exception:
                     pass
         except Exception as e:
@@ -293,6 +298,15 @@ class SessionManager:
         except Exception:
             pass
         return obs
+
+    def mood_context(self) -> str:
+        """One line for brain/agent prompts + status: 'mood happy (0.82)'."""
+        lm = self.last_mood or {}
+        if lm.get("mood"):
+            age = time.time() - float(lm.get("at", 0))
+            return (f"mood {lm['mood']} ({float(lm.get('confidence', 0)):.0%}, "
+                    f"{age:.0f}s ago)")
+        return "mood unknown (no face read yet)"
 
     def _start_claps(self):
         try:

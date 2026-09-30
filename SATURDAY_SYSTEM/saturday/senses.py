@@ -71,20 +71,56 @@ def _need_cv() -> Optional[Dict[str, Any]]:
     return None
 
 
-def grab_frame(timeout_s: float = 8.0):
-    """Open camera, return one BGR frame. Raises RuntimeError on failure."""
+def open_camera(index: Optional[int] = None, timeout_s: float = 10.0):
+    """Open a REAL camera: DSHOW first, MSMF fallback, then index 1.
+    Rejects black/dead streams (mean<=3) so callers never hold a blind
+    camera that reports healthy. Returns (cap, backend_name, index).
+    Raises RuntimeError when nothing usable exists (caller: check nothing
+    else holds the camera + Windows privacy → desktop apps allowed)."""
     missing = _need_cv()
     if missing:
         raise RuntimeError(missing["error"])
-    cap = cv2.VideoCapture(0)
+    tried = []
+    idxs = [index] if index is not None else [0, 1]
+    backends = []
+    for b in (getattr(cv2, "CAP_DSHOW", 700), getattr(cv2, "CAP_MSMF", 1400)):
+        backends.append(b)
+    for idx in idxs:
+        for backend in backends:
+            cap = cv2.VideoCapture(idx, backend)
+            try:
+                if not cap.isOpened():
+                    tried.append(f"{backend}/{idx}:not-open")
+                    continue
+                for _ in range(5):  # warmup: auto-exposure settles
+                    cap.read()
+                ok, frame = cap.read()
+                if not ok or frame is None or float(frame.mean()) <= 3.0:
+                    tried.append(f"{backend}/{idx}:black")
+                    continue
+                name = "DSHOW" if backend == getattr(cv2, "CAP_DSHOW", 700) else "MSMF"
+                logger.info(f"camera open: {name} idx={idx} "
+                            f"{frame.shape[1]}x{frame.shape[0]}")
+                return cap, name, idx
+            except Exception as e:
+                tried.append(f"{backend}/{idx}:{str(e)[:40]}")
+            try:
+                cap.release()
+            except Exception:
+                pass
+    raise RuntimeError(f"No usable camera (tried {tried}). If one exists: close "
+                       "apps holding it (browser/Teams/Camera app) and allow "
+                       "desktop apps in Privacy & security > Camera.")
+
+
+def grab_frame(timeout_s: float = 8.0):
+    """Open camera, return one BGR frame. Raises RuntimeError on failure."""
+    cap, _, _ = open_camera(timeout_s=timeout_s)
     try:
-        if not cap.isOpened():
-            raise RuntimeError("No camera available (device 0 would not open).")
         deadline = time.time() + timeout_s
-        frame = None
         while time.time() < deadline:
             ok, frame = cap.read()
-            if ok and frame is not None:
+            if ok and frame is not None and float(frame.mean()) > 3.0:
                 return frame
             time.sleep(0.1)
         raise RuntimeError("Camera produced no frames.")
@@ -95,14 +131,9 @@ def grab_frame(timeout_s: float = 8.0):
 def capture_series(seconds: float, fps_target: float = 30.0,
                    on_frame: Optional[Callable] = None) -> Tuple[list, float]:
     """Capture frames for `seconds`; returns (frames, actual_fps)."""
-    missing = _need_cv()
-    if missing:
-        raise RuntimeError(missing["error"])
-    cap = cv2.VideoCapture(0)
+    cap, _, _ = open_camera()
     frames: list = []
     try:
-        if not cap.isOpened():
-            raise RuntimeError("No camera available (device 0 would not open).")
         interval = 1.0 / fps_target
         end = time.time() + seconds
         while time.time() < end:
@@ -216,7 +247,9 @@ def mood(frame, model_path: Optional[str] = None) -> Dict[str, Any]:
             _emotion_session = ort.InferenceSession(str(path),
                                                     providers=["CPUExecutionProvider"])
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        b = faces["boxes"][0]
+        # Biggest face = the person in front of the laptop, never a
+        # background false-positive (curtain texture, posters).
+        b = max(faces["boxes"], key=lambda r: r["w"] * r["h"])
         crop = gray[b["y"]:b["y"] + b["h"], b["x"]:b["x"] + b["w"]]
         small = cv2.resize(crop, (64, 64)).astype(np.float32)
         blob = small.reshape(1, 1, 64, 64)
@@ -230,6 +263,62 @@ def mood(frame, model_path: Optional[str] = None) -> Dict[str, Any]:
     except Exception as e:
         logger.warning(f"mood failed: {e}")
         return {"success": False, "error": str(e)}
+
+
+# -- mood live layer: ~4fps throttle + temporal vote (no flicker) ------------
+from collections import deque as _deque
+
+_mood_hist: _deque = _deque(maxlen=5)  # (label, confidence)
+_mood_last_run = 0.0
+_mood_cached: Dict[str, Any] = {"success": False, "error": "no reading yet"}
+MOOD_MIN_INTERVAL = 0.25  # ~4 fps max inference rate
+
+
+def mood_smooth(frame, model_path: Optional[str] = None) -> Dict[str, Any]:
+    """Raw mood() + majority vote over the last 5 reads. A single odd frame
+    can't flip the label; returns {mood, confidence, stability, votes}."""
+    global _mood_cached
+    res = mood(frame, model_path=model_path)
+    if res.get("success"):
+        _mood_hist.append((res["mood"], float(res.get("confidence", 0.0))))
+    if not _mood_hist:
+        _mood_cached = dict(res)
+        return _mood_cached
+    tally: Dict[str, list] = {}
+    for label, conf in _mood_hist:
+        tally.setdefault(label, []).append(conf)
+    best = max(tally, key=lambda k: (len(tally[k]), sum(tally[k])))
+    confs = tally[best]
+    smooth = {"success": True, "mood": best,
+              "confidence": round(sum(confs) / len(confs), 3),
+              "stability": round(len(confs) / len(_mood_hist), 2),
+              "votes": {k: len(v) for k, v in tally.items()},
+              "top_emotion": res.get("top_emotion") if res.get("success") else None,
+              "face": res.get("face") if res.get("success") else None}
+    if not res.get("success"):
+        smooth["note"] = res.get("error")
+    _mood_cached = smooth
+    return smooth
+
+
+def mood_live(frame, model_path: Optional[str] = None) -> Dict[str, Any]:
+    """Throttle to ~4fps (returns cached label when called faster), run on
+    face change or interval expiry. Cheap enough for the always-on loop."""
+    global _mood_last_run
+    now = time.time()
+    if frame is None:
+        return {"success": False, "error": "no frame"}
+    if now - _mood_last_run < MOOD_MIN_INTERVAL:
+        return dict(_mood_cached)
+    _mood_last_run = now
+    return mood_smooth(frame, model_path=model_path)
+
+
+def mood_reset():
+    _mood_hist.clear()
+    global _mood_cached, _mood_last_run
+    _mood_cached = {"success": False, "error": "no reading yet"}
+    _mood_last_run = 0.0
 
 
 # -- heart rate (rPPG) -------------------------------------------------------
