@@ -26,5 +26,10 @@
     },
     "logging": {
         "level": "INFO"
+    },
+    "audio": {
+        "mic_device": "",
+        "mic_gain": 2.0,
+        "comment": "mic_device: '' = auto (WASAPI Realtek array first). Or index ('9') or name substring. Env SATURDAY_MIC_DEVICE overrides this."
     }
 }
