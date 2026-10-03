@@ -87,14 +87,32 @@ def _shot_path() -> str:
 
 
 AUDIT_LOG = _d_tmp() / "screen_audit.jsonl"
+AUDIT_MAX_BYTES = 5 * 1024 * 1024
 
 
 def _append_audit(entry: Dict[str, Any]) -> None:
     try:
         import json as _j
 
+        if AUDIT_LOG.exists() and AUDIT_LOG.stat().st_size > AUDIT_MAX_BYTES:
+            lines = AUDIT_LOG.read_text(encoding="utf-8").splitlines()
+            AUDIT_LOG.write_text("\n".join(lines[len(lines) // 2:]) + "\n", encoding="utf-8")
         with open(AUDIT_LOG, "a", encoding="utf-8") as fh:
             fh.write(_j.dumps(entry) + "\n")
+    except Exception:
+        pass
+
+
+def _prune_screens(keep: int = 20) -> None:
+    """Bounded disk: keep newest `keep` screenshots, drop older bursts."""
+    try:
+        shots = sorted((_d_tmp() / "screens").glob("saturday_see_*.png"),
+                       key=lambda p: p.stat().st_mtime)
+        for old in shots[:-keep] if len(shots) > keep else []:
+            try:
+                old.unlink()
+            except Exception:
+                pass
     except Exception:
         pass
 
@@ -387,6 +405,7 @@ class ScreenOperator:
                 path = _shot_path()
             shot = pyautogui.screenshot()
             shot.save(path)
+            _prune_screens()
             w, h = shot.size
             self._audit("screenshot", f"{path} [{w}x{h}]",
                         method="pyautogui", target="screen", result=f"{w}x{h}")
