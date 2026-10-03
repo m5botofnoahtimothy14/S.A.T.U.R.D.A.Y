@@ -154,6 +154,38 @@ class SelfHeal:
                        else self._bad("agents", f"{n} runaway background agents"))
         except Exception as e:
             out.append(self._bad("agents", str(e)[:100]))
+        # Models on D: (whisper tiny/base, FER+ ONNX, landmarker, silero VAD).
+        try:
+            import os as _os
+            from pathlib import Path as _P
+
+            hf = _P(_os.getenv("HF_HOME", "") or r"D:\S.A.T.U.R.D.A.Y\.huggingface") / "hub"
+            have_whisper = any((hf / d).exists() for d in (
+                "models--Systran--faster-whisper-base",
+                "models--Systran--faster-whisper-tiny"))
+            sysmodels = _P(__file__).parent.parent / "models"
+            need = {"whisper": have_whisper,
+                    "emotion-ferplus-8.onnx": (sysmodels / "emotion-ferplus-8.onnx").exists(),
+                    "silero_vad.onnx": (sysmodels / "silero_vad.onnx").exists()}
+            missing = [k for k, v in need.items() if not v]
+            out.append(self._ok("models", "whisper+onnx present") if not missing
+                       else self._bad("models", f"missing: {', '.join(missing)}"))
+        except Exception as e:
+            out.append(self._bad("models", str(e)[:100]))
+        # Python deps importable (report; `pip install` is YOUR call).
+        try:
+            absent = []
+            for mod in ("sounddevice", "cv2", "onnxruntime", "faster_whisper",
+                        "pyautogui", "pygetwindow", "pytesseract", "mediapipe",
+                        "pywinauto"):
+                try:
+                    __import__(mod)
+                except Exception:
+                    absent.append(mod)
+            out.append(self._ok("deps", "all importable") if not absent
+                       else self._bad("deps", f"missing: {', '.join(absent)}"))
+        except Exception as e:
+            out.append(self._bad("deps", str(e)[:100]))
         self.last = out
         return out
 

@@ -78,6 +78,7 @@ class SATURDAYCore:
             "prev": lambda a, r: self._handle_media(["prev"], r),
             "tell": self._handle_tell,
             "verse": self._handle_verse,
+            "sys": self._handle_sys,
             "do": self._handle_do,
             "research": self._handle_research,
             "tasks": self._handle_tasks,
@@ -357,6 +358,55 @@ class SATURDAYCore:
             return f"❌ Verse module missing: {e}"
         ref = " ".join(args).strip()
         return _v.verse_of_day() if not ref else _v.verse_lookup(ref)
+
+    # -- Lawful admin: allowlisted READ-ONLY diagnostics -------------------
+    # No free-form shell, no arguments, no writes, no privilege tricks.
+    # Exact command names only; output truncated; everything audit-logged.
+    SYS_ALLOWLIST = {
+        "ver": ["cmd", "/c", "ver"],
+        "whoami": ["whoami"],
+        "hostname": ["hostname"],
+        "ipconfig": ["ipconfig"],
+        "tasklist": ["tasklist"],
+        "netstat": ["netstat", "-an"],
+        "drivers": ["driverquery", "/FO", "TABLE"],
+    }
+
+    @staticmethod
+    def _we_are_elevated() -> bool:
+        try:
+            import ctypes as _ct
+
+            return bool(_ct.windll.shell32.IsUserAnAdmin())
+        except Exception:
+            return False
+
+    def _handle_sys(self, args, raw_text):
+        if not self._current_trusted:
+            return "❌ sys diagnostics are local-only. Remote callers cannot use them."
+        if not args or args[0].lower() not in self.SYS_ALLOWLIST:
+            known = ", ".join(sorted(self.SYS_ALLOWLIST))
+            return f"❌ Usage: sys <{known}>. Read-only diagnostics only — no free shell."
+        name = args[0].lower()
+        import subprocess as _sp
+
+        elev = "elevated" if self._we_are_elevated() else "not elevated"
+        try:
+            r = _sp.run(self.SYS_ALLOWLIST[name], capture_output=True, text=True,
+                        timeout=30, errors="replace")
+            out = (r.stdout or "") + (r.stderr or "")
+            out = out.strip()[:3000] or "(no output)"
+            logger.warning(f"sys {name} ({elev}) by local user")
+            try:
+                self.screen._audit("sys", name, method="allowlist-shell",
+                                   target=name, result=f"rc={r.returncode}")
+            except Exception:
+                pass
+            return f"[{name}] ({elev}, rc={r.returncode}):\n{out}"
+        except _sp.TimeoutExpired:
+            return f"❌ sys {name} timed out after 30s."
+        except Exception as e:
+            return f"❌ sys {name} failed: {e}"
 
     # -- Agent (autonomy: SATURDAY acts by itself) ---------------------
     def _run_agent_task(self, task: AgentTask) -> str:
