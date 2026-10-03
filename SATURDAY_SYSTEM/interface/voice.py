@@ -63,6 +63,7 @@ class SATURDAYVoice:
                 vdir = os.getenv("PIPER_VOICES_DIR", r"D:\S.A.T.U.R.D.A.Y\models\piper\voices")
                 want = (voice or "").lower()
                 length_scale = os.getenv("SATURDAY_PIPER_LENGTH", "1.0")
+                sentence_silence = os.getenv("SATURDAY_PIPER_SILENCE", "0.3")
                 if "amy" in want:
                     model = os.path.join(vdir, "en_US-amy-medium.onnx")
                 elif "ryan" in want:
@@ -70,12 +71,15 @@ class SATURDAYVoice:
                 elif "kristin" in want:
                     model = os.path.join(vdir, "en_US-kristin-medium.onnx")
                     length_scale = os.getenv("EDITH_PIPER_LENGTH", length_scale)
+                    sentence_silence = os.getenv("EDITH_PIPER_SILENCE", sentence_silence)
                 elif "kathleen" in want:
                     model = os.path.join(vdir, "en_US-kathleen-low.onnx")
                     length_scale = os.getenv("EDITH_PIPER_LENGTH", length_scale)
+                    sentence_silence = os.getenv("EDITH_PIPER_SILENCE", sentence_silence)
                 elif "edith" in want or "zira" in want or "female" in want or "lessac" in want:
                     model = os.getenv("EDITH_PIPER_MODEL", os.path.join(vdir, "en_US-amy-medium.onnx"))
-                    length_scale = os.getenv("EDITH_PIPER_LENGTH", "1.1")
+                    length_scale = os.getenv("EDITH_PIPER_LENGTH", "1.15")
+                    sentence_silence = os.getenv("EDITH_PIPER_SILENCE", "0.6")
                 else:
                     model = (os.getenv("PIPER_MODEL_PATH", "")
                              or os.getenv("SATURDAY_PIPER_MODEL", "")
@@ -88,6 +92,12 @@ class SATURDAYVoice:
                         ls = float(length_scale)
                         if abs(ls - 1.0) > 0.01:
                             cmd += ["--length-scale", str(ls)]
+                    except Exception:
+                        pass
+                    try:
+                        ss = float(sentence_silence)
+                        if ss > 0.01:
+                            cmd += ["--sentence-silence", str(ss)]
                     except Exception:
                         pass
                     subprocess.run(
