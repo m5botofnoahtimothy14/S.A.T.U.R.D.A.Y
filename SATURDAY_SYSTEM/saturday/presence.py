@@ -146,6 +146,9 @@ class PresenceLoop:
             logger.debug(f"watch snapshot failed: {e}")
             return None
 
+    def _workmode(self) -> bool:
+        return getattr(self.core, "workmode", False) is True
+
     def _greet(self, name: Optional[str]) -> str:
         from saturday import humanvoice as hv
 
@@ -156,7 +159,24 @@ class PresenceLoop:
             if frame is not None:
                 m = senses.mood(frame)
                 mood = m.get("mood") if m.get("success") else None
-            line = hv.arrival_line(name, mood)
+            # Family first: khadija (wife/gf) always gets warmth by name.
+            fam = {}
+            try:
+                fam = self.core._family() if hasattr(self.core, "_family") else {}
+            except Exception:
+                pass
+            if name and name.lower() in fam:
+                line = hv.family_line(name, fam[name.lower()],
+                                      "work" if self._workmode() else None,
+                                      mood)
+            elif self._workmode():
+                line = hv.arrival_line("sir", mood, "work")
+            else:
+                try:
+                    owner = self.core._owner_name() if hasattr(self.core, "_owner_name") else ""
+                except Exception:
+                    owner = ""
+                line = hv.arrival_line(name or owner or "sir", mood)
         except Exception:
             hour = time.localtime().tm_hour
             part = "evening" if hour >= 17 else "afternoon" if hour >= 12 else "morning"

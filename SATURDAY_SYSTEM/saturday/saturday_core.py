@@ -3,6 +3,7 @@ import json
 import shlex
 import time
 from pathlib import Path
+from typing import Dict
 from saturday.controller import MemoryController
 from saturday.screen_operator import ScreenOperator, backend_available, ocr_available
 from saturday.agent import AgentRunner, AgentTask, TemplateBrain, research_plan, supervised_plan
@@ -29,6 +30,7 @@ class SATURDAYCore:
         self._share_obj = None
         self.cloud_config = {}
         self.is_running = False
+        self.workmode = False  # True = sharp/focused, addressed as sir
         # Set per process_command call; read by screen handlers. Assignment
         # and dispatch have no I/O between them, so this is GIL-atomic.
         self._current_trusted = True
@@ -53,6 +55,11 @@ class SATURDAYCore:
     def _build_command_handlers(self):
         return {
             "store": self._handle_store,
+            "remember": self._handle_remember,
+            "recall": self._handle_recall,
+            "profile": self._handle_profile,
+            "family": self._handle_family,
+            "secret": self._handle_secret,
             "retrieve": self._handle_retrieve,
             "search": self._handle_search,
             "status": self._handle_status,
@@ -78,6 +85,8 @@ class SATURDAYCore:
             "prev": lambda a, r: self._handle_media(["prev"], r),
             "tell": self._handle_tell,
             "verse": self._handle_verse,
+            "edith": self._handle_edith,
+            "workmode": self._handle_workmode,
             "sys": self._handle_sys,
             "sysclean": self._handle_sysclean,
             "evolve": self._handle_evolve,
@@ -126,7 +135,11 @@ class SATURDAYCore:
         }
 
     def _parse_command(self, cmd_string: str):
-        tokens = shlex.split(cmd_string.strip())
+        text = (cmd_string or "").strip()
+        try:
+            tokens = shlex.split(text)
+        except ValueError:
+            tokens = text.split()  # apostrophes/quotes fall back to naive split
         command = tokens[0].lower() if tokens else ""
         args = tokens[1:]
         return command, args
@@ -224,6 +237,94 @@ class SATURDAYCore:
             return "❌ Provide the entry ID to delete. Example: delete <entry_id>"
         ok = self.pmv.secure_delete(args[0])
         return "🗑️ Entry deleted." if ok else "❌ Entry not found."
+
+    # -- Memory: teach me, recall, profile, secrets ----------------------
+    # Everything lands encrypted in YOUR vault (Fernet). Secrets are tagged
+    # and never shown by recall/profile — only by explicit `secret get`.
+    def _handle_remember(self, args, raw_text):
+        fact = raw_text[len("remember"):].strip()
+        if not fact:
+            return "❌ Usage: remember <fact about you>. Example: remember my wife's name is Rida"
+        entry_id = self.pmv.secure_store(fact, entry_type="fact", tags=["profile-fact"])
+        return f"Noted — I'll remember that. (id {entry_id[:8]})"
+
+    def _handle_recall(self, args, raw_text):
+        query = raw_text[len("recall"):].strip().lower()
+        try:
+            results = self.pmv.secure_search() or []
+        except Exception as e:
+            return f"❌ Recall failed: {e}"
+        # Secrets never leak through recall.
+        results = [r for r in results if "secret" not in (r.get("tags") or [])]
+        if query:
+            results = [r for r in results if query in str(r.get("content", "")).lower()]
+        if not results:
+            return "I don't have anything on that yet. Teach me with: remember <fact>"
+        results = sorted(results, key=lambda e: e.get("timestamp", 0), reverse=True)[:3]
+        lines = [f"   - {str(r.get('content', ''))[:120]}" for r in results]
+        return "Here's what I remember:\n" + "\n".join(lines)
+
+    def _handle_profile(self, args, raw_text):
+        try:
+            facts = self.pmv.secure_search(tag="profile-fact") or []
+            fam = self.pmv.secure_search(tag="family") or []
+        except Exception as e:
+            return f"❌ Profile unreadable: {e}"
+        if not facts and not fam:
+            return ("I don't know you yet. Teach me: remember <fact>, "
+                    "family add <name> <relation>, enroll, enrollvoice.")
+        lines = [f"   - {str(r.get('content', ''))[:120]}" for r in
+                 sorted(facts, key=lambda e: e.get("timestamp", 0), reverse=True)[:10]]
+        for r in fam:
+            lines.append(f"   - family: {str(r.get('content', ''))[:120]}")
+        return "What I know about you:\n" + "\n".join(lines)
+
+    def _handle_family(self, args, raw_text):
+        rest = raw_text[len("family"):].strip()
+        if rest.lower().startswith("add"):
+            parts = rest[3:].strip().split(None, 1)
+            if len(parts) < 2:
+                return "❌ Usage: family add <name> <relation>. Example: family add Rida wife"
+            name, relation = parts
+            entry_id = self.pmv.secure_store(f"{name} ({relation})",
+                                             entry_type="fact", tags=["family"])
+            return f"Noted — {name} ({relation}). I'll treat them with care. (id {entry_id[:8]})"
+        try:
+            fam = self.pmv.secure_search(tag="family") or []
+        except Exception as e:
+            return f"❌ Family list unreadable: {e}"
+        if not fam:
+            return "No family recorded. Usage: family add <name> <relation>"
+        return "Family:\n" + "\n".join(f"   - {str(r.get('content', ''))[:80]}" for r in fam)
+
+    def _handle_secret(self, args, raw_text):
+        if not args or args[0] not in ("save", "get"):
+            return "❌ Usage: secret save <label> | secret get <label>"
+        if args[0] == "save":
+            if len(args) < 2:
+                return "❌ Usage: secret save <label>"
+            label = args[1]
+            try:
+                import getpass as _gp
+
+                value = _gp.getpass(f"   Password for '{label}' (hidden) ❯ ")
+            except Exception:
+                return "❌ Hidden input unavailable here."
+            if not value:
+                return "❌ Empty — nothing stored."
+            entry_id = self.pmv.secure_store(f"[secret:{label}] {value}",
+                                             entry_type="secret", tags=["secret"])
+            return f"Locked away under '{label}'. (id {entry_id[:8]})"
+        label = args[1] if len(args) > 1 else ""
+        try:
+            found = self.pmv.secure_search(tag="secret") or []
+        except Exception as e:
+            return f"❌ Secret lookup failed: {e}"
+        for r in found:
+            content = str(r.get("content", ""))
+            if content.startswith(f"[secret:{label}]"):
+                return f"Password for '{label}': {content.split(' ', 1)[1] if ' ' in content else ''}"
+        return f"No secret stored under '{label}'. Usage: secret save <label>"
 
     # -- Screen operator (offline GUI automation, no APIs/credentials) --
     def _screen_denied(self, result: dict) -> str:
@@ -360,6 +461,51 @@ class SATURDAYCore:
             return f"❌ Verse module missing: {e}"
         ref = " ".join(args).strip()
         return _v.verse_of_day() if not ref else _v.verse_lookup(ref)
+
+    def _handle_edith(self, args, raw_text):
+        """EDITH: same brain, female voice, only when called."""
+        if not self._current_trusted:
+            return "❌ EDITH is local-only. Remote callers cannot use her."
+        try:
+            from saturday import edith as _ed
+
+            return _ed.edith_handle(self, raw_text)
+        except Exception as e:
+            return f"❌ EDITH failed: {e}"
+
+    # -- People: owner, family, workmode ---------------------------------
+    def _owner_name(self) -> str:
+        try:
+            return (self.pmv.settings.get("identity", {}).get("owner_name", "")
+                    or __import__("os").getenv("SATURDAY_OWNER", "") or "Noah")
+        except Exception:
+            return "Noah"
+
+    def _family(self) -> Dict[str, str]:
+        """Lowercased name → relation, from vault family facts."""
+        try:
+            found = self.pmv.secure_search(tag="family") or []
+            out: Dict[str, str] = {}
+            for r in found:
+                content = str(r.get("content", ""))
+                if "(" in content and content.endswith(")"):
+                    nm, rel = content.rsplit("(", 1)
+                    out[nm.strip().lower()] = rel[:-1].strip().lower()
+            return out
+        except Exception:
+            return {}
+
+    def _handle_workmode(self, args, raw_text):
+        if args and args[0].lower() in ("on", "off"):
+            self.workmode = args[0].lower() == "on"
+            try:
+                self.screen._audit("workmode", args[0], method="prefs",
+                                   target="self", result=args[0])
+            except Exception:
+                pass
+            return (f"Work mode ON — sharp and focused, sir."
+                    if self.workmode else f"Work mode off — relaxed, {self._owner_name()}.")
+        return f"Work mode is {'ON' if getattr(self, 'workmode', False) else 'off'}. Usage: workmode on|off"
 
     # -- Lawful admin: allowlisted READ-ONLY diagnostics -------------------
     # No free-form shell, no arguments, no writes, no privilege tricks.

@@ -23,7 +23,7 @@ logger = logging.getLogger("SATURDAY.HumanVoice")
 
 _HELLO = ["Hey, good to see you.", "There you are.", "Good to have you back.",
           "Hey. I'm right here.", "Welcome back."]
-_NIGHT = ["It's late — I'm here, quietly.", "Burning the midnight oil with you."]
+_NIGHT = ["It's late - SATURDAY's here, quietly.", "Burning the midnight oil with you. SATURDAY's up."]
 
 
 def startup_line(core_ok: bool = True, vault_ok: bool = True) -> str:
@@ -37,7 +37,11 @@ def startup_line(core_ok: bool = True, vault_ok: bool = True) -> str:
     return f"{random.choice(_HELLO)} SATURDAY's online — all systems running."
 
 
-def arrival_line(name: Optional[str], mood: Optional[str] = None) -> str:
+def arrival_line(name: Optional[str], mood: Optional[str] = None,
+                 mode: Optional[str] = None) -> str:
+    if mode == "work":
+        who = name or "sir"
+        return f"{who}. Focused. What do you need?"
     hour = time.localtime().tm_hour
     who = f", {name}" if name else ""
     if mood in ("sad", "anxious", "angry", "sad", "disgusted"):
@@ -101,30 +105,46 @@ def unknown_command_line() -> str:
         "That's new to me — 'help' lists everything I've learned."])
 
 
-# -- mood care: what the brain says when it sees how you feel ---------------
+# -- family: respectful, jovial, joyful, workmode stays warm but brief --
+WIFE_RELATIONS = {"wife", "gf", "girlfriend", "fiancee", "partner"}
+
+
+def family_line(name: str, relation: str, mode: Optional[str] = None,
+                mood: Optional[str] = None) -> str:
+    rel = (relation or "").strip().lower()
+    if mode == "work":
+        return f"{name}. All set on my side, what do you need?"
+    if rel in WIFE_RELATIONS:
+        return random.choice([
+            f"Hey {name}... good to see you. I'm all yours.",
+            f"{name}! Lovely as always. What can I do for you?",
+            f"Well, look who it is... hi {name}. I'm smiling, I promise."])
+    return random.choice([
+        f"Hey {name}, good to see you.",
+        f"Welcome, {name}. How can I help?"])
 # Short, warm, never clinical. Each returns a (say_text, episode_tag) pair.
 # Water/health/anger/calm actions are decided by the mind loop, which calls
-# these for wording. Not medical advice — nudges only.
+# these for wording. Not medical advice, nudges only.
 def mood_care_line(mood: Optional[str], name: Optional[str] = None) -> tuple:
     who = f", {name}" if name else ""
     if mood == "angry":
         return (random.choice([
-            f"Easy{who}. Breathe in with me — four counts in, six out. I'm holding everything else.",
-            f"I can see it{who}. Put it down for one minute — want some water? I'll keep watch.",
+            f"Easy{who}. Breathe in with me, four counts in, six out. I'm holding everything else.",
+            f"I can see it{who}. Put it down for one minute, want some water? I'll keep watch.",
             f"Rough one{who}. I'm here, nothing needs you for the next minute. Unclench, breathe."]), "calmed-anger")
     if mood == "sad":
         return (random.choice([
-            f"I'm here{who}. Have some water, step into light for a minute — small things first.",
-            f"Hey{who} — be gentle with yourself. Water, daylight, one small win. I'll handle the rest.",
+            f"I'm here{who}. Have some water, step into light for a minute, small things first.",
+            f"Hey{who}, be gentle with yourself. Water, daylight, one small win. I'll handle the rest.",
             f"I've got you{who}. Sip water, breathe slow. Tell me if I can take something off you."]), "comforted-sad")
     if mood in ("anxious", "tense"):
         return (random.choice([
             f"Let's slow it down{who}: in for four, hold for four, out for six. Twice. I'm right here.",
-            f"Anxious is okay{who}. Water, slow breaths, one thing at a time — I'll track the rest.",
+            f"Anxious is okay{who}. Water, slow breaths, one thing at a time, I'll track the rest.",
             f"Hey{who}, let's land: feet flat, shoulders down, one slow breath. I've got the rest."]), "eased-anxiety")
     if mood == "happy":
         return (random.choice([
-            f"Good energy{who} — drink some water and ride it!",
+            f"Good energy{who}, drink some water and ride it!",
             f"Love to see it{who}. Stay hydrated and keep going!"]), "shared-happy")
     if mood in ("disgusted",):
         return (f"Something off{who}? Fresh air and water help. I'm here if you need me.", "checked-in")

@@ -46,5 +46,9 @@
         ],
         "allowed_actions": [],
         "comment": "allowed_actions empty = all schema actions (destructive still needs YES-confirm). Kill switch: Ctrl+Alt+Shift+X or 'stop'."
+    },
+    "identity": {
+        "owner_name": "Noah",
+        "comment": "EDITH calls you this on recognition. SATURDAY: workmode=sir, normal=name-or-sir."
     }
 }

@@ -19,9 +19,19 @@ logger = logging.getLogger("SATURDAY.Edith")
 EDITH_VOICE = os.getenv("EDITH_TTS_VOICE", "Zira")
 
 GREETINGS = [
-    "EDITH here. Same mind, at your service.",
-    "You called? I'm listening.",
+    "Mmm... Noah... you called? ... I'm here.",
+    "Noah... I felt that. ... What do you need, hmm?",
 ]
+
+
+def owner_name(core) -> str:
+    try:
+        get = getattr(core, "_owner_name", None)
+        if callable(get):
+            return get() or "Noah"
+    except Exception:
+        pass
+    return "Noah"
 
 
 def edith_addressed(text: str) -> bool:
@@ -57,7 +67,7 @@ def edith_handle(core, raw_text: str) -> str:
     if not sub:
         import random as _r
 
-        line = _r.choice(GREETINGS)
+        line = _r.choice(GREETINGS).replace("Noah", owner_name(core))
         edith_say(core, line)
         return line
     out = core.process_command(sub, trusted=True)
