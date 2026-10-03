@@ -348,6 +348,29 @@ def capture(seconds: float = 5.0, samplerate: int = TARGET_SR) -> Dict[str, Any]
             continue
         try:
             samples = _resample_to_16k(out["samples"], out.get("recorded_sr", TARGET_SR))
+            # Driver-artifact rejection: some kernel streams (seen: Realtek
+            # WDM-KS mic) emit blocks of exact zeros interleaved with huge
+            # spikes + DC offset. That energy is NOT speech — skip the device.
+            import numpy as _np
+
+            probe = _np.asarray(samples).astype(_np.float64)
+            dc = float(probe.mean()) if len(probe) else 0.0
+            zeros = float((probe == 0).mean()) if len(probe) else 0.0
+            # Bit-identical runs: a live mic's ADC noise never repeats one
+            # value for 2048+ samples (128ms); kernel-streaming garbage does
+            # (blocks of exact zeros between spikes).
+            diff = _np.diff(_np.asarray(samples).astype(_np.int16)) if len(samples) else [1]
+            run = 1
+            maxrun = 1
+            for v in diff:
+                run = run + 1 if v == 0 else 1
+                if run > maxrun:
+                    maxrun = run
+            if abs(dc) > 400.0 or zeros > 0.40 or maxrun > 2048:
+                logger.warning(f"mic device {device} rejected: driver artifact "
+                               f"(dc {dc:.0f}, zeros {zeros:.0%}, maxrun {maxrun}) — trying next")
+                tried.append(device)
+                continue
             samples, gain = _apply_gain(samples)
         except Exception as e:
             logger.warning(f"mic resample/gain failed (device {device}): {e}")

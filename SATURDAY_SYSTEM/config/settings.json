@@ -28,12 +28,21 @@
         "level": "INFO"
     },
     "audio": {
-        "mic_device": "",
+        "mic_device": "9",
         "mic_gain": 2.0,
-        "comment": "mic_device: '' = auto (WASAPI Realtek array first). Or index ('9') or name substring. Env SATURDAY_MIC_DEVICE overrides this."
+        "comment": "mic_device: '' = auto (WASAPI Realtek array first). Or index ('9') or name substring. Env SATURDAY_MIC_DEVICE overrides this. NOTE: WDM-KS idx 12 rejected 2026-10-03 (driver spike artifact, dc/zeros) - do not select."
     },
     "agent": {
-        "allowed_apps": ["notepad", "calculator", "mspaint", "opera", "chrome", "firefox", "explorer", "settings"],
+        "allowed_apps": [
+            "notepad",
+            "calculator",
+            "mspaint",
+            "opera",
+            "chrome",
+            "firefox",
+            "explorer",
+            "settings"
+        ],
         "allowed_actions": [],
         "comment": "allowed_actions empty = all schema actions (destructive still needs YES-confirm). Kill switch: Ctrl+Alt+Shift+X or 'stop'."
     }
