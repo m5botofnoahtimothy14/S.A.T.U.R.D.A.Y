@@ -30,7 +30,7 @@ class SATURDAYVoice:
         logger.info(f"Transcribed: {transcription}")
         return self.core.process_command(transcription)
 
-    def speak(self, text: str):
+    def speak(self, text: str, voice: str = ""):
         """Outputs text through local TTS engine (Piper, platform TTS, or pyttsx3 fallback)."""
         logger.info(f"SATURDAY Speaking: {text}")
         if not text:
@@ -48,16 +48,40 @@ class SATURDAYVoice:
                 if cli_path:
                     subprocess.run([cli_path, text], check=True)
                     return
-            # 2. Piper when selected AND a valid model is configured.
-            if os.getenv("SATURDAY_TTS", "auto").lower() in ("piper", "auto"):
-                piper = shutil.which("piper")
-                model = os.getenv("PIPER_MODEL_PATH", "")
-                if piper and model and os.path.exists(model):
-                    tmp_wav = os.path.join(tempfile.gettempdir(), "saturday_tts.wav")
+            # 2. Piper neural voices when selected AND models configured.
+            # Defaults (D:, offline, yours forever): SATURDAY = ryan (male),
+            # EDITH = amy (female). `voice` picks the persona model.
+            if os.getenv("SATURDAY_TTS", "piper").lower() in ("piper", "auto"):
+                piper_bin = os.getenv("PIPER_BIN", "") or shutil.which("piper") or ""
+                if not piper_bin:
+                    for cand in (
+                            r"D:\S.A.T.U.R.D.A.Y\models\piper\piper\piper.exe",
+                            os.path.join(os.path.expanduser("~"), ".local", "bin", "piper")):
+                        if os.path.exists(cand):
+                            piper_bin = cand
+                            break
+                vdir = os.getenv("PIPER_VOICES_DIR", r"D:\S.A.T.U.R.D.A.Y\models\piper\voices")
+                want = (voice or "").lower()
+                if "amy" in want or "edith" in want or "zira" in want or "female" in want:
+                    model = os.getenv("EDITH_PIPER_MODEL", os.path.join(vdir, "en_US-amy-medium.onnx"))
+                else:
+                    model = (os.getenv("PIPER_MODEL_PATH", "")
+                             or os.getenv("SATURDAY_PIPER_MODEL", "")
+                             or os.path.join(vdir, "en_US-ryan-medium.onnx"))
+                if piper_bin and model and os.path.exists(model):
+                    tmp_wav = os.path.join(os.getenv("SATURDAY_D_TMP", r"D:\SATURDAY_TEMP"),
+                                            "saturday_tts.wav")
                     subprocess.run(
-                        ["piper", "--model", model, "--output_file", tmp_wav],
+                        [piper_bin, "--model", model, "--output_file", tmp_wav],
                         input=text, capture_output=True, text=True, check=True,
+                        timeout=60,
+                        cwd=os.path.dirname(piper_bin),
                     )
+                    if sys.platform.startswith("win"):
+                        import winsound
+
+                        winsound.PlaySound(tmp_wav, winsound.SND_FILENAME)
+                        return
                     player = shutil.which("aplay") or shutil.which("afplay") or shutil.which("play")
                     if player:
                         subprocess.Popen([player, tmp_wav],
@@ -70,7 +94,7 @@ class SATURDAYVoice:
                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 return
             elif sys.platform.startswith("win"):
-                if self._windows_speak(text):
+                if self._windows_speak(text, voice=voice or os.getenv("SATURDAY_TTS_VOICE", "")):
                     return
             self._fallback_voice(text)
         except Exception as e:
@@ -80,17 +104,24 @@ class SATURDAYVoice:
             except Exception:
                 pass
 
-    def _windows_speak(self, text: str) -> bool:
-        """Best-effort Windows speech via System.Speech; returns True on success."""
+    def _windows_speak(self, text: str, voice: str = "") -> bool:
+        """Best-effort Windows speech via System.Speech; returns True on success.
+        voice: substring of the SAPI voice name ('Zira' = female en-US)."""
         import os
         try:
             import subprocess
             volume = min(100, max(0, int(os.getenv("SATURDAY_TTS_VOLUME", "80"))))
             rate = min(10, max(-10, int(os.getenv("SATURDAY_TTS_RATE", "0"))))
             safe = text.replace("'", "''").replace('"', '""')[:1000]
+            pick = ""
+            if (voice or "").strip():
+                hint = voice.replace("'", "''")
+                pick = (f"$v=$s.GetInstalledVoices() | Where-Object {{$_.VoiceInfo.Name -like '*{hint}*'}} "
+                        f"| Select-Object -First 1; if ($v) {{ $s.SelectVoice($v.VoiceInfo.Name) }}; ")
             ps = (
                 "Add-Type -AssemblyName System.Speech; "
                 "$s=New-Object System.Speech.Synthesis.SpeechSynthesizer; "
+                f"{pick}"
                 f"$s.Volume={volume}; $s.Rate={rate}; "
                 f"$s.Speak('{safe}')"
             )
