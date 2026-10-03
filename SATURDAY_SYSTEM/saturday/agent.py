@@ -204,7 +204,8 @@ class AgentRunner:
                  max_steps: int = 15, confirm: bool = True,
                  confirm_fn: Optional[ConfirmFn] = None,
                  allowed_apps: Optional[List[str]] = None,
-                 allowed_actions: Optional[List[str]] = None):
+                 allowed_actions: Optional[List[str]] = None,
+                 context_fn: Optional[Callable[[], str]] = None):
         self.operator = operator
         self.brain = brain or TemplateBrain()
         self.store_fn = store_fn
@@ -216,6 +217,8 @@ class AgentRunner:
         self.confirm_fn = confirm_fn
         self.allowed_apps = [a.lower() for a in (allowed_apps or [])]
         self.allowed_actions = [a.lower() for a in (allowed_actions or [])]
+        # Trusted local-sensor context (mood line) for the brain's prompt.
+        self.context_fn = context_fn
         self.history: List[AgentTask] = []
         self._last_shot: Optional[str] = None
         self._last_shot_at = 0.0
@@ -250,6 +253,13 @@ class AgentRunner:
             obs["active_window"] = ""
         try:
             obs["screen_size"] = self._as_dict(op.screen_size()) if hasattr(op, "screen_size") else {}
+        except Exception:
+            pass
+        # Trusted sensor context (mood). Screen text stays UNTRUSTED;
+        # this line comes from OUR camera pipeline, not the screen.
+        try:
+            if self.context_fn:
+                obs["context"] = str(self.context_fn() or "")
         except Exception:
             pass
         return obs

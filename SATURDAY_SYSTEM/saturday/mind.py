@@ -25,6 +25,8 @@ TICK_SECONDS = 30.0
 MAX_SPEAKS_PER_HOUR = 3
 GREET_COOLDOWN_S = 4 * 3600
 NUDGE_COOLDOWN_S = 2 * 3600
+MOOD_COOLDOWN_S = 3600
+MOOD_MIN_CONF = 0.5
 MAX_EPISODES = 300
 
 
@@ -43,6 +45,54 @@ class MindLoop:
         self._thread = None
         self._lock = threading.Lock()
         self._load_prefs()
+        with self._lock:
+            self.prefs.setdefault("last_mood_care", 0.0)
+            self.prefs.setdefault("last_mood_seen", "")
+
+    # -- mood care: brain sees mood → decides help ---------------------------
+    def _mood_care(self, obs: Dict[str, Any]) -> Optional[str]:
+        """Mood → caring action. Returns the action taken (for tests/logs).
+        Speaks at most once per MOOD_COOLDOWN_S, only when confident."""
+        mood = (obs.get("mood") or "").strip().lower()
+        if mood in ("", "neutral", "unknown"):
+            return None
+        try:
+            conf = float(obs.get("mood_confidence", 0) or 0)
+        except Exception:
+            conf = 0.0
+        if conf < MOOD_MIN_CONF:
+            return None
+        now = time.time()
+        with self._lock:
+            if now - float(self.prefs.get("last_mood_care", 0)) < MOOD_COOLDOWN_S:
+                return None
+            if self.prefs.get("last_mood_seen") == mood and mood == "happy":
+                return None  # still happy — no repeat celebration
+        if not self._can_speak():
+            return None
+        try:
+            from saturday import humanvoice as hv
+        except Exception:
+            return None
+        name = (obs.get("present") or "").strip() or None
+        if name and str(name).lower() == "unknown":
+            name = None
+        text, tag = hv.mood_care_line(mood, name)
+        if not text:
+            return None
+        try:
+            session = getattr(self.core, "session", None)
+            if session is None:
+                return None
+            session.inbox_add(kind="say", text=text, priority=5)
+            with self._lock:
+                self.prefs["last_mood_care"] = now
+                self.prefs["last_mood_seen"] = mood
+            self._mark_spoke()
+            self.episode(f"mood care for {mood} ({tag})")
+            return f"care:{mood}"
+        except Exception:
+            return None
 
     # -- persistence (encrypted vault) -----------------------------------------
     def _vault(self):
@@ -180,6 +230,15 @@ class MindLoop:
             self._say("Hello. I don't recognize you yet — I can learn you with enroll.")
             actions.append("greet:stranger")
             self.episode("met someone new (unenrolled)")
+
+        # Mood care: the brain sees the feeling and decides the help —
+        # calm anger, comfort sadness, ease anxiety, water, health tip.
+        try:
+            care = self._mood_care(obs)
+            if care:
+                actions.append(care)
+        except Exception:
+            pass
 
         # Hydration nudge: assign MYSELF a speak-task (single control point).
         try:

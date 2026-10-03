@@ -45,8 +45,10 @@ DECIDE_SYSTEM = (
     f"{ACTIONS_GUIDE}), args (object), why (short string). "
     "Rules: prefer click_text over click with coordinates; use read after "
     "screenshot to understand screens; use describe when you need to see "
-    "icons or layout OCR cannot read; call store when you have findings "
+    "icons or layout OCR cannot read; use store when you have findings "
     "worth saving; call done only when the goal is achieved. "
+    "If USER STATE reports anger/sadness/anxiety, prefer gentle helpful "
+    "actions and keep 'why' kind. "
     "Keep 'why' under 20 words."
 )
 
@@ -132,8 +134,16 @@ class OllamaBrain(Brain):
                     "prompt": "My local brain is offline (Ollama/model missing). What should I do?"}
         plan_state = f"step {task.step_idx + 1}/{max(len(task.plan), 1)}"
         obs_text = json.dumps(observation)[:1500]
+        mood_line = ""
+        try:
+            ctx = observation.get("context") if isinstance(observation, dict) else ""
+            if ctx:
+                mood_line = f"USER STATE (trusted local sensor): {ctx}\n"
+        except Exception:
+            pass
         prompt = (f"GOAL: {task.goal}\nPLAN STATE: {plan_state}\n"
-                  f"LAST RESULT: {obs_text}\nNext action as JSON:")
+                   f"{mood_line}"
+                   f"LAST RESULT: {obs_text}\nNext action as JSON:")
         try:
             raw = self._generate(self.model, prompt, system=DECIDE_SYSTEM)
             action = self._extract_json(raw)

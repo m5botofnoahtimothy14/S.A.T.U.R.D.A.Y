@@ -212,6 +212,26 @@ class TestMind(TestCase):
         self.assertFalse(mind._can_speak())
         print("DONE: mind caps test passed.")
 
+    def test_mood_care_acts(self):
+        mind, core, calls = self._mind()
+        actions = mind.tick({"present": "Noah", "mood": "angry",
+                             "mood_confidence": 0.9, "commands": {}})
+        self.assertIn("care:angry", actions)
+        self.assertTrue(any(c.get("kind") == "say" for c in calls))
+        print("DONE: mood anger care test passed.")
+
+    def test_mood_care_cooldown_and_gate(self):
+        mind, core, calls = self._mind()
+        mind.tick({"mood": "sad", "mood_confidence": 0.9})
+        n = len(calls)
+        mind.tick({"mood": "sad", "mood_confidence": 0.9})  # cooldown: silent
+        self.assertEqual(len(calls), n)
+        mind2, _, calls2 = self._mind()
+        mind2.tick({"mood": "sad", "mood_confidence": 0.2})  # unsure: silent
+        mind2.tick({"mood": "neutral", "mood_confidence": 0.9})  # neutral: silent
+        self.assertEqual(len(calls2), 0)
+        print("DONE: mood cooldown/gate test passed.")
+
 
 if __name__ == "__main__":
     test_main(verbosity=2)

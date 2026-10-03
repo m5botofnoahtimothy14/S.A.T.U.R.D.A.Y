@@ -338,6 +338,7 @@ class SATURDAYCore:
             confirm_fn=confirm_fn,
             allowed_apps=agent_cfg.get("allowed_apps", []),
             allowed_actions=agent_cfg.get("allowed_actions", []),
+            context_fn=self._mood_context_fn(),
         )
         print(f"\n🤖 Working on it by myself: {task.goal}")
         print("   (failsafe ON + kill switch Ctrl+Alt+Shift+X or say 'stop')")
@@ -345,6 +346,18 @@ class SATURDAYCore:
         self.agent_history.append(finished)
         self.agent_history = self.agent_history[-50:]  # bounded for long runs
         return "\n" + finished.summary() + "\n"
+
+    def _mood_context_fn(self):
+        """Trusted mood line for agent/brain prompts (OUR sensor, not screen)."""
+        def _ctx():
+            try:
+                session = getattr(self, "session", None)
+                if session is not None and hasattr(session, "mood_context"):
+                    return session.mood_context()
+            except Exception:
+                pass
+            return ""
+        return _ctx
 
     def _handle_agent_stop(self, args, raw_text):
         from saturday import agent as _agent
@@ -1334,6 +1347,7 @@ class SATURDAYCore:
             max_steps=15,
             confirm=True,   # local CLI = present user
             confirm_fn=None,  # ...but destructive steps are REFUSED, never assumed
+            context_fn=self._mood_context_fn(),
         )
         print(f"\n🧠 Brain engaged, working alone: {goal}")
         print("   (failsafe active — slam mouse to a corner to abort motion)")

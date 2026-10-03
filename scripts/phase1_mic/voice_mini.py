@@ -32,7 +32,7 @@ def main():
                 continue
             if not text:
                 line = "I didn't catch that. Say it again."
-            elif "goodbye" in text.lower():
+            elif "goodbye" in text.lower().replace(" ", ""):
                 line = "Goodbye."
                 print(f"SATURDAY: {line!r}", flush=True)
                 voice.speak(line)

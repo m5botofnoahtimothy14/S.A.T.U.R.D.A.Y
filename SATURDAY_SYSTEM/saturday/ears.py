@@ -72,10 +72,17 @@ except Exception as e:  # pragma: no cover
 
 STT_MODEL = os.getenv("SATURDAY_STT_MODEL", "tiny")
 STT_LANGUAGE = os.getenv("SATURDAY_STT_LANGUAGE", "").strip().lower()
+# Accuracy levers (all local, all free with the models on D:):
+# - SATURDAY_STT_MODEL: tiny (fast, default) | base (heavier, different errors)
+# - SATURDAY_STT_TASK: transcribe (same language) | translate (→ English)
+# - SATURDAY_STT_PROMPT: whisper initial_prompt (names/context bias)
+STT_TASK = os.getenv("SATURDAY_STT_TASK", "transcribe").strip().lower()
+STT_PROMPT = os.getenv("SATURDAY_STT_PROMPT", "")
 MIC_GAIN = float(os.getenv("SATURDAY_MIC_GAIN", "") or "0") or None  # resolved lazily
 MIC_DEVICE = os.getenv("SATURDAY_MIC_DEVICE", "").strip()
 TARGET_SR = 16000
 _stt_model = None
+_vad_session = None
 
 # Whisper language codes. English variants all map to "en" (whisper has one
 # English model); Tamil → "ta", French → "fr". ""/"auto" = detect per turn.
@@ -516,6 +523,58 @@ def heard(samples, silence_rms: float = 120.0) -> bool:
         return False
 
 
+def _vad_path() -> Path:
+    base = Path(__file__).parent.parent
+    return base / "models" / "silero_vad.onnx"
+
+
+def neural_vad(samples, threshold: float = 0.5) -> Dict[str, Any]:
+    """Silero neural VAD (2MB ONNX, CPU, lazy-loaded, cached on D:).
+    Returns per-chunk speech probs + trimmed audio (speech ± 250ms pad).
+    Honest {'available': False} when model/onnxruntime missing."""
+    try:
+        import onnxruntime as _ort
+        import numpy as _np
+    except Exception as e:
+        return {"available": False, "error": f"vad backend missing ({e})"}
+    path = _vad_path()
+    if not path.exists():
+        return {"available": False, "error": f"vad model missing at {path}"}
+    try:
+        global _vad_session
+        if _vad_session is None:
+            _vad_session = _ort.InferenceSession(str(path), providers=["CPUExecutionProvider"])
+        x = (_np.asarray(samples).astype(_np.float32).flatten() / 32768.0)
+        n = (len(x) // 512) * 512
+        if n < 512:
+            return {"available": False, "error": "clip too short for VAD"}
+        x = x[:n]
+        state = _np.zeros((2, 1, 128), dtype=_np.float32)
+        sr = _np.array([16000], dtype=_np.int64)
+        probs = []
+        for i in range(0, n, 512):
+            chunk = x[i:i + 512].reshape(1, -1)
+            out, state = _vad_session.run(None, {"input": chunk, "state": state, "sr": sr})
+            probs.append(float(out[0][0]))
+        probs = _np.array(probs)
+        speech = probs >= threshold
+        ratio = float(speech.mean())
+        confident = bool(probs.max() >= 0.7 and ratio >= 0.03)
+        if speech.any():
+            i0 = max(0, int(_np.argmax(speech)) * 512 - 4000)
+            i1 = min(n, (len(speech) - int(speech[::-1].argmax())) * 512 + 4000)
+            trimmed = (_np.asarray(samples).astype(_np.int16).flatten()[i0:i1])
+        else:
+            trimmed = _np.asarray(samples).astype(_np.int16).flatten()[:0]
+        return {"available": True, "max_prob": round(float(probs.max()), 3),
+                "mean_prob": round(float(probs.mean()), 3),
+                "speech_ratio": round(ratio, 3), "confident": confident,
+                "trimmed": trimmed.astype(_np.int16)}
+    except Exception as e:
+        logger.warning(f"neural VAD failed: {e}")
+        return {"available": False, "error": str(e)[:120]}
+
+
 def _temp_wav_path() -> str:
     try:
         base = Path(_TMP_DEFAULT)
@@ -545,26 +604,50 @@ def _get_model():
 
 def transcribe(samples=None, wav_path: Optional[str] = None,
                samplerate: int = TARGET_SR, vad: bool = True,
-               language: Optional[str] = None) -> Dict[str, Any]:
+               language: Optional[str] = None, task: Optional[str] = None,
+               prompt: Optional[str] = None) -> Dict[str, Any]:
     """Speech → text, local whisper. Empty speech → text '' (not an error).
-    language: whisper code ('en','ta','fr') or None/'' = auto-detect."""
+    language: whisper code ('en','ta','fr') or None/'' = auto-detect.
+    task: 'transcribe' (same language) or 'translate' (→ English, free).
+    prompt: whisper initial_prompt — names/context bias, improves accuracy."""
     if not _STT_AVAILABLE:
         return {"success": False, "error": f"faster-whisper missing ({_STT_ERROR})"}
     try:
-        if wav_path is None:
-            if samples is None:
-                return {"success": False, "error": "Nothing to transcribe."}
-            wav_path = save_wav(samples, samplerate)
         lang = resolve_language(language) or None  # None = whisper auto-detect
+        use_task = (task or STT_TASK or "transcribe").strip().lower()
+        if use_task not in ("transcribe", "translate"):
+            use_task = "transcribe"
+        use_prompt = prompt if prompt is not None else (STT_PROMPT or None)
+        if samples is not None and wav_path is None:
+            # Neural trim: cut leading/trailing non-speech so the decoder
+            # spends its capacity on words, not room noise. Falls back to
+            # raw audio on any failure — trimming must never eat speech.
+            try:
+                nv = neural_vad(samples)
+                if (nv.get("available") and nv.get("confident")
+                        and len(nv.get("trimmed", [])) >= 8000):
+                    samples = nv["trimmed"]
+                    vad_trim = {"max_prob": nv["max_prob"], "ratio": nv["speech_ratio"]}
+                else:
+                    vad_trim = {"skipped": nv.get("error", "unconfident VAD — raw audio kept")}
+            except Exception:
+                vad_trim = {"skipped": "vad error"}
+            wav_path = save_wav(samples, samplerate)
+        else:
+            vad_trim = {"skipped": "wav-path mode"}
+            if wav_path is None and samples is None:
+                return {"success": False, "error": "Nothing to transcribe."}
         model = _get_model()
         # VAD prefilter: music/silence segments never reach the decoder,
         # which is where tiny-model hallucinations come from.
         segments, info = model.transcribe(wav_path, beam_size=5, vad_filter=vad,
-                                          language=lang)
+                                          language=lang, task=use_task,
+                                          initial_prompt=use_prompt)
         text = " ".join(s.text.strip() for s in segments).strip()
         return {"success": True, "text": text,
                 "language": getattr(info, "language", "?"),
-                "requested_language": lang or "auto",
+                "requested_language": lang or "auto", "task": use_task,
+                "vad_trim": vad_trim,
                 "heard_something": bool(text)}
     except Exception as e:
         logger.warning(f"transcription failed: {e}")
