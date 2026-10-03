@@ -30,7 +30,8 @@
     "audio": {
         "mic_device": "9",
         "mic_gain": 2.0,
-        "comment": "mic_device: '' = auto (WASAPI Realtek array first). Or index ('9') or name substring. Env SATURDAY_MIC_DEVICE overrides this. NOTE: WDM-KS idx 12 rejected 2026-10-03 (driver spike artifact, dc/zeros) - do not select."
+        "stt_language": "auto",
+        "comment": "mic_device: '' = auto (WASAPI Realtek array first). Or index ('9') or name substring. Env SATURDAY_MIC_DEVICE overrides this. NOTE: WDM-KS idx 12 rejected 2026-10-03 (driver spike artifact, dc/zeros) - do not select. stt_language: auto (detect incl. Tamil) or en/ta/fr. Env SATURDAY_STT_LANGUAGE wins."
     },
     "agent": {
         "allowed_apps": [

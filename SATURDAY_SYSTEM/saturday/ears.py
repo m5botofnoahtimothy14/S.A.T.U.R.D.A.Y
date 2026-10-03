@@ -71,10 +71,38 @@ except Exception as e:  # pragma: no cover
     _STT_ERROR = str(e)
 
 STT_MODEL = os.getenv("SATURDAY_STT_MODEL", "tiny")
+STT_LANGUAGE = os.getenv("SATURDAY_STT_LANGUAGE", "").strip().lower()
 MIC_GAIN = float(os.getenv("SATURDAY_MIC_GAIN", "") or "0") or None  # resolved lazily
 MIC_DEVICE = os.getenv("SATURDAY_MIC_DEVICE", "").strip()
 TARGET_SR = 16000
 _stt_model = None
+
+# Whisper language codes. English variants all map to "en" (whisper has one
+# English model); Tamil → "ta", French → "fr". ""/"auto" = detect per turn.
+LANGUAGE_ALIASES = {
+    "english": "en", "en-us": "en", "en-gb": "en", "en-in": "en",
+    "us": "en", "uk": "en", "indian": "en",
+    "tamil": "ta", "ta-in": "ta",
+    "french": "fr", "fr-fr": "fr",
+    "auto": "", "": "",
+}
+
+
+def resolve_language(explicit: Optional[str] = None) -> str:
+    """STT language: per-call > env SATURDAY_STT_LANGUAGE > settings.json
+    [audio].stt_language > auto-detect. Returns whisper code or "" (auto)."""
+    for raw in (explicit,
+                os.getenv("SATURDAY_STT_LANGUAGE", ""),
+                str(_audio_config().get("stt_language", "") or "")):
+        key = (raw or "").strip().lower()
+        if not key:
+            continue
+        if key in LANGUAGE_ALIASES:
+            return LANGUAGE_ALIASES[key]
+        if len(key) == 2 and key.isalpha():
+            return key  # already a whisper code (de, es, hi, ...)
+        logger.warning(f"unknown STT language {raw!r}; using auto-detect")
+    return ""
 
 
 def _package_root() -> Path:
@@ -516,8 +544,10 @@ def _get_model():
 
 
 def transcribe(samples=None, wav_path: Optional[str] = None,
-               samplerate: int = TARGET_SR, vad: bool = True) -> Dict[str, Any]:
-    """Speech → text, local whisper. Empty speech → text '' (not an error)."""
+               samplerate: int = TARGET_SR, vad: bool = True,
+               language: Optional[str] = None) -> Dict[str, Any]:
+    """Speech → text, local whisper. Empty speech → text '' (not an error).
+    language: whisper code ('en','ta','fr') or None/'' = auto-detect."""
     if not _STT_AVAILABLE:
         return {"success": False, "error": f"faster-whisper missing ({_STT_ERROR})"}
     try:
@@ -525,20 +555,23 @@ def transcribe(samples=None, wav_path: Optional[str] = None,
             if samples is None:
                 return {"success": False, "error": "Nothing to transcribe."}
             wav_path = save_wav(samples, samplerate)
+        lang = resolve_language(language) or None  # None = whisper auto-detect
         model = _get_model()
         # VAD prefilter: music/silence segments never reach the decoder,
         # which is where tiny-model hallucinations come from.
-        segments, info = model.transcribe(wav_path, beam_size=5, vad_filter=vad)
+        segments, info = model.transcribe(wav_path, beam_size=5, vad_filter=vad,
+                                          language=lang)
         text = " ".join(s.text.strip() for s in segments).strip()
         return {"success": True, "text": text,
                 "language": getattr(info, "language", "?"),
+                "requested_language": lang or "auto",
                 "heard_something": bool(text)}
     except Exception as e:
         logger.warning(f"transcription failed: {e}")
         return {"success": False, "error": str(e)}
 
 
-def hear_once(seconds: float = 5.0) -> Dict[str, Any]:
+def hear_once(seconds: float = 5.0, language: Optional[str] = None) -> Dict[str, Any]:
     """One full hearing cycle: listen → gate → transcribe."""
     cap = capture(seconds)
     if not cap.get("success"):
@@ -548,11 +581,12 @@ def hear_once(seconds: float = 5.0) -> Dict[str, Any]:
                 "note": (f"Silence (rms {cap['rms']}). Nothing said — no audio "
                          f"arrived within {cap.get('seconds', seconds)}s."),
                 "rms": cap["rms"], "device": cap.get("device")}
-    res = transcribe(samples=cap["samples"], samplerate=cap["samplerate"])
+    res = transcribe(samples=cap["samples"], samplerate=cap["samplerate"],
+                     language=language)
     # Loud but VAD-empty = over-aggressive filter, not silence: decode direct.
     if res.get("success") and not res.get("text") and cap.get("rms", 0) > 300:
         res = transcribe(samples=cap["samples"], samplerate=cap["samplerate"],
-                         vad=False)
+                         vad=False, language=language)
         res["vad_fallback"] = True
     res["rms"] = cap["rms"]
     res["samples"] = cap["samples"]  # owner-gate needs the raw audio
