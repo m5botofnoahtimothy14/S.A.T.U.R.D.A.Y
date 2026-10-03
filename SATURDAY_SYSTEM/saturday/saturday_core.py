@@ -79,6 +79,8 @@ class SATURDAYCore:
             "tell": self._handle_tell,
             "verse": self._handle_verse,
             "sys": self._handle_sys,
+            "sysclean": self._handle_sysclean,
+            "evolve": self._handle_evolve,
             "do": self._handle_do,
             "research": self._handle_research,
             "tasks": self._handle_tasks,
@@ -407,6 +409,201 @@ class SATURDAYCore:
             return f"❌ sys {name} timed out after 30s."
         except Exception as e:
             return f"❌ sys {name} failed: {e}"
+
+    def _handle_sysclean(self, args, raw_text):
+        """Admin cleanup WITH your consent: launches an elevated PowerShell
+        (Windows shows YOU the UAC prompt — approve it or nothing runs).
+        Never bypasses UAC; that path does not exist here."""
+        if not self._current_trusted:
+            return "❌ sysclean is local-only."
+        import tempfile as _tf
+
+        script = (
+            "$ErrorActionPreference='SilentlyContinue';"
+            "dism /online /cleanup-image /startcomponentcleanup;"
+            "Remove-Item $env:TEMP\\* -Recurse -Force;"
+            "Remove-Item C:\\Windows\\Temp\\* -Recurse -Force;"
+            "Remove-Item C:\\Windows\\SoftwareDistribution\\Download\\* -Recurse -Force;"
+            "cleanmgr /sagerun:1;"
+            "Write-Host 'SATURDAY admin cleanup done.'; Start-Sleep 5")
+        path = str(_tf.NamedTemporaryFile(suffix=".ps1", delete=False,
+                                          dir=r"D:\SATURDAY_TEMP").name)
+        try:
+            with open(path, "w", encoding="utf-8") as fh:
+                fh.write(script)
+        except Exception as e:
+            return f"❌ Could not stage cleanup script: {e}"
+        try:
+            import ctypes as _ct
+
+            rc = _ct.windll.shell32.ShellExecuteW(
+                None, "runas", "powershell",
+                f'-NoProfile -ExecutionPolicy Bypass -File "{path}"', None, 1)
+            if int(rc) <= 32:
+                return "❌ Elevation refused or failed (UAC said no — nothing ran)."
+            try:
+                self.screen._audit("sysclean", "elevated cleanup launched",
+                                   method="runas-uac", target="C:",
+                                   result="user-approved")
+            except Exception:
+                pass
+            return ("⬆️ Elevated cleanup launched — approve the Windows UAC prompt "
+                    "and it cleans WinSxS + temps. Deny it and nothing runs.")
+        except Exception as e:
+            return f"❌ Elevation launch failed: {e}"
+
+    # -- Self code-writing (evolve): draft → YOUR approval → apply → test --
+    # The brain proposes a unified diff for ONE project file; nothing applies
+    # without your typed YES; backup kept; py_compile + related test must pass
+    # or it auto-rolls back. This is how SATURDAY rewrites itself safely.
+    def _handle_evolve(self, args, raw_text):
+        if not self._current_trusted:
+            return "❌ evolve is local-only."
+        goal = raw_text[len("evolve"):].strip()
+        if not goal:
+            return "❌ Usage: evolve <file.py> <what to change>. Example: evolve verse add 5 verses"
+        parts = goal.split(None, 1)
+        if len(parts) < 2:
+            return "❌ Usage: evolve <file.py> <what to change>."
+        fname, change = parts
+        from pathlib import Path as _P
+
+        target = (_P.cwd() / fname).resolve() if not _P(fname).is_absolute() else _P(fname).resolve()
+        root = _P(__file__).parent.parent.resolve()
+        try:
+            target.relative_to(root)
+        except Exception:
+            return f"❌ Refusing: {fname} is outside the SATURDAY project."
+        if not target.exists() or target.suffix != ".py":
+            return f"❌ Refusing: {target} is not an existing project .py file."
+        try:
+            from saturday.brain import OllamaBrain
+
+            brain = OllamaBrain(timeout=300)  # codegen needs room on 8GB boxes
+            if not brain.available():
+                return "❌ Brain offline (Ollama). Evolve needs the local LLM."
+        except Exception as e:
+            return f"❌ Brain failed to load: {e}"
+        try:
+            original = target.read_text(encoding="utf-8")
+        except Exception as e:
+            return f"❌ Cannot read {target}: {e}"
+        system = ("You output ONLY a unified diff (--- a/file, +++ b/file, @@ hunks) "
+                  "for the given Python file. No explanations. Max 60 diff lines. "
+                  "RULES: copy context lines CHARACTER-FOR-CHARACTER from the file, "
+                  "never retype or shorten them; 2 context lines before/after max; "
+                  "small hunk only.")
+        prompt = (f"FILE: {target.name}\n```python\n{original[:12000]}\n```\n"
+                  f"CHANGE: {change}\nUnified diff only:")
+        try:
+            raw = brain._generate(brain.model, prompt, system=system,
+                                  json_mode=False, num_ctx=2048)
+        except Exception as e:
+            return f"❌ Brain generation failed: {e}"
+        diff = self._extract_diff(raw)
+        if not diff:
+            return f"❌ Brain returned no usable diff. Raw head:\n{raw[:400]}"
+        print(f"\n🧬 Proposed patch for {target.name}:\n{diff[:2000]}")
+        print("Type YES to apply (backup kept, tests must pass) or anything else to drop it.")
+        try:
+            answer = input("   Apply ❯ ").strip()
+        except Exception:
+            answer = ""
+        if answer != "YES":
+            return "Dropped — no files touched."
+        bak = str(target) + f".pre-evolve-{int(__import__('time').time())}.bak"
+        try:
+            _P(bak).write_text(original, encoding="utf-8")
+            patched = self._apply_diff(original, diff)
+            target.write_text(patched, encoding="utf-8")
+        except Exception as e:
+            return f"❌ Patch rejected (context mismatch, file untouched): {e}"
+        import py_compile as _pc
+
+        try:
+            _pc.compile(str(target), doraise=True)
+        except Exception as e:
+            _P(bak).replace(target)
+            return f"❌ Patched file would not compile — rolled back from backup. ({e})"
+        test_out = self._evolve_test(target)
+        try:
+            self.screen._audit("evolve", f"{target.name}: {change[:80]}",
+                               method="brain-diff", target=str(target),
+                               result="applied" if test_out[0] else "rolled-back")
+        except Exception:
+            pass
+        if not test_out[0]:
+            _P(bak).replace(target)
+            return f"❌ Tests failed after patch — rolled back from backup.\n{test_out[1][:500]}"
+        return (f"🧬 Evolved {target.name}: {change[:100]}\n"
+                f"   compile OK, {test_out[1]}Backup: {bak}")
+
+    @staticmethod
+    def _extract_diff(raw: str) -> str:
+        import re as _re
+
+        m = _re.search(r"```(?:diff)?\s*(.*?)\s*```", raw, _re.S)
+        text = m.group(1) if m else raw
+        lines = [ln for ln in text.splitlines()
+                 if ln.startswith(("---", "+++", "@@", " ", "+", "-"))]
+        lines = [ln for ln in lines if not ln.startswith(("--- /dev", "+++ /dev"))]
+        hunks = [ln for ln in lines if ln.startswith("@@")]
+        if not hunks or len(lines) > 200:
+            return ""
+        return "\n".join(lines) + "\n"
+
+    @staticmethod
+    def _apply_diff(original: str, diff: str) -> str:
+        import re as _re
+
+        src = original.splitlines(keepends=False)
+        out: list = []
+        pos = 0
+        for line in diff.splitlines():
+            if line.startswith(("---", "+++")):
+                continue
+            m = _re.match(r"@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@", line)
+            if m:
+                start = int(m.group(1)) - 1
+                if start < pos:
+                    raise ValueError("overlapping hunks")
+                out.extend(src[pos:start])
+                pos = start
+                continue
+            if line.startswith(" ") or line == "":
+                if pos >= len(src) or src[pos] != line[1:]:
+                    raise ValueError(f"context mismatch at line {pos + 1}")
+                out.append(src[pos])
+                pos += 1
+            elif line.startswith("-"):
+                if pos >= len(src) or src[pos] != line[1:]:
+                    raise ValueError(f"removal mismatch at line {pos + 1}")
+                pos += 1
+            elif line.startswith("+"):
+                out.append(line[1:])
+            else:
+                raise ValueError(f"bad diff line: {line[:40]}")
+        out.extend(src[pos:])
+        return "\n".join(out) + ("\n" if original.endswith("\n") else "")
+
+    def _evolve_test(self, target):
+        """Compile passed already; run the mapped unit test file if it exists."""
+        import subprocess as _sp
+
+        name = target.stem
+        cand = target.parent.parent / "tests" / f"test_{name}.py"
+        if not cand.exists():
+            cand = target.parent / f"test_{name}.py"
+        if not cand.exists():
+            return True, "no mapped test file (compile only). "
+        try:
+            r = _sp.run(["python", str(cand)], capture_output=True, text=True,
+                        timeout=240, errors="replace")
+            tail = (r.stdout or "")[-300:] + (r.stderr or "")[-300:]
+            ok = ("OK" in tail and "FAILED" not in tail) or r.returncode == 0
+            return ok, f"{cand.name} rc={r.returncode}. "
+        except Exception as e:
+            return False, f"test run failed: {e}"
 
     # -- Agent (autonomy: SATURDAY acts by itself) ---------------------
     def _run_agent_task(self, task: AgentTask) -> str:
