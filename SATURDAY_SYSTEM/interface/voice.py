@@ -62,12 +62,20 @@ class SATURDAYVoice:
                             break
                 vdir = os.getenv("PIPER_VOICES_DIR", r"D:\S.A.T.U.R.D.A.Y\models\piper\voices")
                 want = (voice or "").lower()
+                length_scale = os.getenv("SATURDAY_PIPER_LENGTH", "1.0")
                 if "amy" in want:
                     model = os.path.join(vdir, "en_US-amy-medium.onnx")
                 elif "ryan" in want:
                     model = os.path.join(vdir, "en_US-ryan-medium.onnx")
+                elif "kristin" in want:
+                    model = os.path.join(vdir, "en_US-kristin-medium.onnx")
+                    length_scale = os.getenv("EDITH_PIPER_LENGTH", length_scale)
+                elif "kathleen" in want:
+                    model = os.path.join(vdir, "en_US-kathleen-low.onnx")
+                    length_scale = os.getenv("EDITH_PIPER_LENGTH", length_scale)
                 elif "edith" in want or "zira" in want or "female" in want or "lessac" in want:
-                    model = os.getenv("EDITH_PIPER_MODEL", os.path.join(vdir, "en_US-lessac-medium.onnx"))
+                    model = os.getenv("EDITH_PIPER_MODEL", os.path.join(vdir, "en_US-amy-medium.onnx"))
+                    length_scale = os.getenv("EDITH_PIPER_LENGTH", "1.1")
                 else:
                     model = (os.getenv("PIPER_MODEL_PATH", "")
                              or os.getenv("SATURDAY_PIPER_MODEL", "")
@@ -75,8 +83,15 @@ class SATURDAYVoice:
                 if piper_bin and model and os.path.exists(model):
                     tmp_wav = os.path.join(os.getenv("SATURDAY_D_TMP", r"D:\SATURDAY_TEMP"),
                                             "saturday_tts.wav")
+                    cmd = [piper_bin, "--model", model, "--output_file", tmp_wav]
+                    try:
+                        ls = float(length_scale)
+                        if abs(ls - 1.0) > 0.01:
+                            cmd += ["--length-scale", str(ls)]
+                    except Exception:
+                        pass
                     subprocess.run(
-                        [piper_bin, "--model", model, "--output_file", tmp_wav],
+                        cmd,
                         input=text, capture_output=True, text=True, check=True,
                         timeout=60,
                         cwd=os.path.dirname(piper_bin),
