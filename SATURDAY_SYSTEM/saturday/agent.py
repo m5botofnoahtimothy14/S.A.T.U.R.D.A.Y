@@ -125,6 +125,7 @@ ACTION_SCHEMA = {
     "type": {"text": str}, "press": {"key": str}, "hotkey": {"keys": list},
     "scroll": {"amount": int}, "file_write": {"path": str, "content": str},
     "focus": {"window": str}, "wait_settle": {}, "ask": {"prompt": str},
+    "volume": {"action": str}, "media": {"key": str},
     "done": {},
 }
 
@@ -527,6 +528,16 @@ class AgentRunner:
                 return op.hotkey(args.get("keys", []), confirm=c)
             if action == "scroll":
                 return op.scroll(args.get("amount", 0), confirm=c)
+            if action == "volume":
+                fn = getattr(op, "volume", None)
+                if not fn:
+                    return {"success": False, "error": "operator has no volume path"}
+                return fn(args.get("action", ""), confirm=c)
+            if action == "media":
+                fn = getattr(op, "media", None)
+                if not fn:
+                    return {"success": False, "error": "operator has no media path"}
+                return fn(args.get("key", ""), confirm=c)
             if action == "file_write":
                 fn = getattr(op, "file_write", None)
                 if not fn:

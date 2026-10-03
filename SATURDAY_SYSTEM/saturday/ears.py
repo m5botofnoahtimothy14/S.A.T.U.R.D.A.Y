@@ -70,7 +70,7 @@ except Exception as e:  # pragma: no cover
     _STT_AVAILABLE = False
     _STT_ERROR = str(e)
 
-STT_MODEL = os.getenv("SATURDAY_STT_MODEL", "tiny")
+STT_MODEL = os.getenv("SATURDAY_STT_MODEL", "base")
 STT_LANGUAGE = os.getenv("SATURDAY_STT_LANGUAGE", "").strip().lower()
 # Accuracy levers (all local, all free with the models on D:):
 # - SATURDAY_STT_MODEL: tiny (fast, default) | base (heavier, different errors)

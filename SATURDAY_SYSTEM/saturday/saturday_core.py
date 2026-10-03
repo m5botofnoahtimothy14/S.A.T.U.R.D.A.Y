@@ -69,6 +69,15 @@ class SATURDAYCore:
             "scroll": self._handle_scroll,
             "read": self._handle_read,
             "clicktext": self._handle_clicktext,
+            "volume": self._handle_volume,
+            "mute": lambda a, r: self._handle_volume(["mute"], r),
+            "media": self._handle_media,
+            "play": lambda a, r: self._handle_media(["play"], r),
+            "pause": lambda a, r: self._handle_media(["pause"], r),
+            "next": lambda a, r: self._handle_media(["next"], r),
+            "prev": lambda a, r: self._handle_media(["prev"], r),
+            "tell": self._handle_tell,
+            "verse": self._handle_verse,
             "do": self._handle_do,
             "research": self._handle_research,
             "tasks": self._handle_tasks,
@@ -310,6 +319,44 @@ class SATURDAYCore:
         if not result.get("success"):
             return self._screen_denied(result)
         return f"🖱️ Clicked '{phrase}' at ({result['x']},{result['y']}). Run 'see' to verify."
+
+    def _handle_volume(self, args, raw_text):
+        if not args or args[0] not in ("up", "down", "mute"):
+            return "❌ Usage: volume <up|down|mute>"
+        result = self.screen.volume(args[0], confirm=self._current_trusted)
+        if not result.get("success"):
+            return self._screen_denied(result)
+        return f"Volume {result['action']} (media-key sent)."
+
+    def _handle_media(self, args, raw_text):
+        if not args or args[0] not in ("play", "pause", "stop", "next", "prev"):
+            return "❌ Usage: media <play|pause|stop|next|prev> (or: play, pause, next, prev)"
+        result = self.screen.media(args[0], confirm=self._current_trusted)
+        if not result.get("success"):
+            return self._screen_denied(result)
+        return f"Media {result['action']} (media-key sent)."
+
+    def _handle_tell(self, args, raw_text):
+        """Read the screen, then SAY it: reading + speaking in one move."""
+        seen = self.screen.read_screen(args[0] if args else None)
+        if not seen.get("success"):
+            return f"❌ Read failed: {seen.get('error')}"
+        from saturday import humanvoice as hv
+
+        said = hv.naturalize(seen.get("text", "")[:600])
+        try:
+            self._speak(said)
+        except Exception as e:
+            return f"Read {len(seen.get('words', []))} words, but voice failed: {e}\n   {said}"
+        return f"Read {len(seen.get('words', []))} words and spoke: {said}"
+
+    def _handle_verse(self, args, raw_text):
+        try:
+            from saturday import verse as _v
+        except Exception as e:
+            return f"❌ Verse module missing: {e}"
+        ref = " ".join(args).strip()
+        return _v.verse_of_day() if not ref else _v.verse_lookup(ref)
 
     # -- Agent (autonomy: SATURDAY acts by itself) ---------------------
     def _run_agent_task(self, task: AgentTask) -> str:

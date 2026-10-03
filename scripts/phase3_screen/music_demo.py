@@ -1,0 +1,25 @@
+import sys, time
+sys.path.insert(0, r"D:\S.A.T.U.R.D.A.Y\SATURDAY_SYSTEM")
+from saturday import screen_operator as so
+op = so.ScreenOperator()
+
+# songs: open lofi stream, let it settle, pause, play, measure change
+r = op.open_url("https://www.youtube.com/results?search_query=lofi+hip+hop+radio", confirm=True)
+print("OPEN:", r.get("url"), flush=True)
+s0 = op.screenshot(r"D:\demo0.png")
+st = op.wait_for_change(s0["path"], timeout=12.0)
+print("SETTLE:", {k: st.get(k) for k in ("changed_ratio", "stable")}, flush=True)
+s1 = op.screenshot(r"D:\demo1.png")
+op.media("pause", confirm=True)
+time.sleep(1.5)
+s2 = op.screenshot(r"D:\demo2.png")
+d1 = op.pixel_change(s1["path"], s2["path"])
+print("PAUSE delta:", round(d1.get("changed_ratio", -1), 4), flush=True)
+op.media("play", confirm=True)
+time.sleep(2.0)
+s3 = op.screenshot(r"D:\demo3.png")
+d2 = op.pixel_change(s2["path"], s3["path"])
+print("PLAY delta:", round(d2.get("changed_ratio", -1), 4), flush=True)
+rd = op.read_screen(s3["path"])
+print("WORDS on screen:", len(rd.get("words", [])), flush=True)
+print("DONE", flush=True)

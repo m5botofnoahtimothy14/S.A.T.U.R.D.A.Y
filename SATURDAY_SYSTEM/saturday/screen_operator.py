@@ -761,6 +761,55 @@ class ScreenOperator:
             logger.warning(f"scroll failed: {e}")
             return self._err(str(e))
 
+    # -- SOUND + MEDIA (system volume, songs/videos play-pause-next) ---------
+    VOLUME_KEYS = {"up": "volumeup", "down": "volumedown", "mute": "volumemute"}
+    MEDIA_KEYS = {"playpause", "play", "pause", "stop", "next", "prev"}
+
+    def volume(self, action: str, confirm: bool = False) -> Dict[str, Any]:
+        """System volume: up / down / mute(toggle). OS-level media keys —
+        works on songs, videos, calls, everything."""
+        gated = self._gated("volume", confirm)
+        if gated:
+            return gated
+        missing = self._need_backend()
+        if missing:
+            return missing
+        key = self.VOLUME_KEYS.get((action or "").strip().lower(), "")
+        if not key:
+            return self._err("Usage: volume <up|down|mute>")
+        try:
+            with self.indicator():
+                pyautogui.press(key)
+            self._audit("volume", action, method="media-key",
+                        target="system-volume", result=action)
+            return {"success": True, "action": action, "method": "media-key"}
+        except Exception as e:
+            return self._err(str(e))
+
+    def media(self, key: str, confirm: bool = False) -> Dict[str, Any]:
+        """Play/pause/stop/next/prev for whatever is playing (song/video)."""
+        gated = self._gated("media", confirm)
+        if gated:
+            return gated
+        missing = self._need_backend()
+        if missing:
+            return missing
+        key = (key or "").strip().lower()
+        mapping = {"play": "playpause", "pause": "playpause",
+                   "playpause": "playpause", "stop": "stop",
+                   "next": "nexttrack", "prev": "prevtrack"}
+        code = mapping.get(key, "")
+        if not code:
+            return self._err("Usage: media <play|pause|stop|next|prev>")
+        try:
+            with self.indicator():
+                pyautogui.press(code)
+            self._audit("media", key, method="media-key",
+                        target="now-playing", result=key)
+            return {"success": True, "action": key, "method": "media-key"}
+        except Exception as e:
+            return self._err(str(e))
+
     # -- READ (self-reading: OCR text + word boxes, fully local) ----
     def read_screen(self, path: Optional[str] = None) -> Dict[str, Any]:
         """Read text off the screen. Returns text plus per-word boxes so

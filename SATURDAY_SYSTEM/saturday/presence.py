@@ -22,6 +22,8 @@ logger = logging.getLogger("SATURDAY.Presence")
 POLL_SECONDS = 1.5
 ARRIVAL_GAP = 6.0      # face gone this long = new arrival
 REPEAT_COOLDOWN = 900.0  # never re-greet the same person within 15 min
+WATCH_COOLDOWN = 300.0  # unknown-face snapshots at most every 5 min
+WATCH_DIRNAME = "watch"
 
 
 class PresenceLoop:
@@ -100,12 +102,49 @@ class PresenceLoop:
         self.present_name = name
         if self._quiet():
             return None
+        if name is None or str(name).lower() == "unknown":
+            self._watch_snapshot(frame)  # unknown face near the laptop: keep evidence
         if (name and name == self.last_greeted_name
                 and now - self.last_greeted_at < REPEAT_COOLDOWN):
             return None
         if self.last_greeted_at and now - self.last_greeted_at < 20.0:
             return None
         return self._greet(name)
+
+    def _watch_snapshot(self, frame) -> Optional[str]:
+        """Theft/threat evidence: unknown face near the laptop → timestamped
+        JPEG on D: (bounded dir, 5-min cooldown) + dashboard event. Never
+        facial-recognition-accuses: it stores 'unknown face seen', not a name."""
+        now = time.time()
+        if now - getattr(self, "_last_watch", 0.0) < WATCH_COOLDOWN:
+            return None
+        try:
+            import os as _os
+            from pathlib import Path as _P
+
+            base = _P(_os.getenv("SATURDAY_D_TMP", "D:/SATURDAY_TEMP")) / WATCH_DIRNAME
+            base.mkdir(parents=True, exist_ok=True)
+            for old in sorted(base.glob("watch_*.jpg"))[:-20]:
+                try:
+                    old.unlink()
+                except Exception:
+                    pass
+            import cv2 as _cv2
+
+            path = str(base / f"watch_{int(now)}.jpg")
+            _cv2.imwrite(path, frame)
+            self._last_watch = now
+            logger.warning(f"WATCH: unknown face snapshot {path}")
+            try:
+                dash = getattr(getattr(self.session, "core", None), "_dashboard", None)
+                if dash is not None:
+                    dash.note("watch", f"unknown face near laptop ({path})")
+            except Exception:
+                pass
+            return path
+        except Exception as e:
+            logger.debug(f"watch snapshot failed: {e}")
+            return None
 
     def _greet(self, name: Optional[str]) -> str:
         from saturday import humanvoice as hv
