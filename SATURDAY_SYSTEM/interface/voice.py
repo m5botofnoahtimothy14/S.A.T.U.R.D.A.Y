@@ -62,12 +62,16 @@ class SATURDAYVoice:
                             break
                 vdir = os.getenv("PIPER_VOICES_DIR", r"D:\S.A.T.U.R.D.A.Y\models\piper\voices")
                 want = (voice or "").lower()
-                if "amy" in want or "edith" in want or "zira" in want or "female" in want:
-                    model = os.getenv("EDITH_PIPER_MODEL", os.path.join(vdir, "en_US-amy-medium.onnx"))
+                if "amy" in want:
+                    model = os.path.join(vdir, "en_US-amy-medium.onnx")
+                elif "ryan" in want:
+                    model = os.path.join(vdir, "en_US-ryan-medium.onnx")
+                elif "edith" in want or "zira" in want or "female" in want or "lessac" in want:
+                    model = os.getenv("EDITH_PIPER_MODEL", os.path.join(vdir, "en_US-lessac-medium.onnx"))
                 else:
                     model = (os.getenv("PIPER_MODEL_PATH", "")
                              or os.getenv("SATURDAY_PIPER_MODEL", "")
-                             or os.path.join(vdir, "en_US-ryan-medium.onnx"))
+                             or os.path.join(vdir, "en_US-bryce-medium.onnx"))
                 if piper_bin and model and os.path.exists(model):
                     tmp_wav = os.path.join(os.getenv("SATURDAY_D_TMP", r"D:\SATURDAY_TEMP"),
                                             "saturday_tts.wav")
