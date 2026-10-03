@@ -72,6 +72,12 @@ footer{position:relative; z-index:1; text-align:center; color:var(--dim); font-s
     <div style="background:#020409;border:1px solid var(--line);border-radius:8px;height:22px;overflow:hidden"><div id="micbar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div>
     <div id="micnum" class="dim" style="font-size:11px;margin-top:4px">mic offline</div></div>
   <div class="card"><h2>☺ MOOD</h2><div id="moodline" class="dim" style="font-size:12px">mood unknown</div></div>
+  <div class="card"><h2>◆ FACE TRAINING</h2>
+    <div class="dim" style="font-size:11px">Upload clear front photos — same pipeline as live camera, cross-verified every frame. Stored encrypted.</div>
+    <div class="row" style="margin-top:6px"><input id="tname" placeholder="name (noah / khadija)" style="max-width:170px"><input id="tfile" type="file" accept="image/*"></div>
+    <div class="row" style="margin-top:6px"><button id="tenroll">ENROLL PHOTO</button></div>
+    <div id="troster" class="dim" style="font-size:12px;margin-top:6px">nobody enrolled yet</div>
+    <div id="tmsg" style="font-size:12px;margin-top:4px"></div></div>
   <div class="card"><h2>◆ SUBSYSTEMS</h2><div id="subs"><span class="dim">…</span></div></div>
   <div class="card"><h2>◆ HOMEBOT CORE2</h2><div id="bot">…</div>
     <div class="pad"><span></span><button data-bot="forward">▲</button><span></span>
@@ -176,6 +182,12 @@ async function refresh(){
       else{$('micbar').style.width='0%';$('micnum').textContent='mic offline ('+esc(String(m.reason||''))+')';}}catch(e){}
     try{const md=await api('/api/mood');
       $('moodline').innerHTML=md.available?`<b class="vio">${esc(String(md.mood))}</b> <span class="dim">${Math.round((md.confidence||0)*100)}% • stable ${Math.round((md.stability||0)*100)}% • ${md.age_s}s ago</span>`:`<span class="dim">${esc(String(md.context||'mood unknown'))}</span>`;}catch(e){}
+    try{const g=await api('/api/gallery',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+      const p=g.people||{};
+      $('troster').innerHTML=Object.keys(p).length?Object.entries(p).map(([n,c])=>`<div><b class="vio">${esc(n)}</b> <span class="dim">${c} samples</span> <button data-forget="${esc(n)}" style="font-size:10px">forget</button></div>`).join(''):'<span class="dim">nobody enrolled yet</span>';
+      document.querySelectorAll('[data-forget]').forEach(b=>b.onclick=async()=>{
+        const r=await api('/api/forget_person',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:b.dataset.forget})});
+        $('tmsg').textContent=r.success?`forgot ${b.dataset.forget} (${r.deleted})`:(r.error||'failed');setTimeout(refresh,800);});}catch(e){}
   }catch(e){failStreak++;setConn(false,'○ RETRY '+failStreak);timer=Math.min(15000,timer*1.5);}
   setTimeout(refresh,timer);
 }
@@ -187,6 +199,14 @@ $('send').onclick=()=>sendCmd();$('cmd').onkeydown=e=>{if(e.key==='Enter')sendCm
 $('saveCfg').onclick=()=>{const a=$('apiBase').value.trim(),k=$('tokIn').value.trim();
   if(a)localStorage.setItem('sat_api',a.replace(/\/$/,''));if(k)localStorage.setItem('sat_token',k);
   say('','🔗 Backend linked. Reloading…','sys');setTimeout(()=>location.reload(),600);};
+$('tenroll').onclick=async()=>{
+  const n=$('tname').value.trim(),f=$('tfile').files[0];
+  if(!n||!f){$('tmsg').textContent='name + photo required';return;}
+  $('tmsg').textContent='scanning photo…';
+  const b=await new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(f);});
+  try{const r=await api('/api/enroll_photo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,image_b64:b})});
+    $('tmsg').textContent=r.success?`enrolled ${r.person}: ${r.saved} sample(s), ${r.faces_found} face(s)`:`failed: ${r.error}`;
+    if(r.success)setTimeout(refresh,800);}catch(e){$('tmsg').textContent='upload error';}};
 (function(){if(API)$('apiBase').value=API;if(TOKEN)$('tokIn').value='••••••';})();
 document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>sendCmd(b.dataset.c));
 document.querySelectorAll('[data-bot]').forEach(b=>b.onclick=async()=>{

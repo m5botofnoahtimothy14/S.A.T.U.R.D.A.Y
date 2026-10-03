@@ -1303,6 +1303,87 @@ class SATURDAYCore:
         self._gallery()  # reload + retrain from vault
         return f"✅ Enrolled '{name}': {saved} samples saved (encrypted). I know you now."
 
+    def enroll_photo(self, name: str, image_bytes: bytes) -> dict:
+        """Website training: photo upload → face scan → vault gallery.
+        Same norm/recognize pipeline as live camera, so uploads cross-verify
+        against live frames. Returns {saved, faces_found} or honest error."""
+        import base64 as _b64
+
+        import numpy as _np
+
+        name = (name or "").strip()
+        if not name or len(name) > 40:
+            return {"success": False, "error": "Name required (max 40 chars)."}
+        if not image_bytes or len(image_bytes) > 8_000_000:
+            return {"success": False, "error": "Photo missing or over 8MB."}
+        try:
+            import cv2 as _cv2
+
+            arr = _np.frombuffer(image_bytes, dtype=_np.uint8)
+            img = _cv2.imdecode(arr, _cv2.IMREAD_COLOR)
+            if img is None:
+                return {"success": False, "error": "Not a readable photo (JPEG/PNG only)."}
+        except Exception as e:
+            return {"success": False, "error": f"Photo decode failed: {e}"}
+        gallery = self._gallery()
+        if not gallery.available():
+            return {"success": False, "error": "Face engine unavailable."}
+        faces = senses.find_faces(img)
+        boxes = faces.get("boxes", []) if faces.get("success") else []
+        if not boxes:
+            return {"success": False, "error": "No face found in this photo. Upload a clear front-facing pic."}
+        saved = 0
+        try:
+            for b in sorted(boxes, key=lambda r: r["w"] * r["h"], reverse=True)[:3]:
+                crop = img[b["y"]:b["y"] + b["h"], b["x"]:b["x"] + b["w"]]
+                normed = gallery.norm(crop)
+                if normed:
+                    self.pmv.secure_store(_b64.b64encode(normed).decode(),
+                                          tags=["identity", f"person:{name}"])
+                    saved += 1
+        except Exception as e:
+            return {"success": False, "error": f"Vault save failed ({e}). Unlock first."}
+        self._gallery_cache = None
+        self._gallery()  # retrain incl. the new samples
+        logger.warning(f"Photo-enrolled '{name}': {saved} sample(s) from upload")
+        return {"success": True, "person": name, "faces_found": len(boxes),
+                "saved": saved}
+
+    def forget_person(self, name: str) -> dict:
+        """Delete every gallery sample for a person (vault entries by id)."""
+        name = (name or "").strip()
+        if not name:
+            return {"success": False, "error": "Name required."}
+        try:
+            found = self.pmv.secure_search(tag="identity") or []
+            n = 0
+            for e in found:
+                tags = e.get("tags", []) or []
+                if any(t == f"person:{name}" or t.lower() == f"person:{name.lower()}" for t in tags):
+                    try:
+                        if self.pmv.secure_delete(e.get("id", "")):
+                            n += 1
+                    except Exception:
+                        pass
+            self._gallery_cache = None
+            self._gallery()
+            return {"success": True, "person": name, "deleted": n}
+        except Exception as e:
+            return {"success": False, "error": str(e)[:120]}
+
+    def gallery_roster(self) -> dict:
+        """Who the camera knows: names + sample counts (for the website)."""
+        try:
+            found = self.pmv.secure_search(tag="identity") or []
+            counts: dict = {}
+            for e in found:
+                for t in e.get("tags", []) or []:
+                    if t.startswith("person:"):
+                        counts[t.split(":", 1)[1]] = counts.get(t.split(":", 1)[1], 0) + 1
+            return {"success": True, "people": counts}
+        except Exception as e:
+            return {"success": False, "error": str(e)[:120]}
+
     def _handle_who(self, args, raw_text):
         got = self._camera_frame()
         if not got.get("success"):

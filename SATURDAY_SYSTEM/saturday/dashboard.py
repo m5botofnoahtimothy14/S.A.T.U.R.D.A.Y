@@ -318,12 +318,46 @@ class _Handler(BaseHTTPRequestHandler):
                 return self._send(403, {"error": "token required (X-Saturday-Token)"})
             import urllib.parse as _up2
             route = _up2.urlparse(self.path).path
-            length = min(int(self.headers.get("Content-Length", 0) or 0), MAX_BODY)
+            cap = 8 * 1024 * 1024 if route == "/api/enroll_photo" else MAX_BODY
+            length = min(int(self.headers.get("Content-Length", 0) or 0), cap)
             raw = self.rfile.read(length) if length else b""
             try:
                 data = json.loads(raw.decode() or "{}")
             except Exception:
                 return self._send(400, {"error": "invalid JSON"})
+            if route == "/api/gallery":
+                try:
+                    return self._send(200, ref.core.gallery_roster())
+                except Exception as e:
+                    return self._send(200, {"success": False, "error": str(e)[:120]})
+            if route == "/api/enroll_photo":
+                import base64 as _b64
+
+                name = str(data.get("name", "")).strip()
+                img_b64 = str(data.get("image_b64", ""))
+                if not name or not img_b64:
+                    return self._send(200, {"success": False,
+                                            "error": "need {name, image_b64}"})
+                try:
+                    img = _b64.b64decode(img_b64.split(",", 1)[-1])
+                except Exception:
+                    return self._send(200, {"success": False, "error": "bad base64 photo"})
+                try:
+                    res = ref.core.enroll_photo(name, img)
+                except Exception as e:
+                    res = {"success": False, "error": str(e)[:160]}
+                ref.note("enroll", f"{name} → {res}")
+                return self._send(200, res)
+            if route == "/api/forget_person":
+                name = str(data.get("name", "")).strip()
+                if not name:
+                    return self._send(200, {"success": False, "error": "need {name}"})
+                try:
+                    res = ref.core.forget_person(name)
+                except Exception as e:
+                    res = {"success": False, "error": str(e)[:160]}
+                ref.note("forget", f"{name} → {res}")
+                return self._send(200, res)
             if route == "/api/command":
                 cmd = str(data.get("command", "")).strip()
                 if not cmd:
