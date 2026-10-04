@@ -49,6 +49,7 @@
     },
     "identity": {
         "owner_name": "Noah",
-        "comment": "EDITH calls you this on recognition. SATURDAY: workmode=sir, normal=name-or-sir."
+        "owner_full": "Noah Timothy Keba",
+        "comment": "Owner/Admin/Creator. EDITH calls you owner_name on recognition. SATURDAY: workmode=sir, normal=name-or-sir. See AUTHORITY.md."
     }
 }

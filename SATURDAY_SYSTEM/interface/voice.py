@@ -12,23 +12,31 @@ class SATURDAYVoice:
         self.active = False
 
     def start_listening(self):
-        """
-        In a full implementation, this would initialize a microphone 
-        and run a local STT engine (like Whisper.cpp or Vosk).
-        """
-        logger.info("Voice engine initialized. (Simulated)")
+        """Arms the voice path (STT engines lazy-load inside ears on first use)."""
+        logger.info("Voice engine initialized.")
         self.active = True
 
     def stop_listening(self):
         self.active = False
         logger.info("Voice engine suspended.")
 
-    def process_voice_command(self, audio_data):
-        """Processes audio and passes transcribed text to SATURDAY core."""
-        # Simulated transcription
-        transcription = "status"
+    def process_voice_command(self, audio_data, language=None):
+        """Real transcription: int16 samples or WAV path → whisper → core.
+        Returns transcribed text (and the core result when a core is bound)."""
+        from saturday import ears
+
+        if isinstance(audio_data, str):
+            res = ears.transcribe(wav_path=audio_data, language=language)
+        else:
+            res = ears.transcribe(samples=audio_data, language=language)
+        transcription = (res.get("text", "") or "").strip()
         logger.info(f"Transcribed: {transcription}")
-        return self.core.process_command(transcription)
+        if not transcription:
+            return {"text": "", "result": "silence"}
+        if self.core is None:
+            return {"text": transcription, "result": None}
+        return {"text": transcription,
+                "result": self.core.process_command(transcription)}
 
     def speak(self, text: str, voice: str = ""):
         """Outputs text through local TTS engine (Piper, platform TTS, or pyttsx3 fallback)."""

@@ -1966,6 +1966,7 @@ class SATURDAYCore:
         return {
             "online": self.is_running,
             "version": self.pmv.settings.get("version", "?"),
+            "creator": "Noah Timothy Keba",
             "vault_mounted": self.pmv.vault_mounted,
             "deadman_status": self.pmv.get_deadman_status(),
             "node_status": self.pmv.node_status(),
