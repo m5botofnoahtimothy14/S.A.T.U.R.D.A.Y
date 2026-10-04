@@ -1400,7 +1400,13 @@ class SATURDAYCore:
         extra = f" +{len(boxes) - 1} other face(s)" if len(boxes) > 1 else ""
         if name:
             return f"👤 I see {name} (match distance {dist}){extra}."
-        return f"👤 {len(boxes)} face(s), none recognized{extra}. Use enroll to teach me."
+        try:
+            from saturday.identity import LBPH_THRESHOLD as _THR
+        except Exception:
+            _THR = 55.0
+        return (f"👤 {len(boxes)} face(s), none recognized{extra} "
+                f"(closest distance {dist}, need under {_THR}). "
+                f"Upload sharper front-facing pics in FACE TRAINING.")
 
     def _handle_enrollvoice(self, args, raw_text):
         from saturday import ears

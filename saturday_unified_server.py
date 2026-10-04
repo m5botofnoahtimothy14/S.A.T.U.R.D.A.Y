@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 import os
 import sys
 import asyncio
@@ -118,225 +118,329 @@ class SATURDAYUnifiedServer:
             return 502, json.dumps({"error": str(e)})
     def get_control_panel_html(self):
         local_ip = self.server_info["local_ip"]
-        saturday_status = "🟢 Online" if self.server_info["saturday_online"] else "🔴 Offline"
+        saturday_status = "🟢 ONLINE" if self.server_info["saturday_online"] else "🔴 OFFLINE"
         uptime = int(time.time() - self.server_info["start_time"])
         hours = uptime // 3600
         minutes = (uptime % 3600) // 60
         return f'''<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SATURDAY Control Panel</title>
+    <title>S.A.T.U.R.D.A.Y // LOCALHOST CONTROL PLANE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-            color: #fff;
+            font-family: 'Rajdhani', -apple-system, sans-serif;
+            background: #030712;
+            color: #e2f1f8;
             min-height: 100vh;
+            overflow-x: hidden;
+        }}
+        .grid-bg {{
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: radial-gradient(rgba(0, 242, 254, 0.08) 1px, transparent 0);
+            background-size: 30px 30px;
         }}
         .header {{
-            background: rgba(0,212,255,0.1);
-            border-bottom: 1px solid rgba(0,212,255,0.3);
-            padding: 20px 40px;
+            position: relative; z-index: 10;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 242, 254, 0.3);
+            padding: 18px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }}
         .header h1 {{
-            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, #00f2fe, #9d4edd);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 28px;
+            font-size: 24px;
+            letter-spacing: 4px;
+        }}
+        .badges {{ display: flex; align-items: center; gap: 12px; }}
+        .sub-tag {{
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            padding: 6px 16px;
+            border-radius: 20px;
+            color: #10b981;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(16,185,129,0.2);
         }}
         .status-badge {{
-            background: rgba(0,255,0,0.2);
-            border: 1px solid #00ff00;
-            padding: 8px 20px;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid #00f2fe;
+            padding: 6px 16px;
             border-radius: 20px;
-            color: #00ff00;
+            color: #00f2fe;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
         }}
         .nav {{
-            background: rgba(255,255,255,0.05);
-            padding: 15px 40px;
+            position: relative; z-index: 10;
+            background: rgba(13, 22, 38, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 242, 254, 0.15);
+            padding: 12px 40px;
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }}
         .nav button {{
-            background: rgba(0,212,255,0.1);
-            border: 1px solid rgba(0,212,255,0.3);
-            color: #00d4ff;
-            padding: 10px 20px;
+            background: rgba(0, 242, 254, 0.08);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: #00f2fe;
+            padding: 8px 18px;
             border-radius: 8px;
             cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
             transition: all 0.3s;
         }}
         .nav button:hover {{
-            background: rgba(0,212,255,0.2);
-            border-color: #00d4ff;
+            background: rgba(0, 242, 254, 0.2);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            transform: translateY(-1px);
         }}
         .content {{
-            padding: 40px;
-            max-width: 1200px;
+            position: relative; z-index: 10;
+            padding: 30px 40px;
+            max-width: 1400px;
             margin: 0 auto;
         }}
         .panel {{
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
+            background: rgba(13, 22, 38, 0.75);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }}
         .panel h2 {{
-            color: #00d4ff;
-            margin-bottom: 20px;
-            font-size: 24px;
+            font-family: 'Orbitron', sans-serif;
+            color: #00f2fe;
+            margin-bottom: 16px;
+            font-size: 16px;
+            letter-spacing: 2px;
         }}
         .info-grid {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
         }}
         .info-box {{
-            background: rgba(0,0,0,0.3);
-            padding: 20px;
+            background: rgba(2, 6, 14, 0.8);
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            padding: 16px;
             border-radius: 10px;
         }}
         .info-label {{
-            color: #888;
-            font-size: 12px;
+            color: #64748b;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }}
         .info-value {{
-            font-size: 24px;
-            color: #00d4ff;
-            margin-top: 5px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #00f2fe;
+            margin-top: 6px;
+            font-family: 'Rajdhani', sans-serif;
         }}
         .url-box {{
-            background: rgba(0,212,255,0.1);
-            border: 1px solid #00d4ff;
-            padding: 20px;
+            background: rgba(0, 242, 254, 0.05);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            padding: 16px;
             border-radius: 10px;
-            margin: 20px 0;
+            margin: 12px 0;
+            display: flex; justify-content: space-between; align-items: center;
         }}
         .url-box a {{
-            color: #00ff88;
-            font-size: 18px;
+            color: #10b981;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
             text-decoration: none;
+            font-weight: 600;
         }}
-        .api-section {{
-            margin-top: 30px;
-        }}
+        .url-box a:hover {{ text-decoration: underline; }}
+        .api-section {{ margin-top: 16px; }}
         .api-endpoint {{
-            background: rgba(0,0,0,0.5);
-            padding: 15px;
+            background: rgba(2, 6, 14, 0.8);
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            padding: 12px 16px;
             border-radius: 8px;
-            margin: 10px 0;
-            font-family: monospace;
+            margin: 8px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            display: flex; align-items: center; justify-content: space-between;
         }}
         .method {{
             display: inline-block;
-            padding: 3px 8px;
+            padding: 3px 10px;
             border-radius: 4px;
-            font-size: 12px;
-            margin-right: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 12px;
         }}
-        .get {{ background: #00ff00; color: #000; }}
-        .post {{ background: #00d4ff; color: #000; }}
-        .delete {{ background: #ff4444; color: #fff; }}
+        .get {{ background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }}
+        .post {{ background: rgba(0, 242, 254, 0.2); color: #00f2fe; border: 1px solid #00f2fe; }}
+        .cmd-box {{
+            display: flex; gap: 10px; margin-top: 10px;
+        }}
+        .cmd-input {{
+            flex: 1; padding: 10px 14px; background: rgba(2, 6, 14, 0.9); border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 8px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+        }}
+        .cmd-out {{
+            height: 120px; overflow-y: auto; background: rgba(2, 6, 14, 0.95); border: 1px solid rgba(0, 242, 254, 0.2);
+            border-radius: 8px; padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+            margin-top: 10px; color: #10b981; white-space: pre-wrap;
+        }}
     </style>
 </head>
 <body>
+    <div class="grid-bg"></div>
     <div class="header">
-        <h1>⬡ SATURDAY Control Panel</h1>
-        <div class="status-badge">{saturday_status}</div>
+        <h1>⬡ S.A.T.U.R.D.A.Y CONTROL PLANE</h1>
+        <div class="badges">
+            <div class="sub-tag">★ PRO SUBSCRIBED</div>
+            <div class="status-badge">{saturday_status}</div>
+        </div>
     </div>
     <div class="nav">
-        <button onclick="location.reload()">🔄 Refresh</button>
-        <button onclick="fetch('/api/control/restart',{{method:'POST'}}).then(()=>location.reload())">♻️ Restart SATURDAY</button>
-        <button onclick="fetch('/api/control/wake/saturday',{{method:'POST'}}).then(r=>r.json()).then(d=>alert(d.message||JSON.stringify(d)))">⚡ Wake SATURDAY</button>
-        <button onclick="fetch('/api/vision/start',{{method:'POST'}}).then(r=>r.json()).then(d=>alert(JSON.stringify(d)))">📷 Start Camera</button>
-        <button onclick="fetch('/api/vision/stop',{{method:'POST'}}).then(r=>r.json()).then(d=>alert(JSON.stringify(d)))">⏹ Stop Camera</button>
+        <button onclick="location.reload()">🔄 REFRESH</button>
+        <button onclick="fetch('/api/control/restart',{{method:'POST'}}).then(()=>location.reload())">♻️ RESTART CORE</button>
+        <button onclick="fetch('/api/control/wake/saturday',{{method:'POST'}}).then(r=>r.json()).then(d=>alert(d.message||JSON.stringify(d)))">⚡ WAKE CORE</button>
+        <button onclick="fetch('/api/vision/start',{{method:'POST'}}).then(r=>r.json()).then(d=>alert(JSON.stringify(d)))">📷 START CAMERA</button>
+        <button onclick="fetch('/api/vision/stop',{{method:'POST'}}).then(r=>r.json()).then(d=>alert(JSON.stringify(d)))">⏹ STOP CAMERA</button>
+        <button onclick="window.open('http://{local_ip}:8099','_blank')">🌐 OPEN VERCEL HUD (8099)</button>
     </div>
     <div class="content">
         <div class="panel">
-            <h2>📊 Server Status</h2>
+            <h2>📊 LOCALHOST SERVER TELEMETRY</h2>
             <div class="info-grid">
                 <div class="info-box">
-                    <div class="info-label">Uptime</div>
+                    <div class="info-label">Server Uptime</div>
                     <div class="info-value">{hours}h {minutes}m</div>
                 </div>
                 <div class="info-box">
-                    <div class="info-label">SATURDAY Status</div>
+                    <div class="info-label">SATURDAY Core</div>
                     <div class="info-value">{saturday_status}</div>
                 </div>
                 <div class="info-box">
-                    <div class="info-label">Local IP</div>
+                    <div class="info-label">Network Host IP</div>
                     <div class="info-value">{local_ip}</div>
                 </div>
                 <div class="info-box">
-                    <div class="info-label">Control Panel</div>
-                    <div class="info-value">:8001</div>
+                    <div class="info-label">Control Port</div>
+                    <div class="info-value">:{CONTROL_PORT}</div>
                 </div>
             </div>
         </div>
+
         <div class="panel">
-            <h2>🔗 Access Links</h2>
+            <h2>⚡ QUICK EXECUTE CONSOLE</h2>
+            <div class="cmd-box">
+                <input id="quickCmd" class="cmd-input" placeholder="Type status | wake | heal | sense | who | briefing..." value="status">
+                <button class="nav" style="padding:10px 20px" onclick="runQuickCmd()">RUN COMMAND</button>
+            </div>
+            <div id="cmdOut" class="cmd-out">Ready for commands...</div>
+        </div>
+
+        <div class="panel">
+            <h2>🔗 LOCALHOST & VERCEL ACCESS LINKS</h2>
             <div class="url-box">
-                <p style="color:#888;margin-bottom:10px;">SATURDAY Core API:</p>
-                <a href="http://{local_ip}:{SATURDAY_PORT}">http://{local_ip}:{SATURDAY_PORT}</a>
+                <div>
+                    <p style="color:#64748b;font-size:12px;font-family:'JetBrains Mono';">SATURDAY Core API Port 8000:</p>
+                    <a href="http://{local_ip}:{SATURDAY_PORT}" target="_blank">http://{local_ip}:{SATURDAY_PORT}</a>
+                </div>
+                <button onclick="window.open('http://{local_ip}:{SATURDAY_PORT}/api/status','_blank')">TEST API</button>
             </div>
             <div class="url-box">
-                <p style="color:#888;margin-bottom:10px;">Control Panel (this page):</p>
-                <a href="http://{local_ip}:{CONTROL_PORT}">http://{local_ip}:{CONTROL_PORT}</a>
+                <div>
+                    <p style="color:#64748b;font-size:12px;font-family:'JetBrains Mono';">Unified Control Panel Port 8001:</p>
+                    <a href="http://{local_ip}:{CONTROL_PORT}" target="_blank">http://{local_ip}:{CONTROL_PORT}</a>
+                </div>
+                <button onclick="location.reload()">RELOAD</button>
+            </div>
+            <div class="url-box">
+                <div>
+                    <p style="color:#64748b;font-size:12px;font-family:'JetBrains Mono';">Vercel Web HUD Port 8099:</p>
+                    <a href="http://{local_ip}:8099" target="_blank">http://{local_ip}:8099</a>
+                </div>
+                <button onclick="window.open('http://{local_ip}:8099','_blank')">OPEN HUD</button>
             </div>
         </div>
+
         <div class="panel">
-            <h2>🛠️ Quick API Endpoints</h2>
+            <h2>🛠️ SYSTEM API ENDPOINTS</h2>
             <div class="api-section">
                 <div class="api-endpoint">
-                    <span class="method get">GET</span>
-                    /api/status - System Status
+                    <span><span class="method get">GET</span> /api/status — Core & Subsystems Telemetry</span>
+                    <button onclick="fetch('/api/status').then(r=>r.json()).then(d=>alert(JSON.stringify(d,null,2)))">CALL</button>
                 </div>
                 <div class="api-endpoint">
-                    <span class="method get">GET</span>
-                    /api/health - Health Data
+                    <span><span class="method get">GET</span> /api/health — System Health & Memory Metrics</span>
+                    <button onclick="fetch('/api/health').then(r=>r.json()).then(d=>alert(JSON.stringify(d,null,2)))">CALL</button>
                 </div>
                 <div class="api-endpoint">
-                    <span class="method post">POST</span>
-                    /api/control/wake/saturday - Wake SATURDAY
+                    <span><span class="method post">POST</span> /api/control/wake/saturday — Wake SATURDAY Core</span>
+                    <button onclick="fetch('/api/control/wake/saturday',{{method:'POST'}}).then(r=>r.json()).then(d=>alert(JSON.stringify(d,null,2)))">CALL</button>
                 </div>
                 <div class="api-endpoint">
-                    <span class="method post">POST</span>
-                    /api/vision/start - Start Camera
+                    <span><span class="method post">POST</span> /api/vision/start — Start Vision Camera Feed</span>
+                    <button onclick="fetch('/api/vision/start',{{method:'POST'}}).then(r=>r.json()).then(d=>alert(JSON.stringify(d,null,2)))">CALL</button>
                 </div>
                 <div class="api-endpoint">
-                    <span class="method get">GET</span>
-                    /api/face/list - List Faces
-                </div>
-                <div class="api-endpoint">
-                    <span class="method post">POST</span>
-                    /api/conversation/chat - Chat with SATURDAY
+                    <span><span class="method get">GET</span> /api/tasks — Active Autonomous Tasks</span>
+                    <button onclick="fetch('/api/tasks').then(r=>r.json()).then(d=>alert(JSON.stringify(d,null,2)))">CALL</button>
                 </div>
             </div>
         </div>
     </div>
     <script>
+        function runQuickCmd() {{
+            const c = document.getElementById('quickCmd').value.trim();
+            if(!c) return;
+            document.getElementById('cmdOut').textContent = "Executing: " + c + "...";
+            fetch('/api/command', {{
+                method: 'POST',
+                headers: {{'Content-Type': 'application/json'}},
+                body: JSON.stringify({{command: c}})
+            }}).then(r=>r.json()).then(d => {{
+                document.getElementById('cmdOut').textContent = d.response || JSON.stringify(d,null,2);
+            }}).catch(e => {{
+                document.getElementById('cmdOut').textContent = "Error: " + e;
+            }});
+        }}
+
         // Auto-refresh status every 10 seconds
         setInterval(() => {{
             fetch('/api/server/status').then(r=>r.json()).then(d => {{
+                const sb = document.querySelector('.status-badge');
                 if(d.saturday_online) {{
-                    document.querySelector('.status-badge').textContent = '🟢 Online';
-                    document.querySelector('.status-badge').style.background = 'rgba(0,255,0,0.2)';
+                    sb.textContent = '🟢 ONLINE';
+                    sb.style.color = '#10b981';
+                    sb.style.borderColor = '#10b981';
                 }} else {{
-                    document.querySelector('.status-badge').textContent = '🔴 Offline';
-                    document.querySelector('.status-badge').style.background = 'rgba(255,0,0,0.2)';
+                    sb.textContent = '🔴 OFFLINE';
+                    sb.style.color = '#f43f5e';
+                    sb.style.borderColor = '#f43f5e';
                 }}
             }});
-        }}, 10000);
+        }}, 8000);
     </script>
 </body>
 </html>'''

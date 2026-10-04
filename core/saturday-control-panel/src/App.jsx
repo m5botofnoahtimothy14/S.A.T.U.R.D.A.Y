@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader, Menu, X, Settings } from 'lucide-react';
 import AIStatusCard from './components/AIStatusCard';
 import CommandPanel from './components/CommandPanel';
@@ -260,11 +260,14 @@ function App() {
         </button>
         <div className="header-title">
           <h1>S.A.T.U.R.D.A.Y Control Panel</h1>
-          <p>AI System Management & Monitoring</p>
+          <p>AI System Management & Monitoring • <span style={{color: '#00ff9f', fontWeight: 'bold'}}>★ PRO SUBSCRIBED TIER</span></p>
         </div>
-        <button className="settings-btn">
-          <Settings size={20} />
-        </button>
+        <div style={{display:'flex', gap:'10px', alignItems:'center'}}>
+          <span className="status-badge status-ACTIVE">★ SUBSCRIBED</span>
+          <button className="settings-btn">
+            <Settings size={20} />
+          </button>
+        </div>
       </header>
 
       {/* Sidebar Navigation */}

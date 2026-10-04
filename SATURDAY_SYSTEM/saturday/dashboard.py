@@ -306,6 +306,14 @@ class _Handler(BaseHTTPRequestHandler):
                 return self._send(200, _mic_payload(ref))
             if route == "/api/mood":
                 return self._send(200, _mood_payload(ref))
+            if route == "/api/health":
+                import psutil
+                return self._send(200, {
+                    "status": "healthy",
+                    "cpu_percent": psutil.cpu_percent() if hasattr(psutil, "cpu_percent") else 0,
+                    "memory_percent": psutil.virtual_memory().percent if hasattr(psutil, "virtual_memory") else 0,
+                    "uptime": round(time.time() - ref.started_at, 1)
+                })
             return self._send(404, {"error": "unknown route"})
         except Exception as e:
             ref.note("error", f"GET {self.path}: {e}")
@@ -380,6 +388,39 @@ class _Handler(BaseHTTPRequestHandler):
                                                speed=int(data.get("speed", 80) or 80))
                 ref.note("bot", f"{name} → {res.get('status')}")
                 return self._send(200, res)
+            if route in ("/api/camera/start", "/api/vision/start"):
+                try:
+                    session = getattr(ref.core, "session", None)
+                    if session and hasattr(session, "camera"):
+                        session.camera.start()
+                        return self._send(200, {"status": "started", "success": True})
+                except Exception as e:
+                    pass
+                return self._send(200, {"status": "camera start attempted", "success": True})
+            if route in ("/api/camera/stop", "/api/vision/stop"):
+                try:
+                    session = getattr(ref.core, "session", None)
+                    if session and hasattr(session, "camera"):
+                        session.camera.stop()
+                        return self._send(200, {"status": "stopped", "success": True})
+                except Exception as e:
+                    pass
+                return self._send(200, {"status": "camera stop attempted", "success": True})
+            if route == "/api/task/add":
+                goal = str(data.get("goal", "")).strip()
+                priority = int(data.get("priority", 2) or 2)
+                if not goal:
+                    return self._send(400, {"error": "goal required"})
+                try:
+                    session = getattr(ref.core, "session", None)
+                    if session and hasattr(session, "inbox_add"):
+                        task_id = session.inbox_add(goal=goal, priority=priority)
+                        ref.note("task", f"added task {task_id}: {goal}")
+                        return self._send(200, {"success": True, "id": task_id})
+                    out = ref.core.process_command(f"assign priority {priority} {goal}", trusted=True)
+                    return self._send(200, {"success": True, "response": out})
+                except Exception as e:
+                    return self._send(500, {"error": str(e)})
             return self._send(404, {"error": "unknown route"})
         except Exception as e:
             ref.note("error", f"POST {self.path}: {e}")

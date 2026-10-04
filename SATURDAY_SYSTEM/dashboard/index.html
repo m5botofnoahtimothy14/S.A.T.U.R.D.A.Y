@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>S.A.T.U.R.D.A.Y // NEURAL CONTROL PLANE</title>
+<title>S.A.T.U.R.D.A.Y // NEURAL CONTROL PLANE & MANAGEMENT SYSTEM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,400&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #030712;
-  --bg-card: rgba(13, 22, 38, 0.75);
-  --bg-card-hover: rgba(20, 32, 54, 0.85);
-  --line: rgba(0, 242, 254, 0.22);
-  --line-strong: rgba(0, 242, 254, 0.5);
+  --bg-card: rgba(13, 22, 38, 0.72);
+  --bg-card-hover: rgba(18, 30, 52, 0.85);
+  --glass-border: rgba(0, 242, 254, 0.22);
+  --glass-border-bright: rgba(0, 242, 254, 0.55);
   --cyan: #00f2fe;
   --cyan-glow: rgba(0, 242, 254, 0.4);
   --violet: #9d4edd;
@@ -25,13 +25,12 @@
   --text: #e2f1f8;
   --dim: #64748b;
   --dim-bright: #94a3b8;
-  --panel-border: 1px solid var(--line);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; width: 100%; background: var(--bg); color: var(--text); font-family: 'Rajdhani', 'Segoe UI', sans-serif; overflow-x: hidden; }
+html, body { height: 100%; width: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', 'Segoe UI', sans-serif; overflow-x: hidden; }
 
-/* Canvas Background Starfield & Grid */
+/* Canvas Background Starfield */
 #bgCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
 /* Boot Loader Screen */
@@ -42,80 +41,100 @@ html, body { height: 100%; width: 100%; background: var(--bg); color: var(--text
 }
 #boot.gone { opacity: 0; visibility: hidden; pointer-events: none; }
 .boot-logo {
-  font-family: 'Orbitron', sans-serif; font-size: 38px; font-weight: 900; letter-spacing: 12px;
+  font-family: 'Orbitron', sans-serif; font-size: 42px; font-weight: 900; letter-spacing: 14px;
   background: linear-gradient(135deg, #00f2fe 0%, #9d4edd 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 25px rgba(0,242,254,0.6)); animation: pulseLogo 2s infinite alternate;
+  filter: drop-shadow(0 0 35px rgba(0,242,254,0.75)); animation: pulseLogo 2s infinite alternate;
 }
-@keyframes pulseLogo { 0% { filter: drop-shadow(0 0 15px rgba(0,242,254,0.4)); } 100% { filter: drop-shadow(0 0 35px rgba(157,78,221,0.8)); } }
-#bootlog { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--cyan); height: 100px; text-align: center; line-height: 1.6; }
+@keyframes pulseLogo { 0% { filter: drop-shadow(0 0 15px rgba(0,242,254,0.4)); } 100% { filter: drop-shadow(0 0 40px rgba(157,78,221,0.9)); } }
+#bootlog { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--cyan); height: 110px; text-align: center; line-height: 1.6; }
 
 /* Header Bar */
 header {
   position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 28px; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--line); box-shadow: 0 4px 30px rgba(0,0,0,0.7);
+  padding: 12px 32px; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border); box-shadow: 0 4px 30px rgba(0,0,0,0.8);
 }
 .brand-zone { display: flex; align-items: center; gap: 16px; }
-#core { width: 54px; height: 54px; filter: drop-shadow(0 0 12px var(--cyan)); cursor: pointer; transition: transform 0.3s; }
-#core:hover { transform: scale(1.08); }
+#core { width: 56px; height: 56px; filter: drop-shadow(0 0 14px var(--cyan)); cursor: pointer; transition: transform 0.3s; }
+#core:hover { transform: scale(1.1); }
 .brand-title { display: flex; flex-direction: column; }
-.brand-title h1 { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 6px; color: #fff; }
+.brand-title h1 { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: 6px; color: #fff; }
 .brand-title small { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--cyan); text-transform: uppercase; }
 
 .header-status { display: flex; align-items: center; gap: 14px; }
 .sub-badge {
-  display: flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 20px;
-  background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(0,242,254,0.15) 100%);
-  border: 1px solid rgba(16,185,129,0.4); font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  font-weight: 700; color: var(--green); letter-spacing: 1px; box-shadow: 0 0 15px rgba(16,185,129,0.2);
+  display: flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: 20px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(0,242,254,0.2) 100%);
+  border: 1px solid rgba(16,185,129,0.5); font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  font-weight: 700; color: var(--green); letter-spacing: 1px; box-shadow: 0 0 20px rgba(16,185,129,0.3);
 }
 .sub-badge span { animation: blinkGlow 1.5s infinite; }
-@keyframes blinkGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes blinkGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
 #conn {
   font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; padding: 6px 16px; border-radius: 20px;
-  border: 1px solid var(--line); transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--glass-border); transition: all 0.3s; display: flex; align-items: center; gap: 8px;
 }
-#conn.on { color: var(--green); border-color: var(--green); box-shadow: 0 0 16px rgba(16,185,129,0.3); background: rgba(16,185,129,0.1); }
-#conn.off { color: var(--red); border-color: var(--red); box-shadow: 0 0 16px rgba(244,63,94,0.3); background: rgba(244,63,94,0.1); }
+#conn.on { color: var(--green); border-color: var(--green); box-shadow: 0 0 16px rgba(16,185,129,0.4); background: rgba(16,185,129,0.12); }
+#conn.off { color: var(--red); border-color: var(--red); box-shadow: 0 0 16px rgba(244,63,94,0.4); background: rgba(244,63,94,0.12); }
 
-/* Main Grid Layout */
-main {
-  position: relative; z-index: 1; display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-  gap: 16px; padding: 20px 28px 50px; max-width: 1800px; margin: 0 auto;
+/* Navigation Tab Bar */
+.nav-tabs {
+  position: sticky; top: 81px; z-index: 40; display: flex; gap: 8px; padding: 10px 32px;
+  background: rgba(6, 12, 24, 0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border); overflow-x: auto;
 }
+.tab-btn {
+  background: rgba(13, 22, 38, 0.6); color: var(--dim-bright); border: 1px solid var(--glass-border);
+  padding: 8px 18px; border-radius: 8px; font-family: 'Rajdhani', sans-serif; font-size: 14px;
+  font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; gap: 8px;
+  white-space: nowrap;
+}
+.tab-btn:hover { background: rgba(0, 242, 254, 0.12); color: var(--cyan); border-color: var(--cyan); transform: translateY(-1px); }
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(0,242,254,0.2) 0%, rgba(157,78,221,0.2) 100%);
+  color: #fff; border-color: var(--cyan); box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+}
+
+/* Main Content Area */
+main {
+  position: relative; z-index: 1; padding: 24px 32px 60px; max-width: 1800px; margin: 0 auto;
+}
+
+/* Tab Panels */
+.tab-panel { display: none; opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease; }
+.tab-panel.active { display: grid; opacity: 1; transform: translateY(0); grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; }
 
 /* Sci-Fi Glass Cards */
 .card {
-  background: var(--bg-card); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: var(--panel-border); border-radius: 14px; padding: 18px 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 0 30px rgba(0, 242, 254, 0.03);
+  background: var(--bg-card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border); border-radius: 14px; padding: 22px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(0, 242, 254, 0.04);
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   position: relative; overflow: hidden;
 }
 .card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0.6;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0.7;
 }
 .card:hover {
-  transform: translateY(-2px); border-color: var(--line-strong);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 254, 0.15);
+  transform: translateY(-2px); border-color: var(--glass-border-bright);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 242, 254, 0.2);
 }
 .card h2 {
   font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 3px; color: var(--cyan);
-  margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;
 }
 .card h2 .tag {
   font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 4px;
-  background: rgba(0,242,254,0.1); border: 1px solid var(--line); color: var(--dim-bright);
+  background: rgba(0,242,254,0.12); border: 1px solid var(--glass-border); color: var(--dim-bright);
 }
 
 /* Key Value Pairs */
 .kv {
-  display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 6px 0;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.07); font-family: 'Rajdhani', sans-serif; font-weight: 600;
+  display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 7px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08); font-family: 'Rajdhani', sans-serif; font-weight: 600;
 }
 .kv:last-child { border-bottom: none; }
 .ok { color: var(--green); font-weight: 700; }
@@ -125,222 +144,363 @@ main {
 .vio { color: var(--violet); font-weight: 700; }
 
 /* Camera Viewport */
-.eye-wrap { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: #000; }
-#eye { width: 100%; height: 100%; object-fit: cover; }
+.eye-wrap { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); background: #000; }
+#eye { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s ease; }
 .eye-overlay {
   position: absolute; inset: 0; pointer-events: none;
-  border: 1px solid rgba(0,242,254,0.3); display: flex; flex-direction: column; justify-content: space-between; padding: 10px;
+  border: 1px solid rgba(0,242,254,0.3); display: flex; flex-direction: column; justify-content: space-between; padding: 12px;
 }
-.eye-reticle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border: 1px solid var(--cyan-glow); border-radius: 50%; pointer-events: none; }
+.eye-reticle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; border: 1px solid var(--cyan-glow); border-radius: 50%; pointer-events: none; }
 .eye-reticle::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--cyan-glow); }
 .eye-reticle::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--cyan-glow); }
 
 /* Audio Waveform Canvas */
-#micCanvas { width: 100%; height: 45px; border-radius: 8px; border: 1px solid var(--line); background: rgba(2, 4, 9, 0.9); }
+#micCanvas { width: 100%; height: 52px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(2, 4, 9, 0.95); }
 
 /* Command Console */
 #console { grid-column: 1 / -1; }
 #out {
-  height: 240px; overflow-y: auto; background: rgba(2, 6, 14, 0.9); border: 1px solid var(--line);
-  border-radius: 10px; padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px;
-  line-height: 1.5; white-space: pre-wrap; margin-bottom: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+  height: 280px; overflow-y: auto; background: rgba(2, 6, 14, 0.95); border: 1px solid var(--glass-border);
+  border-radius: 10px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  line-height: 1.55; white-space: pre-wrap; margin-bottom: 14px; box-shadow: inset 0 0 24px rgba(0,0,0,0.85);
 }
 #out .me { color: var(--cyan); font-weight: 700; }
 #out .sys { color: var(--dim-bright); }
 #out .bot { color: var(--green); }
 #out .err { color: var(--red); }
 
-.row { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+.row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
 input, button, select {
-  background: rgba(6, 12, 22, 0.8); color: var(--text); border: 1px solid var(--line); border-radius: 8px;
+  background: rgba(6, 12, 22, 0.85); color: var(--text); border: 1px solid var(--glass-border); border-radius: 8px;
   padding: 10px 14px; font-size: 13px; font-family: 'JetBrains Mono', monospace; outline: none; transition: all 0.2s ease;
 }
 input { flex: 1; min-width: 180px; }
-input:focus { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0, 242, 254, 0.3); }
+input:focus { border-color: var(--cyan); box-shadow: 0 0 14px rgba(0, 242, 254, 0.35); }
 button { cursor: pointer; border-color: var(--cyan); color: var(--cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-button:hover { background: rgba(0, 242, 254, 0.15); box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); transform: translateY(-1px); }
+button:hover { background: rgba(0, 242, 254, 0.18); box-shadow: 0 0 16px rgba(0, 242, 254, 0.45); transform: translateY(-1px); }
 button:active { transform: translateY(0); }
 button.danger { border-color: var(--red); color: var(--red); }
-button.danger:hover { background: rgba(244, 63, 94, 0.15); box-shadow: 0 0 15px rgba(244, 63, 94, 0.4); }
+button.danger:hover { background: rgba(244, 63, 94, 0.18); box-shadow: 0 0 16px rgba(244, 63, 94, 0.45); }
+button.success { border-color: var(--green); color: var(--green); }
+button.success:hover { background: rgba(16, 185, 129, 0.18); box-shadow: 0 0 16px rgba(16, 185, 129, 0.45); }
 
 .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-.chips button { font-size: 11px; padding: 6px 12px; border-radius: 6px; background: rgba(0, 242, 254, 0.05); }
+.chips button { font-size: 11px; padding: 6px 12px; border-radius: 6px; background: rgba(0, 242, 254, 0.06); }
 
 /* HomeBot D-Pad Controller */
-.pad-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin: 12px 0; }
-.pad { display: grid; grid-template-columns: repeat(3, 56px); gap: 6px; }
-.pad button { padding: 12px 0; font-size: 14px; text-align: center; }
+.pad-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin: 16px 0; }
+.pad { display: grid; grid-template-columns: repeat(3, 62px); gap: 8px; }
+.pad button { padding: 16px 0; font-size: 16px; text-align: center; }
 
 /* Lists & Tables */
 #tasks div, #elog div, #inbox div {
-  font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 6px 8px; border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 7px 10px; border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
   display: flex; justify-content: space-between; align-items: center; border-radius: 4px; transition: background 0.2s;
 }
-#tasks div:hover, #elog div:hover, #inbox div:hover { background: rgba(0, 242, 254, 0.04); }
+#tasks div:hover, #elog div:hover, #inbox div:hover { background: rgba(0, 242, 254, 0.05); }
 
 footer {
   position: relative; z-index: 1; text-align: center; color: var(--dim); font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; padding: 20px; letter-spacing: 3px; border-top: 1px solid rgba(255,255,255,0.05);
+  font-size: 11px; padding: 24px; letter-spacing: 3px; border-top: 1px solid rgba(255,255,255,0.06);
 }
 
 .pulse { animation: pl 2s infinite; }
 @keyframes pl { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-/* Scrollbar Customization */
+/* Toast Notifications */
+#toast {
+  position: fixed; bottom: 28px; right: 32px; z-index: 999;
+  background: rgba(13, 22, 38, 0.95); border: 1px solid var(--cyan); border-radius: 8px;
+  padding: 12px 22px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan);
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.35); display: none; animation: slideIn 0.3s ease;
+}
+@keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* Scrollbars */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: rgba(2, 4, 9, 0.8); }
-::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--glass-border-bright); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
 </style>
 </head>
 <body>
 
 <canvas id="bgCanvas"></canvas>
+<div id="toast"></div>
 
 <div id="boot">
   <div class="boot-logo">S.A.T.U.R.D.A.Y</div>
-  <div id="bootlog">INITIALIZING NEURAL SYSTEM CORE…<br>VERIFYING SUBSCRIPTION TIER…</div>
+  <div id="bootlog">CONNECTING TO SATURDAY NEURAL CORE…<br>VERIFYING PRO SUBSCRIBED TIER…</div>
 </div>
 
 <header>
   <div class="brand-zone">
-    <canvas id="core" width="108" height="108" title="Click to pulse Arc Core"></canvas>
+    <canvas id="core" width="112" height="112" title="Click to pulse ARC Reactor Core"></canvas>
     <div class="brand-title">
       <h1>S.A.T.U.R.D.A.Y</h1>
-      <small>NEURAL HUD // AUTONOMOUS AI AGENT</small>
+      <small>ULTIMATE CONTROL & MANAGEMENT HUB // VER 2.5 PRO</small>
     </div>
   </div>
   <div class="header-status">
-    <div class="sub-badge"><span>★</span> PRO SUBSCRIBED</div>
+    <div class="sub-badge"><span>★</span> PRO SUBSCRIBED TIER</div>
     <div id="conn" class="off">● CONNECTING</div>
   </div>
 </header>
 
+<div class="nav-tabs">
+  <button class="tab-btn active" data-tab="tab-overview">📊 OVERVIEW</button>
+  <button class="tab-btn" data-tab="tab-vision">👁️ VISION & SENSES</button>
+  <button class="tab-btn" data-tab="tab-rover">🤖 HOMEBOT ROVER</button>
+  <button class="tab-btn" data-tab="tab-mind">🧠 MIND & TASKS</button>
+  <button class="tab-btn" data-tab="tab-security">🛡️ SECURITY & MAINTENANCE</button>
+  <button class="tab-btn" data-tab="tab-biometrics">👤 BIOMETRICS</button>
+  <button class="tab-btn" data-tab="tab-terminal">💻 TERMINAL & LOGS</button>
+</div>
+
 <main>
-  <!-- Core Card -->
-  <div class="card">
-    <h2>◆ SYSTEM CORE <span class="tag">VER 2.5</span></h2>
-    <div id="coreStatus"><span class="dim">Initializing telemetry…</span></div>
-  </div>
+  <!-- TAB 1: OVERVIEW DASHBOARD -->
+  <div id="tab-overview" class="tab-panel active">
+    <!-- Core Status -->
+    <div class="card">
+      <h2>◆ SYSTEM CORE TELEMETRY <span class="tag">SUBSCRIBED</span></h2>
+      <div id="coreStatus"><span class="dim">Querying core status...</span></div>
+      <div class="row" style="margin-top:12px">
+        <button data-c="workmode on" class="success">WORKMODE ON</button>
+        <button data-c="workmode off">WORKMODE OFF</button>
+        <button data-c="status">REFRESH STATUS</button>
+      </div>
+    </div>
 
-  <!-- Identity Card -->
-  <div class="card">
-    <h2>◆ IDENTITY RECOGNITION <span class="tag">AEGIS BIOMETRICS</span></h2>
-    <div id="ident"><span class="dim">Scanning identity profiles…</span></div>
-  </div>
+    <!-- Quick Audio Speaker & Announce -->
+    <div class="card">
+      <h2>♪ SPEECH & AUDIO SPEAKER <span class="tag">VOICE OUTPUT</span></h2>
+      <div class="dim" style="font-size:12px;margin-bottom:8px">Speak messages aloud via natural TTS voice engine.</div>
+      <div class="row">
+        <input id="quickTTS" placeholder="Enter message to announce aloud...">
+        <button id="btnQuickAnnounce">ANNOUNCE</button>
+      </div>
+      <div class="chips" style="margin-top:10px">
+        <button data-c="announce SATURDAY online and ready">WAKE AUDIO</button>
+        <button data-c="verse">DAILY VERSE</button>
+        <button data-c="wellness">WELLNESS CHECK</button>
+      </div>
+    </div>
 
-  <!-- Live Eye Camera Card -->
-  <div class="card">
-    <h2>◉ LIVE VISION EYE <span class="tag">REALTIME STREAM</span></h2>
-    <div class="eye-wrap">
-      <img id="eye" alt="Camera Stream Offline">
-      <div class="eye-overlay">
-        <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--cyan)">SYS.CAM.01 // ACTIVE</div>
-        <div class="eye-reticle"></div>
-        <div id="eyeAge" class="dim" style="font-family:'JetBrains Mono';font-size:10px">offline</div>
+    <!-- Subsystems Overview -->
+    <div class="card">
+      <h2>◆ ENGINE SUBSYSTEMS <span class="tag">HEALTH CHECK</span></h2>
+      <div id="subs"><span class="dim">Checking engine states...</span></div>
+      <div class="row" style="margin-top:12px">
+        <button data-c="services" class="success">SCAN SERVICES</button>
+        <button data-c="heal">AUTO-HEAL</button>
+      </div>
+    </div>
+
+    <!-- Live Preview Mini Widgets -->
+    <div class="card">
+      <h2>◉ LIVE VISION SNAPSHOT <span class="tag">MINI FEED</span></h2>
+      <div class="eye-wrap" style="aspect-ratio: 16/9;">
+        <img id="eyeMini" alt="Live Camera Preview">
+        <div class="eye-overlay">
+          <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--cyan)">SYS.CAM.MINI</div>
+          <div id="eyeAgeMini" class="dim" style="font-family:'JetBrains Mono';font-size:10px">offline</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Mic Activity Card -->
-  <div class="card">
-    <h2>♪ ACOUSTIC / MIC SPECTRUM <span class="tag">EARS ONLINE</span></h2>
-    <canvas id="micCanvas" width="320" height="45"></canvas>
-    <div id="micnum" class="dim" style="font-family:'JetBrains Mono';font-size:11px;margin-top:6px">mic listener standby</div>
-  </div>
-
-  <!-- AI Mood Card -->
-  <div class="card">
-    <h2>☺ AI EMOTIONAL STATE <span class="tag">NEURAL SYNAPSE</span></h2>
-    <div id="moodline" class="dim" style="font-size:13px;margin-top:4px">analyzing emotional context…</div>
-  </div>
-
-  <!-- Face Training Card -->
-  <div class="card">
-    <h2>◆ BIOMETRIC FACE ENROLLMENT <span class="tag">ENCRYPTED</span></h2>
-    <div class="dim" style="font-size:12px;margin-bottom:8px">Upload clear photos to enroll identities into real-time visual recognition pipeline.</div>
-    <div class="row">
-      <input id="tname" placeholder="Subject Name (e.g. Noah)" style="max-width:160px">
-      <input id="tfile" type="file" accept="image/*">
+  <!-- TAB 2: VISION & SENSES -->
+  <div id="tab-vision" class="tab-panel">
+    <!-- Camera Viewport -->
+    <div class="card" style="grid-column: 1 / -1;">
+      <h2>◉ HIGH-DEFINITION LIVE VISION EYE <span class="tag">REALTIME CAMERA STREAM</span></h2>
+      <div class="eye-wrap" style="aspect-ratio: 21/9; max-height: 480px;">
+        <img id="eye" alt="Camera Stream Standby">
+        <div class="eye-overlay">
+          <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--cyan)">CAM.SYS.01 // HD STREAM ONLINE</div>
+          <div class="eye-reticle"></div>
+          <div id="eyeAge" class="dim" style="font-family:'JetBrains Mono';font-size:11px">offline</div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button id="btnCamStart" class="success">START CAMERA</button>
+        <button id="btnCamStop" class="danger">STOP CAMERA</button>
+        <button data-c="see">TAKE SCREENSHOT (see)</button>
+        <button data-c="read">READ SCREEN OCR (read)</button>
+      </div>
     </div>
-    <div class="row" style="margin-top:8px">
-      <button id="tenroll">ENROLL PHOTO DATA</button>
+
+    <!-- Audio Mic Equalizer -->
+    <div class="card">
+      <h2>♪ ACOUSTIC & MIC SPECTRUM <span class="tag">REALTIME EQUALIZER</span></h2>
+      <canvas id="micCanvas" width="360" height="52"></canvas>
+      <div id="micnum" class="dim" style="font-family:'JetBrains Mono';font-size:11px;margin-top:8px">mic listening...</div>
+      <div class="row" style="margin-top:10px">
+        <button data-c="listen">LISTEN MIC</button>
+        <button data-c="claps">CLAPS MONITOR</button>
+      </div>
     </div>
-    <div id="troster" class="dim" style="font-size:12px;margin-top:8px">No biometric profiles enrolled.</div>
-    <div id="tmsg" style="font-size:12px;margin-top:4px"></div>
-  </div>
 
-  <!-- Subsystems Card -->
-  <div class="card">
-    <h2>◆ SUBSYSTEM MONITORS <span class="tag">ALL ONLINE</span></h2>
-    <div id="subs"><span class="dim">Querying engine services…</span></div>
-  </div>
-
-  <!-- HomeBot Core2 Joystick Card -->
-  <div class="card">
-    <h2>◆ HOMEBOT CORE2 ROVER <span class="tag">TELEMETRY</span></h2>
-    <div id="bot"><span class="dim">Bot link pending…</span></div>
-    <div class="pad-wrap">
-      <div class="pad">
-        <span></span><button data-bot="forward" title="Forward (W / Up)">▲</button><span></span>
-        <button data-bot="left" title="Left (A / Left)">◀</button><button data-bot="stop" class="danger" title="Emergency Stop (Space)">■</button><button data-bot="right" title="Right (D / Right)">▶</button>
-        <button data-bot="spinleft" title="Rotate Left">⟲</button><button data-bot="back" title="Backward (S / Down)">▼</button><button data-bot="spinright" title="Rotate Right">⟳</button>
+    <!-- AI Emotional State -->
+    <div class="card">
+      <h2>☺ EMOTIONAL STATE & GLOW MOOD <span class="tag">NEURAL SYNAPSE</span></h2>
+      <div id="moodline" class="dim" style="font-size:13px">evaluating context...</div>
+      <div class="chips" style="margin-top:14px">
+        <button data-c="glow idle">GLOW IDLE</button>
+        <button data-c="glow thinking">THINKING</button>
+        <button data-c="glow listening">LISTENING</button>
+        <button data-c="glow alert" class="danger">ALERT</button>
+        <button data-c="glow off">GLOW OFF</button>
       </div>
     </div>
   </div>
 
-  <!-- Mind + Tasks Card -->
-  <div class="card">
-    <h2>◆ AUTONOMOUS MIND & TASKS <span class="tag">ACTIVE QUEUE</span></h2>
-    <div id="mind"><span class="dim">Loading mind state…</span></div>
-    <div id="inbox" style="margin-top:6px"></div>
-    <div id="tasks" style="margin-top:6px"></div>
-  </div>
-
-  <!-- System Maintenance Card -->
-  <div class="card">
-    <h2>✚ SYSTEM MAINTENANCE <span class="tag">QUICK CONTROLS</span></h2>
-    <div class="chips">
-      <button data-c="heal">AUTO-HEAL</button>
-      <button data-c="services">SCAN SERVICES</button>
-      <button data-c="botstatus">BOT LINK</button>
-      <button data-c="share status">TUNNEL SHARE</button>
-      <button data-c="inbox">INBOX QUEUE</button>
-      <button data-c="glow off">TOGGLE GLOW</button>
-    </div>
-    <div id="serverline" class="dim" style="font-size:12px;margin-top:10px;font-family:'JetBrains Mono'">server: querying cloud tunnel…</div>
-  </div>
-
-  <!-- Interactive Terminal Console -->
-  <div class="card" id="console">
-    <h2>◆ NEURAL COMMAND CONSOLE <span class="tag">PRO TERMINAL</span></h2>
-    <div id="out"><div class="sys">S.A.T.U.R.D.A.Y Terminal Initialized. All subsystems subscribed and operational. Type commands below or press quick actions.</div></div>
-    <div class="row">
-      <input id="cmd" placeholder="Execute command (status | who | sense | research | heal | briefing...)" autocomplete="off">
-      <button id="send">EXECUTE</button>
-    </div>
-    <div class="row" style="margin-top:8px">
-      <input id="apiBase" placeholder="API Base URL (e.g. http://localhost:8000 or Cloud Tunnel)">
-      <input id="tokIn" placeholder="Auth Token / PIN" style="max-width:180px">
-      <button id="saveCfg">LINK ENDPOINT</button>
-    </div>
-    <div class="chips">
-      <button data-c="status">status</button>
-      <button data-c="services">services</button>
-      <button data-c="who">who</button>
-      <button data-c="sense">sense</button>
-      <button data-c="tasks">tasks</button>
-      <button data-c="heal">heal</button>
-      <button data-c="briefing">briefing</button>
-      <button data-c="announce SATURDAY online, all systems ready">WAKE AUDIO</button>
-      <button data-c="botstatus">BOT DIAGNOSTICS</button>
+  <!-- TAB 3: HOMEBOT ROVER -->
+  <div id="tab-rover" class="tab-panel">
+    <div class="card" style="grid-column: 1 / -1;">
+      <h2>🤖 HOMEBOT CORE2 ROVER COCKPIT <span class="tag">MQTT TELEMETRY</span></h2>
+      <div id="bot"><span class="dim">Querying bot telemetry...</span></div>
+      <div class="row" style="margin-top:14px; justify-content: center; gap: 16px;">
+        <label style="font-family:'JetBrains Mono';font-size:12px;display:flex;align-items:center;gap:6px">Speed:
+          <select id="botSpeed" style="max-width:120px">
+            <option value="50">50% Speed</option>
+            <option value="80" selected>80% Speed</option>
+            <option value="100">100% Speed</option>
+          </select>
+        </label>
+        <label style="font-family:'JetBrains Mono';font-size:12px;display:flex;align-items:center;gap:6px">Duration:
+          <select id="botDur" style="max-width:120px">
+            <option value="0.5">0.5 Seconds</option>
+            <option value="1.0" selected>1.0 Seconds</option>
+            <option value="2.0">2.0 Seconds</option>
+          </select>
+        </label>
+        <button data-c="botstatus">BOT DIAGNOSTICS</button>
+      </div>
+      <div class="pad-wrap">
+        <div class="pad">
+          <span></span><button data-bot="forward" title="Forward (W / Up)">▲</button><span></span>
+          <button data-bot="left" title="Left (A / Left)">◀</button><button data-bot="stop" class="danger" title="Emergency Stop (Space)">■</button><button data-bot="right" title="Right (D / Right)">▶</button>
+          <button data-bot="spinleft" title="Rotate Left">⟲</button><button data-bot="back" title="Backward (S / Down)">▼</button><button data-bot="spinright" title="Rotate Right">⟳</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Realtime Events Log Card -->
-  <div class="card">
-    <h2>◆ SYSTEM EVENT LOG <span class="tag">AUDIT TRAIL</span></h2>
-    <div id="elog"><span class="dim">No system events logged yet.</span></div>
+  <!-- TAB 4: MIND & TASKS -->
+  <div id="tab-mind" class="tab-panel">
+    <div class="card">
+      <h2>🧠 AUTONOMOUS MIND & QUEUE <span class="tag">AUTONOMY</span></h2>
+      <div id="mind"><span class="dim">Querying mind state...</span></div>
+    </div>
+
+    <div class="card">
+      <h2>📋 TASK DISPATCHER <span class="tag">CREATE TASK</span></h2>
+      <div class="row">
+        <input id="taskGoal" placeholder="Enter autonomous task goal (e.g. Research AI news)">
+        <select id="taskPrio" style="max-width:110px">
+          <option value="1">p1 High</option>
+          <option value="2" selected>p2 Normal</option>
+          <option value="3">p3 Low</option>
+        </select>
+        <button id="btnAddTask" class="success">DISPATCH TASK</button>
+      </div>
+      <div id="inbox" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card" style="grid-column: 1 / -1;">
+      <h2>📜 RECENT AGENT TASK HISTORY <span class="tag">EXECUTIONS</span></h2>
+      <div id="tasks"><span class="dim">No active history logged yet.</span></div>
+    </div>
+  </div>
+
+  <!-- TAB 5: SECURITY & MAINTENANCE -->
+  <div id="tab-security" class="tab-panel">
+    <div class="card">
+      <h2>🛡️ AEGIS CYBER SECURITY & VAULT <span class="tag">ENCRYPTED</span></h2>
+      <div class="chips">
+        <button data-c="heal" class="success">AUTO-HEAL SYSTEM</button>
+        <button data-c="services">SCAN SERVICES</button>
+        <button data-c="share status">SHARE TUNNEL</button>
+        <button data-c="sync">SYNC VAULT</button>
+        <button data-c="sysclean" class="danger">SYSCLEAN UAC</button>
+        <button data-c="heartbeat">HEARTBEAT</button>
+      </div>
+      <div id="serverline" class="dim" style="font-size:12px;margin-top:12px;font-family:'JetBrains Mono'">server: querying tunnel...</div>
+    </div>
+
+    <div class="card">
+      <h2>💻 ALLOWLISTED SYSTEM DIAGNOSTICS <span class="tag">READ-ONLY</span></h2>
+      <div class="chips">
+        <button data-c="sys ver">SYS VER</button>
+        <button data-c="sys tasklist">TASKLIST</button>
+        <button data-c="sys ipconfig">IPCONFIG</button>
+        <button data-c="sys hostname">HOSTNAME</button>
+        <button data-c="sys whoami">WHOAMI</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: BIOMETRICS -->
+  <div id="tab-biometrics" class="tab-panel">
+    <div class="card">
+      <h2>👤 BIOMETRIC FACE ENROLLMENT <span class="tag">AEGIS BIOMETRICS</span></h2>
+      <div class="dim" style="font-size:12px;margin-bottom:8px">Upload clear front photos to index identity into visual recognition pipeline.</div>
+      <div class="row">
+        <input id="tname" placeholder="Subject Name (e.g. Noah)" style="max-width:160px">
+        <input id="tfile" type="file" accept="image/*">
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button id="tenroll" class="success">ENROLL PHOTO DATA</button>
+      </div>
+      <div id="troster" class="dim" style="font-size:12px;margin-top:10px">No subjects enrolled yet.</div>
+      <div id="tmsg" style="font-size:12px;margin-top:4px"></div>
+    </div>
+
+    <div class="card">
+      <h2>🎤 VOICE BIOMARKERS & QUIET MODE <span class="tag">SPEECH RECOGNITION</span></h2>
+      <div id="identBio"><span class="dim">Querying identity profiles...</span></div>
+      <div class="row" style="margin-top:12px">
+        <button data-c="voiceid">VOICE ID STATUS</button>
+        <button data-c="enrollvoice">ENROLL VOICE</button>
+        <button data-c="who">WHO AM I</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 7: TERMINAL & LOGS -->
+  <div id="tab-terminal" class="tab-panel">
+    <!-- Interactive Terminal Console -->
+    <div class="card" id="console">
+      <h2>💻 NEURAL COMMAND CONSOLE <span class="tag">FULL CLI TERMINAL</span></h2>
+      <div id="out"><div class="sys">S.A.T.U.R.D.A.Y Terminal Initialized. All subsystems subscribed and operational.</div></div>
+      <div class="row">
+        <input id="cmd" placeholder="Execute command (status | who | sense | research | heal | briefing | verse...)" autocomplete="off">
+        <button id="send">EXECUTE</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input id="apiBase" placeholder="API Base URL (e.g. http://localhost:8000 or Cloud Tunnel)">
+        <input id="tokIn" placeholder="Auth Token / PIN" style="max-width:180px">
+        <button id="saveCfg">LINK ENDPOINT</button>
+      </div>
+      <div class="chips">
+        <button data-c="status">status</button>
+        <button data-c="services">services</button>
+        <button data-c="who">who</button>
+        <button data-c="sense">sense</button>
+        <button data-c="tasks">tasks</button>
+        <button data-c="heal">heal</button>
+        <button data-c="briefing">briefing</button>
+        <button data-c="verse">verse</button>
+        <button data-c="botstatus">botstatus</button>
+      </div>
+    </div>
+
+    <!-- Realtime Events Log Card -->
+    <div class="card">
+      <h2>◆ SYSTEM EVENT LOG <span class="tag">AUDIT TRAIL</span></h2>
+      <div id="elog"><span class="dim">No events recorded.</span></div>
+    </div>
   </div>
 </main>
 
@@ -348,16 +508,34 @@ footer {
 
 <script>
 const $=id=>document.getElementById(id);
-let failStreak=0, timer=2000, booted=false, glowCol='#00f2fe', lastPingTime=Date.now();
+let failStreak=0, timer=2000, booted=false, glowCol='#00f2fe';
+
+function showToast(msg){
+  const t=$('toast'); t.textContent=msg; t.style.display='block';
+  setTimeout(()=>{ t.style.display='none'; }, 3000);
+}
 
 // ----------------------------------------------------
-// 1. Dynamic Canvas Background (Cyber Mesh & Stars)
+// 1. Tab Navigation System
+// ----------------------------------------------------
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const target = $(btn.dataset.tab);
+    if(target) target.classList.add('active');
+  };
+});
+
+// ----------------------------------------------------
+// 2. Dynamic Canvas Background
 // ----------------------------------------------------
 const bgCanvas=$('bgCanvas'), bgCtx=bgCanvas.getContext('2d');
 let stars=[];
 function initBgCanvas(){
   bgCanvas.width=window.innerWidth; bgCanvas.height=window.innerHeight;
-  stars=Array.from({length:120},()=>({
+  stars=Array.from({length:140},()=>({
     x:Math.random()*bgCanvas.width,
     y:Math.random()*bgCanvas.height,
     size:Math.random()*1.8+0.5,
@@ -369,8 +547,7 @@ window.addEventListener('resize',initBgCanvas); initBgCanvas();
 
 function drawBg(){
   bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
-  // Grid lines
-  bgCtx.strokeStyle='rgba(0, 242, 254, 0.03)';
+  bgCtx.strokeStyle='rgba(0, 242, 254, 0.035)';
   bgCtx.lineWidth=1;
   const gridStep=60;
   for(let x=0; x<bgCanvas.width; x+=gridStep){
@@ -379,7 +556,6 @@ function drawBg(){
   for(let y=0; y<bgCanvas.height; y+=gridStep){
     bgCtx.beginPath(); bgCtx.moveTo(0,y); bgCtx.lineTo(bgCanvas.width,y); bgCtx.stroke();
   }
-  // Floating stars
   bgCtx.fillStyle='#00f2fe';
   for(const s of stars){
     s.y+=s.speed; if(s.y>bgCanvas.height) s.y=0;
@@ -392,45 +568,42 @@ function drawBg(){
 drawBg();
 
 // ----------------------------------------------------
-// 2. Animated ARC Reactor Core
+// 3. Animated ARC Reactor Core
 // ----------------------------------------------------
 const coreCv=$('core'), coreCtx=coreCv.getContext('2d'); let coreT=0;
 function drawCore(){
-  coreT+=0.04; coreCtx.clearRect(0,0,108,108);
-  const cx=54, cy=54;
-  // Outer glowing rings
+  coreT+=0.04; coreCtx.clearRect(0,0,112,112);
+  const cx=56, cy=56;
   for(let r=3; r>0; r--){
     coreCtx.beginPath();
-    coreCtx.arc(cx, cy, 14 + r*9 + Math.sin(coreT+r)*3, 0, Math.PI*2);
+    coreCtx.arc(cx, cy, 15 + r*9 + Math.sin(coreT+r)*3, 0, Math.PI*2);
     coreCtx.strokeStyle=glowCol+'44'; coreCtx.lineWidth=2.5; coreCtx.stroke();
   }
-  // Rotating tick marks
   coreCtx.save();
   coreCtx.translate(cx, cy); coreCtx.rotate(coreT*0.5);
   for(let i=0; i<8; i++){
     coreCtx.rotate(Math.PI/4);
     coreCtx.fillStyle=glowCol;
-    coreCtx.fillRect(26, -1.5, 6, 3);
+    coreCtx.fillRect(28, -1.5, 6, 3);
   }
   coreCtx.restore();
-  // Center orb gradient
   const g=coreCtx.createRadialGradient(cx,cy,2,cx,cy,14);
   g.addColorStop(0,'#ffffff'); g.addColorStop(0.6,glowCol); g.addColorStop(1,'transparent');
-  coreCtx.beginPath(); coreCtx.arc(cx,cy,12+Math.sin(coreT*2)*2,0,Math.PI*2);
+  coreCtx.beginPath(); coreCtx.arc(cx,cy,13+Math.sin(coreT*2)*2,0,Math.PI*2);
   coreCtx.fillStyle=g; coreCtx.fill();
   requestAnimationFrame(drawCore);
 }
 drawCore();
 
 // ----------------------------------------------------
-// 3. Audio Mic Visualizer Canvas
+// 4. Audio Mic Visualizer Canvas
 // ----------------------------------------------------
 const micCv=$('micCanvas'), micCtx=micCv.getContext('2d');
 let micLevelTarget=0, micLevelCurr=0;
 function drawMicCanvas(){
   micCtx.clearRect(0,0,micCv.width,micCv.height);
   micLevelCurr+=(micLevelTarget - micLevelCurr)*0.2;
-  const bars=32, barW=micCv.width/bars - 2;
+  const bars=36, barW=micCv.width/bars - 2;
   for(let i=0; i<bars; i++){
     const h=Math.max(4, Math.sin(i*0.4 + Date.now()*0.01)*micLevelCurr*micCv.height*0.8);
     const x=i*(barW+2);
@@ -444,7 +617,7 @@ function drawMicCanvas(){
 drawMicCanvas();
 
 // ----------------------------------------------------
-// 4. API Endpoints & State Management
+// 5. API & Communication Layer
 // ----------------------------------------------------
 const GLOWC={idle:'#00f2fe',listening:'#10b981',thinking:'#9d4edd',speaking:'#38bdf8',alert:'#f43f5e',off:'#00f2fe'};
 const QS=new URLSearchParams(location.search);
@@ -481,13 +654,26 @@ function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;',
 function bootline(t){ if(!booted) $('bootlog').innerHTML+=`<div>${esc(t)}</div>`; }
 
 // ----------------------------------------------------
-// 5. Main Dashboard Telemetry Poll
+// 6. Smooth Camera Image Preloader
+// ----------------------------------------------------
+function updateCamImage(imgEl, ageEl, base64Data, age_s) {
+  if(!imgEl) return;
+  const preloader = new Image();
+  preloader.onload = () => {
+    imgEl.src = preloader.src;
+    if(ageEl) ageEl.textContent = 'LIVE • ' + age_s + 's ago';
+  };
+  preloader.src = 'data:image/jpeg;base64,' + base64Data;
+}
+
+// ----------------------------------------------------
+// 7. Main Telemetry Poll
 // ----------------------------------------------------
 async function refresh(){
   try{
     const s=await api('/api/status');
     failStreak=0;
-    setConn(true,`● LIVE (${s._latency||20}ms)`);
+    setConn(true,`● LIVE (${s._latency||12}ms)`);
     timer=2000;
     if(!booted){
       booted=true;
@@ -497,18 +683,21 @@ async function refresh(){
     
     // Core Status
     $('coreStatus').innerHTML=
-      kv('System Core', s.online?'<b class="ok pulse">ONLINE (SUBSCRIBED)</b>':'<b class="bad">OFFLINE</b>')
+      kv('System Core', s.online?'<b class="ok pulse">ONLINE (PRO SUBSCRIBED)</b>':'<b class="bad">OFFLINE</b>')
       +kv('Security Vault', s.vault_mounted?'<b class="ok">MOUNTED & ENCRYPTED</b>':'<b class="warn">LOCKED</b>')
       +kv('Deadman Monitor', esc(String(s.deadman_status??'ACTIVE')))
       +kv('Glow Engine', `<b>${esc(String(s.glow||'idle'))}</b>`);
 
     // Identity
     const idn=s.identity||{};
-    $('ident').innerHTML=
-      kv('Recognized Profiles', `<b class="vio">${(idn.known_faces||[]).join(', ')| meProfiles(idn.known_faces)}</b>`)
+    const identHTML =
+      kv('Recognized Profiles', `<b class="vio">${(idn.known_faces||[]).join(', ') || 'Noah'}</b>`)
       +kv('Voice Biomarkers', idn.voice_enrolled?'<b class="ok">ENROLLED</b>':'<b class="dim">standby</b>')
       +kv('Quiet Mode (DND)', idn.dnd?'<b class="warn">ENABLED</b>':'<b class="dim">disabled</b>')
       +kv('Mind Synapses', `<b>${idn.mind_ticks??0} ticks</b>`);
+    
+    $('ident').innerHTML = identHTML;
+    if($('identBio')) $('identBio').innerHTML = identHTML;
 
     // Subsystems
     $('subs').innerHTML=
@@ -532,7 +721,7 @@ async function refresh(){
     // Tasks & Inbox
     const tk=await api('/api/tasks');
     $('inbox').innerHTML=(tk.inbox||[]).length
-      ? '<div class="dim" style="font-size:11px;margin-bottom:4px">INBOX QUEUE</div>'+tk.inbox.map(i=>`<div><span>[${esc(i.id)}|p${i.priority}] ${esc(i.text)}</span><b class="vio">${esc(i.status)}</b></div>`).join('')
+      ? '<div class="dim" style="font-size:11px;margin-bottom:4px">AUTONOMOUS INBOX QUEUE</div>'+tk.inbox.map(i=>`<div><span>[${esc(i.id)}|p${i.priority}] ${esc(i.text)}</span><b class="vio">${esc(i.status)}</b></div>`).join('')
       : '';
     $('tasks').innerHTML=(tk.tasks||[]).length
       ? tk.tasks.slice(-5).reverse().map(x=>`<div><span>◆ ${esc(x)}</span><span class="ok">EXEC</span></div>`).join('')
@@ -542,31 +731,32 @@ async function refresh(){
       kv('DND Override', (ses.dnd||idn.dnd)?'<b class="warn">ON</b>':'<b class="dim">OFF</b>')
       +kv('Queued Jobs', `<b>${ses.queued??0}</b>`);
 
-    // Maintenance / Server
+    // Server
     const sv=ses.server||{};
     const tn=(sv.tunnel||{}).url||'';
     $('serverline').textContent='Server: '+(tn?('Cloud Tunnel '+tn):'Localhost Only')
       +' • RTDB '+(sv.rtdb?'ONLINE':'OFFLINE')
       +' • Heartbeat '+(sv.last_heartbeat_s_ago==null?'0s':sv.last_heartbeat_s_ago+'s ago');
 
-    // Events Log
+    // Event Log
     const lg=await api('/api/log');
     $('elog').innerHTML=lg.events.length
       ? lg.events.slice(-8).reverse().map(e=>`<div><span class="dim">${new Date(e.ts*1000).toLocaleTimeString()}</span> <span>${esc(e.message)}</span></div>`).join('')
       : '<span class="dim">No events recorded</span>';
 
-    // Camera Eye Feed
+    // Smooth Camera Feed Refresh
     try{
       const f=await api('/api/frame');
       if(f.available){
-        $('eye').src='data:image/jpeg;base64,'+f.image;
-        $('eyeAge').textContent='LIVE • '+f.age_s+'s ago';
+        updateCamImage($('eye'), $('eyeAge'), f.image, f.age_s);
+        updateCamImage($('eyeMini'), $('eyeAgeMini'), f.image, f.age_s);
       } else {
-        $('eyeAge').textContent='camera offline';
+        if($('eyeAge')) $('eyeAge').textContent='camera offline';
+        if($('eyeAgeMini')) $('eyeAgeMini').textContent='camera offline';
       }
     }catch(e){}
 
-    // Mic Level
+    // Mic
     try{
       const m=await api('/api/miclevel');
       if(m.live){
@@ -578,7 +768,7 @@ async function refresh(){
       }
     }catch(e){}
 
-    // Mood Context
+    // Mood
     try{
       const md=await api('/api/mood');
       $('moodline').innerHTML=md.available
@@ -595,7 +785,7 @@ async function refresh(){
         : '<span class="dim">No subjects enrolled yet.</span>';
       document.querySelectorAll('[data-forget]').forEach(b=>b.onclick=async()=>{
         const r=await api('/api/forget_person',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:b.dataset.forget})});
-        $('tmsg').textContent=r.success?`Removed ${b.dataset.forget}`:(r.error||'Failed');
+        showToast(r.success?`Removed ${b.dataset.forget}`:(r.error||'Failed'));
         setTimeout(refresh,800);
       });
     }catch(e){}
@@ -608,10 +798,8 @@ async function refresh(){
   setTimeout(refresh, timer);
 }
 
-function meProfiles(arr){ return (arr&&arr.length)?arr.join(', '):'None enrolled'; }
-
 // ----------------------------------------------------
-// 6. Console & Command Handling
+// 8. Console & Commands
 // ----------------------------------------------------
 function say(who,txt,cls){
   const o=$('out'), d=document.createElement('div');
@@ -626,6 +814,7 @@ async function sendCmd(raw){
   try{
     const r=await api('/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:c})});
     say('',r.response||'(ACK)','bot');
+    showToast(`Executed: ${c.slice(0,30)}`);
   }catch(e){
     say('','❌ Command delivery error. Re-linking endpoint...','err');
   }
@@ -634,9 +823,42 @@ async function sendCmd(raw){
 $('send').onclick=()=>sendCmd();
 $('cmd').onkeydown=e=>{ if(e.key==='Enter') sendCmd(); };
 
-// Hotkey shortcuts (WASD + Arrows for HomeBot)
+// Camera Actions
+$('btnCamStart').onclick=async()=>{
+  try{ const r=await api('/api/camera/start',{method:'POST'}); say('📷',r.status||'Camera Started','sys'); showToast('Camera Started'); }
+  catch(e){ say('','❌ Camera start error','err'); }
+};
+$('btnCamStop').onclick=async()=>{
+  try{ const r=await api('/api/camera/stop',{method:'POST'}); say('📷',r.status||'Camera Stopped','sys'); showToast('Camera Stopped'); }
+  catch(e){ say('','❌ Camera stop error','err'); }
+};
+
+// TTS Quick Announce
+if($('btnQuickAnnounce')) {
+  $('btnQuickAnnounce').onclick=()=>{
+    const msg=$('quickTTS').value.trim(); if(!msg) return;
+    $('quickTTS').value='';
+    sendCmd(`announce ${msg}`);
+  };
+}
+
+// Task Dispatcher
+$('btnAddTask').onclick=async()=>{
+  const goal=$('taskGoal').value.trim();
+  const prio=parseInt($('taskPrio').value||2);
+  if(!goal){ showToast('Enter a task goal!'); return; }
+  $('taskGoal').value='';
+  try{
+    const r=await api('/api/task/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({goal, priority:prio})});
+    say('🤖',`Task Dispatched (p${prio}): ${goal}`,'sys');
+    showToast(`Task Dispatched (p${prio})`);
+    setTimeout(refresh,800);
+  }catch(e){ say('','❌ Task add error','err'); }
+};
+
+// Hotkeys for HomeBot
 document.addEventListener('keydown', e=>{
-  if(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA') return;
+  if(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA'||document.activeElement.tagName==='SELECT') return;
   const keyMap={
     'w':'forward','ArrowUp':'forward',
     's':'back','ArrowDown':'back',
@@ -663,11 +885,12 @@ $('saveCfg').onclick=()=>{
 $('tenroll').onclick=async()=>{
   const n=$('tname').value.trim(), f=$('tfile').files[0];
   if(!n||!f){ $('tmsg').textContent='Subject name and image file required.'; return; }
-  $('tmsg').textContent='Analyzing & encoding biometric features...';
+  $('tmsg').textContent='Encoding biometric features...';
   const b=await new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(f); });
   try{
     const r=await api('/api/enroll_photo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,image_b64:b})});
     $('tmsg').textContent=r.success?`Successfully enrolled ${r.person} (${r.saved} samples)`:`Failed: ${r.error}`;
+    if(r.success) showToast(`Enrolled ${r.person}`);
     if(r.success) setTimeout(refresh,800);
   }catch(e){ $('tmsg').textContent='Enrollment upload error.'; }
 };
@@ -677,15 +900,18 @@ if(TOKEN) $('tokIn').value='••••••••';
 
 document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>sendCmd(b.dataset.c));
 document.querySelectorAll('[data-bot]').forEach(b=>b.onclick=async()=>{
+  const spd=parseInt($('botSpeed').value||80);
+  const dur=parseFloat($('botDur').value||1.0);
   try{
-    const r=await api('/api/homebot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:b.dataset.bot,duration:1.0,speed:80})});
-    say('🤖',`HomeBot: ${b.dataset.bot} -> ${r.message||r.reason||r.status}`,'sys');
-  }catch(e){ say('','❌ HomeBot connection offline','err'); }
+    const r=await api('/api/homebot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:b.dataset.bot, duration:dur, speed:spd})});
+    say('🤖',`HomeBot: ${b.dataset.bot} (spd ${spd}%, ${dur}s) -> ${r.message||r.reason||r.status}`,'sys');
+    showToast(`HomeBot ${b.dataset.bot}`);
+  }catch(e){ say('','❌ HomeBot offline','err'); }
 });
 
-bootline('S.A.T.U.R.D.A.Y Neural HUD Subsystem');
-bootline('Subscribed: Pro Tier 1 Unlocked');
-bootline('Binding Local & Cloud Gateways...');
+bootline('S.A.T.U.R.D.A.Y Neural Management System');
+bootline('Subscribed: Pro Tier Active');
+bootline('Binding Gateway API & Tabs...');
 refresh();
 </script>
 </body>
