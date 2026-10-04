@@ -29,8 +29,16 @@ module.exports = async function handler(req, res) {
     if (process.env.SAT_PIN && pin !== process.env.SAT_PIN) {
       return res.status(401).json({ error: "pin required" });
     }
-    const base = (process.env.SAT_API || "").replace(/\/$/, "");
-    const token = process.env.SAT_TOKEN || "";
+    let base = (process.env.SAT_API || "").trim().replace(/\/$/, "");
+    // Explicit backend wins (HUD passes its stored tunnel URL through).
+    // This makes the proxy immune to stale env values after URL rotation.
+    try {
+      const hint = req.query && req.query.api ? String(req.query.api) : "";
+      if (/^https:\/\/[a-z0-9.-]+\.trycloudflare\.com$/i.test(hint.trim())) {
+        base = hint.trim();
+      }
+    } catch (e) { /* env fallback */ }
+    const token = (process.env.SAT_TOKEN || "").trim();
     if (!base) {
       return res.status(503).json({ error: "backend not linked (SAT_API missing)" });
     }
