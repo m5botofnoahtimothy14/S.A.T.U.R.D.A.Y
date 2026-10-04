@@ -18,6 +18,7 @@
 function cleanQuery(search) {
   const q = new URLSearchParams(search || "");
   q.delete("pin");
+  q.delete("path");
   const s = q.toString();
   return s ? "?" + s : "";
 }
@@ -33,8 +34,15 @@ module.exports = async function handler(req, res) {
     if (!base) {
       return res.status(503).json({ error: "backend not linked (SAT_API missing)" });
     }
-    const segs = Array.isArray(req.query.sat) ? req.query.sat.join("/") : "";
-    const target = base + "/" + segs + cleanQuery(req.url.split("?")[1] || "");
+    // path comes from the vercel.json rewrite (/api/sat/:path* -> ?path=)
+    // or legacy [...sat] query form.
+    let sub = "";
+    if (req.query && typeof req.query.path === "string" && req.query.path) {
+      sub = req.query.path.replace(/^\/+/, "");
+    } else if (Array.isArray(req.query && req.query.sat)) {
+      sub = req.query.sat.join("/");
+    }
+    const target = base + "/" + sub + cleanQuery(req.url.split("?")[1] || "");
     const init = {
       method: req.method,
       headers: { "Content-Type": "application/json" },

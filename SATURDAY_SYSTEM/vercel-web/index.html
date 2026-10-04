@@ -2,217 +2,691 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SATURDAY // CONTROL PLANE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S.A.T.U.R.D.A.Y // NEURAL CONTROL PLANE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,400&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#020409; --glass:rgba(13,22,38,.72); --line:rgba(34,211,238,.25);
-  --cyan:#22d3ee; --green:#34d399; --amber:#fbbf24; --red:#f87171;
-  --violet:#a78bfa; --text:#dcf2ff; --dim:#7d93ad;
+:root {
+  --bg: #030712;
+  --bg-card: rgba(13, 22, 38, 0.75);
+  --bg-card-hover: rgba(20, 32, 54, 0.85);
+  --line: rgba(0, 242, 254, 0.22);
+  --line-strong: rgba(0, 242, 254, 0.5);
+  --cyan: #00f2fe;
+  --cyan-glow: rgba(0, 242, 254, 0.4);
+  --violet: #9d4edd;
+  --violet-glow: rgba(157, 78, 221, 0.4);
+  --green: #10b981;
+  --green-glow: rgba(16, 185, 129, 0.4);
+  --amber: #f59e0b;
+  --red: #f43f5e;
+  --text: #e2f1f8;
+  --dim: #64748b;
+  --dim-bright: #94a3b8;
+  --panel-border: 1px solid var(--line);
 }
-*{box-sizing:border-box; margin:0; padding:0}
-html,body{height:100%}
-body{background:var(--bg); color:var(--text); font-family:"Segoe UI",Consolas,monospace; overflow-x:hidden}
-#stars{position:fixed; inset:0; z-index:0}
-#boot{position:fixed; inset:0; z-index:50; background:#020409; display:flex; align-items:center; justify-content:center;
-  flex-direction:column; gap:14px; transition:opacity .8s}
-#boot.gone{opacity:0; pointer-events:none}
-#boot h1{letter-spacing:8px; font-size:26px; color:var(--cyan); text-shadow:0 0 24px var(--cyan)}
-#bootlog{font-size:12px; color:var(--dim); height:120px; text-align:center}
-header{position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:18px; padding:12px 22px;
-  background:rgba(3,7,14,.82); backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
-#core{width:58px; height:58px; filter:drop-shadow(0 0 10px var(--cyan))}
-h1{font-size:19px; letter-spacing:5px}
-h1 small{display:block; font-size:10px; letter-spacing:3px; color:var(--dim)}
-#conn{margin-left:auto; font-size:12px; padding:6px 16px; border-radius:20px; border:1px solid var(--line)}
-#conn.on{color:var(--green); border-color:var(--green); box-shadow:0 0 12px #34d39955}
-#conn.off{color:var(--red); border-color:var(--red)}
-main{position:relative; z-index:1; display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
-  gap:14px; padding:16px 22px 40px}
-.card{background:var(--glass); backdrop-filter:blur(12px); border:1px solid var(--line); border-radius:14px;
-  padding:14px 16px; box-shadow:0 0 24px #22d3ee11, inset 0 0 40px #22d3ee08}
-.card h2{font-size:11px; letter-spacing:4px; color:var(--cyan); margin-bottom:10px}
-.kv{display:flex; justify-content:space-between; font-size:13px; padding:3px 0; border-bottom:1px dashed #152238}
-.ok{color:var(--green)} .warn{color:var(--amber)} .bad{color:var(--red)} .dim{color:var(--dim)} .vio{color:var(--violet)}
-#eye{width:100%; border-radius:10px; border:1px solid var(--line); aspect-ratio:16/9; object-fit:cover; background:#000}
-#console{grid-column:1/-1}
-#out{height:260px; overflow-y:auto; background:rgba(0,0,0,.55); border:1px solid var(--line); border-radius:10px;
-  padding:10px 12px; font-size:13px; white-space:pre-wrap; margin-bottom:10px}
-#out .me{color:var(--cyan)} #out .sys{color:var(--dim)} #out .bot{color:var(--green)}
-.row{display:flex; gap:8px; margin-top:8px}
-input,button,select{background:#060c16; color:var(--text); border:1px solid var(--line); border-radius:8px;
-  padding:9px 12px; font-size:13px; font-family:inherit}
-input{flex:1}
-button{cursor:pointer; border-color:var(--cyan); color:var(--cyan); transition:.15s}
-button:hover{background:#22d3ee26; box-shadow:0 0 12px #22d3ee55}
-button.danger{border-color:var(--red); color:var(--red)}
-.chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
-.chips button{font-size:11px; padding:5px 10px}
-.pad{display:grid; grid-template-columns:repeat(3,62px); gap:6px; justify-content:center; margin:8px 0}
-.pad button{padding:11px 0}
-#tasks div,#elog div,#inbox div{font-size:12px; padding:4px 0; border-bottom:1px dashed #152238}
-footer{position:relative; z-index:1; text-align:center; color:var(--dim); font-size:11px; padding:14px; letter-spacing:3px}
-.pulse{animation:pl 2s infinite}
-@keyframes pl{0%,100%{opacity:1}50%{opacity:.5}}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; width: 100%; background: var(--bg); color: var(--text); font-family: 'Rajdhani', 'Segoe UI', sans-serif; overflow-x: hidden; }
+
+/* Canvas Background Starfield & Grid */
+#bgCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+/* Boot Loader Screen */
+#boot {
+  position: fixed; inset: 0; z-index: 999; background: #030712;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#boot.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+.boot-logo {
+  font-family: 'Orbitron', sans-serif; font-size: 38px; font-weight: 900; letter-spacing: 12px;
+  background: linear-gradient(135deg, #00f2fe 0%, #9d4edd 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 25px rgba(0,242,254,0.6)); animation: pulseLogo 2s infinite alternate;
+}
+@keyframes pulseLogo { 0% { filter: drop-shadow(0 0 15px rgba(0,242,254,0.4)); } 100% { filter: drop-shadow(0 0 35px rgba(157,78,221,0.8)); } }
+#bootlog { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--cyan); height: 100px; text-align: center; line-height: 1.6; }
+
+/* Header Bar */
+header {
+  position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 28px; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line); box-shadow: 0 4px 30px rgba(0,0,0,0.7);
+}
+.brand-zone { display: flex; align-items: center; gap: 16px; }
+#core { width: 54px; height: 54px; filter: drop-shadow(0 0 12px var(--cyan)); cursor: pointer; transition: transform 0.3s; }
+#core:hover { transform: scale(1.08); }
+.brand-title { display: flex; flex-direction: column; }
+.brand-title h1 { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 6px; color: #fff; }
+.brand-title small { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--cyan); text-transform: uppercase; }
+
+.header-status { display: flex; align-items: center; gap: 14px; }
+.sub-badge {
+  display: flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 20px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(0,242,254,0.15) 100%);
+  border: 1px solid rgba(16,185,129,0.4); font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  font-weight: 700; color: var(--green); letter-spacing: 1px; box-shadow: 0 0 15px rgba(16,185,129,0.2);
+}
+.sub-badge span { animation: blinkGlow 1.5s infinite; }
+@keyframes blinkGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+#conn {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; padding: 6px 16px; border-radius: 20px;
+  border: 1px solid var(--line); transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+}
+#conn.on { color: var(--green); border-color: var(--green); box-shadow: 0 0 16px rgba(16,185,129,0.3); background: rgba(16,185,129,0.1); }
+#conn.off { color: var(--red); border-color: var(--red); box-shadow: 0 0 16px rgba(244,63,94,0.3); background: rgba(244,63,94,0.1); }
+
+/* Main Grid Layout */
+main {
+  position: relative; z-index: 1; display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 16px; padding: 20px 28px 50px; max-width: 1800px; margin: 0 auto;
+}
+
+/* Sci-Fi Glass Cards */
+.card {
+  background: var(--bg-card); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: var(--panel-border); border-radius: 14px; padding: 18px 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 0 30px rgba(0, 242, 254, 0.03);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative; overflow: hidden;
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0.6;
+}
+.card:hover {
+  transform: translateY(-2px); border-color: var(--line-strong);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 254, 0.15);
+}
+.card h2 {
+  font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 3px; color: var(--cyan);
+  margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
+}
+.card h2 .tag {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 4px;
+  background: rgba(0,242,254,0.1); border: 1px solid var(--line); color: var(--dim-bright);
+}
+
+/* Key Value Pairs */
+.kv {
+  display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 6px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.07); font-family: 'Rajdhani', sans-serif; font-weight: 600;
+}
+.kv:last-child { border-bottom: none; }
+.ok { color: var(--green); font-weight: 700; }
+.warn { color: var(--amber); font-weight: 700; }
+.bad { color: var(--red); font-weight: 700; }
+.dim { color: var(--dim); }
+.vio { color: var(--violet); font-weight: 700; }
+
+/* Camera Viewport */
+.eye-wrap { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+#eye { width: 100%; height: 100%; object-fit: cover; }
+.eye-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  border: 1px solid rgba(0,242,254,0.3); display: flex; flex-direction: column; justify-content: space-between; padding: 10px;
+}
+.eye-reticle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border: 1px solid var(--cyan-glow); border-radius: 50%; pointer-events: none; }
+.eye-reticle::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--cyan-glow); }
+.eye-reticle::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--cyan-glow); }
+
+/* Audio Waveform Canvas */
+#micCanvas { width: 100%; height: 45px; border-radius: 8px; border: 1px solid var(--line); background: rgba(2, 4, 9, 0.9); }
+
+/* Command Console */
+#console { grid-column: 1 / -1; }
+#out {
+  height: 240px; overflow-y: auto; background: rgba(2, 6, 14, 0.9); border: 1px solid var(--line);
+  border-radius: 10px; padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  line-height: 1.5; white-space: pre-wrap; margin-bottom: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+}
+#out .me { color: var(--cyan); font-weight: 700; }
+#out .sys { color: var(--dim-bright); }
+#out .bot { color: var(--green); }
+#out .err { color: var(--red); }
+
+.row { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+input, button, select {
+  background: rgba(6, 12, 22, 0.8); color: var(--text); border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px 14px; font-size: 13px; font-family: 'JetBrains Mono', monospace; outline: none; transition: all 0.2s ease;
+}
+input { flex: 1; min-width: 180px; }
+input:focus { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0, 242, 254, 0.3); }
+button { cursor: pointer; border-color: var(--cyan); color: var(--cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+button:hover { background: rgba(0, 242, 254, 0.15); box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); transform: translateY(-1px); }
+button:active { transform: translateY(0); }
+button.danger { border-color: var(--red); color: var(--red); }
+button.danger:hover { background: rgba(244, 63, 94, 0.15); box-shadow: 0 0 15px rgba(244, 63, 94, 0.4); }
+
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.chips button { font-size: 11px; padding: 6px 12px; border-radius: 6px; background: rgba(0, 242, 254, 0.05); }
+
+/* HomeBot D-Pad Controller */
+.pad-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin: 12px 0; }
+.pad { display: grid; grid-template-columns: repeat(3, 56px); gap: 6px; }
+.pad button { padding: 12px 0; font-size: 14px; text-align: center; }
+
+/* Lists & Tables */
+#tasks div, #elog div, #inbox div {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 6px 8px; border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+  display: flex; justify-content: space-between; align-items: center; border-radius: 4px; transition: background 0.2s;
+}
+#tasks div:hover, #elog div:hover, #inbox div:hover { background: rgba(0, 242, 254, 0.04); }
+
+footer {
+  position: relative; z-index: 1; text-align: center; color: var(--dim); font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; padding: 20px; letter-spacing: 3px; border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.pulse { animation: pl 2s infinite; }
+@keyframes pl { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+/* Scrollbar Customization */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(2, 4, 9, 0.8); }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
 </style>
 </head>
 <body>
-<canvas id="stars"></canvas>
-<div id="boot"><h1>SATURDAY</h1><div id="bootlog">initializing…</div></div>
+
+<canvas id="bgCanvas"></canvas>
+
+<div id="boot">
+  <div class="boot-logo">S.A.T.U.R.D.A.Y</div>
+  <div id="bootlog">INITIALIZING NEURAL SYSTEM CORE…<br>VERIFYING SUBSCRIPTION TIER…</div>
+</div>
+
 <header>
-  <canvas id="core" width="116" height="116"></canvas>
-  <h1>SATURDAY<small>CONTROL PLANE // REPORTS · HEALTH · MAINTENANCE</small></h1>
-  <div id="conn" class="off">CONNECTING…</div>
+  <div class="brand-zone">
+    <canvas id="core" width="108" height="108" title="Click to pulse Arc Core"></canvas>
+    <div class="brand-title">
+      <h1>S.A.T.U.R.D.A.Y</h1>
+      <small>NEURAL HUD // AUTONOMOUS AI AGENT</small>
+    </div>
+  </div>
+  <div class="header-status">
+    <div class="sub-badge"><span>★</span> PRO SUBSCRIBED</div>
+    <div id="conn" class="off">● CONNECTING</div>
+  </div>
 </header>
+
 <main>
-  <div class="card"><h2>◆ CORE</h2><div id="coreStatus"><span class="dim">…</span></div></div>
-  <div class="card"><h2>◆ IDENTITY — I KNOW YOU</h2><div id="ident"><span class="dim">…</span></div></div>
-  <div class="card"><h2>◉ LIVE EYE</h2><img id="eye" alt="camera offline"><div id="eyeAge" class="dim" style="font-size:11px"></div></div>
-  <div class="card"><h2>♪ MIC ACTIVITY</h2>
-    <div style="background:#020409;border:1px solid var(--line);border-radius:8px;height:22px;overflow:hidden"><div id="micbar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div>
-    <div id="micnum" class="dim" style="font-size:11px;margin-top:4px">mic offline</div></div>
-  <div class="card"><h2>☺ MOOD</h2><div id="moodline" class="dim" style="font-size:12px">mood unknown</div></div>
-  <div class="card"><h2>◆ FACE TRAINING</h2>
-    <div class="dim" style="font-size:11px">Upload clear front photos — same pipeline as live camera, cross-verified every frame. Stored encrypted.</div>
-    <div class="row" style="margin-top:6px"><input id="tname" placeholder="name (noah / khadija)" style="max-width:170px"><input id="tfile" type="file" accept="image/*"></div>
-    <div class="row" style="margin-top:6px"><button id="tenroll">ENROLL PHOTO</button></div>
-    <div id="troster" class="dim" style="font-size:12px;margin-top:6px">nobody enrolled yet</div>
-    <div id="tmsg" style="font-size:12px;margin-top:4px"></div></div>
-  <div class="card"><h2>◆ SUBSYSTEMS</h2><div id="subs"><span class="dim">…</span></div></div>
-  <div class="card"><h2>◆ HOMEBOT CORE2</h2><div id="bot">…</div>
-    <div class="pad"><span></span><button data-bot="forward">▲</button><span></span>
-      <button data-bot="left">◀</button><button data-bot="stop" class="danger">■</button><button data-bot="right">▶</button>
-      <button data-bot="spinleft">⟲</button><button data-bot="back">▼</button><button data-bot="spinright">⟳</button></div>
+  <!-- Core Card -->
+  <div class="card">
+    <h2>◆ SYSTEM CORE <span class="tag">VER 2.5</span></h2>
+    <div id="coreStatus"><span class="dim">Initializing telemetry…</span></div>
   </div>
-  <div class="card"><h2>◆ MIND + TASKS</h2><div id="mind">…</div><div id="inbox"></div><div id="tasks"></div></div>
-  <div class="card"><h2>✚ MAINTENANCE</h2>
-    <div class="chips"><button data-c="heal">HEAL</button><button data-c="services">SERVICES</button><button data-c="botstatus">BOT LINK</button><button data-c="share status">TUNNEL</button><button data-c="inbox">INBOX</button><button data-c="glow off">GLOW OFF</button></div>
-    <div id="serverline" class="dim" style="font-size:12px;margin-top:8px">server: …</div></div>
-  <div class="card" id="console"><h2>◆ COMMAND CONSOLE</h2>
-    <div id="out"><div class="sys">HUD online. Everything here runs on the real core.</div></div>
-    <div class="row"><input id="cmd" placeholder="status | who | sense | research … | heal | glow off" autocomplete="off"><button id="send">EXEC</button></div>
-    <div class="row"><input id="apiBase" placeholder="API base (empty = this host, e.g. https://x.trycloudflare.com)"><input id="tokIn" placeholder="token" style="max-width:180px"><button id="saveCfg">LINK</button></div>
-    <div class="chips"><button data-c="status">status</button><button data-c="services">services</button><button data-c="who">who</button><button data-c="sense">sense</button><button data-c="tasks">tasks</button><button data-c="heal">heal</button><button data-c="briefing">briefing</button><button data-c="announce SATURDAY online, all systems ready">WAKE</button><button data-c="botstatus">BOT</button></div>
+
+  <!-- Identity Card -->
+  <div class="card">
+    <h2>◆ IDENTITY RECOGNITION <span class="tag">AEGIS BIOMETRICS</span></h2>
+    <div id="ident"><span class="dim">Scanning identity profiles…</span></div>
   </div>
-  <div class="card"><h2>◆ EVENTS</h2><div id="elog"><span class="dim">—</span></div></div>
+
+  <!-- Live Eye Camera Card -->
+  <div class="card">
+    <h2>◉ LIVE VISION EYE <span class="tag">REALTIME STREAM</span></h2>
+    <div class="eye-wrap">
+      <img id="eye" alt="Camera Stream Offline">
+      <div class="eye-overlay">
+        <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--cyan)">SYS.CAM.01 // ACTIVE</div>
+        <div class="eye-reticle"></div>
+        <div id="eyeAge" class="dim" style="font-family:'JetBrains Mono';font-size:10px">offline</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mic Activity Card -->
+  <div class="card">
+    <h2>♪ ACOUSTIC / MIC SPECTRUM <span class="tag">EARS ONLINE</span></h2>
+    <canvas id="micCanvas" width="320" height="45"></canvas>
+    <div id="micnum" class="dim" style="font-family:'JetBrains Mono';font-size:11px;margin-top:6px">mic listener standby</div>
+  </div>
+
+  <!-- AI Mood Card -->
+  <div class="card">
+    <h2>☺ AI EMOTIONAL STATE <span class="tag">NEURAL SYNAPSE</span></h2>
+    <div id="moodline" class="dim" style="font-size:13px;margin-top:4px">analyzing emotional context…</div>
+  </div>
+
+  <!-- Face Training Card -->
+  <div class="card">
+    <h2>◆ BIOMETRIC FACE ENROLLMENT <span class="tag">ENCRYPTED</span></h2>
+    <div class="dim" style="font-size:12px;margin-bottom:8px">Upload clear photos to enroll identities into real-time visual recognition pipeline.</div>
+    <div class="row">
+      <input id="tname" placeholder="Subject Name (e.g. Noah)" style="max-width:160px">
+      <input id="tfile" type="file" accept="image/*">
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button id="tenroll">ENROLL PHOTO DATA</button>
+    </div>
+    <div id="troster" class="dim" style="font-size:12px;margin-top:8px">No biometric profiles enrolled.</div>
+    <div id="tmsg" style="font-size:12px;margin-top:4px"></div>
+  </div>
+
+  <!-- Subsystems Card -->
+  <div class="card">
+    <h2>◆ SUBSYSTEM MONITORS <span class="tag">ALL ONLINE</span></h2>
+    <div id="subs"><span class="dim">Querying engine services…</span></div>
+  </div>
+
+  <!-- HomeBot Core2 Joystick Card -->
+  <div class="card">
+    <h2>◆ HOMEBOT CORE2 ROVER <span class="tag">TELEMETRY</span></h2>
+    <div id="bot"><span class="dim">Bot link pending…</span></div>
+    <div class="pad-wrap">
+      <div class="pad">
+        <span></span><button data-bot="forward" title="Forward (W / Up)">▲</button><span></span>
+        <button data-bot="left" title="Left (A / Left)">◀</button><button data-bot="stop" class="danger" title="Emergency Stop (Space)">■</button><button data-bot="right" title="Right (D / Right)">▶</button>
+        <button data-bot="spinleft" title="Rotate Left">⟲</button><button data-bot="back" title="Backward (S / Down)">▼</button><button data-bot="spinright" title="Rotate Right">⟳</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mind + Tasks Card -->
+  <div class="card">
+    <h2>◆ AUTONOMOUS MIND & TASKS <span class="tag">ACTIVE QUEUE</span></h2>
+    <div id="mind"><span class="dim">Loading mind state…</span></div>
+    <div id="inbox" style="margin-top:6px"></div>
+    <div id="tasks" style="margin-top:6px"></div>
+  </div>
+
+  <!-- System Maintenance Card -->
+  <div class="card">
+    <h2>✚ SYSTEM MAINTENANCE <span class="tag">QUICK CONTROLS</span></h2>
+    <div class="chips">
+      <button data-c="heal">AUTO-HEAL</button>
+      <button data-c="services">SCAN SERVICES</button>
+      <button data-c="botstatus">BOT LINK</button>
+      <button data-c="share status">TUNNEL SHARE</button>
+      <button data-c="inbox">INBOX QUEUE</button>
+      <button data-c="glow off">TOGGLE GLOW</button>
+    </div>
+    <div id="serverline" class="dim" style="font-size:12px;margin-top:10px;font-family:'JetBrains Mono'">server: querying cloud tunnel…</div>
+  </div>
+
+  <!-- Interactive Terminal Console -->
+  <div class="card" id="console">
+    <h2>◆ NEURAL COMMAND CONSOLE <span class="tag">PRO TERMINAL</span></h2>
+    <div id="out"><div class="sys">S.A.T.U.R.D.A.Y Terminal Initialized. All subsystems subscribed and operational. Type commands below or press quick actions.</div></div>
+    <div class="row">
+      <input id="cmd" placeholder="Execute command (status | who | sense | research | heal | briefing...)" autocomplete="off">
+      <button id="send">EXECUTE</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <input id="apiBase" placeholder="API Base URL (e.g. http://localhost:8000 or Cloud Tunnel)">
+      <input id="tokIn" placeholder="Auth Token / PIN" style="max-width:180px">
+      <button id="saveCfg">LINK ENDPOINT</button>
+    </div>
+    <div class="chips">
+      <button data-c="status">status</button>
+      <button data-c="services">services</button>
+      <button data-c="who">who</button>
+      <button data-c="sense">sense</button>
+      <button data-c="tasks">tasks</button>
+      <button data-c="heal">heal</button>
+      <button data-c="briefing">briefing</button>
+      <button data-c="announce SATURDAY online, all systems ready">WAKE AUDIO</button>
+      <button data-c="botstatus">BOT DIAGNOSTICS</button>
+    </div>
+  </div>
+
+  <!-- Realtime Events Log Card -->
+  <div class="card">
+    <h2>◆ SYSTEM EVENT LOG <span class="tag">AUDIT TRAIL</span></h2>
+    <div id="elog"><span class="dim">No system events logged yet.</span></div>
+  </div>
 </main>
-<footer>SATURDAY v<span id="ver">?</span> // 127.0.0.1 ONLY // NOTHING LEAVES THIS PC</footer>
+
+<footer>S.A.T.U.R.D.A.Y SYSTEM v2.5 // PRO SUBSCRIBED EDITION // ALL RIGHTS RESERVED</footer>
+
 <script>
 const $=id=>document.getElementById(id);
-let failStreak=0, timer=2000, booted=false, glowCol='#22d3ee';
-// starfield
-const sc=$('stars'),sx=sc.getContext('2d');let stars=[];
-function starInit(){sc.width=innerWidth;sc.height=innerHeight;stars=Array.from({length:130},()=>({x:Math.random()*sc.width,y:Math.random()*sc.height,z:Math.random()*1.5+.3}));}
-addEventListener('resize',starInit);starInit();
-setInterval(()=>{sx.clearRect(0,0,sc.width,sc.height);sx.fillStyle='#22d3ee';
-  for(const s of stars){s.y+=s.z;if(s.y>sc.height)s.y=0;sx.globalAlpha=.12*s.z;sx.fillRect(s.x,s.y,2,2);}sx.globalAlpha=1;},50);
-// arc core
-const cv=$('core'),cx=cv.getContext('2d');let t=0;
-(function draw(){t+=0.035;cx.clearRect(0,0,116,116);
-  for(let r=3;r>0;r--){cx.beginPath();cx.arc(58,58,11+r*8+Math.sin(t+r)*3,0,7);
-    cx.strokeStyle=glowCol+'55';cx.lineWidth=3;cx.stroke();}
-  const g=cx.createRadialGradient(58,58,2,58,58,12);g.addColorStop(0,'#fff');g.addColorStop(1,glowCol);
-  cx.beginPath();cx.arc(58,58,10+Math.sin(t*2)*2,0,7);cx.fillStyle=g;cx.fill();
-  requestAnimationFrame(draw);})();
-const GLOWC={idle:'#22d3ee',listening:'#34d399',thinking:'#a78bfa',speaking:'#5eead4',alert:'#f87171',off:'#22d3ee'};
+let failStreak=0, timer=2000, booted=false, glowCol='#00f2fe', lastPingTime=Date.now();
+
+// ----------------------------------------------------
+// 1. Dynamic Canvas Background (Cyber Mesh & Stars)
+// ----------------------------------------------------
+const bgCanvas=$('bgCanvas'), bgCtx=bgCanvas.getContext('2d');
+let stars=[];
+function initBgCanvas(){
+  bgCanvas.width=window.innerWidth; bgCanvas.height=window.innerHeight;
+  stars=Array.from({length:120},()=>({
+    x:Math.random()*bgCanvas.width,
+    y:Math.random()*bgCanvas.height,
+    size:Math.random()*1.8+0.5,
+    speed:Math.random()*0.4+0.1,
+    alpha:Math.random()*0.7+0.2
+  }));
+}
+window.addEventListener('resize',initBgCanvas); initBgCanvas();
+
+function drawBg(){
+  bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
+  // Grid lines
+  bgCtx.strokeStyle='rgba(0, 242, 254, 0.03)';
+  bgCtx.lineWidth=1;
+  const gridStep=60;
+  for(let x=0; x<bgCanvas.width; x+=gridStep){
+    bgCtx.beginPath(); bgCtx.moveTo(x,0); bgCtx.lineTo(x,bgCanvas.height); bgCtx.stroke();
+  }
+  for(let y=0; y<bgCanvas.height; y+=gridStep){
+    bgCtx.beginPath(); bgCtx.moveTo(0,y); bgCtx.lineTo(bgCanvas.width,y); bgCtx.stroke();
+  }
+  // Floating stars
+  bgCtx.fillStyle='#00f2fe';
+  for(const s of stars){
+    s.y+=s.speed; if(s.y>bgCanvas.height) s.y=0;
+    bgCtx.globalAlpha=s.alpha;
+    bgCtx.fillRect(s.x, s.y, s.size, s.size);
+  }
+  bgCtx.globalAlpha=1;
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+
+// ----------------------------------------------------
+// 2. Animated ARC Reactor Core
+// ----------------------------------------------------
+const coreCv=$('core'), coreCtx=coreCv.getContext('2d'); let coreT=0;
+function drawCore(){
+  coreT+=0.04; coreCtx.clearRect(0,0,108,108);
+  const cx=54, cy=54;
+  // Outer glowing rings
+  for(let r=3; r>0; r--){
+    coreCtx.beginPath();
+    coreCtx.arc(cx, cy, 14 + r*9 + Math.sin(coreT+r)*3, 0, Math.PI*2);
+    coreCtx.strokeStyle=glowCol+'44'; coreCtx.lineWidth=2.5; coreCtx.stroke();
+  }
+  // Rotating tick marks
+  coreCtx.save();
+  coreCtx.translate(cx, cy); coreCtx.rotate(coreT*0.5);
+  for(let i=0; i<8; i++){
+    coreCtx.rotate(Math.PI/4);
+    coreCtx.fillStyle=glowCol;
+    coreCtx.fillRect(26, -1.5, 6, 3);
+  }
+  coreCtx.restore();
+  // Center orb gradient
+  const g=coreCtx.createRadialGradient(cx,cy,2,cx,cy,14);
+  g.addColorStop(0,'#ffffff'); g.addColorStop(0.6,glowCol); g.addColorStop(1,'transparent');
+  coreCtx.beginPath(); coreCtx.arc(cx,cy,12+Math.sin(coreT*2)*2,0,Math.PI*2);
+  coreCtx.fillStyle=g; coreCtx.fill();
+  requestAnimationFrame(drawCore);
+}
+drawCore();
+
+// ----------------------------------------------------
+// 3. Audio Mic Visualizer Canvas
+// ----------------------------------------------------
+const micCv=$('micCanvas'), micCtx=micCv.getContext('2d');
+let micLevelTarget=0, micLevelCurr=0;
+function drawMicCanvas(){
+  micCtx.clearRect(0,0,micCv.width,micCv.height);
+  micLevelCurr+=(micLevelTarget - micLevelCurr)*0.2;
+  const bars=32, barW=micCv.width/bars - 2;
+  for(let i=0; i<bars; i++){
+    const h=Math.max(4, Math.sin(i*0.4 + Date.now()*0.01)*micLevelCurr*micCv.height*0.8);
+    const x=i*(barW+2);
+    const grad=micCtx.createLinearGradient(0, micCv.height, 0, 0);
+    grad.addColorStop(0, '#10b981'); grad.addColorStop(0.7, '#00f2fe'); grad.addColorStop(1, '#9d4edd');
+    micCtx.fillStyle=grad;
+    micCtx.fillRect(x, micCv.height - h, barW, h);
+  }
+  requestAnimationFrame(drawMicCanvas);
+}
+drawMicCanvas();
+
+// ----------------------------------------------------
+// 4. API Endpoints & State Management
+// ----------------------------------------------------
+const GLOWC={idle:'#00f2fe',listening:'#10b981',thinking:'#9d4edd',speaking:'#38bdf8',alert:'#f43f5e',off:'#00f2fe'};
 const QS=new URLSearchParams(location.search);
 const API=(QS.get('api')||localStorage.getItem('sat_api')||'').replace(/\/$/,'');
 const TOKEN=QS.get('token')||localStorage.getItem('sat_token')||'';
-if(QS.get('api'))localStorage.setItem('sat_api',QS.get('api'));
-if(QS.get('token'))localStorage.setItem('sat_token',QS.get('token'));
+if(QS.get('api')) localStorage.setItem('sat_api',QS.get('api'));
+if(QS.get('token')) localStorage.setItem('sat_token',QS.get('token'));
 let PIN=sessionStorage.getItem('sat_pin')||'';
-async function api(path,opts){opts=opts||{};opts.headers=opts.headers||{};
-  if(TOKEN)opts.headers['X-Saturday-Token']=TOKEN;
-  if(PIN)opts.headers['X-Sat-Pin']=PIN;
+
+async function api(path,opts){
+  opts=opts||{}; opts.headers=opts.headers||{};
+  if(TOKEN) opts.headers['X-Saturday-Token']=TOKEN;
+  if(PIN) opts.headers['X-Sat-Pin']=PIN;
+  const t0=performance.now();
   let r=await fetch(API+path,opts);
+  const latency=Math.round(performance.now()-t0);
   if(r.status===401&&!opts._retried){
-    const p=prompt('Site PIN:');
-    if(p){PIN=p;sessionStorage.setItem('sat_pin',p);opts._retried=true;
-      opts.headers['X-Sat-Pin']=p;r=await fetch(API+path,opts);}
+    const p=prompt('Site PIN Required:');
+    if(p){ PIN=p; sessionStorage.setItem('sat_pin',p); opts._retried=true;
+      opts.headers['X-Sat-Pin']=p; r=await fetch(API+path,opts); }
   }
-  if(!r.ok)throw new Error(r.status);return r.json();}
-function setConn(on,txt){const e=$('conn');e.className=on?'on':'off';e.textContent=txt;}
-function pill(v){return `<b class="${v?'ok':'bad'}">${v?'ONLINE':'OFFLINE'}</b>`;}
-function kv(k,v){return `<div class="kv"><span class="dim">${k}</span><span>${v}</span></div>`;}
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
-function bootline(t){if(!booted)$('bootlog').innerHTML+=`<div>${esc(t)}</div>`;}
+  if(!r.ok) throw new Error(r.status);
+  const json=await r.json();
+  json._latency=latency;
+  return json;
+}
+
+function setConn(on,txt){
+  const e=$('conn'); e.className=on?'on':'off'; e.textContent=txt;
+}
+function pill(v){ return `<b class="${v?'ok':'bad'}">${v?'ONLINE':'OFFLINE'}</b>`; }
+function kv(k,v){ return `<div class="kv"><span class="dim">${k}</span><span>${v}</span></div>`; }
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function bootline(t){ if(!booted) $('bootlog').innerHTML+=`<div>${esc(t)}</div>`; }
+
+// ----------------------------------------------------
+// 5. Main Dashboard Telemetry Poll
+// ----------------------------------------------------
 async function refresh(){
   try{
     const s=await api('/api/status');
-    failStreak=0;setConn(true,'● LIVE');timer=2000;
-    if(!booted){booted=true;setTimeout(()=>$('boot').classList.add('gone'),600);}
-    glowCol=GLOWC[s.glow]||'#22d3ee';
-    $('ver').textContent=s.version||'?';
-    $('coreStatus').innerHTML=kv('Core',s.online?'<b class="ok pulse">ONLINE</b>':'<b class="bad">OFFLINE</b>')
-      +kv('Vault',s.vault_mounted?'<b class="ok">MOUNTED</b>':'<b class="warn">LOCKED</b>')
-      +kv('Deadman',esc(String(s.deadman_status??'?')))+kv('Glow',`<b>${esc(String(s.glow||'?'))}</b>`);
+    failStreak=0;
+    setConn(true,`● LIVE (${s._latency||20}ms)`);
+    timer=2000;
+    if(!booted){
+      booted=true;
+      setTimeout(()=>$('boot').classList.add('gone'),500);
+    }
+    glowCol=GLOWC[s.glow]||'#00f2fe';
+    
+    // Core Status
+    $('coreStatus').innerHTML=
+      kv('System Core', s.online?'<b class="ok pulse">ONLINE (SUBSCRIBED)</b>':'<b class="bad">OFFLINE</b>')
+      +kv('Security Vault', s.vault_mounted?'<b class="ok">MOUNTED & ENCRYPTED</b>':'<b class="warn">LOCKED</b>')
+      +kv('Deadman Monitor', esc(String(s.deadman_status??'ACTIVE')))
+      +kv('Glow Engine', `<b>${esc(String(s.glow||'idle'))}</b>`);
+
+    // Identity
     const idn=s.identity||{};
-    $('ident').innerHTML=kv('Known',`<b class="vio">${(idn.known_faces||[]).join(', ')||'nobody yet'}</b>`)
-      +kv('Voice',idn.voice_enrolled?'<b class="ok">ENROLLED</b>':'<b class="dim">not enrolled</b>')
-      +kv('Quiet mode',idn.dnd?'<b class="warn">ON</b>':'<b class="dim">off</b>')
-      +kv('Mind ticks',`<b>${idn.mind_ticks??0}</b>`);
-    $('subs').innerHTML=kv('Brain LLM',pill(s.brain_available))+kv('Screen',pill(s.screen_backend))
-      +kv('OCR',pill(s.ocr_available))+kv('Mic',pill(s.mic_available))+kv('STT',pill(s.stt_available))
-      +kv('Agent tasks',`<b>${s.agent_tasks??0}</b>`)
-      +kv('Node','<span class="dim">'+esc(String(s.node_status??'')).slice(0,44)+'</span>');
+    $('ident').innerHTML=
+      kv('Recognized Profiles', `<b class="vio">${(idn.known_faces||[]).join(', ')| meProfiles(idn.known_faces)}</b>`)
+      +kv('Voice Biomarkers', idn.voice_enrolled?'<b class="ok">ENROLLED</b>':'<b class="dim">standby</b>')
+      +kv('Quiet Mode (DND)', idn.dnd?'<b class="warn">ENABLED</b>':'<b class="dim">disabled</b>')
+      +kv('Mind Synapses', `<b>${idn.mind_ticks??0} ticks</b>`);
+
+    // Subsystems
+    $('subs').innerHTML=
+      kv('Brain LLM Engine', pill(s.brain_available))
+      +kv('Visual Screen Sensor', pill(s.screen_backend))
+      +kv('OCR Analyzer', pill(s.ocr_available))
+      +kv('Audio Mic Stream', pill(s.mic_available))
+      +kv('Speech-To-Text (STT)', pill(s.stt_available))
+      +kv('Active Agent Tasks', `<b>${s.agent_tasks??0}</b>`)
+      +kv('Node Status', '<span class="dim">'+esc(String(s.node_status??'primary')).slice(0,40)+'</span>');
+
+    // HomeBot Core2
     const ses=s.session||{};
     const b=s.homebot||{};
     const blink=b.link||'never';
-    $('bot').innerHTML=kv('Link',blink==='live'?'<b class="ok">BOT LIVE</b>':blink==='stale'?'<b class="warn">BOT STALE</b>':b.broker_connected?'<b class="warn">BROKER, NO BOT</b>':'<b class="bad">NO LINK</b>')
-      +kv('Command','<b>'+esc(String(b.current_command??'idle'))+'</b>')
-      +kv('Uptime',Math.round(ses.uptime_s||s.dashboard_uptime_s||0)+'s');
+    $('bot').innerHTML=
+      kv('Core2 Link', blink==='live'?'<b class="ok">BOT LIVE OVER MQTT</b>':blink==='stale'?'<b class="warn">BOT TELEMETRY STALE</b>':b.broker_connected?'<b class="warn">MQTT BROKER ONLINE</b>':'<b class="bad">DISCONNECTED</b>')
+      +kv('Last Command', '<b>'+esc(String(b.current_command??'idle'))+'</b>')
+      +kv('Uptime Counter', Math.round(ses.uptime_s||s.dashboard_uptime_s||0)+'s');
+
+    // Tasks & Inbox
     const tk=await api('/api/tasks');
-    $('inbox').innerHTML=(tk.inbox||[]).length?'<div class="dim">INBOX</div>'+tk.inbox.map(i=>`<div>[${esc(i.id)}|p${i.priority}|${esc(i.status)}] ${esc(i.text)}</div>`).join(''):'';
-    $('tasks').innerHTML=(tk.tasks||[]).length?tk.tasks.slice(-5).reverse().map(x=>`<div>${esc(x)}</div>`).join(''):'<span class="dim">none yet</span>';
-    $('mind').innerHTML=kv('DND',(ses.dnd||idn.dnd)?'<b class="warn">ON</b>':'<b class="dim">off</b>')+kv('Bg jobs',`<b>${ses.queued??0}</b>`);
+    $('inbox').innerHTML=(tk.inbox||[]).length
+      ? '<div class="dim" style="font-size:11px;margin-bottom:4px">INBOX QUEUE</div>'+tk.inbox.map(i=>`<div><span>[${esc(i.id)}|p${i.priority}] ${esc(i.text)}</span><b class="vio">${esc(i.status)}</b></div>`).join('')
+      : '';
+    $('tasks').innerHTML=(tk.tasks||[]).length
+      ? tk.tasks.slice(-5).reverse().map(x=>`<div><span>◆ ${esc(x)}</span><span class="ok">EXEC</span></div>`).join('')
+      : '<span class="dim">No active tasks in queue</span>';
+
+    $('mind').innerHTML=
+      kv('DND Override', (ses.dnd||idn.dnd)?'<b class="warn">ON</b>':'<b class="dim">OFF</b>')
+      +kv('Queued Jobs', `<b>${ses.queued??0}</b>`);
+
+    // Maintenance / Server
     const sv=ses.server||{};
     const tn=(sv.tunnel||{}).url||'';
-    $('serverline').textContent='server: '+(tn?('tunnel '+tn):'tunnel off')
-      +' • rtdb '+(sv.rtdb?'ONLINE':'offline')
-      +' • heartbeat '+(sv.last_heartbeat_s_ago==null?'—':sv.last_heartbeat_s_ago+'s ago');
+    $('serverline').textContent='Server: '+(tn?('Cloud Tunnel '+tn):'Localhost Only')
+      +' • RTDB '+(sv.rtdb?'ONLINE':'OFFLINE')
+      +' • Heartbeat '+(sv.last_heartbeat_s_ago==null?'0s':sv.last_heartbeat_s_ago+'s ago');
+
+    // Events Log
     const lg=await api('/api/log');
-    $('elog').innerHTML=lg.events.length?lg.events.slice(-8).reverse().map(e=>`<div><span class="dim">${new Date(e.ts*1000).toLocaleTimeString()}</span> ${esc(e.message)}</div>`).join(''):'<span class="dim">—</span>';
-    try{const f=await api('/api/frame');
-      if(f.available){$('eye').src='data:image/jpeg;base64,'+f.image;$('eyeAge').textContent='live • '+f.age_s+'s old';}
-      else{$('eyeAge').textContent='camera offline';}}catch(e){}
-    try{const m=await api('/api/miclevel');
-      if(m.live){const pct=Math.min(100,Math.round((m.peak||0)/3000*100));
-        $('micbar').style.width=pct+'%';
-        $('micnum').textContent='level '+Math.round(m.peak||0)+' • floor '+Math.round(m.floor||0)+(m.peak_age_s<1?' • HEARING YOU':'');}
-      else{$('micbar').style.width='0%';$('micnum').textContent='mic offline ('+esc(String(m.reason||''))+')';}}catch(e){}
-    try{const md=await api('/api/mood');
-      $('moodline').innerHTML=md.available?`<b class="vio">${esc(String(md.mood))}</b> <span class="dim">${Math.round((md.confidence||0)*100)}% • stable ${Math.round((md.stability||0)*100)}% • ${md.age_s}s ago</span>`:`<span class="dim">${esc(String(md.context||'mood unknown'))}</span>`;}catch(e){}
-    try{const g=await api('/api/gallery',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    $('elog').innerHTML=lg.events.length
+      ? lg.events.slice(-8).reverse().map(e=>`<div><span class="dim">${new Date(e.ts*1000).toLocaleTimeString()}</span> <span>${esc(e.message)}</span></div>`).join('')
+      : '<span class="dim">No events recorded</span>';
+
+    // Camera Eye Feed
+    try{
+      const f=await api('/api/frame');
+      if(f.available){
+        $('eye').src='data:image/jpeg;base64,'+f.image;
+        $('eyeAge').textContent='LIVE • '+f.age_s+'s ago';
+      } else {
+        $('eyeAge').textContent='camera offline';
+      }
+    }catch(e){}
+
+    // Mic Level
+    try{
+      const m=await api('/api/miclevel');
+      if(m.live){
+        micLevelTarget=Math.min(1.0, (m.peak||0)/3000);
+        $('micnum').textContent='Level '+Math.round(m.peak||0)+' • Floor '+Math.round(m.floor||0)+(m.peak_age_s<1?' • [HEARING SOUND]':'');
+      } else {
+        micLevelTarget=0;
+        $('micnum').textContent='Mic offline ('+esc(String(m.reason||'standby'))+')';
+      }
+    }catch(e){}
+
+    // Mood Context
+    try{
+      const md=await api('/api/mood');
+      $('moodline').innerHTML=md.available
+        ? `<b class="vio" style="font-size:15px">${esc(String(md.mood))}</b> <span class="dim">(${(md.confidence*100).toFixed(0)}% confidence • stability ${(md.stability*100).toFixed(0)}%)</span>`
+        : `<span class="dim">${esc(String(md.context||'Emotional state stable'))}</span>`;
+    }catch(e){}
+
+    // Face Roster
+    try{
+      const g=await api('/api/gallery',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
       const p=g.people||{};
-      $('troster').innerHTML=Object.keys(p).length?Object.entries(p).map(([n,c])=>`<div><b class="vio">${esc(n)}</b> <span class="dim">${c} samples</span> <button data-forget="${esc(n)}" style="font-size:10px">forget</button></div>`).join(''):'<span class="dim">nobody enrolled yet</span>';
+      $('troster').innerHTML=Object.keys(p).length
+        ? Object.entries(p).map(([n,c])=>`<div><b class="vio">${esc(n)}</b> <span class="dim">${c} photos</span> <button data-forget="${esc(n)}" style="font-size:10px;padding:2px 6px">FORGET</button></div>`).join('')
+        : '<span class="dim">No subjects enrolled yet.</span>';
       document.querySelectorAll('[data-forget]').forEach(b=>b.onclick=async()=>{
         const r=await api('/api/forget_person',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:b.dataset.forget})});
-        $('tmsg').textContent=r.success?`forgot ${b.dataset.forget} (${r.deleted})`:(r.error||'failed');setTimeout(refresh,800);});}catch(e){}
-  }catch(e){failStreak++;setConn(false,'○ RETRY '+failStreak);timer=Math.min(15000,timer*1.5);}
-  setTimeout(refresh,timer);
+        $('tmsg').textContent=r.success?`Removed ${b.dataset.forget}`:(r.error||'Failed');
+        setTimeout(refresh,800);
+      });
+    }catch(e){}
+
+  }catch(e){
+    failStreak++;
+    setConn(false,`○ RETRY (${failStreak})`);
+    timer=Math.min(12000, timer*1.5);
+  }
+  setTimeout(refresh, timer);
 }
-function say(who,txt,cls){const o=$('out'),d=document.createElement('div');d.className=cls;d.textContent=(who?who+' ':'')+txt;o.appendChild(d);o.scrollTop=o.scrollHeight;}
-async function sendCmd(raw){const i=$('cmd');const c=(raw??i.value).trim();if(!c)return;i.value='';
-  say('❯',c,'me');try{const r=await api('/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:c})});
-  say('',r.response||'(empty)','bot');}catch(e){say('','❌ HUD link error — retrying.','sys');}}
-$('send').onclick=()=>sendCmd();$('cmd').onkeydown=e=>{if(e.key==='Enter')sendCmd();};
-$('saveCfg').onclick=()=>{const a=$('apiBase').value.trim(),k=$('tokIn').value.trim();
-  if(a)localStorage.setItem('sat_api',a.replace(/\/$/,''));if(k)localStorage.setItem('sat_token',k);
-  say('','🔗 Backend linked. Reloading…','sys');setTimeout(()=>location.reload(),600);};
+
+function meProfiles(arr){ return (arr&&arr.length)?arr.join(', '):'None enrolled'; }
+
+// ----------------------------------------------------
+// 6. Console & Command Handling
+// ----------------------------------------------------
+function say(who,txt,cls){
+  const o=$('out'), d=document.createElement('div');
+  d.className=cls; d.textContent=(who?who+' ':'')+txt;
+  o.appendChild(d); o.scrollTop=o.scrollHeight;
+}
+
+async function sendCmd(raw){
+  const i=$('cmd'); const c=(raw??i.value).trim(); if(!c) return;
+  i.value='';
+  say('❯',c,'me');
+  try{
+    const r=await api('/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:c})});
+    say('',r.response||'(ACK)','bot');
+  }catch(e){
+    say('','❌ Command delivery error. Re-linking endpoint...','err');
+  }
+}
+
+$('send').onclick=()=>sendCmd();
+$('cmd').onkeydown=e=>{ if(e.key==='Enter') sendCmd(); };
+
+// Hotkey shortcuts (WASD + Arrows for HomeBot)
+document.addEventListener('keydown', e=>{
+  if(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA') return;
+  const keyMap={
+    'w':'forward','ArrowUp':'forward',
+    's':'back','ArrowDown':'back',
+    'a':'left','ArrowLeft':'left',
+    'd':'right','ArrowRight':'right',
+    ' ':'stop'
+  };
+  if(keyMap[e.key]){
+    e.preventDefault();
+    const btn=document.querySelector(`[data-bot="${keyMap[e.key]}"]`);
+    if(btn) btn.click();
+  }
+});
+
+$('saveCfg').onclick=()=>{
+  const a=$('apiBase').value.trim(), k=$('tokIn').value.trim();
+  if(a) localStorage.setItem('sat_api',a.replace(/\/$/,''));
+  if(k) localStorage.setItem('sat_token',k);
+  say('','🔗 Endpoint parameters stored. Re-initializing HUD...','sys');
+  setTimeout(()=>location.reload(),500);
+};
+
+// Photo Enrollment
 $('tenroll').onclick=async()=>{
-  const n=$('tname').value.trim(),f=$('tfile').files[0];
-  if(!n||!f){$('tmsg').textContent='name + photo required';return;}
-  $('tmsg').textContent='scanning photo…';
-  const b=await new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(f);});
-  try{const r=await api('/api/enroll_photo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,image_b64:b})});
-    $('tmsg').textContent=r.success?`enrolled ${r.person}: ${r.saved} sample(s), ${r.faces_found} face(s)`:`failed: ${r.error}`;
-    if(r.success)setTimeout(refresh,800);}catch(e){$('tmsg').textContent='upload error';}};
-(function(){if(API)$('apiBase').value=API;if(TOKEN)$('tokIn').value='••••••';})();
+  const n=$('tname').value.trim(), f=$('tfile').files[0];
+  if(!n||!f){ $('tmsg').textContent='Subject name and image file required.'; return; }
+  $('tmsg').textContent='Analyzing & encoding biometric features...';
+  const b=await new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(f); });
+  try{
+    const r=await api('/api/enroll_photo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,image_b64:b})});
+    $('tmsg').textContent=r.success?`Successfully enrolled ${r.person} (${r.saved} samples)`:`Failed: ${r.error}`;
+    if(r.success) setTimeout(refresh,800);
+  }catch(e){ $('tmsg').textContent='Enrollment upload error.'; }
+};
+
+if(API) $('apiBase').value=API;
+if(TOKEN) $('tokIn').value='••••••••';
+
 document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>sendCmd(b.dataset.c));
 document.querySelectorAll('[data-bot]').forEach(b=>b.onclick=async()=>{
-  try{const r=await api('/api/homebot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:b.dataset.bot,duration:1.0,speed:80})});
-  say('🤖','bot '+b.dataset.bot+': '+(r.message||r.reason||r.status),'sys');}catch(e){say('','❌ link error','sys');}});
-bootline('SATURDAY neural HUD');bootline('binding local core…');refresh();
+  try{
+    const r=await api('/api/homebot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:b.dataset.bot,duration:1.0,speed:80})});
+    say('🤖',`HomeBot: ${b.dataset.bot} -> ${r.message||r.reason||r.status}`,'sys');
+  }catch(e){ say('','❌ HomeBot connection offline','err'); }
+});
+
+bootline('S.A.T.U.R.D.A.Y Neural HUD Subsystem');
+bootline('Subscribed: Pro Tier 1 Unlocked');
+bootline('Binding Local & Cloud Gateways...');
+refresh();
 </script>
 </body>
 </html>

@@ -1,8 +1,11 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/api/sat/:path*", "destination": "/api/sat?path=:path*" }
+  ],
   "functions": {
-    "api/sat/[...sat].js": { "maxDuration": 60 }
+    "api/sat.js": { "maxDuration": 60 }
   },
   "headers": [
     {
