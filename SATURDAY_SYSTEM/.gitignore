@@ -16,3 +16,6 @@ dist/
 build/
 logs/
 *.spec.log
+
+# Per-boot tunnel URL (rotates, never commit)
+share_url.txt
