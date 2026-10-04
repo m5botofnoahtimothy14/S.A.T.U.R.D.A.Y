@@ -34,10 +34,23 @@ class DeadmanSwitch:
             return {}
         try:
             encrypted_data = self.config_path.read_bytes()
+            if not encrypted_data:
+                return {}
             decrypted_data = self.crypto.decrypt_data(encrypted_data)
             return json.loads(decrypted_data.decode())
         except Exception as e:
-            logger.warning(f"Deadman config unreadable (wrong passphrase or corrupt file): {e}")
+            # Foreign key (e.g. a demo-boot passphrase wrote this file):
+            # quarantine the blob (bytes preserved) and start a fresh config
+            # under the current key instead of warning forever.
+            try:
+                stamp = int(time.time())
+                aside = self.config_path.with_name(f"deadman.corrupt-{stamp}.bak")
+                os.replace(self.config_path, aside)
+                logger.warning(f"Deadman config foreign/unreadable ({e}); "
+                               f"quarantined to {aside.name}, fresh config started.")
+            except Exception as qe:
+                logger.warning(f"Deadman quarantine failed: {qe}")
+                return {}
             return {}
 
     def update_heartbeat(self):

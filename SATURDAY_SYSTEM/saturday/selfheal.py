@@ -66,6 +66,36 @@ class SelfHeal:
         self._stop = threading.Event()
         self._thread = None
 
+    @staticmethod
+    def _start_ollama() -> bool:
+        """Spawn the local Ollama server detached (no admin, no installer).
+        Bounded: one attempt per cooldown window via _may_restart."""
+        try:
+            import shutil as _sh
+            import subprocess as _sp
+
+            exe = _sh.which("ollama")
+            if not exe:
+                for cand in (r"C:\Users\Administrator\AppData\Local\Programs\Ollama\ollama.exe",
+                             r"C:\Program Files\Ollama\ollama.exe"):
+                    try:
+                        import os as _os
+
+                        if _os.path.exists(cand):
+                            exe = cand
+                            break
+                    except Exception:
+                        pass
+            if not exe:
+                return False
+            _sp.Popen([exe, "serve"], stdout=_sp.DEVNULL, stderr=_sp.DEVNULL,
+                      creationflags=getattr(_sp, "DETACHED_PROCESS", 0))
+            logger.warning("Self-heal: ollama serve spawned, re-probing...")
+            return True
+        except Exception as e:
+            logger.warning(f"Self-heal: ollama start failed: {e}")
+            return False
+
     def _may_restart(self, key: str) -> bool:
         now = time.time()
         if self.restarts.get(key, 0) >= MAX_RESTARTS:
@@ -120,13 +150,24 @@ class SelfHeal:
                 out.append(self._bad("dashboard", "HUD silent"))
         except Exception as e:
             out.append(self._bad("dashboard", str(e)[:100]))
-        # Ollama: report only.
+        # Ollama: restart the local server if down, then re-probe.
         try:
             from saturday.brain import OllamaBrain
 
             on = OllamaBrain().available()
-            out.append(self._ok("ollama", "llama3.2 reachable") if on
-                       else self._bad("ollama", "down (brain falls back to supervised)"))
+            if not on:
+                if self._may_restart("ollama") and self._start_ollama():
+                    import time as _t
+
+                    _t.sleep(8.0)
+                    on = OllamaBrain().available()
+                    out.append(self._ok("ollama", "server restarted",
+                                        healed=on) if on
+                               else self._bad("ollama", "restart attempted, still down"))
+                else:
+                    out.append(self._bad("ollama", "down (brain falls back to supervised)"))
+            else:
+                out.append(self._ok("ollama", "llama3.2 reachable"))
         except Exception as e:
             out.append(self._bad("ollama", str(e)[:100]))
         # Resources: report only.
