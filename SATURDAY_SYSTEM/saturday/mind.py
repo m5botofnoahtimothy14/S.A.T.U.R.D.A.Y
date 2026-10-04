@@ -228,7 +228,14 @@ class MindLoop:
                 actions.append(f"greet:{name}")
         elif name is None and obs.get("face_seen"):
             last_s = self.prefs["greeted"].get("stranger", 0)
-            if now - last_s > 3600 and self._can_speak():
+            try:
+                known_at = float(getattr(getattr(self.core, "session", None),
+                                         "last_known_at", 0) or 0)
+            except Exception:
+                known_at = 0.0
+            if now - last_s < 3600 or now - known_at < 600:
+                self.episode("met someone new (unenrolled)")
+            elif self._can_speak():
                 try:
                     session = getattr(self.core, "session", None)
                     if session is not None:

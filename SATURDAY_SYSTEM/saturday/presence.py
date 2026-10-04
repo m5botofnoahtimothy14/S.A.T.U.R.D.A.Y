@@ -100,10 +100,22 @@ class PresenceLoop:
         except Exception:
             pass
         self.present_name = name
+        if name and str(name).lower() != "unknown":
+            # Identity hysteresis: hold who we know across flicker frames.
+            try:
+                self.session.last_known_at = now
+                self.session.last_known_name = name
+            except Exception:
+                pass
         if self._quiet():
             return None
         if name is None or str(name).lower() == "unknown":
             self._watch_snapshot(frame)  # unknown face near the laptop: keep evidence
+            try:
+                if now - float(getattr(self.session, "last_known_at", 0)) < 60.0:
+                    return None  # flicker miss right after a hit: stay silent
+            except Exception:
+                pass
         if (name and name == self.last_greeted_name
                 and now - self.last_greeted_at < REPEAT_COOLDOWN):
             return None

@@ -103,20 +103,10 @@ def main() -> int:
     except Exception as e:
         logger.warning(f"kill-switch hotkey unavailable: {e}")
 
+    # Firebase realtime rides with the session server (AlwaysOnServer reads
+    # core.cloud_config / FIREBASE_* env itself). Nothing extra to start here.
     if args.realtime or (_sa and _db):
-        try:
-            from realtime_bridge import create_realtime_bridge
-
-            class _A:  # shape main.py's factory expects
-                service_account = _sa
-                database_url = _db
-                node_id = os.getenv("FIREBASE_NODE_ID", "saturday-node")
-            bridge = create_realtime_bridge(_A())
-            bridge.start(lambda: core.get_status_payload(),
-                         lambda cmd, meta: core.process_command(cmd, trusted=False))
-            logger.warning("realtime bridge: Firebase live")
-        except Exception as e:
-            logger.warning(f"realtime bridge unavailable: {e}")
+        logger.warning("realtime bridge: armed via session server (env creds present)")
 
     if args.tunnel:
         try:
