@@ -189,12 +189,16 @@ class PresenceLoop:
         return line
 
     def startup_hello(self) -> None:
-        """First words after boot — after services warm, once."""
+        """First words after boot — after services warm, once.
+        Skipped when presence already greeted (single-greeter rule)."""
         try:
             self._stop.wait(20.0)  # let camera/heal/ears come up quietly
         except Exception:
             pass
         if self._stop.is_set() or self._quiet():
+            return
+        if time.time() - self.last_greeted_at < 180.0:
+            logger.info("Startup hello skipped — presence already greeted.")
             return
         from saturday import humanvoice as hv
         try:

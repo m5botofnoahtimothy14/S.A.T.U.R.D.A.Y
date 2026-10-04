@@ -217,19 +217,31 @@ class MindLoop:
         self.ticks += 1
 
         # Greet recognized arrivals, once per session window.
+        # Single-greeter rule: PRESENCE speaks arrivals out loud; the mind
+        # only logs the episode (otherwise boot/arrival/mind triple-speak).
         if name and name.lower() != "unknown":
             last = self.prefs["greeted"].get(name, 0)
-            if now - last > GREET_COOLDOWN_S and self._can_speak():
-                part = "evening" if int(hour) >= 17 else "afternoon" if int(hour) >= 12 else "morning"
-                self._say(f"Good {part}, {name}. All systems ready.")
+            if now - last > GREET_COOLDOWN_S:
                 with self._lock:
                     self.prefs["greeted"][name] = now
                 self.episode(f"greeted {name} (mood {mood or '?'})")
                 actions.append(f"greet:{name}")
-        elif name is None and obs.get("face_seen") and self._can_speak():
-            self._say("Hello. I don't recognize you yet — I can learn you with enroll.")
-            actions.append("greet:stranger")
-            self.episode("met someone new (unenrolled)")
+        elif name is None and obs.get("face_seen"):
+            last_s = self.prefs["greeted"].get("stranger", 0)
+            if now - last_s > 3600 and self._can_speak():
+                try:
+                    session = getattr(self.core, "session", None)
+                    if session is not None:
+                        session.inbox_add(kind="say",
+                                          text="Hello. I don't recognize you yet — I can learn you with enroll.",
+                                          priority=3)
+                        with self._lock:
+                            self.prefs["greeted"]["stranger"] = now
+                        self._mark_spoke()
+                        actions.append("greet:stranger")
+                except Exception:
+                    pass
+                self.episode("met someone new (unenrolled)")
 
         # Mood care: the brain sees the feeling and decides the help —
         # calm anger, comfort sadness, ease anxiety, water, health tip.

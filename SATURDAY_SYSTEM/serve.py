@@ -66,6 +66,36 @@ def main() -> int:
     session.boot()
     logger.warning("SATURDAY serve: session booting (camera/mind/presence/dashboard)...")
 
+    # -- ordered startup procedure: each leg reports ready in sequence --
+    def _stage(label, fn, timeout):
+        import time as _t
+
+        t0 = _t.time()
+        while _t.time() - t0 < timeout:
+            try:
+                detail = fn()
+                if detail:
+                    logger.warning(f"BOOT [ok] {label}: {detail} ({_t.time()-t0:.0f}s)")
+                    print(f"  [ok] {label}: {detail}", flush=True)
+                    return True
+            except Exception:
+                pass
+            _t.sleep(1.0)
+        logger.warning(f"BOOT [MISS] {label} after {timeout}s — continuing degraded")
+        print(f"  [MISS] {label} — continuing degraded", flush=True)
+        return False
+
+    print("SATURDAY boot sequence:", flush=True)
+    _stage("vault", lambda: "mounted" if core.pmv.vault_mounted else None, 10)
+    _stage("camera", lambda: (f"{session.camera.frames_captured} frames"
+                              if session.camera.running and session.camera.frames_captured else None), 40)
+    _stage("ears/stt", lambda: "whisper hot" if session.stt_ready else None, 180)
+    _stage("brain", lambda: ("ready" if session.brain_ready else "offline-fallback")
+           if session.brain_ready is not None else None, 40)
+    _stage("mind+presence", lambda: ("running" if (session.mind and session.mind.running
+           and session.presence and session.presence.running) else None), 40)
+    _stage("dashboard", lambda: session.dashboard_url or None, 40)
+
     try:
         from saturday.agent import KillSwitch, stop_requested
 

@@ -88,3 +88,6 @@ pip_packages/
 onnxruntime-*.whl
 tensorflow_cpu-*.whl
 transformers-*.whl
+
+# Firebase service-account keys - NEVER commit
+*-firebase-adminsdk-*.json

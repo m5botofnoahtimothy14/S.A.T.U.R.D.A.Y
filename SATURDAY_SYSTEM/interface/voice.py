@@ -76,6 +76,14 @@ class SATURDAYVoice:
                     model = os.path.join(vdir, "en_US-amy-medium.onnx")
                 elif "ryan" in want:
                     model = os.path.join(vdir, "en_US-ryan-medium.onnx")
+                elif "joe" in want:
+                    model = os.path.join(vdir, "en_US-joe-medium.onnx")
+                    length_scale = os.getenv("SATURDAY_PIPER_LENGTH", "1.1")
+                    sentence_silence = os.getenv("SATURDAY_PIPER_SILENCE", "0.5")
+                elif "john" in want:
+                    model = os.path.join(vdir, "en_US-john-medium.onnx")
+                    length_scale = os.getenv("SATURDAY_PIPER_LENGTH", "1.1")
+                    sentence_silence = os.getenv("SATURDAY_PIPER_SILENCE", "0.5")
                 elif "kristin" in want:
                     model = os.path.join(vdir, "en_US-kristin-medium.onnx")
                     length_scale = os.getenv("EDITH_PIPER_LENGTH", length_scale)
@@ -91,7 +99,11 @@ class SATURDAYVoice:
                 else:
                     model = (os.getenv("PIPER_MODEL_PATH", "")
                              or os.getenv("SATURDAY_PIPER_MODEL", "")
-                             or os.path.join(vdir, "en_US-bryce-medium.onnx"))
+                             or os.path.join(vdir, "en_US-joe-medium.onnx"))
+                    if "SATURDAY_PIPER_LENGTH" not in os.environ:
+                        length_scale = "1.1"
+                    if "SATURDAY_PIPER_SILENCE" not in os.environ:
+                        sentence_silence = "0.5"
                 if piper_bin and model and os.path.exists(model):
                     tmp_wav = os.path.join(os.getenv("SATURDAY_D_TMP", r"D:\SATURDAY_TEMP"),
                                             "saturday_tts.wav")
