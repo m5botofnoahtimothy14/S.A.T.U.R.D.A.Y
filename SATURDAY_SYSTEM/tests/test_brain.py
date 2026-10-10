@@ -87,7 +87,9 @@ class TestBrain(TestCase):
         self.assertIn("local-only", out)
         print("DONE: brain remote refusal test passed.")
 
-    def test_core_brain_reports_offline(self):
+    def test_core_brain_falls_back_to_custom(self):
+        # Teachers unreachable (Ollama removed) → CustomBrain takes over,
+        # honestly labeled. The old "offline, go away" message is retired.
         from saturday.saturday_core import SATURDAYCore
         core = SATURDAYCore.__new__(SATURDAYCore)
         core.pmv = MagicMock()
@@ -100,8 +102,9 @@ class TestBrain(TestCase):
         with patch("saturday.brain.OllamaBrain") as MockBrain:
             MockBrain.return_value.available.return_value = False
             out = core.process_command("brain do stuff", trusted=True)
-            self.assertIn("offline", out.lower())
-        print("DONE: brain offline message test passed.")
+            self.assertNotIn("Local brain offline", out)
+            self.assertIn("task", out.lower())
+        print("DONE: brain custom-fallback test passed.")
 
 
 if __name__ == "__main__":

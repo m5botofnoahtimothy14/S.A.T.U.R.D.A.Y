@@ -74,6 +74,7 @@ class TestSession(TestCase):
         with patch("cv2.VideoCapture", FakeCap), \
              patch("saturday.session.SessionManager._preload_stt", lambda self: None), \
              patch("saturday.session.SessionManager._probe_brain", lambda self: None), \
+             patch("saturday.session.SessionManager._resolve_mic", lambda self: None), \
              patch("saturday.session.SessionManager._start_homebot", lambda self: None), \
              patch("saturday.session.SessionManager._start_dashboard", lambda self: None):
             mgr.boot()

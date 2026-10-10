@@ -177,7 +177,6 @@ class SessionManager:
         logger.info("Session boot: starting all services...")
         self.camera.start()  # slow open happens here, in background
         self._bg("stt-preload", self._preload_stt)
-        self._bg("tts-warm", self._warm_voice)
         self._bg("mic-resolve", self._resolve_mic)
         self._bg("brain-probe", self._probe_brain)
         self._bg("homebot-start", self._start_homebot)
@@ -210,18 +209,6 @@ class SessionManager:
             logger.info("Session: voice model preloaded, ears hot.")
         except Exception as e:
             logger.warning(f"STT preload failed: {e}")
-
-    def _warm_voice(self):
-        """Render one unheard test line so the first real `say` is instant.
-        Kokoro fp32 load is the slow part (~15s once); never played aloud."""
-        try:
-            from saturday import kokoro_voice as _kv
-            if not _kv.available():
-                return
-            _kv.render_wav("Systems online.", voice="af_sarah")
-            logger.info("Session: Kokoro voice warmed, mouth hot.")
-        except Exception as e:
-            logger.warning(f"TTS warmup skipped: {e}")
 
     def _resolve_mic(self):
         """Pick the mic at boot (no recording — fast). Full probe lives in `doctor`."""
