@@ -115,6 +115,7 @@ def run_smoke() -> int:
 
 def create_realtime_bridge(args: argparse.Namespace):
     service_account = args.service_account or os.getenv("FIREBASE_SERVICE_ACCOUNT", "")
+    database_url = args.database_url or os.getenv("FIREBASE_DATABASE_URL", "")
     node_id = args.node_id or os.getenv("FIREBASE_NODE_ID", "saturday-node")
     if not service_account or not database_url:
         raise RuntimeError("Firebase realtime requires FIREBASE_SERVICE_ACCOUNT and FIREBASE_DATABASE_URL.")

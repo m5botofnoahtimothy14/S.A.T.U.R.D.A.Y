@@ -126,6 +126,8 @@ ACTION_SCHEMA = {
     "scroll": {"amount": int}, "file_write": {"path": str, "content": str},
     "focus": {"window": str}, "wait_settle": {}, "ask": {"prompt": str},
     "volume": {"action": str}, "media": {"key": str},
+    "web_search": {"query": str}, "imagine": {"prompt": str},
+    "speak": {"text": str}, "calculate": {"expression": str},
     "done": {},
 }
 
@@ -206,7 +208,8 @@ class AgentRunner:
                  confirm_fn: Optional[ConfirmFn] = None,
                  allowed_apps: Optional[List[str]] = None,
                  allowed_actions: Optional[List[str]] = None,
-                 context_fn: Optional[Callable[[], str]] = None):
+                 context_fn: Optional[Callable[[], str]] = None,
+                 speak_fn: Optional[Callable[[str], None]] = None):
         self.operator = operator
         self.brain = brain or TemplateBrain()
         self.store_fn = store_fn
@@ -220,6 +223,9 @@ class AgentRunner:
         self.allowed_actions = [a.lower() for a in (allowed_actions or [])]
         # Trusted local-sensor context (mood line) for the brain's prompt.
         self.context_fn = context_fn
+        # Voice channel for the `speak` action (core passes self._speak).
+        # None → speak steps fail honestly and planners learn to avoid them.
+        self.speak_fn = speak_fn
         self.history: List[AgentTask] = []
         self._last_shot: Optional[str] = None
         self._last_shot_at = 0.0
@@ -538,6 +544,48 @@ class AgentRunner:
                 if not fn:
                     return {"success": False, "error": "operator has no media path"}
                 return fn(args.get("key", ""), confirm=c)
+            if action == "web_search":
+                # Real DDGS search, no browser needed; findings join the vault.
+                try:
+                    from saturday import neural as _neural
+                    res = _neural.web_search(args.get("query", ""))
+                    res = self._as_dict(res)
+                    if res.get("success"):
+                        bundle = "\n".join(
+                            f"- {h['title']} ({h['url']}): {h['snippet'][:200]}"
+                            for h in res.get("results", []))
+                        task.findings.append(bundle[:2000])
+                        res["screen_text_untrusted"] = UNTRUSTED_PREFIX + bundle[:2000]
+                    return res
+                except Exception as e:
+                    return {"success": False, "error": f"web_search failed: {e}"}
+            if action == "imagine":
+                try:
+                    from saturday import neural as _neural
+                    res = self._as_dict(_neural.imagine(args.get("prompt", "")))
+                    if res.get("success"):
+                        task.findings.append(f"image: {res['path']}")
+                    return res
+                except Exception as e:
+                    return {"success": False, "error": f"imagine failed: {e}"}
+            if action == "speak":
+                if not self.speak_fn:
+                    return {"success": False, "task_failed": True,
+                            "error": "no voice channel on this runner"}
+                try:
+                    self.speak_fn(str(args.get("text", ""))[:300])
+                    return {"success": True, "spoke": True}
+                except Exception as e:
+                    return {"success": False, "error": f"speak failed: {e}"}
+            if action == "calculate":
+                try:
+                    from saturday import neural as _neural
+                    res = self._as_dict(_neural.calculate(args.get("expression", "")))
+                    if res.get("success"):
+                        task.findings.append(f"calc: {res['expression']} = {res['display']}")
+                    return res
+                except Exception as e:
+                    return {"success": False, "error": f"calculate failed: {e}"}
             if action == "file_write":
                 fn = getattr(op, "file_write", None)
                 if not fn:

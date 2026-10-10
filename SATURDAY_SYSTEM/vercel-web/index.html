@@ -230,7 +230,7 @@ footer {
 
 <div id="boot">
   <div class="boot-logo">S.A.T.U.R.D.A.Y</div>
-  <div id="bootlog">CONNECTING TO SATURDAY NEURAL CORE…<br>VERIFYING PRO SUBSCRIBED TIER…</div>
+  <div id="bootlog">CONNECTING TO SATURDAY NEURAL CORE…<br>PROBING LOCAL SUBSYSTEMS…</div>
 </div>
 
 <header>
@@ -238,11 +238,11 @@ footer {
     <canvas id="core" width="112" height="112" title="Click to pulse ARC Reactor Core"></canvas>
     <div class="brand-title">
       <h1>S.A.T.U.R.D.A.Y</h1>
-      <small>ULTIMATE CONTROL & MANAGEMENT HUB // VER 2.5 PRO</small>
+      <small>ULTIMATE CONTROL & MANAGEMENT HUB // CUSTOM BRAIN</small>
     </div>
   </div>
   <div class="header-status">
-    <div class="sub-badge"><span>★</span> PRO SUBSCRIBED TIER</div>
+    <div class="sub-badge"><span>★</span> CUSTOM BRAIN ONLINE</div>
     <div id="conn" class="off">● CONNECTING</div>
   </div>
 </header>
@@ -255,6 +255,7 @@ footer {
   <button class="tab-btn" data-tab="tab-security">🛡️ SECURITY & MAINTENANCE</button>
   <button class="tab-btn" data-tab="tab-biometrics">👤 BIOMETRICS</button>
   <button class="tab-btn" data-tab="tab-terminal">💻 TERMINAL & LOGS</button>
+  <button class="tab-btn" data-tab="tab-neural">🧬 NEURAL BRAIN</button>
 </div>
 
 <main>
@@ -493,6 +494,12 @@ footer {
         <button data-c="briefing">briefing</button>
         <button data-c="verse">verse</button>
         <button data-c="botstatus">botstatus</button>
+        <button data-c="doctor">doctor</button>
+        <button data-c="resources">resources</button>
+        <button data-c="neural status">neural</button>
+        <button data-c="humanoid status">humanoid</button>
+        <button data-c="calc 2+2*3">calc</button>
+        <button data-c="mailbox">mailbox</button>
       </div>
     </div>
 
@@ -502,9 +509,51 @@ footer {
       <div id="elog"><span class="dim">No events recorded.</span></div>
     </div>
   </div>
+
+  <!-- TAB 8: NEURAL BRAIN -->
+  <div id="tab-neural" class="tab-panel">
+    <div class="card">
+      <h2>🧬 CUSTOM BRAIN <span class="tag">DISTILLED</span></h2>
+      <div id="cbrain"><span class="dim">Querying brain state...</span></div>
+      <div class="chips" style="margin-top:12px">
+        <button data-c="brain status">BRAIN STATUS</button>
+        <button data-c="brain learn">LEARN NOW</button>
+        <button data-c="brain fairness">FAIRNESS</button>
+        <button data-c="skills">SKILLS</button>
+        <button data-c="eq">EMOTIONAL IQ</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ RESOURCES & DOCTOR <span class="tag">GOVERNOR</span></h2>
+      <div id="res"><span class="dim">Metering box...</span></div>
+      <div class="chips" style="margin-top:12px">
+        <button data-c="doctor" class="success">DOCTOR SCAN</button>
+        <button data-c="resources">RESOURCES</button>
+        <button data-c="resources unload">FREE MODEL RAM</button>
+        <button data-c="mailbox">MAILBOX</button>
+      </div>
+    </div>
+
+    <div class="card" style="grid-column: 1 / -1;">
+      <h2>🧠 HUMANOID MIND <span class="tag">DUAL-PROCESS</span></h2>
+      <div class="row">
+        <input id="hgoal" placeholder="Ask the humanoid anything (e.g. research fusion and announce it)">
+        <button id="btnHgoal" class="success">THINK</button>
+      </div>
+      <div class="chips" style="margin-top:10px">
+        <button data-c="humanoid status">HUMANOID STATUS</button>
+        <button data-c="calc 15% of 240">SAMPLE MATH</button>
+        <button data-c="mic status">MIC STATUS</button>
+        <button data-c="hand status">HAND SCAN</button>
+        <button data-c="gaze status">GAZE CHECK</button>
+        <button data-c="forge system">FORGE SYSTEM</button>
+      </div>
+    </div>
+  </div>
 </main>
 
-<footer>S.A.T.U.R.D.A.Y SYSTEM v2.5 // PRO SUBSCRIBED EDITION // ALL RIGHTS RESERVED</footer>
+<footer>S.A.T.U.R.D.A.Y SYSTEM // CUSTOM BRAIN // LOCAL-FIRST, CLOUD-FREE CORE</footer>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -683,7 +732,7 @@ async function refresh(){
     
     // Core Status
     $('coreStatus').innerHTML=
-      kv('System Core', s.online?'<b class="ok pulse">ONLINE (PRO SUBSCRIBED)</b>':'<b class="bad">OFFLINE</b>')
+      kv('System Core', s.online?'<b class="ok pulse">ONLINE (CUSTOM BRAIN)</b>':'<b class="bad">OFFLINE</b>')
       +kv('Security Vault', s.vault_mounted?'<b class="ok">MOUNTED & ENCRYPTED</b>':'<b class="warn">LOCKED</b>')
       +kv('Deadman Monitor', esc(String(s.deadman_status??'ACTIVE')))
       +kv('Glow Engine', `<b>${esc(String(s.glow||'idle'))}</b>`);
@@ -737,6 +786,18 @@ async function refresh(){
     $('serverline').textContent='Server: '+(tn?('Cloud Tunnel '+tn):'Localhost Only')
       +' • RTDB '+(sv.rtdb?'ONLINE':'OFFLINE')
       +' • Heartbeat '+(sv.last_heartbeat_s_ago==null?'0s':sv.last_heartbeat_s_ago+'s ago');
+
+    // Custom brain + resources (via the same command plane — every
+    // button on this page executes a real core command, nothing is mock)
+    try{
+      const b=await api('/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:'brain status'})});
+      $('cbrain').innerHTML='<pre style="font-family:\'JetBrains Mono\',monospace;font-size:11px;white-space:pre-wrap;margin:0">'+esc(String(b.response||'unreachable').slice(0,600))+'</pre>';
+    }catch(e){}
+    try{
+      const r=await api('/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:'resources'})});
+      const first=String(r.response||'').split('\n')[0];
+      $('res').innerHTML='<b>'+esc(first.slice(0,160))+'</b>';
+    }catch(e){}
 
     // Event Log
     const lg=await api('/api/log');
@@ -842,6 +903,13 @@ if($('btnQuickAnnounce')) {
   };
 }
 
+// Humanoid goal runner
+if($('btnHgoal')) {
+  const runH=()=>{ const g=$('hgoal').value.trim(); if(!g) return; $('hgoal').value=''; sendCmd(`humanoid ${g}`); };
+  $('btnHgoal').onclick=runH;
+  $('hgoal').onkeydown=e=>{ if(e.key==='Enter') runH(); };
+}
+
 // Task Dispatcher
 $('btnAddTask').onclick=async()=>{
   const goal=$('taskGoal').value.trim();
@@ -910,7 +978,7 @@ document.querySelectorAll('[data-bot]').forEach(b=>b.onclick=async()=>{
 });
 
 bootline('S.A.T.U.R.D.A.Y Neural Management System');
-bootline('Subscribed: Pro Tier Active');
+bootline('Custom brain: local-first, cloud-free core');
 bootline('Binding Gateway API & Tabs...');
 refresh();
 </script>

@@ -83,9 +83,21 @@ class AlwaysOnServer:
         logger.info("Server: RTDB presence + command inbox live.")
 
     def _loop(self):
+        pruned_at = 0.0
         while not self._stop.is_set():
             try:
                 self._heartbeat()
+                # Hourly mailbox hygiene: old results out, pending queue kept.
+                if time.time() - pruned_at > 3600.0:
+                    pruned_at = time.time()
+                    try:
+                        if self.bridge:
+                            r = self.bridge.prune_commands()
+                            if r.get("pruned"):
+                                logger.info(f"Mailbox pruned {r['pruned']} old results "
+                                            f"({r['pending_kept']} pending kept).")
+                    except Exception as e:
+                        logger.debug(f"Mailbox prune skipped: {e}")
             except Exception as e:
                 logger.debug(f"Server heartbeat failed: {e}")
             self._stop.wait(HEARTBEAT_EVERY)

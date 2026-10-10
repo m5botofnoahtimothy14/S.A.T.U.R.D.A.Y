@@ -27,8 +27,7 @@ except Exception:
     tk = None
     _TK_AVAILABLE = False
 
-STATES: Dict[str, Dict] = {
-    "idle":      {"color": (56, 189, 248),  "speed": 0.5, "bands": 1, "width": 2},
+STATES: Dict[str, Dict] = {    "idle":      {"color": (56, 189, 248),  "speed": 0.5, "bands": 1, "width": 2},
     "listening": {"color": (52, 211, 153),  "speed": 2.0, "bands": 2, "width": 2},
     "thinking":  {"color": (167, 139, 250), "speed": 2.6, "bands": 3, "width": 2},
     "speaking":  {"color": (94, 234, 212),  "speed": 3.4, "bands": 3, "width": 2},
@@ -39,6 +38,23 @@ STATES: Dict[str, Dict] = {
 CORNER = 150          # corner arc size (px)
 ARC_GAP = 6           # spacing between concentric corner arcs
 EDGE = 3              # inset from the physical screen edge (px)
+
+# -- global signal bus: any voice/mic path can pulse the glow without
+# holding a reference to the session. No instance running = silent no-op.
+_instance_ref = None
+
+
+def signal(state: str, seconds: float = 3.0) -> bool:
+    """Pulse the live glow from anywhere (speak started, mic opened...).
+    Returns True if a running overlay accepted it."""
+    try:
+        inst = _instance_ref
+        if inst is not None and getattr(inst, "enabled", False):
+            inst.pulse(state, seconds)
+            return True
+    except Exception:
+        pass
+    return False
 
 
 def band_colors(base: Tuple[int, int, int], bands: int, phase: float,
@@ -105,12 +121,17 @@ class EdgeGlow:
             return {"success": False, "error": "tkinter missing"}
         self._stop.clear()
         self.enabled = True
+        global _instance_ref
+        _instance_ref = self
         self._thread = threading.Thread(target=self._run, daemon=True, name="edge-glow")
         self._thread.start()
         return {"success": True}
 
     def stop(self):
         self.enabled = False
+        global _instance_ref
+        if _instance_ref is self:
+            _instance_ref = None
         self._stop.set()
         if self._thread:
             self._thread.join(timeout=4.0)

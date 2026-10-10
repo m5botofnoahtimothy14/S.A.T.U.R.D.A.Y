@@ -131,6 +131,39 @@ class SATURDAYCore:
             "cloudsetup": self._handle_cloudsetup,
             "cloudbackup": self._handle_cloudbackup,
             "cloudrestore": self._handle_cloudrestore,
+            "hand": self._handle_hand,
+            "hands": self._handle_hand,
+            "air": self._handle_hand,
+            "gaze": self._handle_gaze,
+            "eyes": self._handle_gaze,
+            "look": self._handle_gaze,
+            "cog": self._handle_cog,
+            "focus": self._handle_cog,
+            "mindread": self._handle_cog,
+            "eeg": self._handle_cog,
+            "think": self._handle_cog,
+            "forge": self._handle_forge,
+            "build": self._handle_forge,
+            "model": self._handle_forge,
+            "render": self._handle_forge,
+            "blender": self._handle_forge,
+            "neural": self._handle_neural,
+            "nmulti": self._handle_neural,
+            "nsearch": self._handle_nsearch,
+            "imagine": self._handle_imagine,
+            "skills": self._handle_skills,
+            "calc": self._handle_calc,
+            "math": self._handle_calc,
+            "humanoid": self._handle_humanoid,
+            "think": self._handle_humanoid,
+            "feel": self._handle_feel,
+            "answer": self._handle_feel,
+            "eq": self._handle_feel,
+            "resources": self._handle_resources,
+            "doctor": self._handle_doctor,
+            "mic": self._handle_mic,
+            "mailbox": self._handle_mailbox,
+            "relay": self._handle_relay,
             "help": self._handle_help,
         }
 
@@ -1474,7 +1507,18 @@ class SATURDAYCore:
         session = getattr(self, "session", None)
         if session is None or session.mind is None:
             return "🧠 Mind loop not running (session degraded)."
-        return "🧠 Consolidated:\n" + session.mind.consolidate()
+        out = "🧠 Consolidated:\n" + session.mind.consolidate()
+        # sleep cycle: custom brain + episodic memory consolidate alongside
+        try:
+            from saturday import custom_brain as _cb, humanoid as _h
+            r = _cb.learn()
+            e = _h.consolidate_episodes()
+            out += (f"\n💤 Sleep cycle: brain learn #{r['cycle']} (+{r['new_decisions']} decisions, "
+                    f"{r['skills']['skills']} skills, test {r['trained']['test_acc']}) + "
+                    f"episodes kept {e['kept']} (dropped {e['dropped']}, merged {e['merged']}).")
+        except Exception as ex:
+            out += f"\n💤 Sleep skipped: {ex}"
+        return out
 
     def build_briefing(self, name: str = "there") -> str:
         import datetime as _dt
@@ -1851,19 +1895,38 @@ class SATURDAYCore:
         return "👂 Listen session ended (30-turn limit)."
 
     def _handle_brain(self, args, raw_text):
-        """Fully unsupervised arbitrary goal, driven by the local brain."""
+        """Fully unsupervised arbitrary goal, driven by the local brain.
+        Subcommands: brain train | brain learn | brain status | brain distill [n]
+                     brain custom on|off | brain fairness
+        Otherwise: brain <goal> runs it (CustomBrain when custom mode is on —
+        zero network calls — else the Ollama teachers)."""
+        sub = (args[0].lower() if args else "")
+        if sub in ("train", "learn", "status", "distill", "custom", "fairness"):
+            return self._handle_brain_ops(sub, args[1:], raw_text)
         goal = raw_text[len("brain"):].strip()
         if not goal:
             return "❌ Usage: brain <goal>. Example: brain find my cheapest electricity plan"
         if not self._current_trusted:
             return "❌ Unsupervised brain is local-only. Remote callers cannot use it."
         try:
-            from saturday.brain import OllamaBrain
-            brain = OllamaBrain()
-            if not brain.available():
-                return ("❌ Local brain offline. Start Ollama and pull a model:\n"
-                        "   ollama pull llama3.2   (reasoning)\n"
-                        "   ollama pull moondream  (vision)")
+            from saturday import custom_brain as _cb
+            custom = bool(_cb._read_json("mode.json", {}).get("custom"))
+        except Exception:
+            custom = False
+        try:
+            if custom:
+                from saturday.custom_brain import CustomBrain
+                brain = CustomBrain()
+                tag = "custom brain (ours, Ollama-free)"
+            else:
+                from saturday.brain import OllamaBrain
+                brain = OllamaBrain()
+                if not brain.available():
+                    return ("❌ Local brain offline. Start Ollama and pull a model:\n"
+                            "   ollama pull llama3.2   (reasoning)\n"
+                            "   ollama pull moondream  (vision)\n"
+                            "   ...or switch to ours: brain custom on")
+                tag = "teachers (llama3.2)"
         except Exception as e:
             return f"❌ Brain failed to load: {e}"
         runner = AgentRunner(
@@ -1875,8 +1938,9 @@ class SATURDAYCore:
             confirm=True,   # local CLI = present user
             confirm_fn=None,  # ...but destructive steps are REFUSED, never assumed
             context_fn=self._mood_context_fn(),
+            speak_fn=self._speak,
         )
-        print(f"\n🧠 Brain engaged, working alone: {goal}")
+        print(f"\n🧠 Brain engaged ({tag}), working alone: {goal}")
         print("   (failsafe active — slam mouse to a corner to abort motion)")
         self._glow_pulse("thinking", 120.0)
         finished = runner.run(AgentTask(goal, []))
@@ -1884,6 +1948,740 @@ class SATURDAYCore:
         self.agent_history.append(finished)
         self.agent_history = self.agent_history[-50:]
         return "\n" + finished.summary() + "\n"
+
+    def _handle_brain_ops(self, sub, rest, raw_text):
+        from saturday import custom_brain as _cb
+        if sub == "status":
+            s = _cb.status()
+            lines = [f"🧠 Custom brain: {'TRAINED' if s['trained'] else 'untrained'} | "
+                     f"mode={'CUSTOM (Ollama-free)' if s['custom_mode'] else 'teachers'} | "
+                     f"net={'ONLINE' if s['online'] else 'OFFLINE'}",
+                     f"   samples={s['samples']} train={s['train_acc']} test={s['test_acc']} "
+                     f"skills={s['skills']} cycles={s['learn_cycles']} "
+                     f"vectors={s['embeddings_cached']} decisions={s['decisions_logged']}"]
+            lines.append(f"   teachers: {', '.join(s['teachers'])}")
+            return "\n".join(lines)
+        if sub == "train":
+            print("🧠 Training intent classifier on seeds + curriculum + your history...")
+            r = _cb.train_intent()
+            return (f"🧠 Trained: {r['samples']} samples, {r['intents']} intents — "
+                    f"train {r['train_acc']}, held-out test {r['test_acc']}. "
+                    f"{'(honest gap: daily `brain learn` closes it with your real phrasings)' if r['test_acc'] < 0.9 else ''}")
+        if sub == "learn":
+            print("🧠 Daily consolidation: mining skills, caching vectors, retraining...")
+            r = _cb.learn()
+            return (f"🧠 Learned (cycle {r['cycle']}): +{r['new_decisions']} decisions, "
+                    f"{r['skills']['skills']} skills (+{r['skills']['added']}), "
+                    f"test acc {r['trained']['test_acc']}, "
+                    f"{r['embeddings_cached']} vectors cached, {r['pruned']} stale pruned.")
+        if sub == "distill":
+            n = 5
+            if rest:
+                try:
+                    n = max(1, min(20, int(rest[0])))
+                except ValueError:
+                    pass
+            from tests.test_neural import L1
+            print(f"🧠 Asking BOTH teachers about {n} cases (slow, CPU — minutes)...")
+            votes = []
+            for goal, _ in L1[:n]:
+                v = _cb.teacher_label(goal)
+                votes.append((goal[:50], v["winner"], v["disagree"]))
+                _cb.log_decision(goal, "", v["winner"], {}, "teacher-ensemble", True)
+            lines = [f"🧠 {len(votes)} teacher votes (kept in the log for training):"]
+            lines += [f"   {g}: {w}{' ⚠️ teachers disagree' if d else ''}" for g, w, d in votes]
+            return "\n".join(lines)
+        if sub == "custom":
+            want = (rest[0].lower() if rest else "")
+            mode = _cb._read_json("mode.json", {})
+            if want in ("on", "off"):
+                mode["custom"] = (want == "on")
+                _cb._write_json("mode.json", mode)
+                return ("🧠 Custom mode ON — `brain <goal>` now runs with ZERO network calls. "
+                        "Prove it: stop Ollama, it still works. `brain custom off` to return."
+                        if mode["custom"] else
+                        "🧠 Teacher mode — `brain <goal>` uses llama3.2 (+qwen when distilling).")
+            return f"🧠 Custom mode is {'ON' if mode.get('custom') else 'off'}. Usage: brain custom on|off"
+        if sub == "fairness":
+            rep = _cb.fairness_probes()
+            lines = [f"⚖️ Fairness probes: {rep['passed']}/{rep['total']} — {rep['verdict']}"]
+            for p in rep["probes"]:
+                lines.append(f"   {'✅' if p['consistent'] else '❌'} {p['ask']}: {p['intents']}")
+            lines.append("   Charter: ensemble teachers · disagreements logged · "
+                         "persona-free prompts · framing probes (see custom_brain.FAIRNESS_CHARTER). "
+                         "Note: perfect neutrality is impossible (ICML'25); this is bias-reduced + audited.")
+            return "\n".join(lines)
+        return "❌ Usage: brain train|learn|status|distill [n]|custom on|off|fairness|<goal>"
+
+    def _handle_neural(self, args, raw_text):
+        cmd = (args[0].lower() if args else "")
+        from saturday import neural as _neural
+        if cmd == "roster" or (not args and not raw_text.split(None, 1)[1:]):
+            p = _neural.probe()
+            ok = [k for k, v in p.items() if v is True]
+            return (f"🧬 Neural roster: {len(ok)} live — "
+                    + ", ".join(k for k in
+                                ("llama3.2", "moondream", "nomic-embed-text", "whisper",
+                                 "piper", "diffusers", "ddgs") if p.get(k) is True or p.get(k))
+                    + f" | piper voices={p.get('piper_voices')} | net={'online' if p.get('ollama') else '?'}")
+        if raw_text.lower().startswith("nmulti"):
+            goals = [g.strip() for g in raw_text[len("nmulti"):].split("|") if g.strip()]
+            if len(goals) < 2:
+                return "❌ Usage: nmulti goal one | goal two | goal three (parallel VM)"
+            if not self._current_trusted:
+                return "❌ Parallel runs are local-only."
+            import concurrent.futures
+            from saturday import agent as _agent
+            print(f"🧬 Multitasking {len(goals)} goals in parallel...")
+            def _one(gl):
+                try:
+                    return _neural.NeuralRunner(self, max_steps=6).run(gl, speak=False)
+                except Exception as e:
+                    return {"success": False, "goal": gl, "summary": str(e)[:150]}
+            with concurrent.futures.ThreadPoolExecutor(max_workers=min(4, len(goals))) as ex:
+                results = list(ex.map(_one, goals))
+            lines = [f"🧬 Multitask done ({sum(1 for r in results if r.get('success'))}/{len(results)}):"]
+            for r in results:
+                lines.append(f"   {'✅' if r.get('success') else '❌'} {r.get('summary', '')[:150]}")
+            try:
+                self._speak(f"All {len(results)} tasks finished.")
+            except Exception:
+                pass
+            return "\n".join(lines)
+        goal = raw_text[len("neural"):].strip()
+        if not goal:
+            return "❌ Usage: neural <goal>. Example: neural research fusion and announce it"
+        if not self._current_trusted:
+            return "❌ Neural runs are local-only."
+        res = _neural.NeuralRunner(self).run(goal)
+        lines = [f"🧬 {res.get('summary', '')}"]
+        for t in res.get("transcript", [])[:8]:
+            lines.append(f"   {t['cmd'][:80]} → {str(t['result'])[:120]}")
+        return "\n".join(lines)
+
+    def _handle_nsearch(self, args, raw_text):
+        topic = raw_text[len("nsearch"):].strip()
+        if not topic:
+            return "❌ Usage: nsearch <topic>. Example: nsearch quantum batteries"
+        try:
+            from saturday import custom_brain as _cb
+            refused = _cb.gate_online("nsearch")
+            if refused:
+                return refused
+        except Exception:
+            pass
+        from saturday import neural as _neural
+        print(f"🔎 Searching the real web: {topic}")
+        res = _neural.web_search(topic)
+        if not res.get("success"):
+            return f"❌ {res.get('error')}"
+        lines = [f"🔎 {res['count']} real results for '{topic}':"]
+        for h in res["results"][:5]:
+            lines.append(f"   • {h['title'][:90]}\n     {h['url'][:110]}")
+        try:
+            bundle = "\n".join(f"- {h['title']} ({h['url']}): {h['snippet'][:200]}"
+                               for h in res["results"])
+            self.pmv.secure_store(f"[nsearch {topic}]\n{bundle}", tags=["research"])
+            lines.append("   📦 Vaulted (encrypted).")
+        except Exception:
+            pass
+        return "\n".join(lines)
+
+    def _handle_imagine(self, args, raw_text):
+        prompt = raw_text[len("imagine"):].strip()
+        if not prompt:
+            return "❌ Usage: imagine <prompt>. Example: imagine a robot at sunset"
+        if not self._current_trusted:
+            return "❌ Imagine renders locally — remote callers cannot start it."
+        from saturday import resources as _res
+        g = _res.guard("imagine")
+        if not g["ok"]:
+            return f"🔴 {g['reason']}"
+        from saturday import neural as _neural
+        res = _neural.imagine(prompt)
+        if not res.get("success"):
+            return f"❌ Imagine failed: {res.get('error')}"
+        return (f"🎨 Dreamed in {res['seconds']}s ({res['engine']}):\n"
+                f"   {res['path']}\n   Open it with: open {res['path']}")
+
+    def _handle_skills(self, args, raw_text):
+        from saturday import custom_brain as _cb
+        sk = _cb._read_json("skills.json", {"skills": []})["skills"]
+        if not sk:
+            return "🧬 No skills mined yet — run tasks (`neural ...`) then `brain learn`."
+        lines = [f"🧬 {len(sk)} learned skills (replayed Ollama-free):"]
+        for s in sk[:15]:
+            lines.append(f"   • {s['name']} ×{s['uses']} → {s.get('steps', [])}")
+        return "\n".join(lines)
+
+    def _handle_calc(self, args, raw_text):
+        verb = (args[0].lower() if args else "")
+        expr = raw_text.split(None, 1)[1] if len(raw_text.split(None, 1)) > 1 else ""
+        if verb in ("help", "?") or not expr:
+            return "❌ Usage: calc <expression>. Example: calc 15% of 240 | calc sqrt(144) | calc solve x^2-4"
+        from saturday import neural as _neural
+        res = _neural.calculate(expr)
+        if not res.get("success"):
+            return f"❌ {res.get('error')}"
+        extra = (" | " + "; ".join(res["steps"])) if res.get("steps") else ""
+        return f"🔢 {res['expression']} = {res['display']}{extra}  [{res['engine']}]"
+
+    def _handle_feel(self, args, raw_text):
+        from saturday import emotion as _em
+        verb = (args[0].lower() if args else "")
+        if raw_text.lower().startswith("eq") and (not args or verb in ("status",)):
+            s = _em.eq_status()
+            return (f"💜 Emotional intelligence: lexicon {s['lexicon']} | "
+                    f"playbook v{s['playbook_version']} ({s['comfort_lines']} lines) | "
+                    f"{s['charter']}")
+        if raw_text.lower().startswith("answer"):
+            q = raw_text[len("answer"):].strip()
+            if not q:
+                return "❌ Usage: answer <question>. I think + feel + answer on my own."
+            if not self._current_trusted:
+                return "❌ Answering is local-only."
+            try:
+                mood_now = (getattr(getattr(self, "session", None), "last_mood", None) or {}).get("mood")
+            except Exception:
+                mood_now = None
+            print(f"💜 Thinking + feeling: {q[:100]}")
+            res = _em.answer(q, core=self, user_state={"mood": mood_now})
+            if not res.get("success"):
+                return f"❌ {res.get('error')}"
+            lines = [f"💜 {res['answer'][:600]}",
+                     f"   path={res.get('path')} conf={res.get('confidence')} "
+                     f"felt={res.get('emotion_read', {}).get('label')}"]
+            if res.get("dissent"):
+                lines.append("   ⚠️ teachers saw two sides — ask me to dig deeper.")
+            return "\n".join(lines)
+        text = raw_text[len("feel"):].strip() if raw_text.lower().startswith("feel") else raw_text
+        if not text:
+            return "❌ Usage: feel <text>. Example: feel I'm nervous about tomorrow"
+        r = _em.analyze(text)
+        e = _em.empathize(r["label"], r["intensity"], r.get("cause", ""))
+        return (f"💜 You feel {r['label']} ({r['intensity']}) — "
+                f"valence {r['vad'][0]}, arousal {r['vad'][1]}"
+                + (f" about {r['cause']}" if r.get("cause") else "") + f"\n"
+                f"   {e['full'][:300]}")
+
+    def _handle_humanoid(self, args, raw_text):
+        from saturday import humanoid as _h
+        verb = (args[0].lower() if args else "")
+        if verb in ("status", "state", "") and len(raw_text.split()) <= 2:
+            if verb == "" :
+                pass  # fall through to think below when goal words present
+            else:
+                s = _h.status()
+                lines = ["🤖 HUMANOID BRAIN — human-like + machine-exact:",
+                         f"   System 1 (fast, Ollama-free): {s['s1']}",
+                         f"   System 2 (slow, deliberate): {s['s2']}",
+                         f"   Episodes: {s['episodes']} | sightings: {s['sightings']}"]
+                if s.get("beliefs"):
+                    lines.append(f"   Beliefs about you: {s['beliefs']}")
+                lines.append("   Drives, ToM, arbiter, sleep: always on during `humanoid <goal>`.")
+                return "\n".join(lines)
+        goal = raw_text.split(None, 1)[1] if len(raw_text.split(None, 1)) > 1 else ""
+        if verb == "status":
+            s = _h.status()
+            return (f"🤖 S1: {s['s1']}\n   S2: {s['s2']}\n"
+                    f"   Episodes: {s['episodes']} | beliefs: {s.get('beliefs', {})}")
+        if not goal:
+            return "❌ Usage: humanoid <goal> | humanoid status. Example: humanoid research fusion and announce it"
+        if not self._current_trusted:
+            return "❌ Humanoid runs are local-only."
+        # refresh the model-of-you + drives from live state
+        try:
+            facts = []
+            try:
+                found = self.pmv.secure_search(tag="profile-fact") or []
+                facts = [str(r.get("content", ""))[:120] for r in found[-10:]]
+            except Exception:
+                pass
+            mood_now = None
+            try:
+                mood_now = (getattr(getattr(self, "session", None), "last_mood", None) or {}).get("mood")
+            except Exception:
+                pass
+            _h.update_user_model(dict(getattr(self, "cmd_counts", {})), facts, mood_now)
+        except Exception:
+            pass
+        print(f"\n🤖 Humanoid thinking (fast + slow): {goal}")
+        res = _h.think(goal)
+        r = res["route"]
+        lines = [f"🤖 Path: {r['path']} — {r['reason']}",
+                 f"   ToM: {res['tom']} | tone: {res['drives'].get('tone')}"]
+        if res.get("dissent"):
+            lines.append(f"   ⚠️ Teachers disagree — both views kept: {str(res['dissent'])[:200]}")
+        plan = res.get("plan", [])
+        if r["path"] == "ask" or not plan:
+            return "\n".join(lines + [f"   {res.get('answer', '')}"])
+        # execute the S1/S2 plan as real commands (machine-exact half)
+        from saturday import neural as _neural
+        runner = _neural.NeuralRunner(self, max_steps=6)
+        ran = runner.run(goal, speak=False)
+        lines.append(f"   Ran {len(ran.get('transcript', []))} steps: "
+                     f"{ran.get('summary', '')[:150]}")
+        try:
+            self._speak(ran.get("summary", "Done."))
+        except Exception:
+            pass
+        return "\n".join(lines)
+
+    # -- JARVIS hands / gaze / mind / forge (real, installed, no mocks) ----
+    def _session_frame_fn(self):
+        session = getattr(self, "session", None)
+        try:
+            if session is not None and session.camera.running:
+                def _fn():
+                    try:
+                        return session.camera.get_frame(max_age=5.0)
+                    except Exception:
+                        return None
+                # probe one frame
+                if _fn() is not None:
+                    return _fn
+        except Exception:
+            pass
+        return None
+
+    def _handle_hand(self, args, raw_text):
+        from saturday import hands as _h
+        sub = (args[0].lower() if args else "status")
+        if sub in ("status", "test", "check"):
+            got = self._camera_frame()
+            if not got.get("success"):
+                return f"❌ {got['error']}"
+            res = _h.snapshot(got["frame"])
+            if not res.get("success"):
+                return f"❌ Hand scan failed: {res.get('error')}"
+            if not res.get("hands"):
+                return (f"🖐️ No hands in view ({res.get('method')}). "
+                        "Hold palm to camera, good light.")
+            lines = [f"🖐️ {res.get('count')} hand(s) via {res.get('method')}:"]
+            for i, hd in enumerate(res["hands"][:2]):
+                if hd.get("landmarks"):
+                    lines.append(f"   {i+1}. {hd.get('gesture')} "
+                                 f"fingers={','.join(hd.get('fingers', [])) or 'fist'} "
+                                 f"pinch={hd.get('pinch_dist')}px "
+                                 f"({hd.get('handedness', '')})")
+                else:
+                    lines.append(f"   {i+1}. {hd.get('gesture')} "
+                                 f"(box {hd.get('box')})")
+            lines.append("   Gestures: point=move, pinch=click, victory=right-click, fist-hold=scroll.")
+            return "\n".join(lines)
+        if sub in ("live", "on", "air", "control"):
+            secs = 30.0
+            if len(args) > 1:
+                try:
+                    secs = float(args[1])
+                except ValueError:
+                    return "❌ Usage: hand live [seconds]. Example: hand live 30"
+            secs = min(max(secs, 5.0), 300.0)
+            if not self._current_trusted:
+                return "❌ Hand control is local-only."
+            print(f"🖐️ AIR CONTROL {secs:g}s — fingertip moves, pinch clicks, victory right-clicks, Q quits.")
+            print("   Failsafe: slam mouse to corner aborts.")
+            res = _h.live_air_control(secs, confirm=True,
+                                      use_session_frames=self._session_frame_fn())
+            if not res.get("success"):
+                return f"❌ Air control failed: {res.get('error')}"
+            s = res["stats"]
+            return (f"🖐️ Air session done: {s['moves']} moves, {s['clicks']} clicks, "
+                    f"{s['right']} right-clicks, {s['frames']} frames "
+                    f"(last: {res.get('last_gesture')}).")
+        return ("❌ Usage: hand status | hand live [sec].\n"
+                "   status = one scan (gesture + fingers). live = fingertip air-mouse.")
+
+    def _handle_gaze(self, args, raw_text):
+        from saturday import gaze as _g
+        sub = (args[0].lower() if args else "status")
+        if sub in ("status", "check", "look"):
+            got = self._camera_frame()
+            if not got.get("success"):
+                return f"❌ {got['error']}"
+            res = _g.snapshot(got["frame"])
+            if not res.get("success"):
+                return f"❌ {res.get('error')}"
+            f = res["faces"][0]
+            r = f.get("ratios", {}) or {}
+            direction = "center"
+            try:
+                hx, hy = r.get("hx", 0.5), r.get("hy", 0.5)
+                direction = (("left " if hx < 0.35 else "right " if hx > 0.65 else "")
+                             + ("up" if hy < 0.35 else "down" if hy > 0.65 else ""))
+                direction = direction.strip() or "center"
+            except Exception:
+                pass
+            cal = "calibrated" if res.get("calibrated") else "NOT calibrated (run: gaze calibrate)"
+            pt = res.get("gaze_point")
+            return (f"👁️ Gaze: looking {direction} | blink={'YES' if f.get('blink') else 'no'} "
+                    f"EAR={f.get('ear')} | {cal}"
+                    + (f" | screen ~({pt[0]},{pt[1]})" if pt else ""))
+        if sub == "calibrate":
+            if not self._current_trusted:
+                return "❌ Gaze calibrate is local-only."
+            print("👁️ 5-point gaze calibration — look at each prompt, press SPACE.")
+            res = _g.calibrate_interactive(use_session_frames=self._session_frame_fn())
+            if not res.get("success"):
+                return f"❌ Calibration failed: {res.get('error')}"
+            return (f"✅ Gaze calibrated: mean error {res['mean_err_px']}px "
+                    f"({res['note']})")
+        if sub in ("live", "control", "on"):
+            secs = 30.0
+            if len(args) > 1:
+                try:
+                    secs = float(args[1])
+                except ValueError:
+                    return "❌ Usage: gaze live [seconds]. Example: gaze live 30"
+            if not self._current_trusted:
+                return "❌ Gaze control is local-only."
+            print(f"👁️ GAZE CONTROL {secs:g}s — look to move, blink/dwell clicks, Q quits.")
+            res = _g.live_gaze_control(min(max(secs, 5.0), 300.0), confirm=True,
+                                       use_session_frames=self._session_frame_fn())
+            if not res.get("success"):
+                return f"❌ Gaze control failed: {res.get('error')}"
+            s = res["stats"]
+            return (f"👁️ Gaze session done: {s['moves']} moves, "
+                    f"{s['blinks']} blink-clicks, {s['dwells']} dwell-clicks.")
+        if sub in ("read", "what"):
+            got = self._camera_frame()
+            if not got.get("success"):
+                return f"❌ {got['error']}"
+            res = _g.read_at_gaze(self.screen, got["frame"])
+            if not res.get("success"):
+                return f"❌ Eye reading failed: {res.get('error')}"
+            txt = res.get("text", "") or "(no text under your gaze)"
+            return (f"👁️ You're looking at {res.get('gaze')} — I read:\n"
+                    f"   {txt[:400]}")
+        return ("❌ Usage: gaze status | gaze calibrate | gaze live [sec] | gaze read.\n"
+                "   status=where you look, calibrate=5-point, live=eye-mouse, read=OCR under gaze.")
+
+    def _handle_cog(self, args, raw_text):
+        from saturday import cognition as _c
+        sub = (args[0].lower() if args else "read")
+        if sub in ("boards", "list"):
+            res = _c.list_eeg_boards()
+            if not res.get("success"):
+                return f"❌ {res.get('error')}"
+            return ("🧠 EEG boards (BrainFlow): " + ", ".join(res["boards"][:12]) + "\n"
+                    f"   {res['note']}")
+        if sub == "eeg":
+            secs = 10.0
+            board = -1
+            if len(args) > 1:
+                try:
+                    secs = float(args[1])
+                except ValueError:
+                    pass
+            if len(args) > 2:
+                try:
+                    board = int(args[2])
+                except ValueError:
+                    return "❌ Usage: eeg [seconds] [board_id]. Example: eeg 10 -1"
+            print(f"🧠 EEG recording {secs:g}s (board {board})...")
+            res = _c.eeg_session(board_id=board, seconds=min(max(secs, 3.0), 60.0))
+            if not res.get("success"):
+                return f"❌ {res.get('error')}"
+            b = res["bands_rel"]
+            return (f"🧠 EEG bands (real DSP, {res['seconds']}s, {res['channels']}ch @{res['sfreq']}Hz):\n"
+                    f"   delta {b['delta']} theta {b['theta']} alpha {b['alpha']} "
+                    f"beta {b['beta']} gamma {b['gamma']}\n"
+                    f"   focus {res['focus']} calm {res['calm']} fatigue {res['fatigue']}\n"
+                    f"   {res['disclaimer']}")
+        # read / focus / mindread / think: psychology + EEG-refined snapshot
+        got = self._camera_frame()
+        blink_pm, hx, hy, mood_lab = None, None, None, None
+        if got.get("success"):
+            try:
+                from saturday import gaze as _g
+                gs = _g.snapshot(got["frame"])
+                if gs.get("success") and gs.get("faces"):
+                    f0 = gs["faces"][0]
+                    r = f0.get("ratios") or {}
+                    hx, hy = r.get("hx"), r.get("hy")
+                    blink_pm = 4.0 if f0.get("blink") else 12.0
+            except Exception:
+                pass
+            try:
+                from saturday import senses as _s
+                mr = _s.mood(got["frame"])
+                if mr.get("success"):
+                    mood_lab = mr.get("mood")
+            except Exception:
+                pass
+        recent = list((getattr(self, "cmd_counts", {}) or {}).keys())[-8:]
+        snap = _c.cognitive_snapshot(blink_per_min=blink_pm or 12.0,
+                                     gaze_stability=0.7 if hx is not None else 0.5,
+                                     hr_bpm=None, mood=mood_lab,
+                                     recent_commands=recent)
+        if sub in ("think", "mindread") and len(args) > 1:
+            goal = raw_text.split(None, 1)[1] if len(raw_text.split(None, 1)) > 1 else ""
+            if sub == "think" and goal:
+                return (f"🧠 Intent: {snap['intent']} ({snap['intent_confidence']}) — {snap['why']}.\n"
+                        f"   Focus {snap['focus']} ({snap['focus_level']}), load {snap['load']}.\n"
+                        f"   To act on '{goal[:80]}', confirm with: do {goal[:80]}")
+        return (f"🧠 Mind readout — focus {snap['focus']} ({snap['focus_level']}), "
+                f"load {snap['load']} ({snap['load_level']}), calm {snap['calm']}.\n"
+                f"   Intent: {snap['intent']} ({snap['intent_confidence']}) — {snap['why']}.\n"
+                + (f"   Advice: {'; '.join(snap['advice'])}" if snap["advice"] else "   Steady state.")
+                + f"\n   [{snap['disclaimer']}]")
+
+    def _handle_forge(self, args, raw_text):
+        from saturday import forge as _f
+        cmd = (args[0].lower() if args else "")
+        rest = raw_text.split(None, 1)[1] if len(raw_text.split(None, 1)) > 1 else ""
+        # strip leading subcommand word for build prompts
+        if cmd in ("system", "status", "probe"):
+            s = _f.system_probe()
+            return (f"🏭 Forge system: {s['os']} | RAM {s.get('ram_gb')}GB "
+                    f"| GPU {s.get('gpu','?')[:60]} | engine {s['engine']} "
+                    f"{s['resolution'][0]}x{s['resolution'][1]} | "
+                    f"Blender {'OK '+s['blender'][:60] if s['blender_ok'] else 'MISSING'} | "
+                    f"D: free {s.get('disk_free_gb')}GB")
+        if cmd in ("list", "jobs"):
+            res = _f.forge_list()
+            if not res.get("success") or not res.get("jobs"):
+                return "🏭 No forged models yet. Try: forge building 10 floors glass tower"
+            lines = [f"🏭 {len(res['jobs'])} forged model(s):"]
+            for j in res["jobs"][:8]:
+                lines.append(f"   {j['job']}\n      GLB: {j['glb']}\n      PNG: {j['preview']}")
+            return "\n".join(lines)
+        prompt = rest
+        if cmd in ("forge", "build", "model", "render", "blender") and len(args) > 1:
+            # user typed e.g. `build building ...` — rest already excludes first word
+            pass
+        if not prompt or cmd in ("help", "?"):
+            return ("❌ Usage: forge <what>. Example: forge building 12 floors glass tower\n"
+                    "   forge system (this PC render path) | forge list (your models)")
+        if not self._current_trusted:
+            return "❌ Forge renders locally — remote callers cannot start Blender."
+        from saturday import resources as _res
+        g = _res.guard("forge render")
+        if not g["ok"]:
+            return f"🔴 {g['reason']}"
+        print(f"🏭 Forging: {prompt[:100]} — Blender headless building + rendering...")
+        res = _f.forge_build(prompt)
+        if not res.get("success"):
+            return (f"❌ Forge failed: {res.get('error')}\n"
+                    f"   Spec: {res.get('spec')}\n"
+                    f"   Job dir: {res.get('jobdir', '?')}")
+        q = res.get("qa", {})
+        return (f"🏭 Forged {res['spec']['name']}: {res['spec']['floors']} floors, "
+                f"{res['spec']['style']} ({res['engine']}, {res['seconds']}s).\n"
+                f"   GLB: {res['glb']} ({q.get('.glb_bytes', '?')}b)\n"
+                f"   Preview: {res['preview']} (luma {q.get('preview_mean_luma', '?')})\n"
+                f"   Geometry: {q.get('counts', {})}")
+
+    def _handle_resources(self, args, raw_text):
+        from saturday import resources as _res
+        sub = (args[0].lower() if args else "")
+        if sub == "unload":
+            if not self._current_trusted:
+                return "❌ Model unload is local-only."
+            r = _res.unload_idle()
+            if not r.get("success") and not r.get("freed_gb"):
+                return f"❌ Unload failed: {r.get('error', r.get('failed'))}"
+            return (f"🧹 Freed {r['freed_gb']}GB Ollama RAM"
+                    + (f" (kept: {', '.join(r['kept'])})" if r["kept"] else "")
+                    + (f" (failed: {r['failed']})" if r.get("failed") else ""))
+        s = _res.snapshot()
+        lines = [f"⚙️ {_res.status_line()}"]
+        for m in s.get("ollama", {}).get("models", [])[:6]:
+            lines.append(f"   🧠 {m['name']} ({m['size_gb']}GB resident)")
+        for r in s.get("throttle", {}).get("reasons", []):
+            lines.append(f"   ⚠️ {r}")
+        return "\n".join(lines)
+
+    def _handle_doctor(self, args, raw_text):
+        """Ordered boot gates: every subsystem probed, truth printed."""
+        rows = []
+
+        def gate(name, fn):
+            try:
+                ok, note = fn()
+                rows.append(("✅" if ok else "❌", name, note))
+            except Exception as e:
+                rows.append(("❌", name, str(e)[:100]))
+
+        def _vault():
+            ok = bool(self.pmv.vault_mounted)
+            return ok, "mounted" if ok else "LOCKED — unlock first"
+        gate("vault", _vault)
+
+        def _mic():
+            from saturday import ears
+            if not ears.mic_available():
+                return False, "sounddevice missing"
+            devs = ears.list_mics()
+            n = len(devs.get("mics", [])) if devs.get("success") else 0
+            return n > 0, f"{n} input device(s)"
+        gate("mic", _mic)
+
+        def _stt():
+            from saturday import ears
+            ok = ears.stt_available()
+            dn = "denoise on" if getattr(ears, "DENOISE_ENABLED", False) else "denoise off"
+            return ok, f"whisper ready, {dn}" if ok else "faster-whisper missing"
+        gate("hearing", _stt)
+
+        def _tts():
+            from saturday import kokoro_voice as _kv
+            v = _kv.voices()
+            if v:
+                return True, f"Kokoro human voice ({len(v)} voices)"
+            return True, "Kokoro missing — Piper/SAPI chain active"
+        gate("voice", _tts)
+
+        def _cam():
+            try:
+                got = self._camera_frame()
+                return bool(got.get("success")), got.get("error", "live")[:80]
+            except Exception as e:
+                return False, str(e)[:80]
+        gate("camera", _cam)
+
+        def _brain():
+            try:
+                from saturday.brain import OllamaBrain
+                ok = OllamaBrain(timeout=10).available()
+                return ok, "llama3.2 ready" if ok else "Ollama down — custom brain covers routine"
+            except Exception as e:
+                return False, str(e)[:80]
+        gate("brain", _brain)
+
+        def _REN():
+            from saturday import forge as _f
+            b = _f.find_blender()
+            return bool(b.get("success")), (b.get("exe", "?") or "?")[:60] if b.get("success") else b.get("error", "?")[:80]
+        gate("blender", _REN)
+
+        def _tun():
+            from saturday import share as _sh
+            b = _sh.find_cloudflared()
+            return bool(b), b[:60] if b else "winget install Cloudflare.cloudflared"
+        gate("tunnel-bin", _tun)
+
+        def _fb():
+            import os as _os
+            sa = _os.getenv("FIREBASE_SERVICE_ACCOUNT", "")
+            db = _os.getenv("FIREBASE_DATABASE_URL", "")
+            if sa and db:
+                return True, "creds present (mailbox live)"
+            return False, "no creds — run: relay (setup playbook)"
+        gate("firebase", _fb)
+
+        def _disk():
+            from saturday import resources as _res
+            s = _res.snapshot(cpu_interval=0)
+            ok = (s.get("disk_d_free_gb") or 0) > 2 and (s.get("ram_avail_gb") or 0) > 1
+            return ok, (f"D: {s.get('disk_d_free_gb')}GB free, "
+                        f"RAM {s.get('ram_avail_gb')}GB free, CPU {s.get('cpu_pct')}%")
+        gate("resources", _disk)
+
+        bad = sum(1 for e, _, _ in rows if e == "❌")
+        lines = [f"🩺 Doctor: {len(rows)-bad}/{len(rows)} green" + (" — all systems go" if not bad else " — see red lines")]
+        for e, name, note in rows:
+            lines.append(f"   {e} {name}: {note}")
+        return "\n".join(lines)
+
+    def _handle_mic(self, args, raw_text):
+        from saturday import ears
+        sub = (args[0].lower() if args else "status")
+        if sub == "status":
+            devs = ears.list_mics()
+            if not devs.get("success"):
+                return f"❌ {devs.get('error')}"
+            sel = ears.resolve_mic_device()
+            lines = [f"🎙️ {len(devs['mics'])} mic(s), selected device {sel}, "
+                     f"denoise {'ON' if ears.DENOISE_ENABLED else 'OFF'}, gain {ears._resolve_gain()}x:"]
+            for m in devs["mics"][:8]:
+                lines.append(f"   [{m['index']}] {m['name']} ({m['host_api']}, {m['default_samplerate']:.0f}Hz)")
+            return "\n".join(lines)
+        if sub == "level":
+            secs = float(args[1]) if len(args) > 1 and args[1].replace(".", "", 1).isdigit() else 5.0
+            print(f"🎙️ Speak now ({secs:g}s meter)...")
+            r = ears.input_level_meter(secs)
+            if not r.get("success"):
+                return f"❌ {r.get('error')}"
+            return f"🎙️ peak {r['peak']} — bars should have moved while you spoke."
+        if sub == "denoise" and len(args) > 1:
+            on = args[1].lower() in ("on", "1", "yes")
+            ears.DENOISE_ENABLED = on
+            return f"🎙️ Denoise {'ON (spectral gating before Whisper)' if on else 'OFF (raw audio to Whisper)'}."
+        if sub == "test":
+            print("🎙️ Say something (5s)...")
+            res = ears.hear_once(5.0)
+            if not res.get("success"):
+                return f"❌ {res.get('error')}"
+            if not res.get("heard_something"):
+                return f"🎙️ {res.get('note', 'Silence.')}"
+            dn = res.get("denoise", {})
+            return (f"🎙️ Heard: {res['text']}\n"
+                    f"   denoise SNR {dn.get('snr_before')}→{dn.get('snr_after')}dB "
+                    f"| VAD {res.get('vad_trim', {})}")
+        return "❌ Usage: mic status | mic level [sec] | mic denoise on|off | mic test"
+
+    def _handle_mailbox(self, args, raw_text):
+        """Firebase RTDB command mailbox: queued while laptop sleeps, drained on boot."""
+        import os as _os
+        sa = _os.getenv("FIREBASE_SERVICE_ACCOUNT", "")
+        db = _os.getenv("FIREBASE_DATABASE_URL", "")
+        node = _os.getenv("FIREBASE_NODE_ID", "saturday-node")
+        if not sa or not db:
+            return ("❌ Mailbox needs Firebase creds (free Spark plan, no card).\n"
+                    "   Run `relay` for the 10-minute setup playbook.")
+        sub = (args[0].lower() if args else "status")
+        try:
+            from realtime_bridge import RealtimeDatabaseBridge
+            br = RealtimeDatabaseBridge(service_account=sa, database_url=db, node_id=node)
+            cmds = br.commands_ref.get() or {}
+            pend = sum(1 for v in (cmds.values() if isinstance(cmds, dict) else [])
+                       if isinstance(v, dict) and v.get("status") == "pending")
+            if sub == "prune":
+                if not self._current_trusted:
+                    return "❌ Prune is local-only."
+                import time as _t
+                cut = _t.time() - 24 * 3600
+                n = 0
+                for k, v in (cmds.items() if isinstance(cmds, dict) else []):
+                    if isinstance(v, dict) and v.get("status") in ("executed", "error") \
+                            and float(v.get("completed_at", 0) or 0) < cut:
+                        try:
+                            br.commands_ref.child(k).delete()
+                            n += 1
+                        except Exception:
+                            pass
+                return f"📬 Pruned {n} results older than 24h. {pend} pending."
+            return (f"📬 Mailbox /saturday_system/{node}/commands: {pend} pending.\n"
+                    "   Pending survives laptop-off (Google hosts it) and drains on next boot.")
+        except Exception as e:
+            return f"❌ Mailbox unreachable: {e}"[:200]
+
+    def _handle_relay(self, args, raw_text):
+        return (
+            "🛰️ ALWAYS-ON TRUTH + SETUP PLAYBOOK\n"
+            "   Honest physics first: a Cloudflare tunnel is an OUTBOUND pipe from THIS\n"
+            "   laptop. Laptop asleep/off = tunnel dead, no software changes that.\n"
+            "   What stays alive while you sleep (Google hosts it, free Spark plan):\n"
+            "   • Firebase RTDB mailbox — phone/web drops commands as 'pending';\n"
+            "     this laptop executes + writes results on next boot. Nothing lost.\n"
+            "   • Presence heartbeat — anyone can see awake/asleep + last-seen.\n"
+            "   • Encrypted vault backup (`cloudbackup`) — restorable anywhere.\n"
+            "   SETUP (10 min, free, no card):\n"
+            "   1. console.firebase.google.com → Create project → Build →\n"
+            "      Realtime Database → Create → locked mode → copy the URL.\n"
+            "   2. Project settings → Service accounts → Generate new private key.\n"
+            "   3. Save the .json OUTSIDE the repo (e.g. D:\\keys\\sat-fb.json).\n"
+            "   4. In SATURDAY: cloudsetup D:\\keys\\sat-fb.json <your-db-url>\n"
+            "   5. Verify: `mailbox` (should show 0 pending), then `cloudbackup`.\n"
+            "   LAPTOP-OFF CONTROL (optional, pick one):\n"
+            "   A. Mailbox mode (free, now): queue in RTDB, drains on boot. Done.\n"
+            "   B. Relay mode (~$0: Oracle Always-Free VM or a Pi at home):\n"
+            "      install cloudflared there, `cloudflared tunnel run --token ...`\n"
+            "      pointing at a tiny relay that only reads/writes YOUR RTDB\n"
+            "      mailbox. Phone talks to relay 24/7; laptop drains on wake.\n"
+            "   Tunnel on THIS laptop (`share on`) stays the fast path while awake."
+        )
 
     def _handle_help(self, args, raw_text):
         return (
@@ -1917,6 +2715,10 @@ class SATURDAYCore:
             " - hear [sec] : Transcribe one listen (offline whisper).\n"
             " - say [text] : Speak through system voice.\n"
             " - listen : Continuous Jarvis loop until 'goodbye'.\n"
+            " - mic status|level|denoise|test : mic picker, meter, denoise, loopback test.\n"
+            "Health (doctor + resource governor):\n"
+            " - doctor : ordered boot gates for every subsystem (truth, not vibes).\n"
+            " - resources [unload] : CPU/RAM/disk/temp + Ollama RAM budget.\n"
             "HUD + HomeBot Core2:\n"
             " - dashboard [port] : Start the local HUD (default 8099).\n"
             " - bot [cmd] [sec] [speed] : Drive Core2 (forward/stop/...).\n"
@@ -1942,8 +2744,31 @@ class SATURDAYCore:
             " - share [on|off] : Public tunnel URL + token for your phone.\n"
             " - server : Always-on layer status (tunnel + RTDB, not the AI).\n"
             " - cloudsetup/cloudbackup/cloudrestore : Encrypted Firebase backup.\n"
+            " - mailbox [prune] : RTDB command queue (survives laptop-off).\n"
+            " - relay : always-on truth + free setup playbook (tunnel vs mailbox vs relay).\n"
+            "JARVIS hands / eyes / mind / forge (real, installed):\n"
+            " - hand status | hand live [sec] : 21-landmark air-mouse (pinch=click).\n"
+            " - gaze status | gaze calibrate | gaze live [sec] | gaze read : eye-mouse + eye reading.\n"
+            " - cog | focus | mindread | eeg [sec] : focus/load/intent + real EEG bands.\n"
+            " - forge <building ...> | forge system | forge list : Blender headless 3D + render.\n"
+            "Neural virtual system (many free open models, one mind):\n"
+            " - neural <goal> : run anything end-to-end (research→act→speak).\n"
+            " - nmulti <g1> | <g2> : multitask goals in parallel.\n"
+            " - nsearch <topic> : real web search, vaulted. imagine <prompt> : dream it locally.\n"
+            " - calc <expr> : real math (sympy). skills : learned reusable skills.\n"
+            " - brain <goal> | brain train|learn|status|distill [n]|custom on|off|fairness.\n"
+            " - humanoid <goal> | humanoid status : dual-process mind (fast+slow, ToM, drives).\n"
+            " - feel <text> | eq | answer <question> : emotional intelligence + own answers.\n"
             " - help : Show this help text."
         )
+
+    def _resources_snapshot(self):
+        """Sub-second, never raises: HUD polls this every 2s."""
+        try:
+            from saturday import resources as _res
+            return _res.snapshot(cpu_interval=0, light=True)
+        except Exception:
+            return {"throttle": {"throttled": False, "reasons": []}}
 
     def _handle_unknown(self, args, raw_text):
         return "❓ Unknown command. Type 'help' for available commands."
@@ -1983,6 +2808,7 @@ class SATURDAYCore:
             "stt_available": ears.stt_available(),
             "brain_available": brain_on,
             "agent_tasks": len(getattr(self, "agent_history", [])),
+            "resources": self._resources_snapshot(),
             "identity": self._identity_snapshot(),
             "session": session_snapshot,
             "mood": mood_snapshot,

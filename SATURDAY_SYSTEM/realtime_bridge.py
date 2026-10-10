@@ -2,6 +2,7 @@ import os
 import time
 import logging
 import threading
+from typing import Dict
 
 try:
     import firebase_admin
@@ -137,6 +138,32 @@ class RealtimeDatabaseBridge:
         self.listener_thread.start()
         self.publisher_thread.start()
         logger.info("RealtimeDatabaseBridge started.")
+
+    def prune_commands(self, max_age_h: float = 24.0) -> Dict[str, int]:
+        """Delete executed/error results older than max_age_h. Pending queue
+        is NEVER touched — sleep-queued commands survive laptop-off."""
+        import time as _t
+        pruned = {"pruned": 0, "pending_kept": 0}
+        try:
+            cmds = self.commands_ref.get() or {}
+            if not isinstance(cmds, dict):
+                return pruned
+            cut = _t.time() - max_age_h * 3600.0
+            for key, val in cmds.items():
+                if not isinstance(val, dict):
+                    continue
+                if val.get("status") == "pending":
+                    pruned["pending_kept"] += 1
+                    continue
+                if float(val.get("completed_at", 0) or 0) < cut:
+                    try:
+                        self.commands_ref.child(key).delete()
+                        pruned["pruned"] += 1
+                    except Exception:
+                        pass
+        except Exception as exc:
+            logger.warning(f"Mailbox prune failed: {exc}")
+        return pruned
 
     def stop(self):
         self.running = False

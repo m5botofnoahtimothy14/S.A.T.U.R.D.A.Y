@@ -10,6 +10,13 @@ pytesseract>=0.3.10
 # Ears (local mic + offline whisper STT)
 sounddevice>=0.4.6
 faster-whisper>=1.0.0
+# Mic enhancement: spectral denoise before the decoder hears it (local CPU)
+noisereduce>=3.0
+# Human-like voice: Kokoro-82M ONNX (local CPU) → Piper → SAPI → pyttsx3.
+# Weights auto-download to D: on first use (~400MB). Needs no account.
+kokoro-onnx>=0.4
+espeakng-loader>=0.2
+soundfile>=0.12
 # HomeBot Core2 link (MQTT + USB serial)
 paho-mqtt>=1.6
 pyserial>=3.5
@@ -19,5 +26,16 @@ opencv-contrib-python==4.13.0.90
 numpy>=1.26,<3
 scipy>=1.11
 onnxruntime>=1.17
+# JARVIS hands/eyes (MediaPipe Tasks ML, local .task models in models/)
+mediapipe>=1.0.1
+scikit-learn>=1.3
+# Mind/EEG (real BrainFlow DSP: Muse/OpenBCI/synthetic)
+brainflow>=5.0
+# Forge 3D (Blender 4.5 LTS portable on D:, glTF verify + preview QA)
+trimesh>=4.0
+matplotlib>=3.8
+# Neural imagination (sd-turbo via diffusers, CPU offload, D: weights cache)
+diffusers>=0.30
+torch>=2.0
 # Optional: local TTS fallback (uncomment if needed)
 # pyttsx3>=2.90

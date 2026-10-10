@@ -51,6 +51,11 @@ def strip_address(text: str) -> str:
 def edith_say(core, text: str) -> bool:
     """Speak as EDITH (female voice). Returns True if voiced."""
     try:
+        from saturday import edgeglow as _eg
+        _eg.signal("speaking", max(3.0, min(12.0, len(text or "") / 18.0)))
+    except Exception:
+        pass
+    try:
         from interface.voice import SATURDAYVoice
 
         SATURDAYVoice(core=None).speak(text, voice=os.getenv("EDITH_TTS_VOICE", EDITH_VOICE))

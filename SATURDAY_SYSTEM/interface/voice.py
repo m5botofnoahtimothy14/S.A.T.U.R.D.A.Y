@@ -44,6 +44,11 @@ class SATURDAYVoice:
         if not text:
             return
         try:
+            from saturday import edgeglow as _eg
+            _eg.signal("speaking", max(3.0, min(12.0, len(text) / 18.0)))
+        except Exception:
+            pass
+        try:
             import os
             import shutil
             import subprocess
@@ -56,6 +61,32 @@ class SATURDAYVoice:
                 if cli_path:
                     subprocess.run([cli_path, text], check=True)
                     return
+            # 1b. Kokoro human-like neural voice (local ONNX, CPU).
+            # Default when SATURDAY_TTS=kokoro|auto and weights are on D:.
+            # Voice personas: SATURDAY=af_sarah, EDITH=af_nicole (override
+            # via SATURDAY_KOKORO_VOICE / EDITH_KOKORO_VOICE).
+            if os.getenv("SATURDAY_TTS", "kokoro").lower() in ("kokoro", "auto"):
+                try:
+                    from saturday import kokoro_voice as _kv
+                    want = (voice or "").lower()
+                    if "edith" in want or "nicole" in want or "female" in want:
+                        kv_voice = os.getenv("EDITH_KOKORO_VOICE", "af_nicole")
+                    elif "michael" in want or "male" in want:
+                        kv_voice = os.getenv("SATURDAY_KOKORO_VOICE", "am_michael")
+                    else:
+                        kv_voice = os.getenv("SATURDAY_KOKORO_VOICE", "af_sarah")
+                    wav = _kv.render_wav(text, voice=kv_voice)
+                    if sys.platform.startswith("win"):
+                        import winsound
+                        winsound.PlaySound(wav, winsound.SND_FILENAME)
+                        return
+                    player = shutil.which("aplay") or shutil.which("afplay") or shutil.which("play")
+                    if player:
+                        subprocess.Popen([player, wav],
+                                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        return
+                except Exception as e:
+                    logger.warning(f"Kokoro TTS unavailable, falling through: {e}")
             # 2. Piper neural voices when selected AND models configured.
             # Defaults (D:, offline, yours forever): SATURDAY = ryan (male),
             # EDITH = amy (female). `voice` picks the persona model.

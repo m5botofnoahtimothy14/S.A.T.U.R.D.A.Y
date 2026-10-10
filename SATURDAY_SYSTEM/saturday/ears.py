@@ -4,6 +4,9 @@
                 for Whisper; recorded at the device native rate then
                 resampled — WASAPI devices reject 16kHz direct).
 - heard()     : energy gate — silence honestly reported, never hallucinated.
+- denoise()   : spectral gating (noisereduce, local CPU) — fan/hum/clatter
+                suppression with before/after SNR report. Runs inside
+                transcribe() when SATURDAY_DENOISE=1 (default on).
 - transcribe(): faster-whisper (local CPU/int8, tiny model) → text.
 - hear_once() : capture → gate → transcribe, one call.
 - list_mics() : available input devices (index, name, host API, channels,
@@ -352,6 +355,67 @@ def _apply_gain(samples):
     return x.astype(_np.int16), gain
 
 
+DENOISE_ENABLED = (os.getenv("SATURDAY_DENOISE", "1").strip().lower()
+                   not in ("0", "off", "no", "false"))
+DENOISE_PROP = float(os.getenv("SATURDAY_DENOISE_AMOUNT", "") or "0.85")
+
+
+def _snr_db(clean_ref) -> float:
+    """Rough SNR estimate: speech-band energy vs floor. Relative only —
+    used to prove denoise helped, never as an absolute claim."""
+    try:
+        import numpy as _np
+        x = _np.asarray(clean_ref).astype(_np.float64).flatten()
+        if len(x) < 160:
+            return 0.0
+        frame = 160
+        n = (len(x) // frame) * frame
+        e = (_np.abs(x[:n].reshape(-1, frame)) ** 2).mean(axis=1)
+        e = _np.sort(e)
+        floor = max(float(e[:max(1, len(e) // 4)].mean()), 1e-9)
+        loud = max(float(e[-max(1, len(e) // 4):].mean()), 1e-9)
+        import math as _m
+        return round(10.0 * _m.log10(loud / floor), 1)
+    except Exception:
+        return 0.0
+
+
+def denoise(samples, samplerate: int = TARGET_SR,
+            prop_decrease: Optional[float] = None) -> Dict[str, Any]:
+    """RNNoise-class spectral gating (noisereduce, local CPU, no model DL).
+    Stationary fan/hum removal that preserves speech transients.
+    Returns dict with cleaned int16 + before/after SNR. Never raises."""
+    import numpy as _np
+
+    x = _np.asarray(samples).astype(_np.float32).flatten()
+    before = _snr_db(x)
+    try:
+        import noisereduce as _nr
+    except Exception as e:
+        return {"success": False, "error": f"noisereduce missing ({e})",
+                "samples": _np.asarray(samples).astype(_np.int16),
+                "snr_before": before, "snr_after": before}
+    try:
+        amt = DENOISE_PROP if prop_decrease is None else float(prop_decrease)
+        amt = min(1.0, max(0.1, amt))
+        # Stationary first (Cheap, never eats speech onsets)...
+        y = _nr.reduce_noise(y=x, sr=int(samplerate), stationary=True,
+                             prop_decrease=min(1.0, amt + 0.1))
+        # ...then a light non-stationary pass for clatter/keyboard.
+        y = _nr.reduce_noise(y=y, sr=int(samplerate), stationary=False,
+                             prop_decrease=max(0.3, amt - 0.25))
+        y = _np.clip(y, -32768, 32767).astype(_np.int16)
+        after = _snr_db(y)
+        return {"success": True, "samples": y,
+                "snr_before": before, "snr_after": after,
+                "gain_db": round(after - before, 1)}
+    except Exception as e:
+        logger.warning(f"denoise failed, keeping raw audio: {e}")
+        return {"success": False, "error": str(e)[:120],
+                "samples": _np.asarray(samples).astype(_np.int16),
+                "snr_before": before, "snr_after": before}
+
+
 def capture(seconds: float = 5.0, samplerate: int = TARGET_SR) -> Dict[str, Any]:
     """Record mono int16 audio at `samplerate` (16kHz for Whisper). Tries
     ranked mics in order. Recording runs in the CALLING thread (PortAudio
@@ -360,6 +424,11 @@ def capture(seconds: float = 5.0, samplerate: int = TARGET_SR) -> Dict[str, Any]
     if not _MIC_AVAILABLE:
         return {"success": False, "error": f"mic backend missing ({_MIC_ERROR})"}
     seconds = min(max(float(seconds or 5.0), 1.0), 30.0)
+    try:
+        from saturday import edgeglow as _eg
+        _eg.signal("listening", seconds + 1.0)
+    except Exception:
+        pass
     import threading as _th
 
     tried = []
@@ -618,8 +687,8 @@ def transcribe(samples=None, wav_path: Optional[str] = None,
         if use_task not in ("transcribe", "translate"):
             use_task = "transcribe"
         use_prompt = prompt if prompt is not None else (STT_PROMPT or None)
-        if samples is not None and wav_path is None:
-            # Neural trim: cut leading/trailing non-speech so the decoder
+        denoise_rep: Dict[str, Any] = {"skipped": "wav-path mode"}
+        if samples is not None and wav_path is None:            # Neural trim: cut leading/trailing non-speech so the decoder
             # spends its capacity on words, not room noise. Falls back to
             # raw audio on any failure — trimming must never eat speech.
             try:
@@ -632,6 +701,18 @@ def transcribe(samples=None, wav_path: Optional[str] = None,
                     vad_trim = {"skipped": nv.get("error", "unconfident VAD — raw audio kept")}
             except Exception:
                 vad_trim = {"skipped": "vad error"}
+            # Mic enhancement: spectral denoise (fan/hum/clatter) BEFORE the
+            # decoder hears it. Raw audio is always kept on any failure.
+            if DENOISE_ENABLED:
+                try:
+                    dn = denoise(samples, samplerate)
+                    if dn.get("success"):
+                        samples = dn["samples"]
+                    denoise_rep = {"snr_before": dn.get("snr_before"),
+                                   "snr_after": dn.get("snr_after"),
+                                   "gain_db": dn.get("gain_db", 0.0)}
+                except Exception as e:
+                    denoise_rep = {"skipped": f"denoise error: {e}"[:120]}
             wav_path = save_wav(samples, samplerate)
         else:
             vad_trim = {"skipped": "wav-path mode"}
@@ -647,7 +728,7 @@ def transcribe(samples=None, wav_path: Optional[str] = None,
         return {"success": True, "text": text,
                 "language": getattr(info, "language", "?"),
                 "requested_language": lang or "auto", "task": use_task,
-                "vad_trim": vad_trim,
+                "vad_trim": vad_trim, "denoise": denoise_rep,
                 "heard_something": bool(text)}
     except Exception as e:
         logger.warning(f"transcription failed: {e}")
