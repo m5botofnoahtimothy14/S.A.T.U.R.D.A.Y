@@ -1,0 +1,9 @@
+{
+    "node_id": "3478aeae-44a6-483a-9191-ad0dffa441d4",
+    "hostname": "NoahTimothyKeba-Dev",
+    "trusted_peers": [],
+    "sync_folders": [
+        "vault",
+        "blackbox"
+    ]
+}

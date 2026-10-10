@@ -175,15 +175,21 @@ class SessionManager:
     def boot(self):
         self.started_at = time.time()
         logger.info("Session boot: starting all services...")
+        # Staggered boot: whisper/Camera/STT/mind/presence all hammer CPU at
+        # once on small boxes (observed 92%+ sustained). 3s gaps between the
+        # heavy starters keep boot under the governor's throttle line.
         self.camera.start()  # slow open happens here, in background
         self._bg("stt-preload", self._preload_stt)
         self._bg("mic-resolve", self._resolve_mic)
+        time.sleep(3.0)
         self._bg("brain-probe", self._probe_brain)
         self._bg("homebot-start", self._start_homebot)
         self._bg("dashboard-start", self._start_dashboard)
+        time.sleep(3.0)
         self._bg("identity-load", self._load_identity)
         self._bg("mind-start", self._start_mind)
         self._bg("claps-start", self._start_claps)
+        time.sleep(3.0)
         self._bg("glow-start", self._start_glow)
         self._bg("heal-start", self._start_healer)
         self._start_inbox_worker()

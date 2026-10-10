@@ -114,6 +114,20 @@ class TestPresence(TestCase):
             core._speak.assert_not_called()
         print("DONE: presence dnd test passed.")
 
+    def test_stranger_never_serenaded(self):
+        # Unknown face: snapshot kept, voice silent — no 20s greeting loop.
+        mgr, core, frame = self._session()
+        core._gallery.return_value.recognize.return_value = ("unknown", 90.0)
+        from saturday.presence import PresenceLoop
+        with patch("saturday.senses.find_faces",
+                   return_value={"success": True, "count": 1,
+                                 "boxes": [{"x": 0, "y": 0, "w": 60, "h": 60}]}):
+            p = PresenceLoop(mgr)
+            for _ in range(5):
+                self.assertIsNone(p.tick())
+            core._speak.assert_not_called()
+        print("DONE: presence stranger-silence test passed.")
+
 
 if __name__ == "__main__":
     test_main(verbosity=2)

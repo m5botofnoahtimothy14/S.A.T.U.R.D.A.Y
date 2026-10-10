@@ -116,6 +116,11 @@ class PresenceLoop:
                     return None  # flicker miss right after a hit: stay silent
             except Exception:
                 pass
+            logger.debug("presence: stranger in view — silent (no vocal greeting for unknowns)")
+            return None  # strangers are logged + snapshotted, never serenaded:
+                         # vocal greetings are for RECOGNIZED people only.
+                         # (This also keeps TTS/CPU quiet instead of greeting
+                         # every 20s forever when the gallery is empty.)
         if (name and name == self.last_greeted_name
                 and now - self.last_greeted_at < REPEAT_COOLDOWN):
             return None
