@@ -57,7 +57,10 @@ class RealtimeDatabaseBridge:
         if not self.status_ref:
             return False
         try:
-            self.status_ref.set(payload)
+            # update(), NOT set(): a full set() would wipe the sibling
+            # 'presence' child the heartbeat maintains — that race made
+            # Vercel discovery flip-flop. Merge keeps both writers alive.
+            self.status_ref.update(payload)
             return True
         except Exception as exc:
             logger.warning(f"Realtime status publish failed: {exc}")

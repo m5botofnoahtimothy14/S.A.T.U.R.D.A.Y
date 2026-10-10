@@ -4,8 +4,8 @@ The humanoid (brain, voice, hands, mind) LIVES on this machine. The server
 is how it reaches the world and how the world reaches it:
 
   tunnel   : Cloudflare public URL (persist watchdog, token auth).
-  presence : RTDB heartbeat /saturday_presence/<node> = {online, ts, url}
-             so ANY device can see "SATURDAY is awake" without the tunnel.
+  presence : RTDB /saturday_system/<node>/status/presence = {online, ts,
+             tunnel_url} so ANY device can find the live tunnel without it.
   commands : RTDB inbox /saturday_system/<node>/commands — the realtime
              bridge already executes these as UNTRUSTED (no screen-driving).
 
