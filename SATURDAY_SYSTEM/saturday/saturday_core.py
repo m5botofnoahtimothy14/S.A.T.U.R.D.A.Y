@@ -170,7 +170,12 @@ class SATURDAYCore:
     def _parse_command(self, cmd_string: str):
         text = (cmd_string or "").strip()
         try:
-            tokens = shlex.split(text)
+            # posix=False: Windows backslashes survive (shlex POSIX mode eats
+            # them: D:\Keys\x.json → D:Keysx.json). Strip one layer of quotes
+            # afterwards so "multi word" args still group correctly.
+            tokens = shlex.split(text, posix=False)
+            tokens = [t[1:-1] if len(t) >= 2 and t[0] == t[-1] and t[0] in "\"'"
+                      else t for t in tokens]
         except ValueError:
             tokens = text.split()  # apostrophes/quotes fall back to naive split
         command = tokens[0].lower() if tokens else ""
