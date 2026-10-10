@@ -558,6 +558,7 @@ footer {
 <script>
 const $=id=>document.getElementById(id);
 let failStreak=0, timer=2000, booted=false, glowCol='#00f2fe';
+let PROXY=false, proxyWarned=false;
 
 function showToast(msg){
   const t=$('toast'); t.textContent=msg; t.style.display='block';
@@ -675,13 +676,30 @@ const TOKEN=QS.get('token')||localStorage.getItem('sat_token')||'';
 if(QS.get('api')) localStorage.setItem('sat_api',QS.get('api'));
 if(QS.get('token')) localStorage.setItem('sat_token',QS.get('token'));
 let PIN=sessionStorage.getItem('sat_pin')||'';
+// Proxy-first on Vercel (cloud relay); explicit linked API or localhost
+// stays direct. Evaluated here, after API is known.
+PROXY=/vercel\.app$/i.test(location.hostname)&&!API;
 
 async function api(path,opts){
   opts=opts||{}; opts.headers=opts.headers||{};
   if(TOKEN) opts.headers['X-Saturday-Token']=TOKEN;
   if(PIN) opts.headers['X-Sat-Pin']=PIN;
   const t0=performance.now();
-  let r=await fetch(API+path,opts);
+  // Proxy-first on Vercel (same-origin /api/sat → RTDB discovery + PIN
+  // server-side). Direct tunnel fetch only on localhost or manual LINK.
+  // A dead cached hostname can NEVER wedge the page: any network/DNS
+  // failure auto-switches to the proxy once, with a toast.
+  const useProxy=()=>PROXY?'/api/sat'+path:API+path;
+  let r;
+  try{
+    r=await fetch(useProxy(),opts);
+  }catch(e){
+    if(!PROXY){
+      PROXY=true;
+      if(!proxyWarned){ proxyWarned=true; showToast('Direct tunnel dead — switched to cloud relay'); }
+      r=await fetch(useProxy(),opts);
+    } else throw e;
+  }
   const latency=Math.round(performance.now()-t0);
   if(r.status===401&&!opts._retried){
     const p=prompt('Site PIN Required:');
