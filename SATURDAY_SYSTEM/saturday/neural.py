@@ -54,8 +54,48 @@ def brain_log_path() -> Path:
 
 
 # -- model roster -------------------------------------------------------------
+_probe_cache: Dict[str, Any] = {"at": 0.0, "data": {}}
+
+
+def _have(mod: str) -> bool:
+    """Import-free availability: find_spec never executes module code
+    (importing torch/diffusers just to ask 'are you there' costs seconds)."""
+    try:
+        import importlib.util as _iu
+        return _iu.find_spec(mod) is not None
+    except Exception:
+        return False
+
+
+def _dist_version(mod: str) -> Optional[str]:
+    try:
+        from importlib.metadata import version as _v
+        return _v(mod)
+    except Exception:
+        return None
+
+
+def _sd_turbo_present() -> bool:
+    """Direct path check — never rglob the 16GB hub (that walk hangs)."""
+    try:
+        base = D_MODELS / "hf-hub" / "models--stabilityai--sd-turbo" / "snapshots"
+        if not base.exists():
+            return False
+        for snap in base.iterdir():
+            if ((snap / "sd_turbo.safetensors").exists()
+                    or (snap / "unet" / "diffusion_pytorch_model.safetensors").exists()):
+                return True
+        return False
+    except Exception:
+        return False
+
+
 def probe() -> Dict[str, Any]:
-    """Real per-model status. Never guesses — imports + probes each one."""
+    """Real per-model status. Never guesses — probes each one, cached 60s,
+    never imports heavy stacks (torch/diffusers) just to ask questions."""
+    import time as _t
+    if _t.time() - _probe_cache["at"] < 60.0 and _probe_cache["data"]:
+        return dict(_probe_cache["data"])
     out: Dict[str, Any] = {}
     # Ollama family
     try:
@@ -72,12 +112,9 @@ def probe() -> Dict[str, Any]:
         out["ollama"] = False
         out["ollama_error"] = str(e)[:100]
         out["llama3.2"] = out["moondream"] = out["nomic-embed-text"] = False
-    try:
-        import faster_whisper  # noqa
-        out["whisper"] = True
-    except Exception as e:
-        out["whisper"] = False
-        out["whisper_error"] = str(e)[:100]
+    out["whisper"] = _have("faster_whisper")
+    if not out["whisper"]:
+        out["whisper_error"] = "faster-whisper not installed"
     try:
         import shutil
         vdir = D_MODELS / "piper" / "voices"
@@ -89,19 +126,11 @@ def probe() -> Dict[str, Any]:
     except Exception:
         out["piper"] = False
         out["piper_voices"] = []
-    try:
-        import diffusers  # noqa
-        out["diffusers"] = diffusers.__version__
-        w = D_MODELS / "hf-hub"
-        out["sd_turbo_cached"] = any(w.rglob("*sd-turbo*")) if w.exists() else False
-    except Exception:
-        out["diffusers"] = None
-        out["sd_turbo_cached"] = False
-    try:
-        import ddgs  # noqa
-        out["ddgs"] = True
-    except Exception:
-        out["ddgs"] = False
+    out["diffusers"] = _dist_version("diffusers") if _have("diffusers") else None
+    out["sd_turbo_cached"] = _sd_turbo_present()
+    out["ddgs"] = _have("ddgs")
+    _probe_cache["at"] = _t.time()
+    _probe_cache["data"] = dict(out)
     return out
 
 
