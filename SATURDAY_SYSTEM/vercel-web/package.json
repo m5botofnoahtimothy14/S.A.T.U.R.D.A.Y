@@ -1,0 +1,12 @@
+{
+  "name": "saturday-hud-proxy",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SATURDAY front door: Vercel proxy with RTDB presence discovery",
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
