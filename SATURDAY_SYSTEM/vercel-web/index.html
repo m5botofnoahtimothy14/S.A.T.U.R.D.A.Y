@@ -689,7 +689,7 @@ async function api(path,opts){
   // server-side). Direct tunnel fetch only on localhost or manual LINK.
   // A dead cached hostname can NEVER wedge the page: any network/DNS
   // failure auto-switches to the proxy once, with a toast.
-  const useProxy=()=>PROXY?'/api/sat'+path:API+path;
+  const useProxy=()=>PROXY?'/api/sat'+path.replace(/^\/api/,''):API+path;
   let r;
   try{
     r=await fetch(useProxy(),opts);

@@ -1898,8 +1898,9 @@ class SATURDAYCore:
         """Fully unsupervised arbitrary goal, driven by the local brain.
         Subcommands: brain train | brain learn | brain status | brain distill [n]
                      brain custom on|off | brain fairness
-        Otherwise: brain <goal> runs it (CustomBrain when custom mode is on —
-        zero network calls — else the Ollama teachers)."""
+        Otherwise: brain <goal> runs it — CustomBrain when custom mode is on
+        (zero network calls), else the Ollama teachers, else CustomBrain
+        automatically (teachers gone = ours takes over, honestly labeled)."""
         sub = (args[0].lower() if args else "")
         if sub in ("train", "learn", "status", "distill", "custom", "fairness"):
             return self._handle_brain_ops(sub, args[1:], raw_text)
@@ -1922,11 +1923,12 @@ class SATURDAYCore:
                 from saturday.brain import OllamaBrain
                 brain = OllamaBrain()
                 if not brain.available():
-                    return ("❌ Local brain offline. Start Ollama and pull a model:\n"
-                            "   ollama pull llama3.2   (reasoning)\n"
-                            "   ollama pull moondream  (vision)\n"
-                            "   ...or switch to ours: brain custom on")
-                tag = "teachers (llama3.2)"
+                    # Teachers gone (Ollama removed/offline): ours takes over.
+                    from saturday.custom_brain import CustomBrain
+                    brain = CustomBrain()
+                    tag = "custom brain (teachers unreachable — auto-fallback)"
+                else:
+                    tag = "teachers (llama3.2)"
         except Exception as e:
             return f"❌ Brain failed to load: {e}"
         runner = AgentRunner(

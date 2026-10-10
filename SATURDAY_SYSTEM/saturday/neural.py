@@ -174,7 +174,8 @@ def imagine(prompt: str, steps: int = 1, size: int = 512,
 
 # -- mathematics (real symbolic + numeric engine) ----------------------------------
 MATH_WORDS = [
-    (r"(.+)\bequals?\b(.+)", r"Eq(\1,\2)"),  # FIRST: keep equation structure
+    (r"(\d)\s*%", r"\1/100"),  # FIRST: 15% → 15/100 (percent beats modulo)
+    (r"(.+)\bequals?\b(.+)", r"Eq(\1,\2)"),  # keep equation structure
     (r"\bsquare root of\b", "sqrt "),
     (r"\bsquared\b", "**2"),
     (r"\bcubed\b", "**3"),
